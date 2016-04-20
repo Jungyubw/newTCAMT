@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>gov.nist.healthcare.tools.hl7.v2.tcamt.new</groupId>
-	<artifactId>new-tcamt</artifactId>
+	<groupId>gov.nist.healthcare.tools.hl7.v2.tcamt.lite</groupId>
+	<artifactId>tcamt-lite</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>new-tcamt</name>
-	<description>new-tcamt tool</description>
+	<name>tcamt-lite</name>
+	<description>tcamt-lite tool</description>
 	<packaging>pom</packaging>
 	<modules>
-		<module>new-tcamt-resource</module>
-		<module>new-tcamt-domain</module>
-		<module>new-tcamt-repo</module>
-		<module>new-tcamt-service</module>
-		<module>new-tcamt-acmgt</module>
-		<module>new-tcamt-controller</module>
+		<module>tcamt-lite-resource</module>
+		<module>tcamt-lite-domain</module>
+		<module>tcamt-lite-repo</module>
+		<module>tcamt-lite-service</module>
+		<module>tcamt-lite-acmgt</module>
+		<module>tcamt-lite-controller</module>
 	</modules>
 
 	<properties>
@@ -32,23 +32,8 @@
 			<version>1.7.2</version>
 		</dependency>
 
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.12</version>
-		</dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.2</version>
-		</dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>log4j-over-slf4j</artifactId>
-			<version>1.7.2</version>
-		</dependency>
 
 		<dependency>
 			<groupId>commons-dbcp</groupId>
@@ -80,6 +65,16 @@
 		<!-- <dependency> <groupId>com.jayway.jsonpath</groupId> <artifactId>json-path-parent</artifactId> 
 			<version>0.9.1</version> </dependency> -->
 
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.7.12</version>
+		</dependency>
 	</dependencies>
 
 
