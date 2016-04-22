@@ -9,33 +9,37 @@
         top.location = self.location;
     }
 </script>
-<div class="container" ng-controller="TestPlanListCtrl" ng-init="initTestPlans()">
+<div class="container" ng-controller="TestPlanCtrl" ng-init="initTestPlans()">
 
-<div class="row" ng-show="isAuthenticated()">
-    <!--<div class="row">-->
+<div ng-show="isAuthenticated()">
     <div ng-show="!isPending()">
-        <div class="page-header">
-            <h5> Hello, <span ng-bind="getFullName()"></span></h5>
+        <div class="row page-header">
+            <span class="pull-left"><h5> Hello, <span ng-bind="getFullName()"></span></h5></span>
+        	<span class="pull-right">
+        		<button title="Save Changes" type="button" class="btn btn-xs btn-success" ng-click="saveAllChangedTestPlans()">
+           			<span><i class="fa fa-check fa-fw"></i> Save</span>
+         		</button>
+    		</span>
         </div>
-        <accordion close-others="false">
-            <accordion-group is-open="accordi.igList" panel-class="panel-primary">
-                <accordion-heading>
-                    <i class="fa"
-                       ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                    <i class="fa fa-file-text-o fa-fw"></i> Test Plan List
-                </accordion-heading>
-                <div ng-include="'views/edit/listTP.html'"></div>
-            </accordion-group>
+        <div class="row">
+        	<accordion close-others="false">
+            	<accordion-group is-open="accordi.igList" panel-class="panel-primary">
+                	<accordion-heading>
+                    	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                    	<i class="fa fa-file-text-o fa-fw"></i> Test Plan List
+                	</accordion-heading>
+                	<div ng-include="'views/edit/listTP.html'"></div>
+            	</accordion-group>
 
-            <accordion-group is-open="accordi.igDetails" panel-class="panel-primary">
-                <accordion-heading>
-                    <i class="fa"
-                       ng-class="{'fa-caret-down': accordi.igDetails, 'fa-caret-right': !accordi.igDetails}"></i>
-                    <i class="fa fa-pencil fa-fw"></i>Edit Test Plan
-                </accordion-heading>
-                <div ng-include="'views/edit/editIG.html'"></div>
-            </accordion-group>
-        </accordion>
+	            <accordion-group is-open="accordi.igDetails" panel-class="panel-primary">
+    	            <accordion-heading>
+        	            <i class="fa" ng-class="{'fa-caret-down': accordi.igDetails, 'fa-caret-right': !accordi.igDetails}"></i>
+                    	<i class="fa fa-pencil fa-fw"></i>Edit Test Plan
+                	</accordion-heading>
+                	<div ng-include="'views/edit/editTP.html'"></div>
+            	</accordion-group>
+        	</accordion>
+        </div>
     </div>
 
     <div style="font-size: 18px;text-align: center" ng-show="isPending()">

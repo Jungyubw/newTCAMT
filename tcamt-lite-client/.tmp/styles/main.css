@@ -9719,3 +9719,75 @@ table.conformance-profiles-table td {
   border-radius: 3px !important;
   margin: 0px !important;
 }
+
+/* line 2240, ../../app/styles/main.scss */
+.testPlan {
+  margin-left: 5px;
+}
+
+/* line 2245, ../../app/styles/main.scss */
+.testCase {
+  margin-left: 10px;
+}
+
+/* line 2249, ../../app/styles/main.scss */
+.testStep {
+  margin-left: 15px;
+  margin-top: 5px;
+}
+
+/* line 2253, ../../app/styles/main.scss */
+.testStep :hover {
+  background-color: blue;
+}
+
+/* line 2259, ../../app/styles/main.scss */
+.testGroup {
+  margin-left: 10px;
+}
+
+/* line 2263, ../../app/styles/main.scss */
+.testGroupCase {
+  margin-left: 15px;
+}
+
+/* line 2266, ../../app/styles/main.scss */
+.testGroupCaseStep {
+  margin-left: 20px;
+  margin-top: 5px;
+}
+
+/* line 2271, ../../app/styles/main.scss */
+.selected {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e1ffff+0,e1ffff+7,e1ffff+12,fdffff+12,e6f8fd+30,c8eefb+54,bee4f8+75,b1d8f5+100;Blue+Pipe+%232 */
+  background: #e1ffff;
+  /* Old browsers */
+  /* FF3.6-15 */
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, #e1ffff 0%, #e1ffff 7%, #e1ffff 12%, #fdffff 12%, #e6f8fd 30%, #c8eefb 54%, #bee4f8 75%, #b1d8f5 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e1ffff', endColorstr='#b1d8f5',GradientType=0 );
+  /* IE6-9 */
+}
+
+/* line 2281, ../../app/styles/main.scss */
+span {
+  cursor: pointer;
+}
+
+/* line 2285, ../../app/styles/main.scss */
+.draggable {
+  cursor: move;
+  cursor: url(https://mail.google.com/mail/images/2/openhand.cur);
+}
+
+/* line 2290, ../../app/styles/main.scss */
+.angular-ui-tree-handle {
+  cursor: move;
+  text-decoration: none;
+  text-decoration-color: -moz-use-text-color;
+  text-decoration-line: none;
+  -webkit-text-decoration-style: solid;
+  text-decoration-style: solid;
+  font-weight: 700;
+}

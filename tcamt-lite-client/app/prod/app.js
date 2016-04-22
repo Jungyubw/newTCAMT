@@ -28,7 +28,9 @@ var app = angular
         'dndLists',
         'froala',
         'ngNotificationsBar',
-        'ngDragDrop'
+        'ngDragDrop',
+        'ui.tree', 
+        'ui.bootstrap.contextMenu'
     ]);
 
 var

@@ -41,10 +41,8 @@ public class TestPlanReadConverter implements Converter<DBObject, TestPlan> {
 		tp.setCoverPageVersion(readString(source, "coverPageVersion"));
 		tp.setDescription(readString(source, "description"));
 		tp.setId(readMongoId(source));
-		tp.setJurorDocumentEnable((boolean) source.get("jurorDocumentEnable"));
 		tp.setLastUpdateDate(readString(source, "lastUpdateDate"));
 		tp.setName(readString(source, "name"));
-		tp.setPosition((Integer) source.get("position"));
 		tp.setType(readString(source, "type"));
 		tp.setVersion(readString(source, "version"));
 		// tp.setTestcasegroups(testcasegroups);

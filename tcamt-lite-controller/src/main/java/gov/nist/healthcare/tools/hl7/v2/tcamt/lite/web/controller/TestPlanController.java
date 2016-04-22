@@ -54,9 +54,12 @@ public class TestPlanController extends CommonController {
 	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
 	public List<TestPlan> getAllTestPlans() throws UserAccountNotFoundException, TestPlanListException {
 		try {
-			List<TestPlan> result = testPlanService.findAll();
-			return result;
-
+			User u = userService.getCurrentUser();
+			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+			if (account == null) {
+				throw new UserAccountNotFoundException();
+			}
+			return testPlanService.findByAccountId(account.getId());
 		} catch (RuntimeException e) {
 			throw new TestPlanListException(e);
 		} catch (Exception e) {

@@ -22,20 +22,18 @@ public class TestPlan implements Serializable, Cloneable {
 
 	private String name;
 	private String description;
+	private String version;
 	private String lastUpdateDate;
+	private Set<TestCase> testcases = new HashSet<TestCase>();
+	private Set<TestCaseGroup> testcasegroups = new HashSet<TestCaseGroup>();
+	private String type;
+
+	private Long accountId;
 	private String coverPageTitle;
 	private String coverPageSubTitle;
 	private String coverPageVersion;
 	private String coverPageDate;
-	private String version;
-	private Set<TestCase> testcases = new HashSet<TestCase>();
-	private Set<TestCaseGroup> testcasegroups = new HashSet<TestCaseGroup>();
-	private Long accountId;
-	private String type;
-	private boolean jurorDocumentEnable;
-
-	private Integer position;
-
+	
 	public TestPlan() {
 		super();
 		
@@ -125,22 +123,6 @@ public class TestPlan implements Serializable, Cloneable {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public boolean isJurorDocumentEnable() {
-		return jurorDocumentEnable;
-	}
-
-	public void setJurorDocumentEnable(boolean jurorDocumentEnable) {
-		this.jurorDocumentEnable = jurorDocumentEnable;
-	}
-
-	public Integer getPosition() {
-		return position;
-	}
-
-	public void setPosition(Integer position) {
-		this.position = position;
 	}
 
 	public String getCoverPageTitle() {

@@ -29,7 +29,10 @@ var app = angular
         'froala',
         'ngNotificationsBar'
         ,
-        'ngMockE2E'
+        'ngMockE2E',
+        'ngDragDrop',
+        'ui.tree', 
+        'ui.bootstrap.contextMenu'
     ]);
 
 var

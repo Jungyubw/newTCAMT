@@ -1,0 +1,69 @@
+<style id="antiClickjack">body {
+    display: none !important;
+}</style>
+<script type="text/javascript">
+    if (self === top) {
+        var antiClickjack = document.getElementById("antiClickjack");
+        antiClickjack.parentNode.removeChild(antiClickjack);
+    } else {
+        top.location = self.location;
+    }
+</script>
+<ng-include src="'views/edit/editTestPlan.html'"></ng-include>
+<ng-include src="'views/edit/editTestCaseGroup.html'"></ng-include>
+<ng-include src="'views/edit/editTestCase.html'"></ng-include>
+<ng-include src="'views/edit/editTestStep.html'"></ng-include>
+<div class="row" ng-show="!selectedTestPlan">
+    <div class="col-md-12">
+        <p>No Test Plan Selected.</p>
+    </div>
+</div>
+<div ng-show="selectedTestPlan">
+	<div class="row">
+    	<div class="col-md-12 igl-page-header">
+        	<span class="header4 pull-left">Test Plan: {{selectedTestPlan.name}}
+            	<span style="margin-left:10px; font-size:12px;font-weight: normal" ng-show="autoSaving && !saved">Saving....</span>
+            	<span style="margin-left:10px; font-size:14px;font-weight: normal" ng-show="saved && !hasChanges()"><i class="fa fa-check fa-fw green"></i> Saved</span>
+        	</span>
+        	<span class="pull-right">
+            	<button title="Close the IG Document" type="button" class="btn btn-xs btn-warning" ng-click="closeTestPlanEdit()">
+            		<span><i class="fa fa-close fa-fw"></i>Close</span>
+            	</button>
+    		</span>
+    	</div>
+	</div>
+
+	<div class="row">
+    	<div class="col-md-1 col-1-percent" ng-show="hideToc" style="margin-right:6px">
+        	<button title="Show Table of Contents" class="btn btn-xs btn-primary" ng-click="hideToc = !hideToc">
+            	<i class="fa fa-caret-right"></i>
+        	</button>
+   		</div>
+    	<div ng-show="!hideToc" class="col-md-3">
+        	<div class="panel panel-primary">
+            	<div class="panel-heading panel-heading-collapsable">
+                	<i class="glyphicon glyphicon-list"></i> Table of Contents
+                	<button title="Hide Table of Contents" class="btn btn-xs btn-default pull-right" style="margin:0px" ng-click="hideToc = !hideToc">
+                    	<i class="fa fa-caret-left"></i>
+                	</button>
+            	</div>
+            	<div class="panel-body">
+                	<div class="toc-container">
+                    	<div ng-include="'views/toc.html'"></div>
+                	</div>
+            	</div>
+        	</div>
+    	</div>
+    
+    	<div ng-class="{'col-md-9': !hideToc, 'col-md-11 col-98-5-percent':hideToc}">
+        	<div class="panel panel-primary">
+            	<div class="panel-heading">Edit Area</div>
+            	<div class="panel-body" style="padding-bottom:100px">
+                	<div id="edit" ng-show="subview !== undefined" style="width:100%">
+                    	<ng-include src="subview"></ng-include>
+                	</div>
+            	</div>
+        	</div>
+    	</div>
+	</div>
+</div>

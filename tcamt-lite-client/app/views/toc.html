@@ -7,173 +7,99 @@
         top.location = self.location;
     }
 </script>
-<style>
+<div ui-tree ="treeOptions">
+	<ol ui-tree-nodes="" ng-model="testplans"  data-empty-placeholder-enabled>
+		<li ng-repeat="test in testplans" ui-tree-node data-type="root" >
+			<div ui-tree-handle class="testPlan" data-type="root" data-empty-placeholder-enabled>
+				<div context-menu="testPlanOptions">
+            		<span  data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-triangle-bottom" ng-class="{'glyphicon-triangle-right': collapsed, 'glyphicon-triangle-bottom': !collapsed}">
+					</span>
+        	
+        			<span class="glyphicon glyphicon-folder-open draggable">
+        			</span>
+        			
+ 					<span data-nodrag ng-class="{selected : this.$modelValue===activeModel}" ng-click="Activate(this); selectTestPlan(test);">	{{test.name}} </span>
+ 				</div>
+      		</div>
 
-/* CSS Tree menu styles */
-.toc-selected {
-	background-color: yellow;
-}
+			<ol ui-tree-nodes="" ng-model="test.testcasegroups" data-type="testcasegroups" ng-if="!collapsed" data-empty-placeholder-enabled>
+        		<li ng-repeat="group in test.testcasegroups " ui-tree-node data-type="testcasegroup" data-empty-placeholder-enabled>
+          			<div ui-tree-handle  class="testGroup" data-nodrop-enabled="true" class="ui-tree-handle" >
+          				<div context-menu="testGroupOptions">
+          					<span data-nodrag  ng-click="toggle(this)" class="glyphicon glyphicon-triangle-bottom" ng-class="{'glyphicon-triangle-right': collapsed, 'glyphicon-triangle-bottom': !collapsed}"></span>
+        
+        					<span class="glyphicon glyphicon-shopping-cart draggable"></span>
+                			<span data-nodrag ng-class="{selected : this.$modelValue===activeModel}" ng-click="Activate(this); selectTestCaseGroup(group);">[{{group.position}}]  {{group.name}} </span>
+         				</div>
+          			</div>
+         			
+         			<ol ui-tree-nodes="" ng-model="group.testcases" data-type="grouptestcases" ng-if="!collapsed"  data-empty-placeholder-enabled>
+        				<li ng-repeat="case in group.testcases " ui-tree-node data-type="testcase"  data-empty-placeholder-enabled>
+          					<div ui-tree-handle  class="testGroupCase" ng-click="Activate(this)">
+          						<div context-menu="testCaseOptions">
+       								<span data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-triangle-bottom" ng-class="{
+          								'glyphicon-triangle-right': collapsed,
+          								'glyphicon-triangle-bottom': !collapsed
+        								}">
+        							</span>
+         							<span class="glyphicon glyphicon-book draggable"></span>
 
-.top-level {
-	font-weight: bold;
-}
+        
+          							<span data-nodrag ng-class="{selected : this.$modelValue===activeModel}" ng-click="Activate(this); selectTestCase(case);">[{{case.position}}] {{case.name}} </span>
+          
+          						</div>
+          					</div>
+          					
+          					<ol ui-tree-nodes="" ng-model="case.teststeps" data-type="teststeps"  ng-if="!collapsed">
 
-ul.trunk {
-	margin-left: -.75em;
-	width: 300px;
-}
+        						<li ng-repeat="step in case.teststeps " ui-tree-node data-type="teststep" >
+          							<div  ui-tree-handle  class="testGroupCaseStep">
+          								<div context-menu="testStepOptions">
+          									<span  class="glyphicon glyphicon-floppy-disk draggable"></span>
+          									<span  data-nodrag ng-click="Activate(this); selectTestStep(step);" ng-class="{selected : this.$modelValue===activeModel}">
+          										[{{step.position}}] {{step.name}}
+          									</span>
+          								</div>
+          							</div>
+        						</li>
+      						</ol>
+       						
+       						<div ui-tree-handle  data-type="grouptestcases" style="height: 20px;    cursor: move; font-weight: 500;min-height: 0px;line-height: 0px;" class="testCase" ng-hide="collapsed"/>
+        				</li>
+      				</ol>
+    			</li>
+  			</ol>
 
-ul.trunk li {
-	color: #00bcd4;
-	position: relative;
-	list-style: none;
-}
 
-ul.trunk li.branch input {
-	text-decoration: none;
-	display: block;
-}
+      		<ol ui-tree-nodes="" ng-model="test.testcases"  data-type="testcases" ng-if="!collapsed"  data-empty-placeholder-enabled> 
+        		<li ng-repeat="testcase in test.testcases " ui-tree-node   data-type="testcase" ng-class="{ active :true}" data-empty-placeholder-enabled>
+          			<div ui-tree-handle class="testCase">
+    					<div context-menu="testCaseOptions">
+        					<span data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-triangle-bottom" ng-class="{
+          						'glyphicon-triangle-right': collapsed,
+          						'glyphicon-triangle-bottom': !collapsed }">
+         					</span>
 
-ul.trunk li.leaf input {
-	text-decoration: none;
-	display: block;
-}
-
-ul.drop {
-	margin-left: -.75em;
-	position: relative;
-	width: 300px;
-}
-
-ul.drop li.branch input {
-	text-decoration: none;
-	display: block;
-}
-
-li input {
-	position: absolute;
-	left: 0;
-	margin-left: 0;
-	opacity: 0;
-	z-index: 2;
-	cursor: pointer;
-	height: 1em;
-	width: 1em;
-	top: 0;
-}
-
-li.leaf {
-	cursor: pointer;
-	display: block;
-	width: 400px;
-}
-
-li input:checked ~ ul {
-	background-position: 15px;
-	background-size: 1px;
-	margin: -1.25em 0 0 -44px; /* 20px */
-	padding: 1.563em 0 0 80px;
-	height: auto;
-}
-
-li input:checked ~ ul > branch {
-	display: none;
-	margin: 0 0 0.125em;
-}
-
-li input:checked ~ ul > branch:last-child {
-	margin: 0 0 0.063em;
-}
-
-a {
-	cursor: pointer;
-}
-</style>
-<div class="container" style="margin-left: -3em;" ng-controller="ToCCtl">
-	<trunk trunk="tocData"></trunk>
-</div>
-<!--
-	Context menu partials.
--->
-<div class="dropdown position-fixed" id="headContextDiv.html"
-	ng-controller="ContextMenuCtl">
-	<ul class="dropdown-menu" role="menu">
-		<li><a class="pointer" role="menuitem" tabindex="1"
-			ng-click="clicked('Copy')"><i
-                class="fa fa-plus fa-fw"></i>Copy</a></li>
-	</ul>
-</div>
-
-<div class="dropdown position-fixed" id="messageHeadContextDiv.html"
-	ng-controller="HL7VersionsDlgCtrl">
-	<ul class="dropdown-menu" role="menu">
-		<li><a class="pointer" role="menuitem" tabindex="1"
-			ng-click="hl7Versions('ctx')"><i class="fa fa-plus fa-fw"></i>Add</a></li>
-		<li><a class="pointer" role="menuitem" tabindex="2"
-			ng-click="selectMessages(igdocument)"><i class="fa fa-download fa-fw"></i>Export</a></li>
-	</ul>
+         					<span  class="glyphicon glyphicon-book draggable"></span>
+            				<span data-nodrag ng-class="{selected : this.$modelValue===activeModel}" ng-click="Activate(this)"> [{{testcase.position}}] {{testcase.name}} </span>
+         				</div>
+         			</div>
+          			<ol ui-tree-nodes="" ng-model="testcase.teststeps" data-type="teststeps" ng-if="!collapsed" data-empty-placeholder-enabled>
+               			<div  ui-tree-handle/>
+              			<li ng-repeat="step in testcase.teststeps" ui-tree-node  data-type="teststep" class="testStep" >
+                    		<div ui-tree-handle>
+                    			<div context-menu="testStepOptions">
+                					<span  class="glyphicon glyphicon-floppy-disk draggable"></span>
+                   					</span>
+                        			<span data-nodrag ng-class="{selected : this.$modelValue===activeModel}" ng-click="Activate(this)">  [{{step.position}}]  {{step.name}}  </span>
+                    			</div>
+                    		</div>
+                 		</li>
+              		</ol>
+               		<div  ui-tree-handle  data-type="testcases" style="height: 20px;    cursor: move; font-weight: 500;min-height: 0px;line-height: 0px;" class="testCase" ng-hide="collapsed"/>
+        		</li>
+      		</ol>
+		</li>
+	</ol>
 </div>
 
-<div class="dropdown position-fixed" id="tableHeadContextDiv.html"
-	ng-controller="HL7VersionsDlgCtrl">
-	<ul class="dropdown-menu" role="menu">
-		<li><a class="pointer" role="menuitem" tabindex="1"
-			ng-click="addTable(igdocument)"><i class="fa fa-plus fa-fw"></i>Add</a></li>
-	</ul>
-</div>
-
-<div class="dropdown position-fixed" id="messageContextDiv.html"
-	ng-controller="ContextMenuCtl">
-	<ul class="dropdown-menu" role="menu">
-		<li><a class="pointer" role="menuitem" tabindex="1"
-			ng-click="clicked('Copy')"><i
-                class="fa fa-plus fa-fw"></i>Copy</a></li>
-		<li><a class="pointer" role="menuitem" tabindex="2"
-			ng-click="clicked('Delete')"><i class="fa fa-trash-o fa-fw"></i>Delete</a></li>
-		<li><a class="pointer" role="menuitem" tabindex="3"
-			ng-click="selectMessages(igdocument)"><i class="fa fa-download fa-fw"></i>Export</a></li>
-	</ul>
-</div>
-
-<div class="dropdown position-fixed" id="contextDiv.html"
-	ng-controller="ContextMenuCtl">
-	<ul class="dropdown-menu" role="menu">
-		<li><a class="pointer" role="menuitem" tabindex="1"
-			ng-click="clicked('Copy')"><i
-                class="fa fa-plus fa-fw"></i>Copy</a></li>
-		<li><a class="pointer" role="menuitem" tabindex="2"
-			ng-click="clicked('Delete')"><i class="fa fa-trash-o fa-fw"></i>Delete</a></li>
-	</ul>
-</div>
-
-<script type="text/ng-template" id="Metadata.html">
-    <a class="point txt" ng-click="tocSelection(node.title, node)">
-<!--<span class="fa"-->
-      <!--ng-class="{-->
-	          <!--'': !collapsed[node.title]-->
-	        <!--}"></span>-->
-        <span class="">{{node.title}}</span></a>
-</script>
-<script type="text/ng-template" id="DefaultEntry.html">
-    <a class="point txt">
-	<span class="fa" ng-class="{'': !collapsed[member.label]}">{{member.label}}</span>
-<!--
-    <span class="" ng-show="nnode.type === 'segment'">{{nnode.label}}</span>
-    <span class="" ng-show="nnode.type === 'table'">{{nnode.bindingIdentifier}}</span>
-    <span class="" ng-show="nnode.type === 'datatype'">{{nnode.label}}</span>
-    <span class="" ng-show="nnode.type === 'message'">{{nnode.structID}}</span>
--->
-    </a>
-</script>
-<script type="text/ng-template" id="Message.html">
-    <a class="point txt" ng-click="tocSelection(node.title, nnode)">
-<!--<span class="fa"-->
-      <!--ng-class="{-->
-	          <!--'': !collapsed[node.title]-->
-	        <!--}"></span>-->
-        <span class="" ng-show="nnode.type === 'segment'">{{nnode.label}}</span>
-        <span class="" ng-show="nnode.type === 'table'">{{nnode.bindingIdentifier}}</span>
-        <span class="" ng-show="nnode.type === 'datatype'">{{nnode.label}}</span>
-        <span class="" ng-show="nnode.type === 'message'">{{nnode.structID}}</span>
-     </a>
-</script>
