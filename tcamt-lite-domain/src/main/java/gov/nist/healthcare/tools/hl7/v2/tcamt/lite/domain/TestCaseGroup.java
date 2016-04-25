@@ -5,52 +5,14 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Id;
-
-public class TestCaseGroup implements Serializable, Cloneable, Comparable<TestCaseGroup> {
+public class TestCaseGroup extends TestCaseOrGroup implements Serializable, Cloneable, Comparable<TestCaseGroup> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8254402250986054606L;
-
-	
-	@Id
-	private long id;
-	
-	private String name;
-	
-	private String description;
-	
-	private Integer version;
-	
-	private int position;
 	
 	private Set<TestCase> testcases = new HashSet<TestCase>();
-	
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Integer getVersion() {
-		return version;
-	}
-
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
 
 	public Set<TestCase> getTestcases() {
 		return testcases;
@@ -78,14 +40,6 @@ public class TestCaseGroup implements Serializable, Cloneable, Comparable<TestCa
 		return cloned;
 	}
 
-	public int getPosition() {
-		return position;
-	}
-
-	public void setPosition(int position) {
-		this.position = position;
-	}
-
 	public int compareTo(TestCaseGroup comparingTestCaseGroup) {
 		int comparePosition = comparingTestCaseGroup.getPosition(); 
 		return this.position - comparePosition;
@@ -98,14 +52,6 @@ public class TestCaseGroup implements Serializable, Cloneable, Comparable<TestCa
 	public static void setTestCaseGroupPositionComparator(
 			Comparator<TestCaseGroup> testCaseGroupPositionComparator) {
 		TestCaseGroup.testCaseGroupPositionComparator = testCaseGroupPositionComparator;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public static Comparator<TestCaseGroup> testCaseGroupPositionComparator = new Comparator<TestCaseGroup>() {
