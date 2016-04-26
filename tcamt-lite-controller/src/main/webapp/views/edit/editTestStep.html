@@ -1,0 +1,144 @@
+<style id="antiClickjack">body {
+	display: none !important;
+}</style> <script type="text/javascript">if (self === top) {
+		var antiClickjack = document.getElementById("antiClickjack");
+		antiClickjack.parentNode.removeChild(antiClickjack);
+	} else {
+		top.location = self.location;
+	}</script> <script type="text/ng-template" id="EditTestStepMetadata.html"><div class="page-header">
+        <span class="header4">TestStep Metadata</span>
+    </div>
+            
+	<form name="testcasegroupMetaDataForm" class="form-horizontal" novalidate>
+		<div class="row" style="margin:10px">
+			<div class="col-md-12">
+				<div class="col-md-5 col-margin">
+					<div class="form-group">
+						<label class="control-label">Name</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestStep.name" required />
+                    </div>
+				</div>
+
+				<div class="col-md-5 col-margin">
+					<div class="form-group">
+						<label class="control-label">Description</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestStep.description" required />
+                    </div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+	<accordion close-others="false">
+		<accordion-group is-open="false" panel-class="panel-primary">
+			<accordion-heading>
+            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                <i class="fa fa-file-text-o fa-fw"></i> Test Step Story
+            </accordion-heading>
+			<div class="row" style="margin:10px">
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Description</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc" required />
+                    </div>
+				</div>
+				
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Comments</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="comments" ng-model="selectedTestStep.testStepStory.comments" required />
+                    </div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Pre Condition</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required />
+                    </div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Post Condition</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required />
+                    </div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Test Objectives</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required />
+                    </div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Evaluation Criteria</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required />
+                    </div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Notes</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
+                    </div>
+				</div>
+
+			</div>
+		</accordion-group>
+		<accordion-group is-open="false" panel-class="panel-primary">
+			<accordion-heading>
+            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                <i class="fa fa-file-text-o fa-fw"></i> HL7 Encoded Message
+            </accordion-heading>
+		</accordion-group>
+		<accordion-group is-open="false" panel-class="panel-primary">
+			<accordion-heading>
+            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                <i class="fa fa-file-text-o fa-fw"></i> Segments List
+            </accordion-heading>
+		</accordion-group>
+		<accordion-group is-open="false" panel-class="panel-primary">
+			<accordion-heading>
+            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                <i class="fa fa-file-text-o fa-fw"></i> TestData of Selected Segment
+            </accordion-heading>
+		</accordion-group>
+		<accordion-group is-open="false" panel-class="panel-primary">
+			<accordion-heading>
+            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                <i class="fa fa-file-text-o fa-fw"></i> List Constraints
+            </accordion-heading>
+		</accordion-group>
+		<accordion-group is-open="false" panel-class="panel-primary">
+			<accordion-heading>
+            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                <i class="fa fa-file-text-o fa-fw"></i>STD XML Encoded Message
+            </accordion-heading>
+		</accordion-group>
+		<accordion-group is-open="false" panel-class="panel-primary">
+			<accordion-heading>
+            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                <i class="fa fa-file-text-o fa-fw"></i>NIST XML Encoded Message
+            </accordion-heading>
+		</accordion-group>
+		<accordion-group is-open="false" panel-class="panel-primary">
+			<accordion-heading>
+            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                <i class="fa fa-file-text-o fa-fw"></i>Message Contents
+            </accordion-heading>
+		</accordion-group>
+		<accordion-group is-open="false" panel-class="panel-primary">
+			<accordion-heading>
+            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                <i class="fa fa-file-text-o fa-fw"></i>TestData Specification
+            </accordion-heading>
+		</accordion-group>
+		<accordion-group is-open="false" panel-class="panel-primary">
+			<accordion-heading>
+            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
+                <i class="fa fa-file-text-o fa-fw"></i>Juror Document
+            </accordion-heading>
+		</accordion-group>
+	</accordion></script>

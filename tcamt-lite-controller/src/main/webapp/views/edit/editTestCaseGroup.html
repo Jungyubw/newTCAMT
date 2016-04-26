@@ -1,0 +1,30 @@
+<style id="antiClickjack">body {
+	display: none !important;
+}</style> <script type="text/javascript">if (self === top) {
+		var antiClickjack = document.getElementById("antiClickjack");
+		antiClickjack.parentNode.removeChild(antiClickjack);
+	} else {
+		top.location = self.location;
+	}</script> <script type="text/ng-template" id="EditTestCaseGroupMetadata.html"><div class="page-header">
+        <span class="header4">TestCase Group Metadata</span>
+    </div>
+            
+	<form name="testcasegroupMetaDataForm" class="form-horizontal" novalidate>
+		<div class="row" style="margin:10px">
+			<div class="col-md-12">
+				<div class="col-md-5 col-margin">
+					<div class="form-group">
+						<label class="control-label">Name</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestCaseGroup.name" required />
+                    </div>
+				</div>
+
+				<div class="col-md-5 col-margin">
+					<div class="form-group">
+						<label class="control-label">Description</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestCaseGroup.description" required />
+                    </div>
+				</div>
+			</div>
+		</div>
+	</form></script>
