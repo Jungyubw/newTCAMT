@@ -24,8 +24,7 @@ public class TestPlan implements Serializable, Cloneable {
 	private String description;
 	private String version;
 	private String lastUpdateDate;
-	private Set<TestCase> testcases = new HashSet<TestCase>();
-	private Set<TestCaseGroup> testcasegroups = new HashSet<TestCaseGroup>();
+	private Set<TestCaseOrGroup> children = new HashSet<TestCaseOrGroup>();
 	private String type;
 
 	private Long accountId;
@@ -65,27 +64,15 @@ public class TestPlan implements Serializable, Cloneable {
 	}
 
 	public void addTestCase(TestCase testcase) {
-		this.testcases.add(testcase);
+		this.children.add(testcase);
 	}
 
 	public void addTestCaseGroup(TestCaseGroup testcasegroup) {
-		this.testcasegroups.add(testcasegroup);
+		this.children.add(testcasegroup);
 	}
-
-	public Set<TestCase> getTestcases() {
-		return testcases;
-	}
-
-	public void setTestcases(Set<TestCase> testcases) {
-		this.testcases = testcases;
-	}
-
-	public Set<TestCaseGroup> getTestcasegroups() {
-		return testcasegroups;
-	}
-
-	public void setTestcasegroups(Set<TestCaseGroup> testcasegroups) {
-		this.testcasegroups = testcasegroups;
+	
+	public void addTestCaseOrGroup(TestCaseOrGroup testcaseorgroup) {
+		this.children.add(testcaseorgroup);
 	}
 
 	public String getLastUpdateDate() {
@@ -102,17 +89,15 @@ public class TestPlan implements Serializable, Cloneable {
 		cloned.setId(ObjectId.get().toString());
 		cloned.setVersion("init");
 
-		Set<TestCase> cTestcases = new HashSet<TestCase>();
-		for (TestCase testcase : this.testcases) {
-			cTestcases.add(testcase.clone());
+		Set<TestCaseOrGroup> cChildren = new HashSet<TestCaseOrGroup>();
+		for (TestCaseOrGroup o : this.children) {
+			if(o instanceof TestCase){
+				cChildren.add(((TestCase)o).clone());
+			}else if(o instanceof TestCaseGroup){
+				cChildren.add(((TestCaseGroup)o).clone());
+			}
 		}
-		cloned.setTestcases(cTestcases);
-
-		Set<TestCaseGroup> ctestcasegroups = new HashSet<TestCaseGroup>();
-		for (TestCaseGroup group : this.testcasegroups) {
-			ctestcasegroups.add(group.clone());
-		}
-		cloned.setTestcasegroups(ctestcasegroups);
+		cloned.setChildren(cChildren);
 
 		return cloned;
 	}
@@ -171,5 +156,13 @@ public class TestPlan implements Serializable, Cloneable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Set<TestCaseOrGroup> getChildren() {
+		return children;
+	}
+
+	public void setChildren(Set<TestCaseOrGroup> children) {
+		this.children = children;
 	}
 }

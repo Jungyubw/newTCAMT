@@ -24,15 +24,9 @@ public class Message implements Serializable, Cloneable {
 
 	private String lastUpdateDate;
 
-	private Integer version;
+	private String version;
 
 	private String hl7EndcodedMessage;
-
-	private String xmlEncodedSTDMessage;
-
-	private String xmlEncodedNISTMessage;
-
-	private String xmlEncodedMessageContent;
 
 	private String conformanceProfile;
 
@@ -60,11 +54,11 @@ public class Message implements Serializable, Cloneable {
 		this.name = name;
 	}
 
-	public Integer getVersion() {
+	public String getVersion() {
 		return version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion(String version) {
 		this.version = version;
 	}
 
@@ -119,36 +113,12 @@ public class Message implements Serializable, Cloneable {
 		return new Constraint();
 	}
 
-	public String getXmlEncodedSTDMessage() {
-		return xmlEncodedSTDMessage;
-	}
-
-	public void setXmlEncodedSTDMessage(String xmlEncodedSTDMessage) {
-		this.xmlEncodedSTDMessage = xmlEncodedSTDMessage;
-	}
-
-	public String getXmlEncodedNISTMessage() {
-		return xmlEncodedNISTMessage;
-	}
-
-	public void setXmlEncodedNISTMessage(String xmlEncodedNISTMessage) {
-		this.xmlEncodedNISTMessage = xmlEncodedNISTMessage;
-	}
-
 	public String getLastUpdateDate() {
 		return lastUpdateDate;
 	}
 
 	public void setLastUpdateDate(String lastUpdateDate) {
 		this.lastUpdateDate = lastUpdateDate;
-	}
-
-	public String getXmlEncodedMessageContent() {
-		return xmlEncodedMessageContent;
-	}
-
-	public void setXmlEncodedMessageContent(String xmlEncodedMessageContent) {
-		this.xmlEncodedMessageContent = xmlEncodedMessageContent;
 	}
 
 	public String getDescription() {

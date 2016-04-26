@@ -1710,8 +1710,6 @@ public class ProfileSerializationImpl implements ProfileSerialization {
 		
 		
 		filteredProfile.setBaseId(original.getBaseId());
-		filteredProfile.setChanges(original.getChanges());
-		filteredProfile.setComment(original.getComment());
 		filteredProfile.setConstraintId(original.getConstraintId());
 		filteredProfile.setSectionContents(original.getSectionContents());
 		filteredProfile.setSectionDescription(original.getSectionDescription());
@@ -1719,7 +1717,6 @@ public class ProfileSerializationImpl implements ProfileSerialization {
 		filteredProfile.setSectionTitle(original.getSectionTitle());
 		filteredProfile.setSourceId(original.getSourceId());
 		filteredProfile.setType(original.getType());
-		filteredProfile.setUsageNote(original.getUsageNote());
 		filteredProfile.setMetaData(original.getMetaData());
 		
 		Messages messages = new Messages();
@@ -1767,8 +1764,6 @@ public class ProfileSerializationImpl implements ProfileSerialization {
 		
 		
 		filteredProfile.setBaseId(original.getBaseId());
-		filteredProfile.setChanges(original.getChanges());
-		filteredProfile.setComment(original.getComment());
 		filteredProfile.setConstraintId(original.getConstraintId());
 		filteredProfile.setSectionContents(original.getSectionContents());
 		filteredProfile.setSectionDescription(original.getSectionDescription());
@@ -1776,7 +1771,6 @@ public class ProfileSerializationImpl implements ProfileSerialization {
 		filteredProfile.setSectionTitle(original.getSectionTitle());
 		filteredProfile.setSourceId(original.getSourceId());
 		filteredProfile.setType(original.getType());
-		filteredProfile.setUsageNote(original.getUsageNote());
 		filteredProfile.setMetaData(original.getMetaData());
 		
 		Messages messages = new Messages();
@@ -1829,8 +1823,6 @@ public class ProfileSerializationImpl implements ProfileSerialization {
 			
 			
 			filteredProfile.setBaseId(original.getBaseId());
-			filteredProfile.setChanges(original.getChanges());
-			filteredProfile.setComment(original.getComment());
 			filteredProfile.setConstraintId(original.getConstraintId());
 			filteredProfile.setSectionContents(original.getSectionContents());
 			filteredProfile.setSectionDescription(original.getSectionDescription());
@@ -1838,7 +1830,6 @@ public class ProfileSerializationImpl implements ProfileSerialization {
 			filteredProfile.setSectionTitle(original.getSectionTitle());
 			filteredProfile.setSourceId(original.getSourceId());
 			filteredProfile.setType(original.getType());
-			filteredProfile.setUsageNote(original.getUsageNote());
 			filteredProfile.setMetaData(original.getMetaData().clone());
 			
 			Messages messages = new Messages();

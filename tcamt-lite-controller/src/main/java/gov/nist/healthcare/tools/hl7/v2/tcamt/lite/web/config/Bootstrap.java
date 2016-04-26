@@ -12,8 +12,12 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config;
 
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.serialization.ProfileSerializationImpl;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,6 +31,9 @@ public class Bootstrap implements InitializingBean {
 
 	@Autowired
 	TestPlanService testplanService;
+	
+	@Autowired
+	ProfileService profileService;
 
 	/*
 	 * (non-Javadoc)
@@ -36,7 +43,21 @@ public class Bootstrap implements InitializingBean {
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
+//		loadPreloadedIGDocuments();
 //		createTestPlan();
+	}
+	
+	private void loadPreloadedIGDocuments() throws Exception {
+		String p = IOUtils.toString(this.getClass().getResourceAsStream(
+				"/profiles/IZ_Profile.xml"));
+		String v = IOUtils.toString(this.getClass().getResourceAsStream(
+				"/profiles/IZ_ValueSetLibrary.xml"));
+		String c = IOUtils.toString(this.getClass().getResourceAsStream(
+				"/profiles/IZ_Constraints.xml"));
+		Profile profile = new ProfileSerializationImpl()
+				.deserializeXMLToProfile(p, v, c);
+
+		profileService.save(profile);
 	}
 
 	private void createTestPlan() throws Exception {

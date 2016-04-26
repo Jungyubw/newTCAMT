@@ -163,6 +163,35 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}
 	};
 	
+	$scope.recordChanged = function () {
+		$rootScope.isChanged = true;
+		$rootScope.selectedTestPlan.isChanged = true;
+    };
+	
+    $scope.saveAllChangedTestPlans = function() {
+    	$rootScope.tps.forEach(function(testplan) {
+    		if(testplan.isChanged){
+    			var changes = angular.toJson([]);
+    			var data = angular.fromJson({"changes": changes, "tp": testplan});
+    			
+    			$http.post('api/testplans/save', data).then(function (response) {
+    				var saveResponse = angular.fromJson(response.data);
+    				testplan.lastUpdateDate = saveResponse.date;
+    				$rootScope.saved = true;
+    				testplan.isChanged = false;
+    				
+    				
+    			}, function (error) {
+    				$rootScope.saved = false;
+    			});
+    		}
+    	});
+    	
+    	$rootScope.isChanged = false;
+    }
+    
+	
+	//Tree Functions
 	$scope.activeModel={};
 
     $scope.treeOptions = {

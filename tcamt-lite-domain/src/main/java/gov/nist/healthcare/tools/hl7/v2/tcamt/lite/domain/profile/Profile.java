@@ -12,9 +12,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Document(collection = "integrationProfiles")
 public class Profile extends TextbasedSectionModel implements java.io.Serializable,
 		Cloneable {
 
@@ -40,15 +42,8 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 
 	private Long accountId;
 
-	protected String comment = "";
-
-	protected String usageNote = "";
-
-	private String changes = "";
-
 	private String baseId = null; // baseId is the original version of the
 									// profile that was cloned
-
 	private String constraintId;
 	
 	private String sourceId;
@@ -115,30 +110,6 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 	 * @param version
 	 * @return
 	 */
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	public String getUsageNote() {
-		return usageNote;
-	}
-
-	public void setUsageNote(String usageNote) {
-		this.usageNote = usageNote;
-	}
-
-	public String getChanges() {
-		return changes;
-	}
-
-	public void setChanges(String changes) {
-		this.changes = changes;
-	}
-
 	public Tables getTables() {
 		return tables;
 	}
@@ -404,8 +375,6 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 		HashMap<String, Segment> segmentRecords = new HashMap<String, Segment>();
 		HashMap<String, Table> tableRecords = new HashMap<String, Table>();
 
-		clonedProfile.setChanges(changes);
-		clonedProfile.setComment(comment);
 		clonedProfile.setDatatypes(datatypes.clone(dtRecords, tableRecords));
 		clonedProfile.setSegments(segments.clone(dtRecords, segmentRecords,
 				tableRecords));
@@ -414,7 +383,6 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 		clonedProfile.setMessages(messages.clone(dtRecords, segmentRecords,
 				tableRecords));
 		clonedProfile.setMetaData(metaData.clone());
-		clonedProfile.setUsageNote(usageNote);
 		clonedProfile.setAccountId(accountId);
 		clonedProfile.setBaseId(baseId != null ? baseId : id);
 		clonedProfile.setSourceId(id);

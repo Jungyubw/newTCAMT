@@ -7523,124 +7523,6 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
             return $rootScope.igChanged;
         };
 
-        $rootScope.recordChanged = function () {
-            $rootScope.igChanged = true;
-        };
-
-        $rootScope.recordChange = function (object, changeType) {
-//        var type = object.type;
-//
-//
-//        if($rootScope.changes[type] === undefined){
-//            $rootScope.changes[type] = {};
-//        }
-//
-//        if($rootScope.changes[type][object.id] === undefined){
-//            $rootScope.changes[type][object.id] = {};
-//        }
-//
-//        if(changeType === "datatype"){
-//            $rootScope.changes[type][object.id][changeType] = object[changeType].id;
-//        }else{
-//            $rootScope.changes[type][object.id][changeType] = object[changeType];
-//        }
-//
-//        console.log("Change is " + $rootScope.changes[type][object.id][changeType]);
-            $rootScope.recordChanged();
-        };
-
-
-        $rootScope.recordChange2 = function (type, id, attr, value) {
-//        if($rootScope.changes[type] === undefined){
-//            $rootScope.changes[type] = {};
-//        }
-//        if($rootScope.changes[type][id] === undefined){
-//            $rootScope.changes[type][id] = {};
-//        }
-//        if(attr != null) {
-//            $rootScope.changes[type][id][attr] = value;
-//        }else {
-//            $rootScope.changes[type][id] = value;
-//        }
-            $rootScope.recordChanged();
-        };
-
-        $rootScope.recordChangeForEdit = function (object, changeType) {
-//        var type = object.type;
-//
-//        if($rootScope.changes[type] === undefined){
-//            $rootScope.changes[type] = {};
-//        }
-//
-//        if($rootScope.changes[type]['edit'] === undefined){
-//            $rootScope.changes[type]['edit'] = {};
-//        }
-//
-//        if($rootScope.changes[type]['edit'][object.id] === undefined){
-//            $rootScope.changes[type]['edit'][object.id] = {};
-//        }
-//        $rootScope.changes[type]['edit'][object.id][changeType] = object[changeType];
-            $rootScope.recordChanged();
-        };
-
-        $rootScope.recordChangeForEdit2 = function (type, command, id, valueType, value) {
-//        var obj = $rootScope.findObjectInChanges(type, "add", id);
-//        if (obj === undefined) { // not a new object
-//            if ($rootScope.changes[type] === undefined) {
-//                $rootScope.changes[type] = {};
-//            }
-//            if ($rootScope.changes[type][command] === undefined) {
-//                $rootScope.changes[type][command] = [];
-//            }
-//            if (valueType !== type) {
-//                var obj = $rootScope.findObjectInChanges(type, command, id);
-//                if (obj === undefined) {
-//                    obj = {id: id};
-//                    $rootScope.changes[type][command].push(obj);
-//                }
-//                obj[valueType] = value;
-//            } else {
-//                $rootScope.changes[type][command].push(value);
-//            }
-//        }
-            $rootScope.recordChanged();
-        };
-
-        $rootScope.recordDelete = function (type, command, id) {
-            if (id < 0) { // new object
-                $rootScope.removeObjectFromChanges(type, "add", id);
-            } else {
-                $rootScope.removeObjectFromChanges(type, "edit", id);
-//            if ($rootScope.changes[type] === undefined) {
-//                $rootScope.changes[type] = {};
-//            }
-//            if ($rootScope.changes[type][command] === undefined) {
-//                $rootScope.changes[type][command] = [];
-//            }
-//
-//            if ($rootScope.changes[type]["delete"] === undefined) {
-//                $rootScope.changes[type]["delete"] = [];
-//            }
-//
-//            $rootScope.changes[type]["delete"].push({id:id});
-                $rootScope.recordChanged();
-            }
-
-//        if($rootScope.changes[type]) {            //clean the changes object
-//            if ($rootScope.changes[type]["add"] && $rootScope.changes[type]["add"].length === 0) {
-//                delete  $rootScope.changes[type]["add"];
-//            }
-//            if ($rootScope.changes[type]["edit"] && $rootScope.changes[type]["edit"].length === 0) {
-//                delete  $rootScope.changes[type]["edit"];
-//            }
-//
-//            if (Object.getOwnPropertyNames($rootScope.changes[type]).length === 0) {
-//                delete $rootScope.changes[type];
-//            }
-//        }
-        };
-
-
         $rootScope.findObjectInChanges = function (type, command, id) {
             if ($rootScope.changes[type] !== undefined && $rootScope.changes[type][command] !== undefined) {
                 for (var i = 0; i < $rootScope.changes[type][command].length; i++) {
@@ -10758,6 +10640,35 @@ angular.module('tcl').controller('TestPlanCtrl', ["$scope", "$rootScope", "$temp
 		}
 	};
 	
+	$scope.recordChanged = function () {
+		$rootScope.isChanged = true;
+		$rootScope.selectedTestPlan.isChanged = true;
+    };
+	
+    $scope.saveAllChangedTestPlans = function() {
+    	$rootScope.tps.forEach(function(testplan) {
+    		if(testplan.isChanged){
+    			var changes = angular.toJson([]);
+    			var data = angular.fromJson({"changes": changes, "tp": testplan});
+    			
+    			$http.post('api/testplans/save', data).then(function (response) {
+    				var saveResponse = angular.fromJson(response.data);
+    				testplan.lastUpdateDate = saveResponse.date;
+    				$rootScope.saved = true;
+    				testplan.isChanged = false;
+    				
+    				
+    			}, function (error) {
+    				$rootScope.saved = false;
+    			});
+    		}
+    	});
+    	
+    	$rootScope.isChanged = false;
+    }
+    
+	
+	//Tree Functions
 	$scope.activeModel={};
 
     $scope.treeOptions = {
