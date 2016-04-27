@@ -46,49 +46,53 @@ body {
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Description</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc" required />
+						<textarea froala ng-model="myHtml" type="text" ng-change="recordChanged()" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc"></textarea>
                     </div>
 				</div>
 				
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Comments</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="comments" ng-model="selectedTestStep.testStepStory.comments" required />
+						<textarea froala  ng-change="recordChanged()" name="comments" ng-model="selectedTestStep.testStepStory.comments" required ></textarea>
+
                     </div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Pre Condition</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required />
+						<textarea froala   ng-change="recordChanged()" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required ></textarea>
+						
                     </div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Post Condition</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required />
+						<textarea froala  ng-change="recordChanged()" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required ></textarea>
+
                     </div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Test Objectives</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required />
+						<textarea froala  ng-change="recordChanged()" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required></textarea>
+
                     </div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Evaluation Criteria</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required />
+						<textarea froala  ng-change="recordChanged()" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required ></textarea>
                     </div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Notes</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
+						<textarea froala ng-change="recordChanged()" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
                     </div>
 				</div>
 

@@ -2238,35 +2238,31 @@ table.conformance-profiles-table td {
 
 
 .testPlan{
-	margin-left: 5px;
+	margin-left: 3px;
 
 }
 
-.testCase{
-	margin-left: 10px;
-}
+ .testCase{ 
+ 	margin-left: 1px; 
+} 
 
-.testStep{ 	margin-left: 15px;
-	margin-top: 5px;
-
-}
-.testStep :hover{ 	
-
-	background-color: blue;
-}
-
-
-.testGroup{
-	margin-left: 10px;
-}
-
-.testGroupCase{
+.testStep{ 	
 	margin-left: 15px;
-}
-.testGroupCaseStep{
-margin-left: 20px;
-margin-top: 5px;
-}
+ 	margin-top: 5px; 
+
+ } 
+
+ .testGroup{ 
+	margin-left: 10px;
+ } 
+
+.testGroupCase{ 
+ 	margin-left: 15px;
+} 
+.testGroupCaseStep{ 
+ margin-left: 20px;
+ margin-top: 5px; 
+ } 
 
 .selected{
 /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e1ffff+0,e1ffff+7,e1ffff+12,fdffff+12,e6f8fd+30,c8eefb+54,bee4f8+75,b1d8f5+100;Blue+Pipe+%232 */
@@ -2284,13 +2280,11 @@ span {
 }
 .draggable{
 	cursor:move;
-	cursor: url(https://mail.google.com/mail/images/2/openhand.cur)
 }
 
 .angular-ui-tree-handle {
     cursor: move;
     text-decoration: none;
-        text-decoration-color: -moz-use-text-color;
         text-decoration-line: none;
         text-decoration-style: solid;
     font-weight: 700;

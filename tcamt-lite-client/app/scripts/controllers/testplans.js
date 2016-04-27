@@ -5,6 +5,7 @@
 angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ToCSvc, ContextMenuSvc, ProfileAccessSvc, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, DatatypeService, SegmentService, IgDocumentService, ElementUtils,AutoSaveService) {
 	$scope.loading = false;
 	$rootScope.tps = [];
+	$scope.testPlanOptions=[];
 	$scope.accordi = {metaData: false, definition: true, igList: true, igDetails: false};
     
 	$scope.loadTestPlans = function () {
@@ -197,17 +198,31 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     $scope.treeOptions = {
 
         accept: function(sourceNodeScope, destNodesScope, destIndex) {
-            destNodesScope.expand();
+            //destNodesScope.expand();
             var dataTypeSource = sourceNodeScope.$element.attr('data-type');
             var dataTypeDest = destNodesScope.$element.attr('data-type');
 
 
     console.log('source: ' + dataTypeSource + '    target: ' + dataTypeDest);
-            if(dataTypeSource==="root"){
+            if(dataTypeSource==="childrens"){
                 return false;
             }
-            else if(dataTypeSource==="testcasegroup"){
-                if(dataTypeDest==="root"||dataTypeDest==="testcasegroups"){
+            
+            
+            if(dataTypeSource==="child"){
+            	 if(dataTypeDest==="childrens"){
+                     return true;
+                 }else if(!sourceNodeScope.$modelValue.testcases && dataTypeDest==='group'){
+               
+                         return true;
+                     } else{
+                    	 return false;
+                     }
+            	
+            	
+            }
+            else if(dataTypeSource==="group"){
+                if(dataTypeDest==="childrens"){
                
                 return true;
             }else{
@@ -215,9 +230,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
                     return false;
                 }
             }
-
-            else if(dataTypeSource==="testcase"){
-              if(dataTypeDest==="testcases"||dataTypeDest==="grouptestcases"){
+            
+            else if(dataTypeSource==="case"){
+              if(dataTypeDest==="group"||dataTypeDest==="childrens"){
                 return true;
             }else{
                     return false;
@@ -225,8 +240,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
             }
        
 
-            else if(dataTypeSource==="teststep"){
-                 if(dataTypeDest==="teststeps"){
+            else if(dataTypeSource==="step"){
+                 if(dataTypeDest==="case"){
                 return true;
             }else{
                     return false;
@@ -250,22 +265,22 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
             var dataType = destNodes.$element.attr('data-type');
             event.source.nodeScope.$modelValue.position = sortAfter+1;
             $scope.updatePositions(event.dest.nodesScope.$modelValue);
-            $scope.updatePositions(event.source.nodesScope.$modelValue);
+  			$scope.updatePositions(event.source.nodesScope.$modelValue);
             //console.log( event.source.nodeScope.$parentNodesScope.$modelValue)
       
          
 
-             for (var i = $scope.testplans.length -1; i >= 0; i--) {
-
-                    for (var j =  $scope.testplans[i].testcases.length - 1; j >= 0; j--) {
-                        $scope.testplans[i].testcases[j].position=j+1+$scope.testplans[i].testcasegroups.length;
-                  
-     
-    }
-
-     
-
-        }
+//             for (var i = $scope.testplans.length -1; i >= 0; i--) {
+//
+//                    for (var j =  $scope.testplans[i].testcases.length - 1; j >= 0; j--) {
+//                        $scope.testplans[i].testcases[j].position=j+1+$scope.testplans[i].testcasegroups.length;
+//                  
+//     
+//    }
+//
+//     
+//
+//        }
 
 
     }
@@ -301,45 +316,105 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     //$scope.activeId=itemScope.$id;
     };
     
+    $scope.cloneTestStep=function(teststep){
+    	var newTestStep = {};
+    	newTestStep.name = teststep.name+"copy";
+    	
+    }
+    $scope.cloneTestCase=function(testCase){
+    	
+    }
+    
+    $scope.isCase = function(children){
+    	
+    	if(!children.teststeps){
+    		return false; 
+    	}else {return true; }
+    }
+    $scope.cloneteststep=function(teststep){
+    	var model ={};
+    	model.name=teststep.name+"clone";
+    }
+    
+    
+    $scope.clonetestcase=function(testcase){
+    	var model={teststeps:[]};
+    	model.name= testcase.name+"clone";
+    	
+	    for (var i = testcase.teststeps.length - 1; i >= 0; i--){
+	    	model.teststeps.push($scope.cloneteststep(testcases[i]));
+	        }
+
+    	return model;
+    	
+    }
     
     
     
+    
+  $scope.isGroupe = function(children){
+    	
+    	if(!children.testcases){
+    		return false; 
+    	}else {return true; }
+    }
 // Context menu 
     
+  $scope.clonegroup= function($itemScope){
+	  var parent=$itemScope.$parent.$modelValue;
+	
+	  var content=$itemScope.$modelValue;
+	  var model={testcases:[]};
+	  if(content.hasOwnProperty('testcases')){
+		  
+
+		    for (var i = content.testcases.length - 1; i >= 0; i--){
+		    model.testcases.push($scope.clonetestcase(content.testcases[i]));
+		        }
+		
+		 $itemScope.$parent.$modelValue.children.push(model);
+		 $scope.activeModel=model;
+		 
+	  }
+	  
+	  
+	  
+  }
+  
+
     $scope.testPlanOptions = [
-                              ['add new testGroup', function($itemScope) {
-                               
-                               $itemScope.$nodeScope.$modelValue.testcasegroups.push({
-                                      name: "testGroupAdded",
-                                      position:$itemScope.$nodeScope.$modelValue.testcasegroups.length+1,
-                                      testcases:[]
+                              ['add new testgroup', function($itemScope) {
+                               if( !$itemScope.$nodeScope.$modelValue.children){
+                            	  $itemScope.$nodeScope.$modelValue.children=[];
+                               }
+                                  $itemScope.$nodeScope.$modelValue.children.push({name: "newTestGroup", testcases:[], position:$itemScope.$nodeScope.$modelValue.children.length+1});
 
+                                  console.log($itemScope.$nodeScope.$modelValue.children);
+                                  $scope.activeModel=$itemScope.$nodeScope.$modelValue.children[$itemScope.$nodeScope.$modelValue.children.length-1];
 
-                                  });
-
-                                  $scope.activeModel=$itemScope.$nodeScope.$modelValue.testcasegroups[$itemScope.$nodeScope.$modelValue.testcasegroups.length-1];
 
                                 
                               }],
-                              null, // Divtitleier
-                              ['Add new testCase', function($itemScope) {
-                            
-                              $itemScope.$nodeScope.$modelValue.testcases.push({
+                              
+                              ['Add new testcase', function($itemScope) {
+                            	  if( !$itemScope.$nodeScope.$modelValue.children){
+                                	  $itemScope.$nodeScope.$modelValue.children=[];
+                                   }
+                                      $itemScope.$nodeScope.$modelValue.children.push({name: "newTestCase", teststeps:[],position:$itemScope.$nodeScope.$modelValue.children.length+1});
 
-                                      name: "TestCaseAdded",
-                                      position:$itemScope.$nodeScope.$modelValue.testcases.length+1+$itemScope.$nodeScope.$modelValue.testcasegroups.length,
-                                      teststeps:[]
+                                      $scope.activeModel=$itemScope.$nodeScope.$modelValue.children[$itemScope.$nodeScope.$modelValue.children.length-1];
 
-                                  });
-                                           $scope.activeModel=$itemScope.$nodeScope.$modelValue.testcases[$itemScope.$nodeScope.$modelValue.testcases.length-1];
-
-                              }]
+                                  }
+                     ]
                           ];
-
-
-
-
-                          $scope.testGroupOptions = [
+    
+//
+//
+//
+//
+    
+    $scope.cloneindex=1;
+    $scope.testGroupOptions = [
                               ['add new testCase', function($itemScope) {
                                  
                                   $itemScope.$nodeScope.$modelValue.testcases.push({
@@ -354,12 +429,24 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
                               }],
                               null, // Divtitleier
                               ['clone', function($itemScope) {
-                                      var model= {};
-                                      var name =  $itemScope.$nodeScope.$modelValue.name;
-                                      name=name+"(copy)";
-                                      model.name=name;
-                                      model.position=$itemScope.$nodeScope.$parentNodesScope.$modelValue.length+1
-                                      $itemScope.$nodeScope.$parentNodesScope.$modelValue.push(model);
+                            	  
+                            	  
+                            	 
+                                      
+                                     var name =  $itemScope.$nodeScope.$modelValue.name;
+                                     var model = $itemScope.$nodeScope.$modelValue;
+                                     
+                                     model.name=name+"(clone)"+ $scope.cloneindex++;
+                                   
+//                                      model.position=$itemScope.$nodeScope.$parentNodesScope.$modelValue.length+1
+//                                      $itemScope.$nodeScope.$parentNodesScope.$modelValue.push(model);
+                            	  
+                            	  
+                            	  
+                            	  //$scope.clonegroup($itemScope);
+                            	  $itemScope.$nodeScope.$parent.$modelValue.push(model)
+                            	  console.log($itemScope.$nodeScope.$parent.$modelValue)
+                            	  
                               }],
                               null, // Divtitleier
                               ['delete', function($itemScope) {
@@ -368,16 +455,18 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
                               }]
 
                           ];
-    
-    
-    $scope.testCaseOptions = [
+//    
+//    
+    $scope.testCaseOptions =	[
                               ['add new teststep', function($itemScope) {
-                                  $itemScope.$nodeScope.$modelValue.teststeps.push({
-                                      name: "testStepAdded",
-                                      position: $itemScope.$nodeScope.$modelValue.teststeps.length+1,
-                                  });
-                                  $scope.activeModel=$itemScope.$nodeScope.$modelValue.teststeps[$itemScope.$nodeScope.$modelValue.teststeps.length-1];
-
+                                  
+                            	  console.log($itemScope.$parent.$modelValue);
+                            	  if( !$itemScope.$nodeScope.$modelValue.teststeps){
+                                	  $itemScope.$nodeScope.$modelValue.teststeps=[];
+                                   }
+                                      $itemScope.$nodeScope.$modelValue.teststeps.push({name: "newteststep", position:$itemScope.$nodeScope.$modelValue.teststeps.length+1});
+                            	  
+                            	  
 
                               }],
                               null, // Divtitleier
@@ -385,10 +474,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
                                    var model= {};
                                       var name =  $itemScope.$nodeScope.$modelValue.name;
-                                      name=name+"(copy)";
+                                      name=name+"(copy new)";
                                       model.name=name;
-                                      model.teststeps= $itemScope.$nodeScope.$modelValue.teststeps;
-
+                                      var teststeps= $itemScope.$nodeScope.$modelValue.teststeps;
+                                      for (i = 0; i < $itemScope.$nodeScope.$modelValue.teststeps.length; i++) {
+                                    	  model.teststeps.push(teststeps[i].name);
+                                    	   
+                                    	}
+                                      
+                                      
                                       model.position=$itemScope.$nodeScope.$parentNodesScope.$modelValue.length+1;
                                       $itemScope.$nodeScope.$parentNodesScope.$modelValue.push(model);
                                       $scope.Activate($itemScope);
