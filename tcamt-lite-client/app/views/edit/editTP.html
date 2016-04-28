@@ -42,7 +42,7 @@
     	<div ng-show="!hideToc" class="col-md-3">
         	<div class="panel panel-primary">
             	<div class="panel-heading panel-heading-collapsable">
-                	<i class="glyphicon glyphicon-list"></i> Table of Contents
+                	<i class="glyphicon glyphicon-list"></i> Navigation Tree
                 	<button title="Hide Table of Contents" class="btn btn-xs btn-default pull-right" style="margin:0px" ng-click="hideToc = !hideToc">
                     	<i class="fa fa-caret-left"></i>
                 	</button>
@@ -57,7 +57,7 @@
     
     	<div ng-class="{'col-md-9': !hideToc, 'col-md-11 col-98-5-percent':hideToc}">
         	<div class="panel panel-primary">
-            	<div class="panel-heading">Edit Area</div>
+            	<div class="panel-heading">Dashboard</div>
             	<div class="panel-body" style="padding-bottom:100px">
                 	<div id="edit" ng-show="subview !== undefined" style="width:100%">
                     	<ng-include src="subview"></ng-include>

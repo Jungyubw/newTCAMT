@@ -31,7 +31,8 @@ var app = angular
         ,
         'ngMockE2E',
         'ngDragDrop',
-        'ui.tree', 
+        'ui.tree',
+        'ui.bootstrap',
         'ui.bootstrap.contextMenu'
     ]);
 

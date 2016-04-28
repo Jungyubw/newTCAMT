@@ -22,7 +22,7 @@ body {
 					</span> <span class="label label-sub-component label-icon">T</span> </span> <span
 						data-nodrag ng-class="{selected : this.$modelValue===activeModel}"
 						ng-click="Activate(this); selectTestPlan(test);">
-						{{test.name}} {{this}}</span>
+						{{test.name}}</span>
 				</div>
 			</div>
 
@@ -44,7 +44,7 @@ body {
 							<span class="label label-success label-icon">G</span> <span
 								data-nodrag
 								ng-class="{selected : this.$modelValue===activeModel}"
-								ng-click="Activate(this); selectTestCaseGroup(group);">[{{child.position}}]{{child.name}}{{collapsed}}</span>
+								ng-click="Activate(this); selectTestCaseGroup(child);">[{{child.position}}]{{child.name}}{{collapsed}}</span>
 						</div>
 
 					</div>
@@ -59,7 +59,7 @@ body {
 							<span class="label label-component label-icon draggable">C</span>
 							<span data-nodrag
 								ng-class="{selected : this.$modelValue===activeModel}"
-								ng-click="Activate(this); selectTestCaseGroup(group);">[{{child.position}}]{{child.name}}</span>
+								ng-click="Activate(this); selectTestCase(child);">[{{child.position}}]{{child.name}}</span>
 						</div>
 
 					</div>

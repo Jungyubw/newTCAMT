@@ -36,7 +36,38 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.initTestPlans = function () {
 		$scope.loadTestPlans();
 		$scope.getScrollbarWidth();
+		$scope.loadIntegrationProfileMetaDataList();
 	};
+	
+	$scope.loadIntegrationProfileMetaDataList = function () {
+		var delay = $q.defer();
+		$scope.error = null;
+		$rootScope.integrationProfileMetaDataList = [];
+		
+		$scope.loading = true;
+		$http.get('api/integrationprofiles').then(function (response) {
+			$rootScope.integrationProfileMetaDataList = angular.fromJson(response.data);
+			$scope.loading = false;
+			delay.resolve(true);
+		}, function (error) {
+			$scope.loading = false;
+			$scope.error = error.data;
+			delay.reject(false);
+		});
+		return delay.promise;
+	};
+	
+	$scope.loadIntegrationProfile = function () {
+		$rootScope.selectedIntegrationProfile = null;
+		if($rootScope.selectedTestStep.integrationProfileId != undefined && $rootScope.selectedTestStep.integrationProfileId !== ''){
+			$http.get('api/integrationprofiles/' + $rootScope.selectedTestStep.integrationProfileId).then(function (response) {
+				$rootScope.selectedIntegrationProfile = angular.fromJson(response.data);
+			}, function (error) {
+			});
+		}else {
+			$rootScope.selectedTestStep.conformanceProfileId = null;
+		}
+	}
         
 	$scope.confirmDeleteTestPlan = function (testplan) {
 		var modalInstance = $modal.open({
@@ -95,9 +126,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
          
 	$scope.editTestPlan = function () {
 		$scope.subview = "EditTestPlanMetadata.html";
-		$timeout(
-				function () {
-				}, 100);
 	};
          
 	$scope.selectTestCaseGroup = function (testCaseGroup) {
@@ -113,9 +141,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
          
 	$scope.editTestCaseGroup = function () {
 		$scope.subview = "EditTestCaseGroupMetadata.html";
-		$timeout(
-				function () {
-				}, 100);
 	};
           
 	$scope.selectTestCase = function (testCase) {
@@ -131,9 +156,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
            
 	$scope.editTestCase = function () {
 		$scope.subview = "EditTestCaseMetadata.html";
-		$timeout(
-				function () {
-				}, 100);
 	};
            
 	$scope.selectTestStep = function (testStep) {
@@ -141,6 +163,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			waitingDialog.show('Opening Test Step ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
 				$rootScope.selectedTestStep = testStep;
+				$scope.selectedTestStepTab = 1;
 				$scope.editTestStep();
 				waitingDialog.hide();
 			}, 100);
@@ -149,9 +172,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
            
 	$scope.editTestStep = function () {
 		$scope.subview = "EditTestStepMetadata.html";
-		$timeout(
-				function () {
-				}, 100);
 	};
             
 	$scope.selectIgTab = function (value) {
@@ -189,8 +209,18 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     	});
     	
     	$rootScope.isChanged = false;
-    }
+    };
     
+    $scope.updateMessage = function() {
+    	$rootScope.listLineOfMessage = $rootScope.selectedTestStep.er7Message.split("\n");
+    	
+    	console.log($rootScope.listLineOfMessage);
+    	
+    	var message = _.find($rootScope.selectedIntegrationProfile.messages.children,function(m){ 
+    						return m.messageID == $rootScope.selectedTestStep.conformanceProfileId 
+    					});
+    	console.log(message);
+    };
 	
 	//Tree Functions
 	$scope.activeModel={};

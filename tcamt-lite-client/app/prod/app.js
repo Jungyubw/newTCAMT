@@ -30,7 +30,8 @@ var app = angular
         'ngNotificationsBar',
         'ngDragDrop',
         'ui.tree', 
-        'ui.bootstrap.contextMenu'
+        'ui.bootstrap.contextMenu',
+        'ui.bootstrap'
     ]);
 
 var

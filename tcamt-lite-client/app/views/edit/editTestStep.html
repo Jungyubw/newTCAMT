@@ -10,147 +10,142 @@ body {
 	} else {
 		top.location = self.location;
 	}
+	
+	$(function() {
+		$(".lined").linedtextarea(
+			{selectedLine: 1}
+		);
+	});
 </script>
 <script type="text/ng-template" id="EditTestStepMetadata.html">
-    <div class="page-header">
-        <span class="header4">TestStep Metadata</span>
-    </div>
-            
-	<form name="testcasegroupMetaDataForm" class="form-horizontal" novalidate>
+	<ul class="nav nav-pills">
+		<li class="active"><a data-toggle="pill" ng-click="selectedTestStepTab = 1"><i class="fa fa-file-text-o fa-fw"></i> MetaData</a></li>
+		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 2"><i class="fa fa-file-text-o fa-fw"></i> Test Story</a></li>
+		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 3"><i class="fa fa-file-text-o fa-fw"></i> HL7 Encoded Message</a></li>
+		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 4"><i class="fa fa-file-text-o fa-fw"></i> Segments List</a></li>
+		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 5"><i class="fa fa-file-text-o fa-fw"></i> Selected Segment</a></li>
+		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 6"><i class="fa fa-file-text-o fa-fw"></i> List Constraints</a></li>
+		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 7"><i class="fa fa-file-text-o fa-fw"></i> STD/NIST XML Encoded Message</a></li>
+		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 8"><i class="fa fa-file-text-o fa-fw"></i> Message Contents</a></li>
+		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 9"><i class="fa fa-file-text-o fa-fw"></i> TestData Specification</a></li>
+		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 10"><i class="fa fa-file-text-o fa-fw"></i> Juror Document</a></li>
+	</ul>
+  	
+	<div ng-show="selectedTestStepTab == 1">
+		<form name="testcasegroupMetaDataForm" class="form-horizontal" novalidate>
+			<div class="row" style="margin:12px">
+				<div class="col-md-2">
+					<label class="control-label">Name:</label>
+				</div>
+				<div class="col-md-10">
+					<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestStep.name" required />
+				</div>
+			</div>
+			<div class="row" style="margin:12px">
+				<div class="col-md-2">
+					<label class="control-label">Description:</label>
+				</div>
+				<div class="col-md-10">
+					<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestStep.description" required />
+				</div>
+			</div>
+			<div class="row" style="margin:12px">
+				<div class="col-md-2">
+					<label class="control-label">Integration Profile:</label>
+				</div>
+				<div class="col-md-10">
+					<select class="form-control" name="iProfile"
+                            ng-change="recordChanged(); loadIntegrationProfile();"
+                            required ng-model="selectedTestStep.integrationProfileId" ng-options="list.id as list.metadata.name + ' (' + list.metadata.profileID + ')'  for list in integrationProfileMetaDataList">
+						<option value="">No integration profile</option>
+					</select>
+				</div>
+			</div>
+
+			<div ng-show="selectedIntegrationProfile" class="row" style="margin:12px">
+				<div class="col-md-2">
+					<label class="control-label">Conformance Profile:</label>
+				</div>
+				<div class="col-md-10">
+					<select class="form-control" name="cProfile"
+                            ng-change="recordChanged();"
+                            required ng-model="selectedTestStep.conformanceProfileId" ng-options="message.messageID as message.messageType + '-' + message.event + '-' + message.structID + ' (' + message.messageID + ')'  for message in selectedIntegrationProfile.messages.children">
+						<option value="">No conformance profile</option>
+					</select>
+				</div>
+			</div>
+		</form>
+	</div>
+
+    <div ng-show="selectedTestStepTab == 2">
 		<div class="row" style="margin:10px">
 			<div class="col-md-12">
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Name</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestStep.name" required />
-                    </div>
+				<div class="form-group">
+					<label class="control-label">Description</label>
+					<textarea froala ng-model="myHtml" type="text" ng-change="recordChanged()" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc"></textarea>
 				</div>
-
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Description</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestStep.description" required />
-                    </div>
+			</div>
+				
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="control-label">Comments</label>
+					<textarea froala  ng-change="recordChanged()" name="comments" ng-model="selectedTestStep.testStepStory.comments" required ></textarea>
+				</div>
+			</div>
+				
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="control-label">Pre Condition</label>
+					<textarea froala   ng-change="recordChanged()" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required ></textarea>
+				</div>
+			</div>
+				
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="control-label">Post Condition</label>
+					<textarea froala  ng-change="recordChanged()" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required ></textarea>
+				</div>
+			</div>
+				
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="control-label">Test Objectives</label>
+					<textarea froala  ng-change="recordChanged()" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required></textarea>
+				</div>
+			</div>
+				
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="control-label">Evaluation Criteria</label>
+					<textarea froala  ng-change="recordChanged()" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required ></textarea>
+				</div>
+			</div>
+				
+			<div class="col-md-12">
+				<div class="form-group">
+					<label class="control-label">Notes</label>
+					<textarea froala ng-change="recordChanged()" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
 				</div>
 			</div>
 		</div>
-	</form>
+	</div>
+    
+	<div ng-show="selectedTestStepTab == 3">
+		<textarea class="lined form-control" rows="20" ng-model="selectedTestStep.er7Message" ng-change="updateMessage()" />
+		<script>
+			$(function() {
+				$(".lined").linedtextarea(
+					{selectedLine: 1}
+				);
+			});
+		</script>
+	</div>
+    
+	<div ng-show="selectedTestStepTab == 4">
+		<h3>Menu 3</h3>
+		<p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+	</div>
 
-	<accordion close-others="false">
-		<accordion-group is-open="false" panel-class="panel-primary">
-			<accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i> Test Step Story
-            </accordion-heading>
-			<div class="row" style="margin:10px">
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Description</label>
-						<textarea froala ng-model="myHtml" type="text" ng-change="recordChanged()" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc"></textarea>
-                    </div>
-				</div>
-				
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Comments</label>
-						<textarea froala  ng-change="recordChanged()" name="comments" ng-model="selectedTestStep.testStepStory.comments" required ></textarea>
 
-                    </div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Pre Condition</label>
-						<textarea froala   ng-change="recordChanged()" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required ></textarea>
-						
-                    </div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Post Condition</label>
-						<textarea froala  ng-change="recordChanged()" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required ></textarea>
-
-                    </div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Test Objectives</label>
-						<textarea froala  ng-change="recordChanged()" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required></textarea>
-
-                    </div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Evaluation Criteria</label>
-						<textarea froala  ng-change="recordChanged()" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required ></textarea>
-                    </div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Notes</label>
-						<textarea froala ng-change="recordChanged()" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
-                    </div>
-				</div>
-
-			</div>
-		</accordion-group>
-		<accordion-group is-open="false" panel-class="panel-primary">
-			<accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i> HL7 Encoded Message
-            </accordion-heading>
-		</accordion-group>
-		<accordion-group is-open="false" panel-class="panel-primary">
-			<accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i> Segments List
-            </accordion-heading>
-		</accordion-group>
-		<accordion-group is-open="false" panel-class="panel-primary">
-			<accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i> TestData of Selected Segment
-            </accordion-heading>
-		</accordion-group>
-		<accordion-group is-open="false" panel-class="panel-primary">
-			<accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i> List Constraints
-            </accordion-heading>
-		</accordion-group>
-		<accordion-group is-open="false" panel-class="panel-primary">
-			<accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i>STD XML Encoded Message
-            </accordion-heading>
-		</accordion-group>
-		<accordion-group is-open="false" panel-class="panel-primary">
-			<accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i>NIST XML Encoded Message
-            </accordion-heading>
-		</accordion-group>
-		<accordion-group is-open="false" panel-class="panel-primary">
-			<accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i>Message Contents
-            </accordion-heading>
-		</accordion-group>
-		<accordion-group is-open="false" panel-class="panel-primary">
-			<accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i>TestData Specification
-            </accordion-heading>
-		</accordion-group>
-		<accordion-group is-open="false" panel-class="panel-primary">
-			<accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i>Juror Document
-            </accordion-heading>
-		</accordion-group>
-	</accordion>
+	<code>{{selectedTestStep}}</code>
 </script>

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 import javax.persistence.Id;
-import javax.persistence.Transient;
 
 public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
@@ -20,7 +19,11 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	private String description;
 
-	private Message message;
+	private String integrationProfileId;
+	
+	private String conformanceProfileId;
+	
+	private String er7Message;
 
 	private Integer version;
 
@@ -29,9 +32,6 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	private TestStory testStepStory = new TestStory();
 
 	private String type;
-
-	@Transient
-	private boolean changed;
 
 	public TestStep(long id, String name, String description, Integer version) {
 		super();
@@ -43,7 +43,6 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	public TestStep() {
 		super();
-		this.message = new Message();
 	}
 
 	public long getId() {
@@ -70,13 +69,6 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 		this.version = version;
 	}
 
-	public Message getMessage() {
-		return message;
-	}
-
-	public void setMessage(Message message) {
-		this.message = message;
-	}
 
 	public TestStory getTestStepStory() {
 		testStepStory = testStepStory.normalize();
@@ -91,12 +83,6 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	public TestStep clone() throws CloneNotSupportedException {
 		TestStep cloned = (TestStep) super.clone();
 		cloned.setId(0);
-		if (this.message == null) {
-			cloned.setMessage(null);
-		} else {
-			Message cMessage = this.message.clone();
-			cloned.setMessage(cMessage);
-		}
 		cloned.setTestStepStory((TestStory) testStepStory.clone());
 
 		return cloned;
@@ -123,14 +109,6 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 		this.type = type;
 	}
 
-	public boolean isChanged() {
-		return changed;
-	}
-
-	public void setChanged(boolean changed) {
-		this.changed = changed;
-	}
-
 	public static Comparator<TestStep> getTestCasePositionComparator() {
 		return testCasePositionComparator;
 	}
@@ -146,6 +124,30 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getIntegrationProfileId() {
+		return integrationProfileId;
+	}
+
+	public void setIntegrationProfileId(String integrationProfileId) {
+		this.integrationProfileId = integrationProfileId;
+	}
+
+	public String getConformanceProfileId() {
+		return conformanceProfileId;
+	}
+
+	public void setConformanceProfileId(String conformanceProfileId) {
+		this.conformanceProfileId = conformanceProfileId;
+	}
+
+	public String getEr7Message() {
+		return er7Message;
+	}
+
+	public void setEr7Message(String er7Message) {
+		this.er7Message = er7Message;
 	}
 
 	public static Comparator<TestStep> testCasePositionComparator = new Comparator<TestStep>() {

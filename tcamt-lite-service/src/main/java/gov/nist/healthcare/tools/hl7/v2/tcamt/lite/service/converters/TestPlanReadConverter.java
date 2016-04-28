@@ -27,7 +27,7 @@ public class TestPlanReadConverter implements Converter<DBObject, TestPlan> {
 			.getLogger(TestPlanReadConverter.class);
 
 	public TestPlanReadConverter() {
-		log.info("IGDocument Read Converter Created");
+		log.info("TestPlan Read Converter Created");
 	}
 
 	@Override
