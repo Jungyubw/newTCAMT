@@ -23,7 +23,6 @@ var app = angular
         'smart-table',
         'ngTreetable',
         'restangular',
-        'ng-context-menu',
         'angularjs-dropdown-multiselect',
         'dndLists',
         'froala',
