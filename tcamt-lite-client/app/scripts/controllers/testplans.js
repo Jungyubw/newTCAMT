@@ -211,15 +211,277 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     	$rootScope.isChanged = false;
     };
     
+    $scope.loadConformanceProfile = function (){
+    };
+    
     $scope.updateMessage = function() {
-    	$rootScope.listLineOfMessage = $rootScope.selectedTestStep.er7Message.split("\n");
+    	var conformanceProfile = _.find($rootScope.selectedIntegrationProfile.messages.children,function(m){ 
+			return m.messageID == $rootScope.selectedTestStep.conformanceProfileId 
+		});
     	
-    	console.log($rootScope.listLineOfMessage);
+    	var listLineOfMessage = $rootScope.selectedTestStep.er7Message.split("\n");
     	
-    	var message = _.find($rootScope.selectedIntegrationProfile.messages.children,function(m){ 
-    						return m.messageID == $rootScope.selectedTestStep.conformanceProfileId 
-    					});
-    	console.log(message);
+    	var nodeList = [];
+    	$scope.travelConformanceProfile(conformanceProfile, "", "", "", "" , "",  nodeList, 10);
+    	
+    	$rootScope.segmentList = [];
+    	var currentPosition = 0;
+    	
+    	for(var i in listLineOfMessage){
+    		currentPosition = $scope.getSegment(nodeList, currentPosition, listLineOfMessage[i]);
+    	};
+    	
+    	console.log($rootScope.segmentList);
+    	
+    };
+    
+    $scope.getSegment = function (nodeList, currentPosition, segmentStr) {
+    	var segmentName = segmentStr.substring(0,3);
+    	
+    	for(var index = currentPosition; index < nodeList.length; index++){
+    		if(nodeList[index].obj.name === segmentName){
+    			nodeList[index].segmentStr = segmentStr;
+    			$rootScope.segmentList.push(nodeList[index]);
+    			return index + 1;
+    		}
+    	}
+    	return currentPosition;
+    };
+    
+    $scope.getInstanceValue = function (str) {
+    	return str.substring(str.indexOf('[') + 1, str.indexOf(']'));
+    };
+    
+    $scope.initHL7EncodedMessageTab = function () {
+    	$scope.testDataAccordi = {};
+    	$scope.testDataAccordi.segmentList = true;
+    	$scope.testDataAccordi.selectedSegment = false;
+    	$scope.testDataAccordi.constraintList = false;
+    };
+    
+    $scope.selectSegment = function (segment) {
+    	$scope.testDataAccordi.segmentList = false;
+    	$scope.testDataAccordi.selectedSegment = true;
+    	$scope.testDataAccordi.constraintList = false;
+    	
+    	$rootScope.selectedSegmentNode = {};
+    	$rootScope.selectedSegmentNode.segment = segment;
+    	$rootScope.selectedSegmentNode.children = [];
+    	var splittedSegment = segment.segmentStr.split("|");
+    	
+    	var fieldValues = [];
+    	
+    	if(splittedSegment[0] === 'MSH'){
+    		fieldValues.push('|');
+    	}
+    	
+    	for(var index = 1; index < splittedSegment.length; index++){
+			fieldValues.push(splittedSegment[index]);
+		}
+    		
+    	for(var i = 0; i < segment.obj.fields.length; i++){
+    		var fieldInstanceValues = [];
+    		if (fieldValues[i] != undefined) fieldInstanceValues = fieldValues[i].split("~");
+    		
+    		for(var h = 0; h < fieldInstanceValues.length; h++){
+    			var fieldNode = {
+    					path : segment.path + "." + (i + 1),
+    					iPath : segment.iPath + "." + (i + 1) + "[" + (h + 1) + "]",
+    					positionPath : segment.positionPath + "." + (i + 1),
+    					positioniPath : segment.positioniPath + "." + (i + 1) + "[" + (h + 1) + "]",
+    					usagePath : segment.usagePath + "-" + segment.obj.fields[i].usage,
+        				field: segment.obj.fields[i],
+    					dt: $scope.findDatatype(segment.obj.fields[i].datatype),
+    					value: fieldInstanceValues[h],
+    					children : []
+    			};
+        		
+    			var componentValues = [];
+    			if (fieldInstanceValues[h] != undefined) componentValues = fieldInstanceValues[h].split("^");
+    			
+        		for(var j = 0; j < fieldNode.dt.components.length; j++){
+        			
+        			var componentNode = {
+        					path : fieldNode.path + "." + (j + 1),
+        					iPath : fieldNode.iPath + "." + (j + 1) + "[1]",
+        					positionPath : fieldNode.positionPath + "." + (j + 1),
+        					positioniPath : fieldNode.positioniPath + "." + (j + 1) + "[1]",
+        					usagePath : fieldNode.usagePath + "-" + fieldNode.dt.components[j].usage,
+            				component: fieldNode.dt.components[j],
+        					dt: $scope.findDatatype(fieldNode.dt.components[j].datatype),
+        					value: componentValues[j],
+        					children : []
+        			};
+        			
+        			var subComponentValues = [];
+        			if (componentValues[j] != undefined) subComponentValues = componentValues[j].split("&");
+        			for(var k = 0; k < componentNode.dt.components.length; k++){
+        				var subComponentNode = {
+            					path : componentNode.path + "." + (k + 1),
+            					iPath : componentNode.iPath + "." + (k + 1) + "[1]",
+            					positionPath : componentNode.positionPath + "." + (k + 1),
+            					positioniPath : componentNode.positioniPath + "." + (k + 1) + "[1]",
+            					usagePath : componentNode.usagePath + "-" + componentNode.dt.components[k].usage,
+                				component: componentNode.dt.components[k],
+            					dt: $scope.findDatatype(componentNode.dt.components[k].datatype),
+            					value: subComponentValues[k],
+            			};
+        				componentNode.children.push(subComponentNode);
+        			}
+        			
+        			fieldNode.children.push(componentNode);
+        			
+        			
+        		}
+        		
+        		$rootScope.selectedSegmentNode.children.push(fieldNode);
+    		}
+    		
+    		
+    	}
+    	
+    	
+    	
+    	console.log($rootScope.selectedSegmentNode);
+    };
+    
+    $scope.travelConformanceProfile = function (parent, path, ipath, positionPath, positioniPath, usagePath, nodeList, maxSize) {
+    	for(var i in parent.children){
+    		var child = parent.children[i];
+    		if(child.type === 'segmentRef'){
+    			var obj = $scope.findSegment(child.ref);
+    			
+    			if(child.max === '1'){
+    				var segmentPath = null;
+        			var segmentiPath = null;
+        			var segmentPositionPath = null;
+        			var segmentiPositionPath = null;
+        			var segmentUsagePath = null;
+        			
+        			if(path===""){
+        				segmentPath = obj.name;
+        				segmentiPath = obj.name + "[1]";
+        				segmentPositionPath = child.position;
+        				segmentiPositionPath = child.position + "[1]";
+        				segmentUsagePath = child.usage;
+        			}else {
+        				segmentPath = path + "." + obj.name;
+        				segmentiPath = ipath + "." + obj.name + "[1]";
+        				segmentPositionPath = positionPath + "." + child.position;
+        				segmentiPositionPath = positioniPath + "." + child.position + "[1]";
+        				segmentUsagePath = usagePath + "-" + child.usage;
+        			}
+        			var node = {
+        					path: segmentPath,
+        					iPath: segmentiPath,
+        					positionPath: segmentPositionPath,
+        					positioniPath: segmentiPositionPath,
+        					usagePath: segmentUsagePath,
+        					obj : obj
+        			};
+        			nodeList.push(node);
+    			}else {
+    				for (var index = 1; index < maxSize + 1; index++) { 
+        				var segmentPath = null;
+            			var segmentiPath = null;
+            			var segmentPositionPath = null;
+            			var segmentiPositionPath = null;
+            			var segmentUsagePath = null;
+            			
+            			if(path===""){
+            				segmentPath = obj.name;
+            				segmentiPath = obj.name + "[" + index + "]";
+            				segmentPositionPath = child.position;
+            				segmentiPositionPath = child.position + "[" + index + "]";
+            				segmentUsagePath = child.usage;
+            			}else {
+            				segmentPath = path + "." + obj.name;
+            				segmentiPath = ipath + "." + obj.name + "[" + index + "]";
+            				segmentPositionPath = positionPath + "." + child.position;
+            				segmentiPositionPath = positioniPath + "." + child.position + "[" + index + "]";
+            				segmentUsagePath = usagePath + "-" + child.usage;
+            			}
+            			
+            			var node = {
+            					path: segmentPath,
+            					iPath: segmentiPath,
+            					positionPath: segmentPositionPath,
+            					positioniPath: segmentiPositionPath,
+            					usagePath: segmentUsagePath,
+            					obj : obj
+            			};
+            			nodeList.push(node);
+        			}
+    			}
+    			
+    		}else if(child.type === 'group'){
+    			var groupName = child.name;
+    			if(groupName.indexOf(".") >= 0) { 
+    				groupName = groupName.substr(groupName.lastIndexOf(".") + 1);
+    			}
+    			
+    			
+    			if(child.max === '1'){
+    				var groupPath = null;
+        			var groupiPath = null;
+        			var groupPositionPath = null;
+        			var groupiPositionPath = null;
+        			var groupUsagePath = null;
+        			
+        			if(path===""){
+        				groupPath = groupName;
+            			groupiPath = groupName + "[1]";
+            			groupPositionPath = child.position;
+            			groupiPositionPath = child.position + "[1]";
+            			groupUsagePath = child.usage;
+        			}else {
+        				groupPath = path + "." + groupName;
+            			groupiPath = ipath + "." + groupName + "[1]";
+            			groupPositionPath = positionPath + "." + child.position;
+            			groupiPositionPath = positioniPath + "." + child.position + "[1]";
+            			groupUsagePath = usagePath + "-" + child.usage;
+        			}
+        			
+        			$scope.travelConformanceProfile(child, groupPath, groupiPath, groupPositionPath, groupiPositionPath, groupUsagePath, nodeList, maxSize);
+    			}else {
+    				for (var index = 1; index < maxSize + 1; index++) { 
+    					var groupPath = null;
+    	    			var groupiPath = null;
+    	    			var groupPositionPath = null;
+    	    			var groupiPositionPath = null;
+    	    			var groupUsagePath = null;
+    	    			
+    	    			if(path===""){
+    	    				groupPath = groupName;
+    	        			groupiPath = groupName + "[" + index + "]";
+    	        			groupPositionPath = child.position;
+    	        			groupiPositionPath = child.position + "[" + index + "]";
+    	        			groupUsagePath = child.usage;
+    	    			}else {
+    	    				groupPath = path + "." + groupName;
+    	        			groupiPath = ipath + "." + groupName + "[" + index + "]";
+    	        			groupPositionPath = positionPath + "." + child.position;
+    	        			groupiPositionPath = positioniPath + "." + child.position + "[" + index + "]";
+    	        			groupUsagePath = usagePath + "-" + child.usage;
+    	    			}
+    	    			
+    	    			$scope.travelConformanceProfile(child, groupPath, groupiPath, groupPositionPath, groupiPositionPath, groupUsagePath, nodeList,  maxSize);
+    				}
+    			}
+    		}
+    	};
+    };
+    
+    $scope.findDatatype = function (ref){
+    	return _.find($rootScope.selectedIntegrationProfile.datatypes.children,function(d){ 
+			return d.id == ref
+		});
+    };
+    
+    $scope.findSegment = function (ref){
+    	return _.find($rootScope.selectedIntegrationProfile.segments.children,function(s){ 
+			return s.id == ref
+		});
     };
 	
 	//Tree Functions
