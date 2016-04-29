@@ -15,11 +15,13 @@ body {
 	<ol ui-tree-nodes="" ng-model="testplans">
 		<li ng-repeat="test in testplans" ui-tree-node data-type="childrens">
 			<div ui-tree-handle data-type="childrens">
-				<div context-menu="testPlanOptions" data-type="childrens">
-					<span data-nodrag ng-click="this.toggle(this)"
-						class="glyphicon glyphicon-triangle-bottom"
-						ng-class="{'glyphicon-triangle-right': collapsed, 'glyphicon-triangle-bottom': !collapsed}">
-					</span> <span class="label label-sub-component label-icon">T</span> </span> <span
+				<div context-menu="testPlanOptions" data-type="childrens"  data-target="" style="margin-left:5px;">
+
+					<span data-nodrag ng-click="toggle(this)"
+						class="glyphicon glyphicon-plus"
+						ng-class="{'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed}">
+					</span> 
+					<span class="label label-sub-component label-icon">T</span> </span> <span
 						data-nodrag ng-class="{selected : this.$modelValue===activeModel}"
 						ng-click="Activate(this); selectTestPlan(test);">
 						{{test.name}}</span>
@@ -34,32 +36,32 @@ body {
 					data-type="child" class="testGroup">
 
 
-					<div ui-tree-handle data-nodrop-enabled="true"
+					<div ui-tree-handle  style="margin-left:7px; data-nodrop-enabled="true"
 						ng-if="child.hasOwnProperty('testcases')" data-type="group">
 						<div context-menu="testGroupOptions" data-type="group">
-							<span data-nodrag ng-click="toggle(this)"
-								class="glyphicon glyphicon-triangle-bottom"
-								ng-class="{'glyphicon-triangle-right': collapsed, 'glyphicon-triangle-bottom': !collapsed}"></span>
+							<span data-nodrag ng-click="toggle(this); print(this)"
+								class="glyphicon glyphicon-plus"
+								ng-class="{'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed}"></span>
 
 							<span class="label label-success label-icon">G</span> <span
 								data-nodrag
 								ng-class="{selected : this.$modelValue===activeModel}"
-								ng-click="Activate(this); selectTestCaseGroup(child);">[{{child.position}}]{{child.name}}{{collapsed}}</span>
+								ng-click="Activate(this); selectTestCaseGroup(child);">[{{child.position}}]{{child.name}}</span>
 						</div>
 
 					</div>
 
-					<div ui-tree-handle data-nodrop-enabled="true"
+					<div ui-tree-handle   style="margin-left:7px; data-nodrop-enabled="true"
 						ng-if="child.hasOwnProperty('teststeps')" data-type="case"
 						style="">
 						<div context-menu="testCaseOptions" data-type="case">
 							<span data-nodrag ng-click="toggle(this)"
-								class="glyphicon glyphicon-triangle-bottom"
-								ng-class="{'glyphicon-triangle-right': collapsed, 'glyphicon-triangle-bottom': !collapsed}"></span>
-							<span class="label label-component label-icon draggable">C</span>
+								class="glyphicon glyphicon-plus"
+								ng-class="{'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed}"></span>
+							<span class="label label-component label-icon draggable" >C</span>
 							<span data-nodrag
 								ng-class="{selected : this.$modelValue===activeModel}"
-								ng-click="Activate(this); selectTestCase(child);">[{{child.position}}]{{child.name}}</span>
+								ng-click="Activate(this); selectTestCase(child)">[{{child.position}}]{{child.name}}</span>
 						</div>
 
 					</div>
@@ -69,19 +71,20 @@ body {
 
 
 					<ol ui-tree-nodes="" ng-model="child.testcases"
-						ng-if="!collapsed || child.hasOwnProperty('testcases')"
+						ng-if="!$parentNodeScope.collapsed || child.hasOwnProperty('testcases')"
 						data-type="group">
-						<li ng-repeat="case in child.testcases " ui-tree-node
+						<li ng-hide="$parentNodeScope.collapsed"  ng-repeat="case in child.testcases " ui-tree-node
 							data-type="case">
-							<div ui-tree-handle ng-click="Activate(this)">
-								<div context-menu="testCaseOptions">
-									<span data-nodrag ng-click="toggle(this)"
-										class="glyphicon glyphicon-triangle-bottom"
+							<div ui-tree-handle  style="margin-left:14px; ng-click="Activate(this)">
+								<div context-menu="testCaseOptions" data-target="">
+									<span data-nodrag ng-click="toggle(this);print(this)"
+										class="glyphicon glyphicon-plus"
 										ng-class="{
-          								'glyphicon-triangle-right': collapsed,
-          								'glyphicon-triangle-bottom': !collapsed
+          								'glyphicon glyphicon-plus': collapsed,
+          								'glyphicon glyphicon-minus': !collapsed
         								}">
-									</span> <span class="label label-component label-icon draggable">C</span>
+									</span> 
+									<span class="label label-component label-icon draggable">C</span>
 
 
 									<span data-nodrag
@@ -97,8 +100,8 @@ body {
 
 								<li ng-repeat="step in case.teststeps " ui-tree-node
 									data-type="step">
-									<div ui-tree-handle>
-										<div context-menu="testStepOptions">
+									<div ui-tree-handle  style="margin-left:21px;">
+										<div context-menu="testStepOptions" data-target="">
 											<span class="label label-segment label-icon draggable">S</span>
 											<span data-nodrag
 												ng-click="Activate(this); selectTestStep(step);"
@@ -117,14 +120,14 @@ body {
 
 					<ol ng-if="child.hasOwnProperty('teststeps')" ui-tree-nodes=""
 						ng-model="child.teststeps" data-type="case"
-						ng-if="!collapsed child.hasOwnProperty('teststeps') ">
+						ng-if="!collapsed child.hasOwnProperty('teststeps')|| !$parentNodeScope.collapsed">
 
-						<li ng-repeat="step in child.teststeps " ui-tree-node
+						<li ng-hide="$parentNodeScope.collapsed" ng-repeat="step in child.teststeps " ui-tree-node
 							data-type="step" class="testStep">
-							<div ui-tree-handle>
-								<div context-menu="testStepOptions">
-									<span class="label label-segment label-icon draggable">S</span>
-									<span data-nodrag
+							<div ui-tree-handle style="margin-left: 5px;">
+								<div context-menu="testStepOptions" data-target="">
+									<span class="label label-segment label-icon draggable"
+										style="margin-left: 13px;">S</span> <span data-nodrag
 										ng-click="Activate(this); selectTestStep(step);"
 										ng-class="{selected : this.$modelValue===activeModel}">
 										[{{step.position}}]{{step.name}} </span>
@@ -135,12 +138,6 @@ body {
 
 
 				</li>
-
-
-
-
-
-
 			</ol>
 	</ol>
 
