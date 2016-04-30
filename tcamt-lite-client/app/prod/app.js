@@ -30,7 +30,8 @@ var app = angular
         'ngDragDrop',
         'ui.tree', 
         'ui.bootstrap.contextMenu',
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'ui.codemirror'
     ]);
 
 var

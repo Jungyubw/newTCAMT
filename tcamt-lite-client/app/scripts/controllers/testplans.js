@@ -58,13 +58,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 	
 	$scope.loadIntegrationProfile = function () {
-		$rootScope.selectedIntegrationProfile = null;
 		if($rootScope.selectedTestStep.integrationProfileId != undefined && $rootScope.selectedTestStep.integrationProfileId !== ''){
 			$http.get('api/integrationprofiles/' + $rootScope.selectedTestStep.integrationProfileId).then(function (response) {
 				$rootScope.selectedIntegrationProfile = angular.fromJson(response.data);
 			}, function (error) {
+				$rootScope.selectedIntegrationProfile = null;
 			});
 		}else {
+			$rootScope.selectedIntegrationProfile = null;
 			$rootScope.selectedTestStep.conformanceProfileId = null;
 		}
 	}
@@ -114,7 +115,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			
 			$rootScope.testplans = [];
 			$rootScope.testplans.push(testplan);
-			
 			
 			$timeout(function () {
 				$rootScope.selectedTestPlan = testplan;
@@ -166,7 +166,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 				$scope.selectedTestStepTab = 1;
 				$scope.editTestStep();
 				waitingDialog.hide();
+				$scope.loadIntegrationProfile();
 			}, 100);
+			
 		}
 	};
            
@@ -210,10 +212,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     	
     	$rootScope.isChanged = false;
     };
-    
-    $scope.loadConformanceProfile = function (){
-    };
-    
+
     $scope.updateMessage = function() {
     	var conformanceProfile = _.find($rootScope.selectedIntegrationProfile.messages.children,function(m){ 
 			return m.messageID == $rootScope.selectedTestStep.conformanceProfileId 
@@ -230,9 +229,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     	for(var i in listLineOfMessage){
     		currentPosition = $scope.getSegment(nodeList, currentPosition, listLineOfMessage[i]);
     	};
-    	
-    	console.log($rootScope.segmentList);
-    	
     };
     
     $scope.getSegment = function (nodeList, currentPosition, segmentStr) {
@@ -259,6 +255,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     	$scope.testDataAccordi.constraintList = false;
     };
     
+    $scope.initTestData = function () {
+    	$scope.updateMessage();
+    };
+    
     $scope.selectSegment = function (segment) {
     	$scope.testDataAccordi.segmentList = false;
     	$scope.testDataAccordi.selectedSegment = true;
@@ -273,18 +273,28 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     	
     	if(splittedSegment[0] === 'MSH'){
     		fieldValues.push('|');
+    		fieldValues.push('^~\\&');
+    		for(var index = 2; index < splittedSegment.length; index++){
+    			fieldValues.push(splittedSegment[index]);
+    		}
+    	}else {
+    		for(var index = 1; index < splittedSegment.length; index++){
+    			fieldValues.push(splittedSegment[index]);
+    		}
     	}
     	
-    	for(var index = 1; index < splittedSegment.length; index++){
-			fieldValues.push(splittedSegment[index]);
-		}
     		
     	for(var i = 0; i < segment.obj.fields.length; i++){
     		var fieldInstanceValues = [];
-    		if (fieldValues[i] != undefined) fieldInstanceValues = fieldValues[i].split("~");
+    		if(splittedSegment[0] === 'MSH' && i == 1) {
+    			fieldInstanceValues.push('^~\\&');
+    		}else {
+    			if (fieldValues[i] != undefined) fieldInstanceValues = fieldValues[i].split("~");
+    		}
     		
     		for(var h = 0; h < fieldInstanceValues.length; h++){
     			var fieldNode = {
+    					type: 'field',
     					path : segment.path + "." + (i + 1),
     					iPath : segment.iPath + "." + (i + 1) + "[" + (h + 1) + "]",
     					positionPath : segment.positionPath + "." + (i + 1),
@@ -302,6 +312,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
         		for(var j = 0; j < fieldNode.dt.components.length; j++){
         			
         			var componentNode = {
+        					type: 'component',
         					path : fieldNode.path + "." + (j + 1),
         					iPath : fieldNode.iPath + "." + (j + 1) + "[1]",
         					positionPath : fieldNode.positionPath + "." + (j + 1),
@@ -317,6 +328,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
         			if (componentValues[j] != undefined) subComponentValues = componentValues[j].split("&");
         			for(var k = 0; k < componentNode.dt.components.length; k++){
         				var subComponentNode = {
+        						type: 'subcomponent',
             					path : componentNode.path + "." + (k + 1),
             					iPath : componentNode.iPath + "." + (k + 1) + "[1]",
             					positionPath : componentNode.positionPath + "." + (k + 1),
@@ -325,6 +337,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
                 				component: componentNode.dt.components[k],
             					dt: $scope.findDatatype(componentNode.dt.components[k].datatype),
             					value: subComponentValues[k],
+            					children : []
             			};
         				componentNode.children.push(subComponentNode);
         			}
@@ -339,10 +352,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     		
     		
     	}
-    	
-    	
-    	
-    	console.log($rootScope.selectedSegmentNode);
+    	$scope.refreshTree();
     };
     
     $scope.travelConformanceProfile = function (parent, path, ipath, positionPath, positioniPath, usagePath, nodeList, maxSize) {
@@ -372,6 +382,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
         				segmentUsagePath = usagePath + "-" + child.usage;
         			}
         			var node = {
+        					type: 'segment',
         					path: segmentPath,
         					iPath: segmentiPath,
         					positionPath: segmentPositionPath,
@@ -403,6 +414,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
             			}
             			
             			var node = {
+            					type: 'segment',
             					path: segmentPath,
             					iPath: segmentiPath,
             					positionPath: segmentPositionPath,
@@ -472,6 +484,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     	};
     };
     
+    $scope.findTable = function (ref){
+    	return _.find($rootScope.selectedIntegrationProfile.tables.children,function(t){ 
+			return t.id == ref
+		});
+    };
+    
     $scope.findDatatype = function (ref){
     	return _.find($rootScope.selectedIntegrationProfile.datatypes.children,function(d){ 
 			return d.id == ref
@@ -483,6 +501,48 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			return s.id == ref
 		});
     };
+    
+    $scope.editorOptions = {
+    		lineWrapping : false,
+            lineNumbers: true,
+            mode: 'xml'
+    };
+    
+    $scope.refreshTree = function () {
+        if ($scope.segmentParams)
+            $scope.segmentParams.refresh();
+    };
+    
+    $scope.minimizePath = function (iPath) {
+    	return $scope.replaceAll(iPath.replace($rootScope.selectedSegmentNode.segment.iPath + "." ,""), "[1]","");
+    };
+
+    $scope.replaceAll = function(str, search, replacement) {
+        return str.split(search).join(replacement);
+    };
+    
+    $scope.segmentParams = new ngTreetableParams({
+        getNodes: function (parent) {
+        	if (parent && parent != null) {
+        		return parent.children;
+        	}else {
+        		if($rootScope.selectedSegmentNode) return $rootScope.selectedSegmentNode.children;
+        	}
+        	return [];
+        },
+        getTemplate: function (node) {
+            if(node.type == 'field') return 'FieldTree.html';
+            else if (node.type == 'component') return 'ComponentTree.html';
+            else if (node.type == 'subcomponent') return 'SubComponentTree.html';
+            else return 'FieldTree.html';
+        }
+    });
+    
+    $scope.hasChildren = function (node) {
+        if(!node || !node.children || node.children.length === 0) return false;
+        return true;
+    };
+    
 	
 	//Tree Functions
 	$scope.activeModel={};
@@ -608,7 +668,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
                             	if( !$itemScope.$nodeScope.$modelValue.children){
                             		$itemScope.$nodeScope.$modelValue.children=[];
                             	}
-                            	$itemScope.$nodeScope.$modelValue.children.push({name: "newTestGroup", testcases:[], position:$itemScope.$nodeScope.$modelValue.children.length+1});
+                            	$itemScope.$nodeScope.$modelValue.children.push({
+                            		id: new ObjectId().toString(),
+                            		type : "testcasegroup",
+                            		name: "newTestGroup", 
+                            		testcases:[], 
+                            		position:$itemScope.$nodeScope.$modelValue.children.length+1});
 
                             	$scope.activeModel=$itemScope.$nodeScope.$modelValue.children[$itemScope.$nodeScope.$modelValue.children.length-1];
 
@@ -620,7 +685,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
                             	if( !$itemScope.$nodeScope.$modelValue.children){
                             		$itemScope.$nodeScope.$modelValue.children=[];
                             	}
-                            	$itemScope.$nodeScope.$modelValue.children.push({name: "newTestCase", teststeps:[],position:$itemScope.$nodeScope.$modelValue.children.length+1});
+                            	$itemScope.$nodeScope.$modelValue.children.push(
+                            			{
+                            				id: new ObjectId().toString(),
+                                    		type : "testcase",
+                                    		name: "newTestCase", 
+                            				teststeps:[],
+                            				position:$itemScope.$nodeScope.$modelValue.children.length+1
+                            			});
 
                             	$scope.activeModel=$itemScope.$nodeScope.$modelValue.children[$itemScope.$nodeScope.$modelValue.children.length-1];
                             	$scope.recordChanged();
@@ -632,6 +704,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
                               ['add new testCase', function($itemScope) {
                                  
                                   $itemScope.$nodeScope.$modelValue.testcases.push({
+                                	  id: new ObjectId().toString(),
+                              		  type : "testcase",
                                       name: "testCaseAdded",
                                       position: $itemScope.$nodeScope.$modelValue.testcases.length+1,
                                       teststeps:[]

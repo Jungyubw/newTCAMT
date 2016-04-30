@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bson.types.ObjectId;
+
 public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable, Comparable<TestCase> {
 
 	/**
@@ -12,6 +14,13 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 	 */
 	private static final long serialVersionUID = 8586117174000506245L;
 
+	
+	public TestCase() {
+		super();
+		this.type = "testcase";
+	}
+
+	
 	private String protocol;
 
 	private Set<TestStep> teststeps = new HashSet<TestStep>();
@@ -43,7 +52,7 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 	@Override
 	public TestCase clone() throws CloneNotSupportedException {
 		TestCase cloned = (TestCase) super.clone();
-		cloned.setId(0);
+		cloned.setId(ObjectId.get().toString());
 
 		Set<TestStep> cTeststeps = new HashSet<TestStep>();
 		for (TestStep teststep : this.teststeps) {

@@ -2,9 +2,18 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = As.PROPERTY, property = "type")
+@JsonSubTypes({
+		@JsonSubTypes.Type(value = TestCase.class, name = "testcase"),
+		@JsonSubTypes.Type(value = TestCaseGroup.class, name = "testcasegroup") })
 public abstract class TestCaseOrGroup {
 	@Id
-	protected long id;
+	protected String id;
 	
 	protected String name;
 	
@@ -13,12 +22,14 @@ public abstract class TestCaseOrGroup {
 	protected Integer version;
 	
 	protected int position;
+	
+	protected String type;
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -53,6 +64,15 @@ public abstract class TestCaseOrGroup {
 	public void setPosition(int position) {
 		this.position = position;
 	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 	
 	
 }
