@@ -10,8 +10,6 @@
  */
 package gov.nist.healthcare.nht.acmgt.dto.domain;
 
-import gov.nist.healthcare.nht.acmgt.general.UserUtil;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -24,8 +22,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.security.crypto.codec.Base64;
+
+import gov.nist.healthcare.nht.acmgt.general.UserUtil;
 
 /**
  * @author fdevaulx

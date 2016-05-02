@@ -11,18 +11,18 @@
 
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanService;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.serialization.ProfileSerializationImpl;
-
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.serialization.ProfileSerializationImpl;
 
 @Service
 public class Bootstrap implements InitializingBean {

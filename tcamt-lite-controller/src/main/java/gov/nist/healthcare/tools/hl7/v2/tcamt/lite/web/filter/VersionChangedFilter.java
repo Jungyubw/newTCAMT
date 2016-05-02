@@ -44,10 +44,10 @@ public class VersionChangedFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest req = (HttpServletRequest) request;
-		HttpServletResponse res = (HttpServletResponse) response;
-		String path = req.getRequestURI().substring(
-				req.getContextPath().length());
+//		HttpServletRequest req = (HttpServletRequest) request;
+//		HttpServletResponse res = (HttpServletResponse) response;
+//		String path = req.getRequestURI().substring(
+//				req.getContextPath().length());
 		// if (!Pattern.compile("\\/api\\/appInfo").matcher(path).find()) {
 		// String headerVersion = req.getHeader("version");
 		// String contextVersion = req.getServletContext().getInitParameter(

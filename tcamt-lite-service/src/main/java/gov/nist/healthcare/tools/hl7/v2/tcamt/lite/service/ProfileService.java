@@ -17,12 +17,11 @@
 
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 
 @Service
 public interface ProfileService {
