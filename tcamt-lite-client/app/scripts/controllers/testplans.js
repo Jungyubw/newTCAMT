@@ -7,6 +7,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$rootScope.tps = [];
 	$scope.testPlanOptions=[];
 	$scope.accordi = {metaData: false, definition: true, igList: true, igDetails: false};
+	$rootScope.usageViewFilter = 'All';
     
 	$scope.loadTestPlans = function () {
 		var delay = $q.defer();
@@ -521,12 +522,41 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
         return str.split(search).join(replacement);
     };
     
+    $scope.usageFilter = function (node) {
+    	if(node.type == 'field') {
+    		if(node.field.usage === 'R') return true;
+            if(node.field.usage === 'RE') return true;
+            if(node.field.usage === 'C') return true;
+    	} else {
+    		if(node.component.usage === 'R') return true;
+            if(node.component.usage === 'RE') return true;
+            if(node.component.usage === 'C') return true;
+        }
+    	
+       
+    	return false;
+    };
+    
+    $scope.changeUsageFilter = function () {
+    	if($rootScope.usageViewFilter === 'All') $rootScope.usageViewFilter = 'RREC';
+    	else $rootScope.usageViewFilter = 'All';
+    };
+    
     $scope.segmentParams = new ngTreetableParams({
         getNodes: function (parent) {
         	if (parent && parent != null) {
-        		return parent.children;
+        		if($rootScope.usageViewFilter != 'All'){
+        			return parent.children.filter($scope.usageFilter);
+        			
+        		}else {
+        			return parent.children;
+        		}
         	}else {
-        		if($rootScope.selectedSegmentNode) return $rootScope.selectedSegmentNode.children;
+        		if($rootScope.usageViewFilter != 'All'){
+        			if($rootScope.selectedSegmentNode) return $rootScope.selectedSegmentNode.children.filter($scope.usageFilter);
+        		}else{
+        			if($rootScope.selectedSegmentNode) return $rootScope.selectedSegmentNode.children;
+        		}
         	}
         	return [];
         },
@@ -540,6 +570,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     
     $scope.hasChildren = function (node) {
         if(!node || !node.children || node.children.length === 0) return false;
+        return true;
+    };
+    
+    $scope.filterForSegmentList = function(segment)
+    {
+        if(segment.usagePath.indexOf('O') > -1 || segment.usagePath.indexOf('X') > -1){
+        	return false;
+        }
         return true;
     };
     
@@ -648,12 +686,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     	var model ={};
     	model.name=teststep.name+"clone";
     }
- 
-    $scope.print= function(param){
-    	console.log(param);
-    }  
     
-  $scope.isGroupe = function(children){
+    $scope.isGroupe = function(children){
     	
     	if(!children.testcases){
     		return false; 
