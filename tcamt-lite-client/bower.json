@@ -30,7 +30,8 @@
     "angular-froala": "~2.2.0",
     "ng-notifications-bar": "^0.0.16",
     "codemirror": "5.14.2",
-    "angular-ui-codemirror": "0.3.0"  
+    "angular-ui-codemirror": "0.3.0",
+    "angularjs-dropdown-multiselect" : "1.5.2"
   },
   "devDependencies": {
     "angular-scenario": "1.5.5",
@@ -42,7 +43,7 @@
     "lodash": "~3.10.1"
   },
   "main": [
-    "bower_components/froala-wysiwyg-editor/css/plugins/*",
-    "bower_components/froala-wysiwyg-editor/js/plugins/*"
+    "bower_components/froala-wysiwyg-editor/css/plugins/",
+    "bower_components/froala-wysiwyg-editor/js/plugins/"
   ]
 }

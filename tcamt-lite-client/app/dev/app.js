@@ -33,7 +33,8 @@ var app = angular
         'ui.tree',
         'ui.bootstrap',
         'ui.bootstrap.contextMenu',
-        'ui.codemirror'
+        'ui.codemirror',
+        'angularjs-dropdown-multiselect'
     ]);
 
 var
