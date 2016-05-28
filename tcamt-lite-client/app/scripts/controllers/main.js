@@ -361,6 +361,13 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
         };
 
 
+        $rootScope.testDataCategorizations = ['Indifferent', 'Presence-Content Indifferent', 'Presence-Configuration',
+            'Presence-System Generated', 'Presence-Test Case Proper', 'Presence Length-Content Indifferent',
+            'Presence Length-Configuration', 'Presence Length-System Generated', 'Presence Length-Test Case Proper', 'Presence-Profile Fixed',
+            'Value-Profile Fixed', 'Value-Profile Fixed List', 'Value-Test Case Fixed', 'Value-Test Case Fixed List', 'NonPresence'];
+
+        $rootScope.segmentTemplates = [];
+
         $rootScope.readonly = false;
         $rootScope.igdocument = null; // current igdocument
         $rootScope.message = null; // current message

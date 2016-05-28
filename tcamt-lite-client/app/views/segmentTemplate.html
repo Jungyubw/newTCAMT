@@ -1,0 +1,41 @@
+<style id="antiClickjack">
+body {
+	display: none !important;
+}
+</style>
+<script type="text/javascript">
+    if (self === top) {
+        var antiClickjack = document.getElementById("antiClickjack");
+        antiClickjack.parentNode.removeChild(antiClickjack);
+    } else {
+        top.location = self.location;
+    }
+</script>
+<div class="row">
+	<table class="table table-striped table-bordered">
+		<thead>
+		<tr class="tbl-header">
+			<th class="col-md-1"></th>
+			<th class="col-md-4">Name</th>
+			<th class="col-md-4">Segment Name</th>
+			<th class="col-md-3">Date</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr ng-repeat="template in segmentTemplates">
+			<td class="col-md-1">
+				<i class="fa fa-bullseye fa-lg" data-drag="true" data-jqyoui-options="{revert: 'invalid',helper:'clone'}" ng-model="template" jqyoui-draggable="{placeholder:'keep',animate:true}"></i>
+			</td>
+			<td class="col-md-4">
+				<span>{{template.name}}</span>
+			</td>
+			<td class="col-md-4">
+				<span>{{template.segment}}</span>
+			</td>
+			<td class="col-md-3">
+				<span>{{template.date}}</span>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
