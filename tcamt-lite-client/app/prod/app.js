@@ -63,10 +63,6 @@ app.config(function ($routeProvider, RestangularProvider, $httpProvider, Keepali
         .when('/tp', {
             templateUrl: 'views/tp.html'
         })
-        .when('/masterDTLib', {
-            templateUrl: 'views/masterDTLib.html',
-            controller: 'DatatypeLibraryCtl'
-        })
         .when('/doc', {
             templateUrl: 'views/doc.html'
         })
@@ -124,9 +120,6 @@ app.config(function ($routeProvider, RestangularProvider, $httpProvider, Keepali
         })
         .when('/registrationSubmitted', {
             templateUrl: 'views/account/registrationSubmitted.html'
-        })
-        .when('/masterDTLib', {
-            templateUrl: 'views/edit/masterDTLib.html'
         })
         .otherwise({
             redirectTo: '/'
