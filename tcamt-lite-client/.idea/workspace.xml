@@ -2,233 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7c2a7e8f-c6da-40fd-a486-ae5ad26e7d5a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/tcamt_lite_client_node_modules.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/segmentTemplate.html" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/DatatypeLibraryCtl.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/EditSectionsCtl.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/constraints.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/datatypes.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/doc.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/hl7VersionsMessages.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/masterDTLib.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/messages.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/segments.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/tables.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/Anivers_Regular-webfont.eot" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/Anivers_Regular-webfont.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/Anivers_Regular-webfont.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/Anivers_Regular-webfont.woff" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/Anivers_Regular-webfont.woff2" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/FontAwesome.otf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/SofiaProLight-webfont.eot" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/SofiaProLight-webfont.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/SofiaProLight-webfont.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/SofiaProLight-webfont.woff" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/SofiaProLight-webfont.woff2" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/WorkSans-Black.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/WorkSans-Bold.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/WorkSans-ExtraBold.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/WorkSans-ExtraLight.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/WorkSans-Light.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/WorkSans-Medium.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/WorkSans-Regular.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/WorkSans-SemiBold.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/WorkSans-Thin.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/chunkfive-webfont.eot" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/chunkfive-webfont.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/chunkfive-webfont.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/chunkfive-webfont.woff" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/chunkfive-webfont.woff2" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/fontawesome-webfont.eot" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/fontawesome-webfont.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/fontawesome-webfont.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/fontawesome-webfont.woff" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/fontawesome-webfont.woff2" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/glyphicons-halflings-regular.eot" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/glyphicons-halflings-regular.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/glyphicons-halflings-regular.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/fonts/glyphicons-halflings-regular.woff" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/about.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/ajax-loader.gif" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/ajax.gif" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/bg_body.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/bg_body2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/bg_body3.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/bg_body4.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/bg_button.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/check.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/component.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/field.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/front-page.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/glyphicons-halflings-white.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/glyphicons-halflings.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/group.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/ig1.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/index.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/itl-logo.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/nist_logo.gif" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/onc-favicon.ico" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/onc_cert_logo.gif" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/onc_logo.gif" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/phone_receiver2.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/segment.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/subcomponent.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/images/yeoman.png" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/index.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/Objectid.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/angular-treetable/angular-treetable.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/angular-treetable/js/angular-treetable.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/angular-treetable/js/angular-treetable.min.js.copy" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/angular-treetable/js/jquery.treetable.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/angular-treetable/style/jquery.treetable.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/angular-treetable/style/jquery.treetable.theme.default.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/css/font-awesome.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/css/font-awesome.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/fonts/FontAwesome.otf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/fonts/fontawesome-webfont.eot" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/fonts/fontawesome-webfont.svg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/fonts/fontawesome-webfont.ttf" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/fonts/fontawesome-webfont.woff" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/fonts/fontawesome-webfont.woff2" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/animated.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/bordered-pulled.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/core.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/fixed-width.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/font-awesome.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/icons.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/larger.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/list.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/mixins.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/path.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/rotated-flipped.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/stacked.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/less/variables.less" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_animated.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_bordered-pulled.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_core.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_fixed-width.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_icons.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_larger.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_list.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_mixins.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_path.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_rotated-flipped.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_stacked.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/_variables.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/font-awesome/scss/font-awesome.scss" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/char_counter.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/char_counter.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/colors.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/colors.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/draggable.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/draggable.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/file.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/file.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/fullscreen.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/fullscreen.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/image.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/image.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/line_breaker.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/line_breaker.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/quick_insert.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/table.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/css/plugins/table.min.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/align.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/char_counter.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/colors.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/draggable.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/emoticons.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/entities.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/file.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/font_family.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/font_size.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/fullscreen.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/image.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/inline_style.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/line_breaker.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/link.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/lists.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/paragraph_format.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/paragraph_style.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/quick_insert.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/quote.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/save.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/table.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/froala-plugins/js/plugins/url.min.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/igamt.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/jquery-file-download.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/jquery-linedtextarea.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/jquery.i18n.properties-1.0.9.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/material-custom/material-custom.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/ng-grid-csv-export-custom.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/lib/utils.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/571eda2332ea58347919c95a.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/appInfo/appInfo.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/changes.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/config.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/datatype.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/db.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/integrationprofiles.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/shortaccounts.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/tableLib.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/testplans.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/tmp.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/userProfiles.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/resources/vc.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/scripts/modules.d41d8cd9.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/styles/main.18599e54.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/InvalidAppState.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/InvalidRequest.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/SessionTimeout.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/about.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/account/accountsList.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/account/agreement.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/account/forgotten.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/account/header.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/account/login.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/account/registerResetPassword.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/account/registration.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/account/registrationSubmitted.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/account/userAccount.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/account/userProfile.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/contact.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/dashboard.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/doc.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/constraints.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editConformanceStatements.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editDatatypes.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editER7Message.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editMessages.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editPredicates.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editSections.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editSegments.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editTP.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editTestCase.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editTestCaseGroup.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editTestPlan.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editTestStep.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editValueSets.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/listTP.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/masterDTLib.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/error.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/footer.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/glossary.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/header.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/home.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/issue.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/main.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/masterDTLib.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/templates.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/toc.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/tp.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/scripts/controllers/ToCCtl.js" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.tmp/styles/main.css" afterPath="$PROJECT_DIR$/.tmp/styles/main.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/index.html" afterPath="$PROJECT_DIR$/app/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/resources/integrationprofiles.json" afterPath="$PROJECT_DIR$/app/resources/integrationprofiles.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/main.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTP.html" afterPath="$PROJECT_DIR$/app/views/edit/editTP.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
     </list>
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -249,104 +27,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/index.html">
+      <file leaf-file-name="clickGo.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/scripts/directives/clickGo.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3915">
-              <caret line="261" column="63" selection-start-line="261" selection-start-column="63" selection-end-line="261" selection-end-column="63" />
-              <folding>
-                <marker date="1464397100000" expanded="true" signature="4378:4535" ph="..." />
-                <marker date="1464397100000" expanded="true" signature="4471:4503" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="flavors.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/filters/flavors.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="bytes.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/filters/bytes.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="yesno.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/scripts/filters/yesno.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="registration.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/registration.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="15" column="1" selection-start-line="15" selection-start-column="1" selection-end-line="15" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="idle.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/idle.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="57" selection-end-column="12" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gruntfile.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bower_components/ng-idle/gruntfile.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="810">
-              <caret line="54" column="23" selection-start-line="54" selection-start-column="23" selection-end-line="54" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="issue.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/issue.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/main.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5520">
-              <caret line="368" column="35" selection-start-line="368" selection-start-column="19" selection-end-line="368" selection-end-column="35" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="forgotten.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/forgotten.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="114">
+              <caret line="19" column="23" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -364,11 +49,12 @@
         <option value="$PROJECT_DIR$/app/views/edit/editTestPlan.html" />
         <option value="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
         <option value="$PROJECT_DIR$/bower_components/angular-ui-tree/dist/angular-ui-tree.js" />
-        <option value="$PROJECT_DIR$/app/scripts/controllers/main.js" />
         <option value="$PROJECT_DIR$/app/views/segmentTemplate.html" />
         <option value="$PROJECT_DIR$/app/views/edit/editTP.html" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
+        <option value="$PROJECT_DIR$/app/scripts/controllers/main.js" />
         <option value="$PROJECT_DIR$/app/index.html" />
+        <option value="$PROJECT_DIR$/app/scripts/directives/clickGo.js" />
       </list>
     </option>
   </component>
@@ -503,8 +189,9 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1440" />
-    <option name="height" value="900" />
+    <option name="x" value="-7" />
+    <option name="width" value="1036" />
+    <option name="height" value="768" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -531,7 +218,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -540,20 +227,106 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tcamt-lite-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tcamt-lite-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tcamt-lite-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tcamt-lite-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tcamt-lite-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tcamt-lite-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scripts" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tcamt-lite-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tcamt-lite-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scripts" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="directives" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tcamt-lite-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tcamt-lite-client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scripts" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controllers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../igamt-lite/igamt-lite-client" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="FullScreen" value="true" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
     <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
-    <property name="js.buildTools.grunt.grunt-cli.package" value="/usr/local/lib/node_modules/grunt-cli" />
+    <property name="js.buildTools.grunt.grunt-cli.package" value="C:\Users\HomeMain\AppData\Roaming\npm\node_modules\grunt-cli" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///Users/jungyubw/Documents/Works/Projects/tcamt-lite/tcamt-lite-client/app/views/edit/editTestPlan.html" />
   </component>
@@ -642,7 +415,7 @@
       <method />
     </configuration>
     <configuration default="false" name="Serve" type="js.build_tools.grunt" factoryName="Grunt.js">
-      <node-interpreter value="project" />
+      <node-interpreter value="C:/Program Files/nodejs/node" />
       <gruntfile value="$PROJECT_DIR$/Gruntfile.js" />
       <tasks>
         <task value="serve" />
@@ -666,6 +439,9 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="7c2a7e8f-c6da-40fd-a486-ae5ad26e7d5a" name="Default" comment="" />
@@ -675,35 +451,45 @@
       <updated>1464349720131</updated>
       <workItem from="1464349721803" duration="23230000" />
       <workItem from="1464397312394" duration="9000" />
+      <workItem from="1464463471517" duration="2640000" />
+      <workItem from="1464482839192" duration="2374000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23239000" />
+    <option name="totallyTimeSpent" value="28253000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="false" />
+    <frame x="-7" y="0" width="1036" height="768" extended-state="1" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24305555" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3245098" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32916668" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17222223" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1557789" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25908557" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32942554" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1557789" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -713,33 +499,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3915">
-          <caret line="261" column="63" selection-start-line="261" selection-start-column="63" selection-end-line="261" selection-end-column="63" />
-          <folding>
-            <marker date="1464397100000" expanded="true" signature="4378:4535" ph="..." />
-            <marker date="1464397100000" expanded="true" signature="4471:4503" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/filters/flavors.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/filters/bytes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/filters/yesno.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -768,7 +527,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="810">
           <caret line="54" column="23" selection-start-line="54" selection-start-column="23" selection-end-line="54" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -800,9 +558,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="756">
           <caret line="90" column="58" selection-start-line="90" selection-start-column="45" selection-end-line="90" selection-end-column="64" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -874,9 +629,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="762">
           <caret line="97" column="24" selection-start-line="67" selection-start-column="12" selection-end-line="97" selection-end-column="24" />
-          <folding>
-            <element signature="n#script#2;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -891,7 +643,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
           <caret line="46" column="34" selection-start-line="46" selection-start-column="34" selection-end-line="46" selection-end-column="34" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -899,7 +650,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="261">
           <caret line="610" column="26" selection-start-line="610" selection-start-column="26" selection-end-line="610" selection-end-column="26" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -910,7 +660,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -918,7 +667,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -926,7 +674,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -935,7 +682,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -950,7 +696,7 @@
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/hl7VersionsMessages.js" />
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/idle.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
+        <state relative-caret-position="114">
           <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="57" selection-end-column="12" />
           <folding />
         </state>
@@ -958,9 +704,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bower_components/ng-idle/gruntfile.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="810">
+        <state relative-caret-position="1026">
           <caret line="54" column="23" selection-start-line="54" selection-start-column="23" selection-end-line="54" selection-end-column="23" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -972,40 +717,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5520">
-          <caret line="368" column="35" selection-start-line="368" selection-start-column="19" selection-end-line="368" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/masterDTLib.js" />
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/segments.js" />
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/registration.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
+        <state relative-caret-position="285">
           <caret line="15" column="1" selection-start-line="15" selection-start-column="1" selection-end-line="15" selection-end-column="1" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/tables.js" />
-    <entry file="file://$PROJECT_DIR$/app/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3915">
-          <caret line="261" column="63" selection-start-line="261" selection-start-column="63" selection-end-line="261" selection-end-column="63" />
-          <folding>
-            <marker date="1464397100000" expanded="true" signature="4378:4535" ph="..." />
-            <marker date="1464397100000" expanded="true" signature="4471:4503" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/filters/flavors.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/filters/yesno.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="6" column="4" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="4" />
           <folding />
         </state>
       </provider>
@@ -1018,10 +752,77 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/filters/yesno.js">
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="603" column="8" selection-start-line="603" selection-start-column="8" selection-end-line="603" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/ToCCtl.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2223">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="252" column="61" selection-start-line="252" selection-start-column="61" selection-end-line="252" selection-end-column="61" />
+          <folding>
+            <marker date="1464483771010" expanded="true" signature="4378:4535" ph="..." />
+            <marker date="1464483771010" expanded="true" signature="4471:4503" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/directives/compile.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/directives/csSelect.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/directives/exit.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/directives/stRatio.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/directives/ToCDir.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/directives/clickGo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="19" column="23" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
           <folding />
         </state>
       </provider>
