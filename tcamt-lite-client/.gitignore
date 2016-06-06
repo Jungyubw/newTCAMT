@@ -4,3 +4,5 @@
 /.sass-cache/
 /bin/
 /target/
+.tern-project
+/.tmp/

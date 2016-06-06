@@ -33,6 +33,7 @@ body {
 					<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestStep.name" required />
 				</div>
 			</div>
+
 			<div class="row" style="margin:12px">
 				<div class="col-md-2">
 					<label class="control-label">Description:</label>
@@ -41,16 +42,15 @@ body {
 					<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestStep.description" required />
 				</div>
 			</div>
+
 			<div class="row" style="margin:12px">
 				<div class="col-md-2">
 					<label class="control-label">Integration Profile:</label>
 				</div>
 				<div class="col-md-10">
-					<select class="form-control" name="iProfile"
-                            ng-change="recordChanged(); loadIntegrationProfile();"
-                            required ng-model="selectedTestStep.integrationProfileId" ng-options="list.id as list.metadata.name + ' (' + list.metadata.profileID + ')'  for list in integrationProfileMetaDataList">
-						<option value="">No integration profile</option>
-					</select>
+					<div class="thumbnail" data-drop="true" data-jqyoui-options ng-model="selectedTestStep.integrationProfileId" style='height:30px;' jqyoui-droppable="{onDrop:'loadIntegrationProfile'}">
+						<span>{{selectedIntegrationProfile.metaData.name}}</span>
+					</div>
 				</div>
 			</div>
 
@@ -59,13 +59,79 @@ body {
 					<label class="control-label">Conformance Profile:</label>
 				</div>
 				<div class="col-md-10">
-					<select class="form-control" name="cProfile"
-                            ng-change="recordChanged()"
-                            required ng-model="selectedTestStep.conformanceProfileId" ng-options="message.messageID as message.messageType + '-' + message.event + '-' + message.structID + ' (' + message.messageID + ')'  for message in selectedIntegrationProfile.messages.children">
-						<option value="">No conformance profile</option>
-					</select>
+					<div class="thumbnail" data-drop="true" data-jqyoui-options ng-model="selectedTestStep.conformanceProfileId" style='height:30px;' jqyoui-droppable="{onDrop:'loadConformanceProfile'}">
+						<span ng-show="selectedConformanceProfile">{{selectedConformanceProfile.name}}</span>
+					</div>
 				</div>
 			</div>
+
+			<div class="row" style="margin:12px">
+				<table class="table table-striped table-bordered" ng-show="selectedIntegrationProfile && !selectedConformanceProfile">
+					<thead>
+						<tr class="tbl-header">
+							<th class="col-md-1"></th>
+							<th class="col-md-3">Name</th>
+							<th class="col-md-4">Description</th>
+							<th class="col-md-2">StructID</th>
+							<th class="col-md-2">Identifier</th>
+						</tr>
+					</thead>
+					<tbody>
+					<tr ng-repeat="message in selectedIntegrationProfile.messages.children">
+							<td class="col-md-1">
+								<i class="fa fa-bullseye fa-lg" data-drag="true" data-jqyoui-options="{revert: 'invalid',helper:'clone'}" ng-model="message.id" jqyoui-draggable="{placeholder:'keep',animate:true}"></i>
+							</td>
+							<td class="col-md-3">
+								<span>{{message.name}}</span>
+							</td>
+							<td class="col-md-4">
+								<span>{{message.description}}</span>
+							</td>
+							<td class="col-md-2">
+								<span>{{message.structID}}</span>
+							</td>
+							<td class="col-md-2">
+								<span>{{message.identifier}}</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<table class="table table-striped table-bordered" ng-show="!selectedIntegrationProfile">
+					<thead>
+					<tr class="tbl-header">
+						<th class="col-md-1"></th>
+						<th class="col-md-3">Name</th>
+						<th class="col-md-2">Organization</th>
+						<th class="col-md-2">Version</th>
+						<th class="col-md-2">HL7 Version</th>
+						<th class="col-md-2">Date</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="ip in integrationProfileMetaDataList">
+							<td class="col-md-1">
+								<i class="fa fa-bullseye fa-lg" data-drag="true" data-jqyoui-options="{revert: 'invalid',helper:'clone'}" ng-model="ip.id" jqyoui-draggable="{placeholder:'keep',animate:true}"></i>
+							</td>
+							<td class="col-md-3">
+								<span>{{ip.metadata.name}}</span>
+							</td>
+							<td class="col-md-2">
+								<span>{{ip.metadata.orgName}}</span>
+							</td>
+							<td class="col-md-2">
+								<span>{{ip.metadata.version}}</span>
+							</td>
+							<td class="col-md-2">
+								<span>{{ip.metadata.hl7Version}}</span>
+							</td>
+							<td class="col-md-2">
+								<span>{{ip.metadata.date}}</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
 		</form>
 	</div>
 
@@ -128,13 +194,27 @@ body {
 
 	<div ng-show="selectedTestStepTab == 4">
 		<div class="row">
+			<div class="col-md-12">
+				<span class="pull-right">
+					<div class="btn-group btn-group-sm" data-toggle="buttons">
+    					<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'All'}">
+        					<input type="radio">All Usages</input>
+						</label>
+						<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'RREC'}">
+        					<input type="radio">R/RE/C Only</input>
+						</label>
+   					</div>
+				</span>
+			</div>
+		</div>
+		<div class="row">
         	<accordion close-others="false">
             	<accordion-group is-open="testDataAccordi.segmentList" panel-class="panel-primary">
                 	<accordion-heading>
 						<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.segmentList, 'fa-caret-right': !testDataAccordi.segmentList}"></i>
                     	<i class="fa fa-file-text-o fa-fw"></i> Segments List
                 	</accordion-heading>
-                	<div class="col-md-12">
+					<div class="col-md-12">
                 		<div class="table-responsive">
                     		<table class="table table-striped table-bordered">
                         		<thead>
@@ -146,7 +226,7 @@ body {
                         			</tr>
                         		</thead>
                         		<tbody>
-                        			<tr ng-repeat="segment in segmentList">
+                        			<tr ng-repeat="segment in segmentList | filter:filterForSegmentList">
                             			<td class="col-md-4">
 											{{segment.iPath}}
                             			</td>
@@ -174,21 +254,32 @@ body {
 						<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.selectedSegment, 'fa-caret-right': !testDataAccordi.selectedSegment}"></i>
                     	<i class="fa fa-pencil fa-fw"></i> Selected Segment
                 	</accordion-heading>
+					<div class="col-md-12">
+						<span class="pull-right">
+							<button title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="createSegmentTemplate()">
+                            	<span><i class="fa fa-pencil fa-fw"></i> Make Segment TestData Cate. Template</span>
+                            </button>
+						</span>
+					</div>
+					<div class="col-md-12">
+						<span class="pull-right">
+							<span ng-dropdown-multiselect="" options="colsData" selected-model="selectedCols" extra-settings="smartButtonSettings"></span>
+						</span>
+					</div>
                 	<div class="col-md-12">
-
 						<div class="table-responsive">
             				<table tt-table tt-params="segmentParams" class="table table-bordered table-fix-header table-condensed profile-table">
                 				<thead>
                 					<tr class="tbl-header">
                     					<th class="col-md-1">Path</th>
                             			<th class="col-md-1">Name</th>
-                            			<th class="col-md-1">DT</th>
-										<th class="col-md-1">Usage</th>
-										<th class="col-md-1">Cardi.</th>
-										<th class="col-md-1">Length</th>
-										<th class="col-md-1">ValueSet</th>
-										<th class="col-md-1">Predicate</th>
-										<th class="col-md-1">Conf.Statement</th>
+                            			<th class="col-md-1" ng-show="isShow(1)">DT</th>
+										<th class="col-md-1" ng-show="isShow(2)">Usage</th>
+										<th class="col-md-1" ng-show="isShow(3)">Cardi.</th>
+										<th class="col-md-1" ng-show="isShow(4)">Length</th>
+										<th class="col-md-1" ng-show="isShow(5)">ValueSet</th>
+										<th class="col-md-1" ng-show="isShow(6)">Predicate</th>
+										<th class="col-md-1" ng-show="isShow(7)">Conf.Statement</th>
 										<th class="col-md-1">Value</th>
 										<th class="col-md-1">Test Data Cate.</th>
 										<th class="col-md-1">Action</th>
@@ -221,37 +312,32 @@ body {
 		<td class="col-md-1">
 			{{node.field.name}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(1)">
 			{{node.dt.label}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(2)">
 			{{node.field.usage}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(3)">
 			[{{node.field.min}}..{{node.field.max}}]
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(4)">
 			[{{node.field.minLength}}..{{node.field.maxLength}}]
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(5)">
 			{{findTable(node.field.table).bindingIdentifier}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(6)">
 			-
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(7)">
 			-
         </td>
 		<td class="col-md-1">
 			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged()" ng-model="node.value" required />
         </td>
 		<td class="col-md-1">
-			<select ng-hide="hasChildren(node)" class="form-control" name="testDataCate">
-				<option value="">Select one</option>
-				<option value="Indifferent">Indifferent</option>
-				<option value="Presence-Content-Indifferent">Presence-Content-Indifferent</option>
-				<option value="....">....</option>
-			</select>
+			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);"  ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
         </td>
 		<td class="col-md-1">
 			-
@@ -267,37 +353,32 @@ body {
 		<td class="col-md-1">
 			{{node.component.name}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(1)">
 			{{node.dt.label}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(2)">
 			{{node.component.usage}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(3)">
 			[{{node.component.min}}..{{node.component.max}}]
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(4)">
 			[{{node.component.minLength}}..{{node.component.maxLength}}]
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(5)">
 			{{findTable(node.component.table).bindingIdentifier}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(6)">
 			-
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(7)">
 			-
         </td>
 		<td class="col-md-1">
 			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged()" ng-model="node.value" required />
         </td>
 		<td class="col-md-1">
-			<select ng-hide="hasChildren(node)" class="form-control" name="testDataCate">
-				<option value="">Select one</option>
-				<option value="Indifferent">Indifferent</option>
-				<option value="Presence-Content-Indifferent">Presence-Content-Indifferent</option>
-				<option value="....">....</option>
-			</select>
+			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
         </td>
 		<td class="col-md-1">
 			-
@@ -313,37 +394,32 @@ body {
 		<td class="col-md-1">
 			{{node.component.name}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(1)">
 			{{node.dt.label}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(2)">
 			{{node.component.usage}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(3)">
 			[{{node.component.min}}..{{node.component.max}}]
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(4)">
 			[{{node.component.minLength}}..{{node.component.maxLength}}]
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(5)">
 			{{findTable(node.component.table).bindingIdentifier}}
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(6)">
 			-
         </td>
-		<td class="col-md-1">
+		<td class="col-md-1" ng-show="isShow(7)">
 			-
         </td>
 		<td class="col-md-1">
 			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged()" ng-model="node.value" required />
         </td>
 		<td class="col-md-1">
-			<select ng-hide="hasChildren(node)" class="form-control" name="testDataCate">
-				<option value="">Select one</option>
-				<option value="Indifferent">Indifferent</option>
-				<option value="Presence-Content-Indifferent">Presence-Content-Indifferent</option>
-				<option value="....">....</option>
-			</select>
+			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
         </td>
 		<td class="col-md-1">
 			-
