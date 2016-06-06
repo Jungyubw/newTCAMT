@@ -54,7 +54,7 @@
 					<select class="form-control" name="cProfile"
                             ng-change="recordChanged()"
                             required ng-model="selectedTestStep.conformanceProfileId" ng-options="message.messageID as message.messageType + '-' + message.event + '-' + message.structID + ' (' + message.messageID + ')'  for message in selectedIntegrationProfile.messages.children">
-						<option value="NO">No conformance profile</option>
+						<option value="">No conformance profile</option>
 					</select>
 				</div>
 			</div>
