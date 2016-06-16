@@ -600,7 +600,8 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
         	}else {
         		return "";
         	}
-        }
+        };
+        
         $rootScope.processElement = function (element, parent) {
             try {
                 if(element != undefined && element != null) {
