@@ -65,6 +65,20 @@ body {
 				</div>
 			</div>
 
+			<div ng-repeat="ig in igs">
+				<span>
+					IG Document : {{ig.id}}
+				</span>
+				<div ng-repeat="m in ig.profile.messages.children">
+					<span>
+						<button title="ApplyConformanceProfile" type="button" class="btn btn-xs btn-info"
+								ng-click="applyConformanceProfile(ig.id, m.id)">
+                                <span><i class="fa fa-plus-o fa-fw"></i> {{m.id}}</span>
+                            </button>
+					</span>
+				</div>
+			</div>
+
 			<div class="row" style="margin:12px">
 				<table class="table table-striped table-bordered" ng-show="selectedIntegrationProfile && !selectedConformanceProfile">
 					<thead>

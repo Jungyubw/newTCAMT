@@ -34,7 +34,35 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		return delay.promise;
 	};
 
+	$scope.loadIGDocuments = function () {
+		var delay = $q.defer();
+		$scope.error = null;
+		$rootScope.igs = [];
+		$scope.loading = true;
+
+		$http.get('api/igdocuments', { params: { "type": "USER" } }).then(function(response) {
+			$rootScope.igs = angular.fromJson(response.data);
+			$scope.loading = false;
+			delay.resolve(true);
+		}, function(error) {
+			$scope.loading = false;
+			$scope.error = error.data;
+			delay.reject(false);
+		});
+	};
+
+	$scope.applyConformanceProfile = function (igid, mid) {
+		console.log(igid);
+		console.log(mid);
+
+		$scope.selectedTestStep.integrationProfileId = igid;
+		$scope.selectedTestStep.conformanceProfileId = mid;
+
+	};
+
+
 	$scope.initTestPlans = function () {
+		$scope.loadIGDocuments();
 		$scope.loadTestPlans();
 		$scope.getScrollbarWidth();
 		$scope.loadIntegrationProfileMetaDataList();
