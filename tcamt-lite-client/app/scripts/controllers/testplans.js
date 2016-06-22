@@ -40,7 +40,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$rootScope.igs = [];
 		$scope.loading = true;
 
-		$http.get('api/igdocuments', { params: { "type": "USER" } }).then(function(response) {
+		$http.get('http://localhost:7070/igamt/api/igdocuments', { params: { "type": "USER" } }).then(function(response) {
 			$rootScope.igs = angular.fromJson(response.data);
 			$scope.loading = false;
 			delay.resolve(true);
@@ -55,9 +55,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		console.log(igid);
 		console.log(mid);
 
-		$scope.selectedTestStep.integrationProfileId = igid;
-		$scope.selectedTestStep.conformanceProfileId = mid;
-
+		$rootScope.selectedTestStep.integrationProfileId = igid;
+		$rootScope.selectedTestStep.conformanceProfileId = mid;
+		$scope.loadIntegrationProfile();
 	};
 
 
@@ -65,31 +65,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$scope.loadIGDocuments();
 		$scope.loadTestPlans();
 		$scope.getScrollbarWidth();
-		$scope.loadIntegrationProfileMetaDataList();
-	};
-
-	$scope.loadIntegrationProfileMetaDataList = function () {
-		var delay = $q.defer();
-		$scope.error = null;
-		$rootScope.integrationProfileMetaDataList = [];
-
-		$scope.loading = true;
-		$http.get('api/integrationprofiles').then(function (response) {
-			$rootScope.integrationProfileMetaDataList = angular.fromJson(response.data);
-			$scope.loading = false;
-			delay.resolve(true);
-		}, function (error) {
-			$scope.loading = false;
-			$scope.error = error.data;
-			delay.reject(false);
-		});
-		return delay.promise;
 	};
 
 	$scope.loadIntegrationProfile = function () {
 		console.log("IntegrationProfile Loading!!");
 		if($rootScope.selectedTestStep.integrationProfileId != undefined && $rootScope.selectedTestStep.integrationProfileId !== ''){
-			$http.get('api/integrationprofiles/' + $rootScope.selectedTestStep.integrationProfileId).then(function (response) {
+			$http.get('http://localhost:7070/igamt/api/igdocuments/' + $rootScope.selectedTestStep.integrationProfileId + '/tcamtProfile').then(function (response) {
 				$rootScope.selectedIntegrationProfile = angular.fromJson(response.data);
 				$scope.loadConformanceProfile();
 			}, function (error) {
