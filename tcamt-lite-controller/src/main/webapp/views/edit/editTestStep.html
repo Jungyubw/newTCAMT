@@ -1,19 +1,11 @@
-<style id="antiClickjack">
-body {
+<style id="antiClickjack">body {
 	display: none !important;
-}
-</style>
-<script type="text/javascript">
-	if (self === top) {
+}</style> <script type="text/javascript">if (self === top) {
 		var antiClickjack = document.getElementById("antiClickjack");
 		antiClickjack.parentNode.removeChild(antiClickjack);
 	} else {
 		top.location = self.location;
-	}
-</script>
-
-<script type="text/ng-template" id="EditTestStepMetadata.html">
-	<ul class="nav nav-pills">
+	}</script> <script type="text/ng-template" id="EditTestStepMetadata.html"><ul class="nav nav-pills">
 		<li class="active"><a data-toggle="pill" ng-click="selectedTestStepTab = 1"><i class="fa fa-file-text-o fa-fw"></i> MetaData</a></li>
 		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 2"><i class="fa fa-file-text-o fa-fw"></i> Test Story</a></li>
 		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 3; initHL7EncodedMessageTab();"><i class="fa fa-file-text-o fa-fw"></i> HL7 Encoded Message</a></li>
@@ -48,9 +40,7 @@ body {
 					<label class="control-label">Integration Profile:</label>
 				</div>
 				<div class="col-md-10">
-					<div class="thumbnail" data-drop="true" data-jqyoui-options ng-model="selectedTestStep.integrationProfileId" style='height:30px;' jqyoui-droppable="{onDrop:'loadIntegrationProfile'}">
-						<span>{{selectedIntegrationProfile.metaData.name}}</span>
-					</div>
+					<span ng-show="selectedIntegrationProfile">{{selectedIntegrationProfile.sectionTitle}}</span>
 				</div>
 			</div>
 
@@ -59,23 +49,7 @@ body {
 					<label class="control-label">Conformance Profile:</label>
 				</div>
 				<div class="col-md-10">
-					<div class="thumbnail" data-drop="true" data-jqyoui-options ng-model="selectedTestStep.conformanceProfileId" style='height:30px;' jqyoui-droppable="{onDrop:'loadConformanceProfile'}">
-						<span ng-show="selectedConformanceProfile">{{selectedConformanceProfile.name}}</span>
-					</div>
-				</div>
-			</div>
-
-			<div ng-repeat="ig in igs">
-				<span>
-					IG Document : {{ig.id}}
-				</span>
-				<div ng-repeat="m in ig.profile.messages.children">
-					<span>
-						<button title="ApplyConformanceProfile" type="button" class="btn btn-xs btn-info"
-								ng-click="applyConformanceProfile(ig.id, m.id)">
-                                <span><i class="fa fa-plus-o fa-fw"></i> {{m.id}}</span>
-                            </button>
-					</span>
+					<span ng-show="selectedConformanceProfile">{{selectedConformanceProfile.name}}</span>
 				</div>
 			</div>
 		</form>
@@ -247,11 +221,7 @@ body {
             	</accordion-group>
         	</accordion>
         </div>
-	</div>
-</script>
-
-<script type="text/ng-template" id="FieldTree.html">
-	<tr tt-node is-branch="hasChildren(node)">
+	</div></script> <script type="text/ng-template" id="FieldTree.html"><tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
 			{{minimizePath(node.iPath)}}
         </td>
@@ -288,11 +258,7 @@ body {
 		<td class="col-md-1">
 			-
         </td>
-    </tr>
-</script>
-
-<script type="text/ng-template" id="ComponentTree.html">
-	<tr tt-node is-branch="hasChildren(node)">
+    </tr></script> <script type="text/ng-template" id="ComponentTree.html"><tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
 			{{minimizePath(node.iPath)}}
         </td>
@@ -329,11 +295,7 @@ body {
 		<td class="col-md-1">
 			-
         </td>
-    </tr>
-</script>
-
-<script type="text/ng-template" id="SubComponentTree.html">
-	<tr tt-node is-branch="hasChildren(node)">
+    </tr></script> <script type="text/ng-template" id="SubComponentTree.html"><tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
 			{{minimizePath(node.iPath)}}
         </td>
@@ -370,6 +332,4 @@ body {
 		<td class="col-md-1">
 			-
         </td>
-    </tr>
-</script>
-
+    </tr></script>

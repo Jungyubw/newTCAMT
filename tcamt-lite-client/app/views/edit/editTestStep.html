@@ -48,9 +48,7 @@ body {
 					<label class="control-label">Integration Profile:</label>
 				</div>
 				<div class="col-md-10">
-					<div class="thumbnail" data-drop="true" data-jqyoui-options ng-model="selectedTestStep.integrationProfileId" style='height:30px;' jqyoui-droppable="{onDrop:'loadIntegrationProfile'}">
-						<span>{{selectedIntegrationProfile.metaData.name}}</span>
-					</div>
+					<span ng-show="selectedIntegrationProfile">{{selectedIntegrationProfile.sectionTitle}}</span>
 				</div>
 			</div>
 
@@ -59,23 +57,7 @@ body {
 					<label class="control-label">Conformance Profile:</label>
 				</div>
 				<div class="col-md-10">
-					<div class="thumbnail" data-drop="true" data-jqyoui-options ng-model="selectedTestStep.conformanceProfileId" style='height:30px;' jqyoui-droppable="{onDrop:'loadConformanceProfile'}">
-						<span ng-show="selectedConformanceProfile">{{selectedConformanceProfile.name}}</span>
-					</div>
-				</div>
-			</div>
-
-			<div ng-repeat="ig in igs">
-				<span>
-					IG Document : {{ig.id}}
-				</span>
-				<div ng-repeat="m in ig.profile.messages.children">
-					<span>
-						<button title="ApplyConformanceProfile" type="button" class="btn btn-xs btn-info"
-								ng-click="applyConformanceProfile(ig.id, m.id)">
-                                <span><i class="fa fa-plus-o fa-fw"></i> {{m.id}}</span>
-                            </button>
-					</span>
+					<span ng-show="selectedConformanceProfile">{{selectedConformanceProfile.name}}</span>
 				</div>
 			</div>
 		</form>

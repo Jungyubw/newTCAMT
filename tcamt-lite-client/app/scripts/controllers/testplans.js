@@ -40,7 +40,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$rootScope.igs = [];
 		$scope.loading = true;
 
-		$http.get('http://localhost:7070/igamt/api/igdocuments', { params: { "type": "USER" } }).then(function(response) {
+		$http.get($rootScope.igamtURL + 'api/igdocuments', { params: { "type": "USER" } }).then(function(response) {
 			$rootScope.igs = angular.fromJson(response.data);
 			$scope.loading = false;
 			delay.resolve(true);
@@ -48,6 +48,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			$scope.loading = false;
 			$scope.error = error.data;
 			delay.reject(false);
+
 		});
 	};
 
@@ -70,7 +71,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.loadIntegrationProfile = function () {
 		console.log("IntegrationProfile Loading!!");
 		if($rootScope.selectedTestStep.integrationProfileId != undefined && $rootScope.selectedTestStep.integrationProfileId !== ''){
-			$http.get('http://localhost:7070/igamt/api/igdocuments/' + $rootScope.selectedTestStep.integrationProfileId + '/tcamtProfile').then(function (response) {
+			$http.get($rootScope.igamtURL + 'api/igdocuments/' + $rootScope.selectedTestStep.integrationProfileId + '/tcamtProfile').then(function (response) {
 				$rootScope.selectedIntegrationProfile = angular.fromJson(response.data);
 				$scope.loadConformanceProfile();
 			}, function (error) {
@@ -141,6 +142,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 			$timeout(function () {
 				$rootScope.selectedTestPlan = testplan;
+                $rootScope.selectedTestStep = null;
 				$scope.editTestPlan();
 				waitingDialog.hide();
 			}, 100);
@@ -167,6 +169,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			waitingDialog.show('Opening Test Case Group...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
 				$rootScope.selectedTestCaseGroup = testCaseGroup;
+                $rootScope.selectedTestStep = null;
 				$scope.editTestCaseGroup();
 				waitingDialog.hide();
 			}, 100);
@@ -182,6 +185,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			waitingDialog.show('Opening Test Case ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
 				$rootScope.selectedTestCase = testCase;
+                $rootScope.selectedTestStep = null;
 				$scope.editTestCase();
 				waitingDialog.hide();
 			}, 100);
@@ -525,20 +529,24 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.findTable = function (ref){
+        if(ref === undefined || ref === null) return null;
+
 		return _.find($rootScope.selectedIntegrationProfile.tables.children,function(t){
-			return t.id == ref
+			return t.id == ref.id;
 		});
 	};
 
 	$scope.findDatatype = function (ref){
+        if(ref === undefined || ref === null) return null;
 		return _.find($rootScope.selectedIntegrationProfile.datatypes.children,function(d){
-			return d.id == ref
+			return d.id == ref.id;
 		});
 	};
 
 	$scope.findSegment = function (ref){
+        if(ref === undefined || ref === null) return null;
 		return _.find($rootScope.selectedIntegrationProfile.segments.children,function(s){
-			return s.id == ref
+			return s.id == ref.id;
 		});
 	};
 

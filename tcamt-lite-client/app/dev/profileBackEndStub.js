@@ -87,21 +87,14 @@ angular.module('tcl').run(function ($httpBackend, $q, $http) {
         return [request.status, profile, {}];
     });
     
-    $httpBackend.whenGET('api/integrationprofiles/571eda2332ea58347919c95a').respond(function (method, url, data, headers) {
+    $httpBackend.whenGET('api/igdocuments/57450d2bd4c6f57e697c4078/tcamtProfile').respond(function (method, url, data, headers) {
         var request = new XMLHttpRequest();
-        request.open('GET', '../../resources/571eda2332ea58347919c95a.json', false);
+        request.open('GET', '../../resources/57450d2bd4c6f57e697c4078.json', false);
         request.send(null);
         var profile = angular.fromJson(request.response);
         return [request.status, profile, {}];
     });
     
-    $httpBackend.whenGET('api/integrationprofiles').respond(function (method, url, data, headers) {
-        var request = new XMLHttpRequest();
-        request.open('GET', '../../resources/integrationprofiles.json', false);
-        request.send(null);
-        var profile = angular.fromJson(request.response);
-        return [request.status, profile, {}];
-    });
 
     
     
