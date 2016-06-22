@@ -27,7 +27,7 @@ body {
 						{{test.name}}</span>
 				</div>
 			</div>
-
+{{updatePositions(test.children)}}
 			<ol ui-tree-nodes="" ng-model="test.children" data-type="childrens"
 				ng-if="!collapsed">
 
