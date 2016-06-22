@@ -150,7 +150,18 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.editTestPlan = function () {
 		$scope.subview = "EditTestPlanMetadata.html";
 	};
+	
+	$scope.OpenIgMetadata= function(ig){
+		$rootScope.igDocument=ig;
+		$scope.subview = "EditDocumentMetadata.html";
 
+	}
+	
+	$scope.OpenMessageMetadata= function(msg){
+		$rootScope.message=msg;
+		$scope.subview = "MessageMetadata.html";
+
+	}
 	$scope.selectTestCaseGroup = function (testCaseGroup) {
 		if (testCaseGroup != null) {
 			waitingDialog.show('Opening Test Case Group...', {dialogSize: 'xs', progressType: 'info'});
@@ -947,6 +958,18 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}]
 
 	];
+	
+	
+	$scope.ApplyProfile = [
+
+	                  		['Apply Profile', function($itemScope) {
+	                  			console.log($itemScope.ig);
+	                  			console.log($itemScope.msg);
+	                  			$scope.applyConformanceProfile($itemScope.ig.id, $itemScope.msg.id);
+	                  		}]
+	                  		
+
+	                  	];
 
 
 });
