@@ -1,5 +1,5 @@
 /**
- * Created by Jungyub on 5/12/16.
+ * Created by Jungyub on 5/12/16
  */
 
 angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService) {
@@ -692,7 +692,66 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 		$rootScope.segmentTemplates.push(segmentTemplate)
 
-	}
+	};
+
+	$scope.updateValue =function(node){
+
+		var segmentStr = $rootScope.selectedSegmentNode.segment.obj.name;
+		var previousFieldPath = '';
+		console.log(node);
+		console.log($rootScope.selectedSegmentNode);
+
+		for(var i in $rootScope.selectedSegmentNode.children){
+			var fieldNode = $rootScope.selectedSegmentNode.children[i];
+			// console.log(i + ":" + fieldNode.value);
+			if(previousFieldPath === fieldNode.positionPath){
+				segmentStr = segmentStr + "~"
+			}else {
+				segmentStr = segmentStr + "|"
+			}
+
+			previousFieldPath = fieldNode.positionPath;
+
+			if(fieldNode.children.length === 0){
+				if(fieldNode.value != undefined || fieldNode.value != null) segmentStr = segmentStr + fieldNode.value;
+			}else {
+				for(var j in fieldNode.children) {
+					var componentNode = fieldNode.children[j];
+					// console.log(i + "-" + j + ":" + componentNode.value);
+
+					if(componentNode.children.length === 0){
+						if(componentNode.value != undefined || componentNode.value != null) segmentStr = segmentStr + componentNode.value;
+						segmentStr = segmentStr + "^";
+					}else {
+						for(var k in componentNode.children) {
+							var subComponentNode = componentNode.children[k];
+							if(subComponentNode.value != undefined || subComponentNode.value != null) segmentStr = segmentStr + subComponentNode.value;
+							segmentStr = segmentStr + "&";
+
+							if(k === componentNode.children.length - 1){
+								segmentStr = $scope.reviseStr(segmentStr, '&');
+							}
+						}
+					}
+				}
+			}
+
+
+		}
+
+		console.log(segmentStr);
+
+	};
+
+	$scope.reviseStr = function (str, seperator) {
+		var lastChar = str.substring(str.length() - 1);
+		if(seperator !== lastChar) return str;
+		else{
+			str = str.substring(0, str.length()-1);
+			return $scope.reviseStr(str, seperator);
+		}
+
+	};
 
 	//Tree Functions
 	$scope.activeModel={};
