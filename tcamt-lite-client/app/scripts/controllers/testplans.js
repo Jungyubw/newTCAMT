@@ -1041,6 +1041,57 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	                  	];
 
 
+
+	$rootScope.templatesToc=[
+	{id :1 , name: "template Name",note: "note", 
+
+	segmentTemplates:[
+	
+	{name :"segname", description: "msgdesc", date:"dddddd",segmentName:"segmentName", categorizations:[]},
+	{name :"segmpname2", description: "msgdesc2", date:"dddddd2", igDocumentId:"ID2", conformanceProfileId :"cfId2", categorizations:[]}
+	
+
+	], 
+
+	messageTemplates:[
+	{name :"msgname", description: "msgdesc", date:"dddddd", igDocumentId:"ID", conformanceProfileId :"cfId", categorizations:[]},
+	{name :"msgmpname2", description: "msgdesc2", date:"dddddd2", igDocumentId:"ID2", conformanceProfileId :"cfId2", categorizations:[]}
+	]
+
+	 },
+	 {"id":"576c0bd6d4c6bb4f9cc9afbb","name":"My Template","note":"No note","messageTemplates":[{"name":"new Template for Unsolicited Immunization Update","descrption":"No Desc","date":"2016-06-23T16:52:55.357Z","igDocumentId":"57450d2ad4c6f57e697ad10b","conformanceProfileId":"57450d2bd4c6f57e697c4075","categorizations":[{"iPath":"MSH[1].1[1]","testDataCategorization":"Value-Profile Fixed"},{"iPath":"MSH[1].2[1]","testDataCategorization":"Value-Profile Fixed List"}]}],"segmentTemplates":[{"name":"new Template for MSH","descrption":"No Desc","segmentName":"MSH","date":"2016-06-23T16:52:53.911Z","categorizations":[{"iPath":"1[1]","testDataCategorization":"Value-Profile Fixed"},{"iPath":"2[1]","testDataCategorization":"Value-Profile Fixed List"}]}],"accountId":46}
+	 ]
+
+
+
+
+
+	$scope.messagetempCollapsed=false;
+	$scope.segmenttempCollapsed=false;
+	$scope.switchermsg= function(bool){
+		console.log(bool);
+		$scope.messagetempCollapsed = !$scope.messagetempCollapsed;
+	};
+		$scope.switcherseg= function(bool){
+	$scope.segmenttempCollapsed = !$scope.segmenttempCollapsed;
+	};
+
+
+	$scope.OpenMsgTemplateMetadata=function(msgtemp){
+		$scope.msgTemplate=msgtemp;
+
+		$scope.subview = "MessageTemplateMetadata.html";
+	}
+	$scope.OpenTemplateMetadata=function(temp){
+		$scope.rootTemplate=temp;
+		console.log("here");
+		$scope.subview = "TemplateMetadata.html";
+	}
+	$scope.OpenSegmentTemplateMetadata=function(segtemp){
+		$scope.segTemplate=segtemp;
+		$scope.subview = "SegmentTemplateMetadata.html";
+	}
+
 });
 
 angular.module('tcl').controller('ConfirmTestPlanDeleteCtrl', function ($scope, $modalInstance, testplanToDelete, $rootScope, $http) {
