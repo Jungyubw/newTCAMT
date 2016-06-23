@@ -173,12 +173,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 	
 	$scope.OpenIgMetadata= function(ig){
+		$rootScope.selectedTestStep=null;
 		$rootScope.igDocument=ig;
 		$scope.subview = "EditDocumentMetadata.html";
 
 	}
 	
 	$scope.OpenMessageMetadata= function(msg){
+		$rootScope.selectedTestStep=null;
 		$rootScope.message=msg;
 		$scope.subview = "MessageMetadata.html";
 

@@ -9765,17 +9765,30 @@ table.conformance-profiles-table td {
   /* IE6-9 */
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032277}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032276}}
+.used {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fefcea+0,f1da36+100;Gold+3D */
+  background: #fefcea;
+  /* Old browsers */
+  /* FF3.6-15 */
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, #fefcea 0%, #f1da36 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', endColorstr='#f1da36',GradientType=0 );
+  /* IE6-9 */
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032285}}
 span {
   cursor: pointer;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032281}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032289}}
 .draggable {
   cursor: move;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032285}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032293}}
 .angular-ui-tree-handle {
   cursor: move;
   text-decoration: none;
@@ -9785,14 +9798,14 @@ span {
   font-weight: 700;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032295}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032303}}
 .CodeMirror {
   border: 1px solid #eee;
   height: auto;
   min-height: 400px !important;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032300}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/jungyubw\/Documents\/Works\/Projects\/tcamt\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000032308}}
 .CodeMirror-scroll {
   overflow-y: hidden;
   overflow-x: auto;
