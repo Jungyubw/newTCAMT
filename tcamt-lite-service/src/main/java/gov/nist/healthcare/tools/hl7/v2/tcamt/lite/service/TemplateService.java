@@ -27,6 +27,4 @@ public interface TemplateService {
 	public Template save(Template t);
 
 	public Template findByAccountId(Long accountId);
-	
-	public Template apply(Template t);
 }

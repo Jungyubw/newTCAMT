@@ -2,8 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/resources/template.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.tmp/styles/main.css" afterPath="$PROJECT_DIR$/.tmp/styles/main.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/dev/profileBackEndStub.js" afterPath="$PROJECT_DIR$/app/dev/profileBackEndStub.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestPlan.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestPlan.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/index.html" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editTestStep.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/TemplateService.java" afterPath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/TemplateService.java" />
     </list>
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -27,8 +34,8 @@
       <file leaf-file-name="editTestStep.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5190">
-              <caret line="346" column="125" selection-start-line="346" selection-start-column="125" selection-end-line="346" selection-end-column="125" />
+            <state relative-caret-position="430">
+              <caret line="186" column="53" selection-start-line="186" selection-start-column="53" selection-end-line="186" selection-end-column="53" />
               <folding />
             </state>
           </provider>
@@ -37,8 +44,58 @@
       <file leaf-file-name="testplans.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="603">
-              <caret line="682" column="39" selection-start-line="682" selection-start-column="24" selection-end-line="682" selection-end-column="39" />
+            <state relative-caret-position="11610">
+              <caret line="774" column="39" selection-start-line="774" selection-start-column="39" selection-end-line="774" selection-end-column="39" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="profileBackEndStub.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/dev/profileBackEndStub.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="442">
+              <caret line="74" column="63" selection-start-line="74" selection-start-column="63" selection-end-line="74" selection-end-column="63" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="editTestPlan.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/edit/editTestPlan.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="390">
+              <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="template.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/resources/template.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="57450d2bd4c6f57e697c4078.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/resources/57450d2bd4c6f57e697c4078.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="1" column="1514" selection-start-line="1" selection-start-column="1514" selection-end-line="1" selection-end-column="1514" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tableLib.json" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/resources/tableLib.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -53,11 +110,12 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/app/resources/igdocuments.json" />
-        <option value="$PROJECT_DIR$/app/views/edit/editTestPlan.html" />
         <option value="$PROJECT_DIR$/app/prod/app.js" />
         <option value="$PROJECT_DIR$/app/dev/app.js" />
-        <option value="$PROJECT_DIR$/app/dev/profileBackEndStub.js" />
         <option value="$PROJECT_DIR$/app/resources/57450d2bd4c6f57e697c4078.json" />
+        <option value="$PROJECT_DIR$/app/dev/profileBackEndStub.js" />
+        <option value="$PROJECT_DIR$/app/resources/template.json" />
+        <option value="$PROJECT_DIR$/app/views/edit/editTestPlan.html" />
         <option value="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
       </list>
@@ -526,12 +584,12 @@
       <workItem from="1466605278307" duration="5503000" />
       <workItem from="1466636118488" duration="316000" />
       <workItem from="1466636680246" duration="6769000" />
-      <workItem from="1466692309990" duration="832000" />
+      <workItem from="1466692309990" duration="4901000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="20225000" />
+    <option name="totallyTimeSpent" value="24294000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1920" y="0" width="2560" height="1440" extended-state="0" />
@@ -543,18 +601,18 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17756315" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11589896" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17819461" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296131" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -570,14 +628,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/app/scripts/controllers/testplans.js</url>
-          <line>731</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="2" />
+      <option name="time" value="3" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -618,9 +669,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1305">
           <caret line="89" column="66" selection-start-line="89" selection-start-column="42" selection-end-line="89" selection-end-column="66" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -716,13 +765,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/edit/editTestPlan.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="596">
-          <caret line="53" column="18" selection-start-line="53" selection-start-column="18" selection-end-line="53" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/bower/lib/node_modules/github/index.js" />
     <entry file="file://$PROJECT_DIR$/.tmp/concat/scripts/scripts.js" />
     <entry file="file://$PROJECT_DIR$/app/dev/app.js">
@@ -745,14 +787,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="38" selection-start-line="0" selection-start-column="38" selection-end-line="0" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/resources/57450d2bd4c6f57e697c4078.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="1" column="1514" selection-start-line="1" selection-start-column="1514" selection-end-line="1" selection-end-column="1514" />
           <folding />
         </state>
       </provider>
@@ -783,26 +817,56 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/dev/profileBackEndStub.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="89" column="66" selection-start-line="89" selection-start-column="42" selection-end-line="89" selection-end-column="66" />
-          <folding>
-            <element signature="n#!!doc" expanded="false" />
-          </folding>
+        <state relative-caret-position="442">
+          <caret line="74" column="63" selection-start-line="74" selection-start-column="63" selection-end-line="74" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/resources/57450d2bd4c6f57e697c4078.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="1" column="1514" selection-start-line="1" selection-start-column="1514" selection-end-line="1" selection-end-column="1514" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/resources/tableLib.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/resources/template.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/edit/editTestPlan.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5190">
-          <caret line="346" column="125" selection-start-line="346" selection-start-column="125" selection-end-line="346" selection-end-column="125" />
+        <state relative-caret-position="430">
+          <caret line="186" column="53" selection-start-line="186" selection-start-column="53" selection-end-line="186" selection-end-column="53" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="603">
-          <caret line="682" column="39" selection-start-line="682" selection-start-column="24" selection-end-line="682" selection-end-column="39" />
+        <state relative-caret-position="11610">
+          <caret line="774" column="39" selection-start-line="774" selection-start-column="39" selection-end-line="774" selection-end-column="39" />
           <folding />
         </state>
       </provider>
