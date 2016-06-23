@@ -250,7 +250,7 @@
 			-
         </td>
 		<td class="col-md-1">
-			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged()" ng-model="node.value" required />
+			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
         </td>
 		<td class="col-md-1">
 			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);"  ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
@@ -287,7 +287,7 @@
 			-
         </td>
 		<td class="col-md-1">
-			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged()" ng-model="node.value" required />
+			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
         </td>
 		<td class="col-md-1">
 			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
@@ -324,7 +324,7 @@
 			-
         </td>
 		<td class="col-md-1">
-			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged()" ng-model="node.value" required />
+			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
         </td>
 		<td class="col-md-1">
 			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
