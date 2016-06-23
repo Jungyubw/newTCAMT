@@ -2,28 +2,23 @@
     <ol ui-tree-nodes="" ng-model="templatesToc">
         <li ng-repeat="template in templatesToc" ui-tree-node data-nodrag>
             <div ui-tree-handle ng-click="Activate(this); OpenTemplateMetadata(template)" ng-class="{selected : this.$modelValue===activeModel}">
-                <span data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-plus" ng-class="{
-                          'glyphicon glyphicon-plus': collapsed,
-                          'glyphicon glyphicon-minus': !collapsed
-                        }">
-                  </span> {{template.name}}
+			 {{template.name}}
             </div>
 
 
 
 
-            <div ui-tree-handle>
+            <div ui-tree-handle >
                 <span data-nodrag ng-click="switchermsg(messagetempCollapsed)" class="glyphicon glyphicon-plus" ng-class="{
                           'glyphicon glyphicon-plus': messagetempCollapsed,
                           'glyphicon glyphicon-minus': !messagetempCollapsed
                         }">
-                  </span> Messages Templates{{messagetempCollapsed}}
+                  </span> Messages Templates
             </div>
             <ol ui-tree-nodes="" ng-model="template.messageTemplates" ng-if="!messagetempCollapsed">
                 <li ng-repeat="msgTmp in template.messageTemplates" ui-tree-node>
-                    <div ui-tree-handle ng-click="Activate(this);OpenMsgTemplateMetadata(msgTmp)" ng-class="{selected : this.$modelValue===activeModel}">
-                        <span ng-hide="selectedTestStep"><span class=" label-info badge">CP</span>{{msgTmp.name}}</span>
-                        <span context-menu="ApplyProfile" ng-hide="!selectedTestStep">[{{$index+1}}]<span class="label-success badge">MT</span>{{msgTmp.name}}-{{msgTmp.description}}</span>
+                    <div ui-tree-handle ng-click="Activate(this);OpenMsgTemplateMetadata(msgTmp)"   ng-class="{selected : this.$modelValue===activeModel}">
+                        <span context-menu="MessageOptions"><span class="label-success badge">MT</span>{{msgTmp.name}}</span>
                     </div>
                 </li>
             </ol>
@@ -33,12 +28,12 @@
                           'glyphicon glyphicon-plus': segmenttempCollapsed,
                           'glyphicon glyphicon-minus': !segmenttempCollapsed
                         }">
-                  </span> Segment Templates {{segmenttempCollapsed}}
+                  </span> Segment Templates 
             </div>
 
                 <ol ui-tree-nodes="" ng-model="template.segmentTemplates" ng-if="!segmenttempCollapsed">
                 <li ng-repeat="segTmp in template.segmentTemplates" ui-tree-node>
-                    <div ui-tree-handle ng-click="Activate(this);OpenSegmentTemplateMetadata(segTemp)" ng-class="{selected : this.$modelValue===activeModel}">
+                    <div ui-tree-handle context-menu="SegmentOptions" ng-click="Activate(this);OpenSegmentTemplateMetadata(segTemp)" ng-class="{selected : this.$modelValue===activeModel}">
                         <span><span class=" label-success badge">ST</span>{{segTmp.name}}</span>
                     </div>
                 </li>

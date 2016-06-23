@@ -1105,8 +1105,35 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}]
 
 	];
+	$scope.MessageOptions=[
+
+
+
+		['Delete Template', function($itemScope) {
+		$scope.deleteMessageTemplate($itemScope.msgTmp);
+
+		}],
+		null, ['Apply Template', function($itemScope) {
+			$scope.applyMessageTemplate($itemScope.msgTmp);
+		}]
+	];
 	
-	
+
+
+		$scope.SegmentOptions=[
+
+
+
+		['Delete Template', function($itemScope) {
+		$scope.deleteSegmentTemplate($itemScope.segTmp);
+
+		}],
+		null, ['Apply Template', function($itemScope) {
+			$scope.applySegmentTemplate($itemScope.segTmp);
+		}]
+	];
+
+
 	$scope.ApplyProfile = [
 
 	                  		['Apply Profile', function($itemScope) {
