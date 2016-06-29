@@ -4,6 +4,7 @@
 
 angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService) {
 	$scope.loading = false;
+    $scope.selectedTestStepTab = 1;
 	$rootScope.tps = [];
 	$scope.testPlanOptions=[];
 	$scope.accordi = {metaData: false, definition: true, igList: true, igDetails: false};
@@ -73,9 +74,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     };
 
 	$scope.applyConformanceProfile = function (igid, mid) {
-		console.log(igid);
-		console.log(mid);
-
 		$rootScope.selectedTestStep.integrationProfileId = igid;
 		$rootScope.selectedTestStep.conformanceProfileId = mid;
 		$scope.loadIntegrationProfile();
@@ -89,9 +87,22 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$scope.getScrollbarWidth();
 	};
 
+    $scope.deleteProfile = function (){
+        $rootScope.selectedIntegrationProfile = null;
+        $rootScope.selectedConformanceProfile = null;
+        $rootScope.selectedTestStep.integrationProfileId = null;
+        $rootScope.selectedTestStep.conformanceProfileId = null;
+    };
+
+    $scope.isNotManualTestStep = function(){
+        if($rootScope.selectedTestStep.integrationProfileId == null) return false;
+        return true;
+    };
+
 	$scope.loadIntegrationProfile = function () {
-		console.log("IntegrationProfile Loading!!");
-		if($rootScope.selectedTestStep.integrationProfileId != undefined && $rootScope.selectedTestStep.integrationProfileId !== ''){
+        console.log($rootScope.selectedTestStep);
+
+		if($rootScope.selectedTestStep.integrationProfileId != undefined && $rootScope.selectedTestStep.integrationProfileId !== null){
 			$http.get($rootScope.igamtURL + 'api/igdocuments/' + $rootScope.selectedTestStep.integrationProfileId + '/tcamtProfile').then(function (response) {
 				$rootScope.selectedIntegrationProfile = angular.fromJson(response.data);
 				$scope.loadConformanceProfile();
@@ -105,7 +116,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.loadConformanceProfile = function () {
-		console.log("CP ID:  " + $rootScope.selectedTestStep.conformanceProfileId);
 		if($rootScope.selectedTestStep.conformanceProfileId != undefined && $rootScope.selectedTestStep.conformanceProfileId !== ''){
 			$rootScope.selectedConformanceProfile =_.find($rootScope.selectedIntegrationProfile.messages.children, function(m) {
 				return m.id == $rootScope.selectedTestStep.conformanceProfileId;
@@ -162,9 +172,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			$rootScope.testplans.push(testplan);
 
 			$timeout(function () {
+                $scope.editTestPlan();
 				$rootScope.selectedTestPlan = testplan;
                 $rootScope.selectedTestStep = null;
-				$scope.editTestPlan();
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -191,9 +201,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		if (testCaseGroup != null) {
 			waitingDialog.show('Opening Test Case Group...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
+                $scope.editTestCaseGroup();
 				$rootScope.selectedTestCaseGroup = testCaseGroup;
                 $rootScope.selectedTestStep = null;
-				$scope.editTestCaseGroup();
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -207,9 +217,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		if (testCase != null) {
 			waitingDialog.show('Opening Test Case ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
+                $scope.editTestCase();
 				$rootScope.selectedTestCase = testCase;
                 $rootScope.selectedTestStep = null;
-				$scope.editTestCase();
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -229,12 +239,20 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 				}
 				$scope.selectedTestStepTab = 1;
 				$scope.editTestStep();
-				waitingDialog.hide();
 				$scope.loadIntegrationProfile();
+                waitingDialog.hide();
 			}, 100);
 
 		}
 	};
+
+    $scope.changeTestStepTab = function (tabNum) {
+        $scope.selectedTestStepTab = tabNum;
+    };
+
+    $scope.isSelectedTestStepTab = function (tabNum) {
+      return   tabNum == $scope.selectedTestStepTab;
+    };
 
 	$scope.editTestStep = function () {
 		$scope.subview = "EditTestStepMetadata.html";
@@ -777,15 +795,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     };
 
 	$scope.updateValue =function(node){
-
 		var segmentStr = $rootScope.selectedSegmentNode.segment.obj.name;
 		var previousFieldPath = '';
-		console.log(node);
-		console.log($rootScope.selectedSegmentNode);
-
 		for(var i in $rootScope.selectedSegmentNode.children){
 			var fieldNode = $rootScope.selectedSegmentNode.children[i];
-			// console.log(i + ":" + fieldNode.value);
 			if(previousFieldPath === fieldNode.positionPath){
 				segmentStr = segmentStr + "~"
 			}else {
@@ -799,8 +812,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			}else {
 				for(var j in fieldNode.children) {
 					var componentNode = fieldNode.children[j];
-					// console.log(i + "-" + j + ":" + componentNode.value);
-
 					if(componentNode.children.length === 0){
 						if(componentNode.value != undefined || componentNode.value != null) segmentStr = segmentStr + componentNode.value;
 						segmentStr = segmentStr + "^";
@@ -809,27 +820,36 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 							var subComponentNode = componentNode.children[k];
 							if(subComponentNode.value != undefined || subComponentNode.value != null) segmentStr = segmentStr + subComponentNode.value;
 							segmentStr = segmentStr + "&";
-
-							if(k === componentNode.children.length - 1){
+                            if(k == componentNode.children.length - 1){
 								segmentStr = $scope.reviseStr(segmentStr, '&');
 							}
 						}
+                        segmentStr = segmentStr + "^";
 					}
+
+                    if(j == fieldNode.children.length - 1){
+                        segmentStr = $scope.reviseStr(segmentStr, '^');
+                    }
 				}
 			}
 
+            if(i == $rootScope.selectedSegmentNode.children.length - 1){
+                segmentStr = $scope.reviseStr(segmentStr, '|');
+            }
+
 
 		}
+        if(segmentStr.substring(0,11) == "MSH|||^~\\&|") segmentStr = 'MSH|^~\\&|' + segmentStr.substring(11);
 
-		console.log(segmentStr);
 
+        $rootScope.selectedSegmentNode.segment.segmentStr = segmentStr;
 	};
 
 	$scope.reviseStr = function (str, seperator) {
-		var lastChar = str.substring(str.length() - 1);
+		var lastChar = str.substring(str.length - 1);
 		if(seperator !== lastChar) return str;
 		else{
-			str = str.substring(0, str.length()-1);
+			str = str.substring(0, str.length-1);
 			return $scope.reviseStr(str, seperator);
 		}
 
@@ -1050,7 +1070,24 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			if( !$itemScope.$nodeScope.$modelValue.teststeps){
 				$itemScope.$nodeScope.$modelValue.teststeps=[];
 			}
-			$itemScope.$nodeScope.$modelValue.teststeps.push({name: "newteststep", position:$itemScope.$nodeScope.$modelValue.teststeps.length+1});
+
+            var newTestStep = {
+                id: new ObjectId().toString(),
+                type : "teststep",
+                name : "newteststep",
+                position : $itemScope.$nodeScope.$modelValue.teststeps.length+1,
+                testStepStory: {}
+            };
+
+            newTestStep.testStepStory.comments = "No Comments";
+            newTestStep.testStepStory.evaluationCriteria = "No evaluation criteria";
+            newTestStep.testStepStory.notes = "No Note";
+            newTestStep.testStepStory.postCondition = "No PostCondition";
+            newTestStep.testStepStory.preCondition = "No PreCondition";
+            newTestStep.testStepStory.testObjectives = "No Objectives";
+            newTestStep.testStepStory.teststorydesc = "No Description";
+
+			$itemScope.$nodeScope.$modelValue.teststeps.push(newTestStep);
 
 			$scope.recordChanged();
 
