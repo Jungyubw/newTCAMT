@@ -59,6 +59,7 @@
 			<groupId>xom</groupId>
 			<artifactId>xom</artifactId>
 			<version>1.2.5</version>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -75,9 +76,9 @@
 			<scope>test</scope>
 		</dependency>
  
-		<!-- <dependency> <groupId>org.codehaus.jackson</groupId> <artifactId>jackson-core-asl</artifactId> 
+		<dependency> <groupId>org.codehaus.jackson</groupId> <artifactId>jackson-core-asl</artifactId> 
 			<version>1.9.13</version> </dependency> <dependency> <groupId>org.codehaus.jackson</groupId> 
-			<artifactId>jackson-mapper-asl</artifactId> <version>1.8.5</version> </dependency> -->
+			<artifactId>jackson-mapper-asl</artifactId> <version>1.8.5</version> </dependency> 
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
@@ -162,6 +163,12 @@
 			<groupId>org.docx4j</groupId>
 			<artifactId>docx4j</artifactId>
 			<version>3.2.2</version>
+						<exclusions>
+				<exclusion>
+					<groupId>xalan</groupId>
+					<artifactId>xalan</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>

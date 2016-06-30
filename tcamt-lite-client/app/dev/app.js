@@ -54,7 +54,7 @@ var
 var msg = {};
 
 
-app.config(function ($routeProvider, RestangularProvider, $httpProvider, KeepaliveProvider, IdleProvider,notificationsConfigProvider) {
+app.config(function ($routeProvider, RestangularProvider, $httpProvider, KeepaliveProvider, IdleProvider,notificationsConfigProvider,$compileProvider) {
 
     app.requires.push('ngMockE2E');
 
@@ -314,9 +314,16 @@ app.config(function ($routeProvider, RestangularProvider, $httpProvider, Keepali
     $httpProvider.defaults.transformRequest.push(spinnerStarter);
 
     httpHeaders = $httpProvider.defaults.headers;
-
+    
+	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|blob):/);
 
 });
+app.filter("sanitize", ['$sce', function($sce) {
+	  return function(htmlCode){
+	    return $sce.trustAsHtml(htmlCode);
+	  }
+}]);
+
 
 
 app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, userInfoService, $http, AppInfo,StorageService,$templateCache,$window,notifications) {

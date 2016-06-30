@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16.
  */
 
-angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService) {
+angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce) {
 	$scope.loading = false;
 	$rootScope.tps = [];
 	$scope.testPlanOptions=[];
@@ -665,7 +665,44 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$rootScope.segmentTemplates.push(segmentTemplate)
 
 	}
+	$scope.result="";
+	//validation 
+	$scope.validate = function () {
+		$scope.result="";
+		var message = $rootScope.selectedTestStep.er7Message;
+		var profile = $rootScope.selectedTestStep.integrationProfileId;
 
+		var req = {
+		    method: 'POST',
+		    url: 'api/validation',
+		    headers: {
+		        'Content-Type': undefined
+		    },
+		    params: { message: message, profile: profile }
+		}
+		
+		
+			var promise = $http(req)
+			.success(function(data, status, headers, config) {
+			 //console.log(data);
+			 $scope.result=$sce.trustAsHtml(data.html);
+			 
+			 console.log($scope.result);
+				return data;
+			})
+			.error(function(data,status,headers,config){
+				if(status === 404)
+					console.log("Could not reach the server");
+				else if(status === 403)
+				{
+					console.log("limited access");
+				}
+			});
+			return promise;	
+		}
+
+	
+	
 	//Tree Functions
 	$scope.activeModel={};
 

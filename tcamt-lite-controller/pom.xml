@@ -14,6 +14,17 @@
 		<finalName>tcamt</finalName>
 		<pluginManagement>
 			<plugins>
+<!-- 				<plugin> -->
+<!--                 <groupId>org.springframework.boot</groupId> -->
+<!--                 <artifactId>spring-boot-maven-plugin</artifactId> -->
+<!--             </plugin> -->
+            <!-- tag::wsdl[] -->
+
+
+
+
+
+			
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-eclipse-plugin</artifactId>
@@ -64,6 +75,18 @@
 	</build>
 
 	<dependencies>
+	<dependency>
+  	<groupId>gov.nist</groupId>
+  	<artifactId>hl7-v2-validation</artifactId>
+		<version>1.1.7</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>gov.nist.healthcare.hl7.v2.unifiedreport</groupId>
+		<artifactId>validation-proxy</artifactId>
+		<version>1.0.5</version>
+	</dependency>
+
 
 		<dependency>
 			<groupId>gov.nist.healthcare.tools.hl7.v2.tcamt.lite</groupId>

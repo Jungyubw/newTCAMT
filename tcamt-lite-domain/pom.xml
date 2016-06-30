@@ -177,6 +177,12 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>4.3.0.Final</version>
+		      <exclusions>
+        <exclusion>  <!-- declare the exclusion here -->
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions> 
 		</dependency>
 
 		<dependency>
