@@ -2,8 +2,11 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import javax.persistence.Id;
+
+import org.bson.types.ObjectId;
 
 public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
@@ -13,7 +16,7 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	private static final long serialVersionUID = 1164104159252764632L;
 
 	@Id
-	private long id;
+	private String id;
 
 	private String name;
 
@@ -32,8 +35,10 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	private TestStory testStepStory = new TestStory();
 
 	private String type;
+	
+	private HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>(); 
 
-	public TestStep(long id, String name, String description, Integer version) {
+	public TestStep(String id, String name, String description, Integer version) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -43,13 +48,14 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	public TestStep() {
 		super();
+		this.id = ObjectId.get().toString();
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -82,7 +88,7 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	@Override
 	public TestStep clone() throws CloneNotSupportedException {
 		TestStep cloned = (TestStep) super.clone();
-		cloned.setId(0);
+		cloned.setId(ObjectId.get().toString());
 		cloned.setTestStepStory((TestStory) testStepStory.clone());
 
 		return cloned;
@@ -148,6 +154,14 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	public void setEr7Message(String er7Message) {
 		this.er7Message = er7Message;
+	}
+
+	public HashMap<String, Categorization> getTestDataCategorizationMap() {
+		return testDataCategorizationMap;
+	}
+
+	public void setTestDataCategorizationMap(HashMap<String, Categorization> testDataCategorizationMap) {
+		this.testDataCategorizationMap = testDataCategorizationMap;
 	}
 
 	public static Comparator<TestStep> testCasePositionComparator = new Comparator<TestStep>() {

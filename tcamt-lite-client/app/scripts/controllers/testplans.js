@@ -396,7 +396,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 					value: fieldInstanceValues[h],
 					children : []
 				};
-				fieldNode.testDataCategorization = $rootScope.selectedTestStep.testDataCategorizationMap[fieldNode.iPath];
+
+                var fieldTestDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(fieldNode.iPath)];
+
+                if(fieldTestDataCategorizationObj != undefined && fieldTestDataCategorizationObj != null){
+                    console.log(fieldTestDataCategorizationObj);
+                    fieldNode.testDataCategorization = fieldTestDataCategorizationObj.testDataCategorization;
+                    fieldNode.testDataCategorizationListData = fieldTestDataCategorizationObj.listData;
+                }
+
 
 				var componentValues = [];
 				if (fieldInstanceValues[h] != undefined) componentValues = fieldInstanceValues[h].split("^");
@@ -415,7 +423,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 						value: componentValues[j],
 						children : []
 					};
-					componentNode.testDataCategorization = $rootScope.selectedTestStep.testDataCategorizationMap[componentNode.iPath];
+                    var componentTestDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(componentNode.iPath)];
+
+                    if(componentTestDataCategorizationObj != undefined && componentTestDataCategorizationObj != null){
+                        componentNode.testDataCategorization = componentTestDataCategorizationObj.testDataCategorization;
+                        componentNode.testDataCategorizationListData = componentTestDataCategorizationObj.listData;
+                    }
+
 
 					var subComponentValues = [];
 					if (componentValues[j] != undefined) subComponentValues = componentValues[j].split("&");
@@ -432,8 +446,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 							value: subComponentValues[k],
 							children : []
 						};
-						subComponentNode.testDataCategorization = $rootScope.selectedTestStep.testDataCategorizationMap[subComponentNode.iPath];
-						componentNode.children.push(subComponentNode);
+
+                        var subComponentTestDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(subComponentNode.iPath)];
+
+                        if(subComponentTestDataCategorizationObj != undefined && subComponentTestDataCategorizationObj != null){
+                            subComponentNode.testDataCategorization = subComponentTestDataCategorizationObj.testDataCategorization;
+                            subComponentNode.testDataCategorizationListData = subComponentTestDataCategorizationObj.listData;
+                        }
 					}
 
 					fieldNode.children.push(componentNode);
@@ -711,31 +730,54 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		if($rootScope.selectedTestStep.testDataCategorizationMap == undefined || $rootScope.selectedTestStep == null){
 			$rootScope.selectedTestStep.testDataCategorizationMap = {};
 		}
-		$rootScope.selectedTestStep.testDataCategorizationMap[node.iPath] = node.testDataCategorization;
+
+        var name = '';
+        if(node.type == 'field') name = node.field.name;
+        else if (node.type == 'component') name = node.component.name;
+        else if (node.type == 'subcomponent') name = node.component.name;
+
+        var testDataCategorizationObj = {
+            iPath: node.iPath,
+            testDataCategorization: node.testDataCategorization,
+            name: name,
+            listData : []
+        };
+
+		$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(node.iPath)] = testDataCategorizationObj;
 
 	};
+
+    $scope.replaceDot2Dash = function(path){
+        return path.split('.').join('-');
+    };
 
 
 	$scope.createSegmentTemplate = function () {
 		console.log($rootScope.selectedTestStep.testDataCategorizationMap);
 		console.log($rootScope.selectedSegmentNode);
 		var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
-			if(i.includes($rootScope.selectedSegmentNode.segment.iPath))
+			if(i.includes($scope.replaceDot2Dash($rootScope.selectedSegmentNode.segment.iPath)))
 				return i;
 		});
 		console.log(keys);
 		var segmentTemplate = {};
+        segmentTemplate.id = new ObjectId().toString();
 		segmentTemplate.name = 'new Template for ' + $rootScope.selectedSegmentNode.segment.obj.name;
         segmentTemplate.descrption = 'No Desc';
         segmentTemplate.segmentName = $rootScope.selectedSegmentNode.segment.obj.name;
 		segmentTemplate.date = new Date();
 		segmentTemplate.categorizations = [];
 		keys.forEach(function(key){
-			var cate = {};
-			// cate.iPath = key.replace($rootScope.selectedSegmentNode.segment.iPath + "." ,"");
-            cate.iPath = key;
-			cate.testDataCategorization = $rootScope.selectedTestStep.testDataCategorizationMap[key];
-			segmentTemplate.categorizations.push(cate);
+            var testDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[key];
+
+            if(testDataCategorizationObj != undefined && testDataCategorizationObj != null){
+                var cate = {};
+                cate.iPath = testDataCategorizationObj.iPath.replace($rootScope.selectedSegmentNode.segment.iPath,'');
+                cate.name = testDataCategorizationObj.name;
+                cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
+                cate.listData = testDataCategorizationObj.listData;
+                segmentTemplate.categorizations.push(cate);
+            }
 		});
 		console.log(segmentTemplate);
 		$rootScope.template.segmentTemplates.push(segmentTemplate)
@@ -749,23 +791,42 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
         });
         console.log(keys);
         var messageTemplate = {};
+        messageTemplate.id = new ObjectId().toString();
         messageTemplate.name = 'new Template for ' + $rootScope.selectedConformanceProfile.name;
         messageTemplate.descrption = 'No Desc';
         messageTemplate.date = new Date();
-        //TODO need Check
-        messageTemplate.igDocumentId = $rootScope.selectedIntegrationProfile.id;
+        messageTemplate.integrationProfileId = $rootScope.selectedIntegrationProfile.id;
         messageTemplate.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
-
 
         messageTemplate.categorizations = [];
         keys.forEach(function(key){
-            var cate = {};
-            cate.iPath = key;
-            cate.testDataCategorization = $rootScope.selectedTestStep.testDataCategorizationMap[key];
-            messageTemplate.categorizations.push(cate);
+            var testDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[key];
+
+            if(testDataCategorizationObj != undefined && testDataCategorizationObj != null){
+                var cate = {};
+                cate.iPath = testDataCategorizationObj.iPath;
+                cate.name = testDataCategorizationObj.name;
+                cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
+                cate.listData = testDataCategorizationObj.listData;
+                messageTemplate.categorizations.push(cate);
+            }
         });
         console.log(messageTemplate);
         $rootScope.template.messageTemplates.push(messageTemplate)
+    };
+
+    $scope.createER7Template = function () {
+        var er7Template = {};
+        er7Template.id = new ObjectId().toString();
+        er7Template.name = 'new Template for ' + $rootScope.selectedConformanceProfile.name;
+        er7Template.descrption = 'No Desc';
+        er7Template.date = new Date();
+        er7Template.integrationProfileId = $rootScope.selectedIntegrationProfile.id;
+        er7Template.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
+
+        er7Template.er7Message = $rootScope.selectedTestStep.er7Message;
+        console.log(er7Template);
+        $rootScope.template.er7Templates.push(er7Template)
     };
 
     $scope.deleteSegmentTemplate = function (template){
@@ -779,6 +840,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
         var index = $rootScope.template.messageTemplates.indexOf(template);
         if (index > -1) {
             $rootScope.template.messageTemplates.splice(index, 1);
+        }
+    };
+
+    $scope.deleteER7Template = function (template){
+        var index = $rootScope.template.er7Templates.indexOf(template);
+        if (index > -1) {
+            $rootScope.template.er7Templates.splice(index, 1);
         }
     };
 
@@ -798,6 +866,29 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
             var cate = template.categorizations[i];
             $rootScope.selectedTestStep.testDataCategorizationMap[cate.iPath] = cate.testDataCategorization;
         }
+    };
+
+
+    $scope.overrideSegmentTemplate = function (template){
+        $rootScope.selectedTestStep.testDataCategorizationMap = {};
+
+        for(var i in template.categorizations){
+            var cate = template.categorizations[i];
+            $rootScope.selectedTestStep.testDataCategorizationMap[cate.iPath] = cate.testDataCategorization;
+        }
+    };
+
+    $scope.overrideMessageTemplate = function (template){
+        $rootScope.selectedTestStep.testDataCategorizationMap = {};
+
+        for(var i in template.categorizations){
+            var cate = template.categorizations[i];
+            $rootScope.selectedTestStep.testDataCategorizationMap[cate.iPath] = cate.testDataCategorization;
+        }
+    };
+
+    $scope.overrideER7Template = function (template){
+
     };
 
 	$scope.deleteRepeatedField = function(node){

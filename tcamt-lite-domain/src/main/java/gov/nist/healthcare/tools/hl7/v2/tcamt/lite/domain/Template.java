@@ -23,6 +23,7 @@ public class Template implements Serializable, Cloneable {
 
 	private String name;
 	private String note;
+	private Set<ER7Template> er7Templates = new HashSet<ER7Template>(); 
 	private Set<MessageTemplate> messageTemplates = new HashSet<MessageTemplate>();
 	private Set<SegmentTemplate> segmentTemplates = new HashSet<SegmentTemplate>();
 
@@ -92,6 +93,16 @@ public class Template implements Serializable, Cloneable {
 
 	public void setSegmentTemplates(Set<SegmentTemplate> segmentTemplates) {
 		this.segmentTemplates = segmentTemplates;
+	}
+
+
+	public Set<ER7Template> getEr7Templates() {
+		return er7Templates;
+	}
+
+
+	public void setEr7Templates(Set<ER7Template> er7Templates) {
+		this.er7Templates = er7Templates;
 	}
 	
 	

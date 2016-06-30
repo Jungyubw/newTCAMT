@@ -1,11 +1,8 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Id;
 
-public class MessageTemplate {
+public class ER7Template {
 	@Id
 	private String id;
 
@@ -16,7 +13,7 @@ public class MessageTemplate {
 	private String integrationProfileId;
 	private String conformanceProfileId;
 	
-	private List<Categorization> categorizations = new ArrayList<Categorization>();
+	private String er7Message;
 
 	public String getId() {
 		return id;
@@ -50,6 +47,14 @@ public class MessageTemplate {
 		this.date = date;
 	}
 
+	public String getIntegrationProfileId() {
+		return integrationProfileId;
+	}
+
+	public void setIntegrationProfileId(String integrationProfileId) {
+		this.integrationProfileId = integrationProfileId;
+	}
+
 	public String getConformanceProfileId() {
 		return conformanceProfileId;
 	}
@@ -58,21 +63,14 @@ public class MessageTemplate {
 		this.conformanceProfileId = conformanceProfileId;
 	}
 
-	public List<Categorization> getCategorizations() {
-		return categorizations;
+	public String getEr7Message() {
+		return er7Message;
 	}
 
-	public void setCategorizations(List<Categorization> categorizations) {
-		this.categorizations = categorizations;
+	public void setEr7Message(String er7Message) {
+		this.er7Message = er7Message;
 	}
-
-	public String getIntegrationProfileId() {
-		return integrationProfileId;
-	}
-
-	public void setIntegrationProfileId(String integrationProfileId) {
-		this.integrationProfileId = integrationProfileId;
-	}
+	
 	
 	
 }

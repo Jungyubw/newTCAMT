@@ -11,8 +11,6 @@
 
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.converters.TestPlanReadConverter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +49,6 @@ public class MongoConfig extends AbstractMongoConfiguration {
 	@Bean
 	public CustomConversions customConversions() {
 		List<Converter<?, ?>> converterList = new ArrayList<Converter<?, ?>>();
-		converterList.add(new TestPlanReadConverter());
 		return new CustomConversions(converterList);
 	}
 
