@@ -5,116 +5,128 @@
 		antiClickjack.parentNode.removeChild(antiClickjack);
 	} else {
 		top.location = self.location;
-	}</script> <script type="text/ng-template" id="EditTestStepMetadata.html"><ul class="nav nav-pills">
-		<li class="active"><a data-toggle="pill" ng-click="selectedTestStepTab = 1"><i class="fa fa-file-text-o fa-fw"></i> MetaData</a></li>
-		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 2"><i class="fa fa-file-text-o fa-fw"></i> Test Story</a></li>
-		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 3; initHL7EncodedMessageTab();"><i class="fa fa-file-text-o fa-fw"></i> HL7 Encoded Message</a></li>
-		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 4; initTestData();"><i class="fa fa-file-text-o fa-fw"></i> Test Data</a></li>
-		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 5"><i class="fa fa-file-text-o fa-fw"></i> Validation</a></li>
-		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 6"><i class="fa fa-file-text-o fa-fw"></i> STD/NIST XML</a></li>
-		<li><a data-toggle="pill" ng-click="selectedTestStepTab = 7"><i class="fa fa-file-text-o fa-fw"></i> Supplement Documents</a></li>
-	</ul>
-  	
-	<div ng-show="selectedTestStepTab == 1">
-		<form name="testcasegroupMetaDataForm" class="form-horizontal" novalidate>
-			<div class="row" style="margin:12px">
-				<div class="col-md-2">
-					<label class="control-label">Name:</label>
-				</div>
-				<div class="col-md-10">
-					<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestStep.name" required />
-				</div>
-			</div>
+	}</script> <script type="text/ng-template" id="EditTestStepMetadata.html"><div ng-show="selectedTestStep">
+		<ul class="nav nav-pills">
+			<li ng-class="{active: isSelectedTestStepTab(1)}"><a data-toggle="pill" ng-click="changeTestStepTab(1);"><i class="fa fa-file-text-o fa-fw"></i> MetaData</a></li>
+			<li ng-class="{active: isSelectedTestStepTab(2)}"><a data-toggle="pill" ng-click="changeTestStepTab(2);"><i class="fa fa-file-text-o fa-fw"></i> Test Story</a></li>
+			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(3)}"><a data-toggle="pill" ng-click="changeTestStepTab(3); initHL7EncodedMessageTab();"><i class="fa fa-file-text-o fa-fw"></i> HL7 Encoded Message</a></li>
+			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(4)}"><a data-toggle="pill" ng-click="changeTestStepTab(4); initTestData();"><i class="fa fa-file-text-o fa-fw"></i> Test Data</a></li>
+			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(5)}"><a data-toggle="pill" ng-click="changeTestStepTab(5);"><i class="fa fa-file-text-o fa-fw"></i> Validation</a></li>
+			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(6)}"><a data-toggle="pill" ng-click="changeTestStepTab(6);"><i class="fa fa-file-text-o fa-fw"></i> STD/NIST XML</a></li>
+			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(7)}"><a data-toggle="pill" ng-click="changeTestStepTab(7);"><i class="fa fa-file-text-o fa-fw"></i> Supplement Documents</a></li>
+		</ul>
 
-			<div class="row" style="margin:12px">
-				<div class="col-md-2">
-					<label class="control-label">Description:</label>
+		<div ng-show="isSelectedTestStepTab(1);">
+			<form name="testcasegroupMetaDataForm" class="form-horizontal" novalidate>
+				<div class="row" style="margin:12px">
+					<div class="col-md-2">
+						<label class="control-label">Name:</label>
+					</div>
+					<div class="col-md-10">
+						<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestStep.name" required />
+					</div>
 				</div>
-				<div class="col-md-10">
-					<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestStep.description" required />
-				</div>
-			</div>
 
-			<div class="row" style="margin:12px">
-				<div class="col-md-2">
-					<label class="control-label">Integration Profile:</label>
+				<div class="row" style="margin:12px">
+					<div class="col-md-2">
+						<label class="control-label">Description:</label>
+					</div>
+					<div class="col-md-10">
+						<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestStep.description" required />
+					</div>
 				</div>
-				<div class="col-md-10">
-					<span ng-show="selectedIntegrationProfile">{{selectedIntegrationProfile.sectionTitle}}</span>
-				</div>
-			</div>
 
-			<div ng-show="selectedIntegrationProfile" class="row" style="margin:12px">
-				<div class="col-md-2">
-					<label class="control-label">Conformance Profile:</label>
-				</div>
-				<div class="col-md-10">
-					<span ng-show="selectedConformanceProfile">{{selectedConformanceProfile.name}}</span>
-				</div>
-			</div>
-		</form>
-	</div>
+				<div ng-show="selectedIntegrationProfile">
+					<div class="row" style="margin:12px">
+						<div class="col-md-2">
+							<label class="control-label">Integration Profile:</label>
+						</div>
+						<div class="col-md-10">
+							<span ng-show="selectedIntegrationProfile">{{selectedIntegrationProfile.sectionTitle}}</span>
+						</div>
+					</div>
 
-    <div ng-show="selectedTestStepTab == 2">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="form-group">
-					<label class="control-label">Description</label>
-					<textarea froala ng-change="recordChanged()" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc"></textarea>
+					<div class="row" style="margin:12px">
+						<div class="col-md-2">
+							<label class="control-label">Conformance Profile:</label>
+						</div>
+						<div class="col-md-10">
+							<span ng-show="selectedConformanceProfile">{{selectedConformanceProfile.name}}</span>
+						</div>
+					</div>
+
+					<div class="row" style="margin:12px">
+					<span class="pull-right">
+						<button title="Delete Profile" type="button" class="btn btn-danger btn-xs" ng-click="deleteProfile();">
+							<span><i class="fa fa-cross fa-fw"></i> Delete Profile (Make Manual TestStep)</span>
+						</button>
+					</span>
+					</div>
 				</div>
-			</div>
-				
-			<div class="col-md-12">
-				<div class="form-group">
-					<label class="control-label">Comments</label>
-					<textarea froala ng-change="recordChanged()" name="comments" ng-model="selectedTestStep.testStepStory.comments" required ></textarea>
+
+			</form>
+		</div>
+
+		<div ng-show="isSelectedTestStepTab(2);">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Description</label>
+						<textarea froala ng-change="recordChanged()" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc"></textarea>
+					</div>
 				</div>
-			</div>
-				
-			<div class="col-md-12">
-				<div class="form-group">
-					<label class="control-label">Pre Condition</label>
-					<textarea froala ng-change="recordChanged()" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required ></textarea>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Comments</label>
+						<textarea froala ng-change="recordChanged()" name="comments" ng-model="selectedTestStep.testStepStory.comments" required ></textarea>
+					</div>
 				</div>
-			</div>
-				
-			<div class="col-md-12">
-				<div class="form-group">
-					<label class="control-label">Post Condition</label>
-					<textarea froala ng-change="recordChanged()" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required ></textarea>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Pre Condition</label>
+						<textarea froala ng-change="recordChanged()" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required ></textarea>
+					</div>
 				</div>
-			</div>
-				
-			<div class="col-md-12">
-				<div class="form-group">
-					<label class="control-label">Test Objectives</label>
-					<textarea froala ng-change="recordChanged()" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required></textarea>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Post Condition</label>
+						<textarea froala ng-change="recordChanged()" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required ></textarea>
+					</div>
 				</div>
-			</div>
-				
-			<div class="col-md-12">
-				<div class="form-group">
-					<label class="control-label">Evaluation Criteria</label>
-					<textarea froala ng-change="recordChanged()" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required ></textarea>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Test Objectives</label>
+						<textarea froala ng-change="recordChanged()" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required></textarea>
+					</div>
 				</div>
-			</div>
-				
-			<div class="col-md-12">
-				<div class="form-group">
-					<label class="control-label">Notes</label>
-					<textarea froala ng-change="recordChanged()" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Evaluation Criteria</label>
+						<textarea froala ng-change="recordChanged()" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required ></textarea>
+					</div>
+				</div>
+
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="control-label">Notes</label>
+						<textarea froala ng-change="recordChanged()" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div ng-show="selectedTestStepTab == 3">
-		<ui-codemirror ui-codemirror-opts="editorOptions" ng-model="selectedTestStep.er7Message"></ui-codemirror>
-	</div>
+		<div ng-show="isSelectedTestStepTab(3);">
+			<ui-codemirror ui-codemirror-opts="editorOptions" ng-change="recordChanged()" ng-model="selectedTestStep.er7Message"></ui-codemirror>
+		</div>
 
-	<div ng-show="selectedTestStepTab == 4">
-		<div class="row">
-			<div class="col-md-12">
+		<div ng-show="isSelectedTestStepTab(4);">
+			<div class="row">
+				<div class="col-md-12">
 				<span class="pull-right">
 					<div class="btn-group btn-group-sm" data-toggle="buttons">
     					<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'All'}">
@@ -125,78 +137,101 @@
 						</label>
    					</div>
 				</span>
+				</div>
 			</div>
-		</div>
-		<div class="row">
-        	<accordion close-others="false">
-            	<accordion-group is-open="testDataAccordi.segmentList" panel-class="panel-primary">
-                	<accordion-heading>
-						<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.segmentList, 'fa-caret-right': !testDataAccordi.segmentList}"></i>
-                    	<i class="fa fa-file-text-o fa-fw"></i> Segments List
-                	</accordion-heading>
-					<div class="col-md-12">
-                		<div class="table-responsive">
-                    		<table class="table table-striped table-bordered">
-                        		<thead>
-                        			<tr class="tbl-header">
+			<div class="row">
+				<accordion close-others="false">
+					<accordion-group is-open="testDataAccordi.segmentList" panel-class="panel-primary">
+						<accordion-heading>
+							<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.segmentList, 'fa-caret-right': !testDataAccordi.segmentList}"></i>
+							<i class="fa fa-file-text-o fa-fw"></i> Segments List
+						</accordion-heading>
+						<div class="col-md-12">
+							<div class="table-responsive">
+								<table class="table table-striped table-bordered">
+									<thead>
+									<tr class="tbl-header">
 										<th class="col-md-4">Path</th>
-                            			<th class="col-md-5">Line</th>
-                            			<th class="col-md-2">Usage</th>
+										<th class="col-md-5">Line</th>
+										<th class="col-md-2">Usage</th>
 										<th class="col-md-1">Action</th>
-                        			</tr>
-                        		</thead>
-                        		<tbody>
-                        			<tr ng-repeat="segment in segmentList | filter:filterForSegmentList">
-                            			<td class="col-md-4">
+									</tr>
+									</thead>
+									<tbody>
+									<tr ng-repeat="segment in segmentList | filter:filterForSegmentList">
+										<td class="col-md-4">
 											{{segment.iPath}}
-                            			</td>
+										</td>
 										<td class="col-md-5">
 											{{segment.segmentStr}}
-                            			</td>
+										</td>
 										<td class="col-md-2">
 											{{segment.usagePath}}
-                            			</td>
+										</td>
 										<td class="col-md-1">
 											<button title="Select Segment"
-                                    			type="button" class="btn btn-primary btn-xs" ng-click="selectSegment(segment)">
-                                        			<span><i class="fa fa-pencil fa-fw"></i> Select</span>
-                            				</button>
-                            			</td>
-                        			</tr>
-                        		</tbody>
-                    		</table>
-                		</div>
-            		</div>
-            	</accordion-group>
+													type="button" class="btn btn-primary btn-xs" ng-click="selectSegment(segment)">
+												<span><i class="fa fa-pencil fa-fw"></i> Select</span>
+											</button>
+										</td>
+									</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</accordion-group>
 
-	            <accordion-group is-open="testDataAccordi.selectedSegment" panel-class="panel-primary">
-    	            <accordion-heading>
-						<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.selectedSegment, 'fa-caret-right': !testDataAccordi.selectedSegment}"></i>
-                    	<i class="fa fa-pencil fa-fw"></i> Selected Segment
-                	</accordion-heading>
-					<div class="col-md-12">
-						<span class="pull-right">
-							<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="createMessageTemplate()">
-                            	<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
-                            </button>
-							<button title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="createSegmentTemplate()">
-                            	<span><i class="fa fa-pencil fa-fw"></i> Make Segment TestData Cate. Template</span>
-                            </button>
-						</span>
-					</div>
-					<div class="col-md-12">
-						<span class="pull-right">
-							<span ng-dropdown-multiselect="" options="colsData" selected-model="selectedCols" extra-settings="smartButtonSettings"></span>
-						</span>
-					</div>
-                	<div class="col-md-12">
-						<div class="table-responsive">
-            				<table tt-table tt-params="segmentParams" class="table table-bordered table-fix-header table-condensed profile-table">
-                				<thead>
-                					<tr class="tbl-header">
-                    					<th class="col-md-1">Path</th>
-                            			<th class="col-md-1">Name</th>
-                            			<th class="col-md-1" ng-show="isShow(1)">DT</th>
+					<accordion-group is-open="testDataAccordi.selectedSegment" panel-class="panel-primary">
+						<accordion-heading>
+							<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.selectedSegment, 'fa-caret-right': !testDataAccordi.selectedSegment}"></i>
+							<i class="fa fa-pencil fa-fw"></i> Selected Segment
+						</accordion-heading>
+
+
+						<div class="row" style="margin:12px">
+							<div class="col-md-2">
+								<label class="control-label">Selected Segment:</label>
+							</div>
+							<div class="col-md-10">
+								<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.iPath" />
+							</div>
+						</div>
+
+						<div class="row" style="margin:12px">
+							<div class="col-md-2">
+								<label class="control-label">Line String:</label>
+							</div>
+							<div class="col-md-10">
+								<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.segmentStr" />
+							</div>
+						</div>
+
+						<div class="col-md-12">
+							<div class="col-md-9">
+							<span class="pull-left">
+								<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="createMessageTemplate()">
+                            		<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
+                            	</button>
+								<button title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="createSegmentTemplate()">
+                            		<span><i class="fa fa-pencil fa-fw"></i> Make Segment TestData Cate. Template</span>
+                            	</button>
+							</span>
+							</div>
+							<div class="col-md-3">
+							<span class="pull-right">
+								<span ng-dropdown-multiselect="" options="colsData" selected-model="selectedCols" extra-settings="smartButtonSettings"></span>
+							</span>
+							</div>
+						</div>
+
+						<div class="col-md-12">
+							<div class="table-responsive">
+								<table tt-table tt-params="segmentParams" class="table table-bordered table-fix-header table-condensed profile-table">
+									<thead>
+									<tr class="tbl-header">
+										<th class="col-md-1">Path</th>
+										<th class="col-md-1">Name</th>
+										<th class="col-md-1" ng-show="isShow(1)">DT</th>
 										<th class="col-md-1" ng-show="isShow(2)">Usage</th>
 										<th class="col-md-1" ng-show="isShow(3)">Cardi.</th>
 										<th class="col-md-1" ng-show="isShow(4)">Length</th>
@@ -206,27 +241,28 @@
 										<th class="col-md-1">Value</th>
 										<th class="col-md-1">Test Data Cate.</th>
 										<th class="col-md-1">Action</th>
-                					</tr>
-                				</thead>
-                				<tbody></tbody>
-            				</table>
-        				</div>
-            		</div>
-            	</accordion-group>
-            	
-            	<accordion-group is-open="testDataAccordi.constraintList" panel-class="panel-primary">
-    	            <accordion-heading>
-						<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.constraintList, 'fa-caret-right': !testDataAccordi.constraintList}"></i>
-                    	<i class="fa fa-file-text-o fa-fw"></i> Constraints List
-                	</accordion-heading>
-                	<div>
-                	</div>
-            	</accordion-group>
-        	</accordion>
-        </div>
+									</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
+							</div>
+						</div>
+					</accordion-group>
+
+					<accordion-group is-open="testDataAccordi.constraintList" panel-class="panel-primary">
+						<accordion-heading>
+							<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.constraintList, 'fa-caret-right': !testDataAccordi.constraintList}"></i>
+							<i class="fa fa-file-text-o fa-fw"></i> Constraints List
+						</accordion-heading>
+						<div>
+						</div>
+					</accordion-group>
+				</accordion>
+			</div>
+		</div>
 	</div></script> <script type="text/ng-template" id="FieldTree.html"><tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
-			{{minimizePath(node.iPath)}}
+			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
 			{{node.field.name}}
@@ -259,11 +295,16 @@
 			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);"  ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
         </td>
 		<td class="col-md-1">
-			-
+			<button ng-show="!minimizePath(node.iPath).includes('[') && node.field.max != '0' && node.field.max != '1'" title="Delete Repeated Field" type="button" class="btn btn-info btn-xs" ng-click="addRepeatedField(node)">
+				<span><i class="fa fa-plus fa-fw"></i> </span>
+			</button>
+			<button ng-show="minimizePath(node.iPath).includes('[')" title="Delete Repeated Field" type="button" class="btn btn-danger btn-xs" ng-click="deleteRepeatedField(node)">
+				<span><i class="fa fa-times fa-fw"></i> </span>
+			</button>
         </td>
     </tr></script> <script type="text/ng-template" id="ComponentTree.html"><tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
-			{{minimizePath(node.iPath)}}
+			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
 			{{node.component.name}}
@@ -300,7 +341,7 @@
         </td>
     </tr></script> <script type="text/ng-template" id="SubComponentTree.html"><tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
-			{{minimizePath(node.iPath)}}
+			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
 			{{node.component.name}}

@@ -129,7 +129,7 @@ body {
 		</div>
 
 		<div ng-show="isSelectedTestStepTab(3);">
-			<ui-codemirror ui-codemirror-opts="editorOptions" ng-model="selectedTestStep.er7Message"></ui-codemirror>
+			<ui-codemirror ui-codemirror-opts="editorOptions" ng-change="recordChanged()" ng-model="selectedTestStep.er7Message"></ui-codemirror>
 		</div>
 
 		<div ng-show="isSelectedTestStepTab(4);">
@@ -308,7 +308,12 @@ body {
 			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);"  ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
         </td>
 		<td class="col-md-1">
-			-
+			<button ng-show="!minimizePath(node.iPath).includes('[') && node.field.max != '0' && node.field.max != '1'" title="Delete Repeated Field" type="button" class="btn btn-info btn-xs" ng-click="addRepeatedField(node)">
+				<span><i class="fa fa-plus fa-fw"></i> </span>
+			</button>
+			<button ng-show="minimizePath(node.iPath).includes('[')" title="Delete Repeated Field" type="button" class="btn btn-danger btn-xs" ng-click="deleteRepeatedField(node)">
+				<span><i class="fa fa-times fa-fw"></i> </span>
+			</button>
         </td>
     </tr>
 </script>

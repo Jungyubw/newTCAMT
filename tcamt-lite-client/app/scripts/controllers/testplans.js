@@ -94,10 +94,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
         $rootScope.selectedTestStep.conformanceProfileId = null;
     };
 
-    $scope.isNotManualTestStep = function(){
-        if($rootScope.selectedTestStep.integrationProfileId == null) return false;
-        return true;
-    };
+	$scope.isNotManualTestStep = function(){
+		if($rootScope.selectedTestStep == null || $rootScope.selectedTestStep.integrationProfileId == null) return false;
+		return true;
+	};
 
 	$scope.loadIntegrationProfile = function () {
         console.log($rootScope.selectedTestStep);
@@ -108,9 +108,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 				$scope.loadConformanceProfile();
 			}, function (error) {
 				$rootScope.selectedIntegrationProfile = null;
+				$rootScope.selectedTestStep.integrationProfileId = null;
+				$rootScope.selectedTestStep.conformanceProfileId = null;
 			});
 		}else {
 			$rootScope.selectedIntegrationProfile = null;
+			$rootScope.selectedTestStep.integrationProfileId = null;
 			$rootScope.selectedTestStep.conformanceProfileId = null;
 		}
 	};
@@ -233,6 +236,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		if (testStep != null) {
 			waitingDialog.show('Opening Test Step ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
+				$rootScope.selectedIntegrationProfile = null;
 				$rootScope.selectedTestStep = testStep;
 				if($rootScope.selectedTestStep.testDataCategorizationMap == undefined || $rootScope.selectedTestStep == null){
 					$rootScope.selectedTestStep.testDataCategorizationMap = {};
@@ -336,13 +340,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.initHL7EncodedMessageTab = function () {
+	};
+
+	$scope.initTestData = function () {
 		$scope.testDataAccordi = {};
 		$scope.testDataAccordi.segmentList = true;
 		$scope.testDataAccordi.selectedSegment = false;
 		$scope.testDataAccordi.constraintList = false;
-	};
-
-	$scope.initTestData = function () {
 		$scope.updateMessage();
 	};
 
@@ -576,7 +580,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	$scope.findTable = function (ref){
         if(ref === undefined || ref === null) return null;
-
+		if($rootScope.selectedIntegrationProfile == undefined || $rootScope.selectedIntegrationProfile == null) return null;
 		return _.find($rootScope.selectedIntegrationProfile.tables.children,function(t){
 			return t.id == ref.id;
 		});
@@ -584,6 +588,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	$scope.findDatatype = function (ref){
         if(ref === undefined || ref === null) return null;
+		if($rootScope.selectedIntegrationProfile == undefined || $rootScope.selectedIntegrationProfile == null) return null;
 		return _.find($rootScope.selectedIntegrationProfile.datatypes.children,function(d){
 			return d.id == ref.id;
 		});
@@ -591,6 +596,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	$scope.findSegment = function (ref){
         if(ref === undefined || ref === null) return null;
+		if($rootScope.selectedIntegrationProfile == undefined || $rootScope.selectedIntegrationProfile == null) return null;
 		return _.find($rootScope.selectedIntegrationProfile.segments.children,function(s){
 			return s.id == ref.id;
 		});
@@ -794,6 +800,35 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
         }
     };
 
+	$scope.deleteRepeatedField = function(node){
+		var index = $rootScope.selectedSegmentNode.children.indexOf(node);
+		if (index > -1) {
+			$rootScope.selectedSegmentNode.children.splice(index, 1);
+		}
+		$scope.updateValue(node);
+		$scope.refreshTree();
+	};
+
+	$scope.addRepeatedField = function (node) {
+		var fieldStr = node.value;
+		var fieldPosition = node.path.substring(node.path.lastIndexOf('.') + 1);
+		var splittedSegment = $rootScope.selectedSegmentNode.segment.segmentStr.split("|");
+		if($rootScope.selectedSegmentNode.segment.obj.name == 'MSH') fieldPosition = fieldPosition -1;
+		splittedSegment[fieldPosition] = splittedSegment[fieldPosition] + '~' + fieldStr;
+		var updatedStr = '';
+		for(var i in splittedSegment){
+			updatedStr = updatedStr + splittedSegment[i];
+			if(i < splittedSegment.length - 1) updatedStr = updatedStr + "|"
+		}
+		$rootScope.selectedSegmentNode.segment.segmentStr = updatedStr;
+		var updatedER7Message = '';
+		for(var i in $rootScope.segmentList){
+			updatedER7Message = updatedER7Message + $rootScope.segmentList[i].segmentStr + '\n';
+		}
+		$rootScope.selectedTestStep.er7Message = updatedER7Message;
+		$scope.selectSegment($rootScope.selectedSegmentNode.segment);
+	};
+
 	$scope.updateValue =function(node){
 		var segmentStr = $rootScope.selectedSegmentNode.segment.obj.name;
 		var previousFieldPath = '';
@@ -841,8 +876,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}
         if(segmentStr.substring(0,11) == "MSH|||^~\\&|") segmentStr = 'MSH|^~\\&|' + segmentStr.substring(11);
 
-
         $rootScope.selectedSegmentNode.segment.segmentStr = segmentStr;
+
+		var updatedER7Message = '';
+
+		for(var i in $rootScope.segmentList){
+			updatedER7Message = updatedER7Message + $rootScope.segmentList[i].segmentStr + '\n';
+		}
+
+		$rootScope.selectedTestStep.er7Message = updatedER7Message;
 	};
 
 	$scope.reviseStr = function (str, seperator) {
