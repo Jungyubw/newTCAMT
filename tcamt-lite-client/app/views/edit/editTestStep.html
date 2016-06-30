@@ -271,8 +271,22 @@ body {
 				</accordion>
 			</div>
 		</div>
-	</div>
 
+		<div ng-show="selectedTestStepTab == 5">
+			<ui-codemirror ui-codemirror-opts="editorOptions" ng-model="selectedTestStep.er7Message"></ui-codemirror>
+
+			<div class="row">
+				<span class="col-md-4"></span>
+				<button class="btn btn-xs btn-success col-md-4" ng-click="validate()">Validate</button>
+				<span class="col-md-4"></span>
+			</div>
+
+			<div class="panel-body"  style="padding: center; max-height: 500px;	overflow-y: scroll;">
+
+				<ng-bind-html ng-bind-html="result"/>
+			</div>
+		</div>
+	</div>
 </script>
 
 <script type="text/ng-template" id="FieldTree.html">

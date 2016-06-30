@@ -2,21 +2,36 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/converters/TestPlanReadConverter.java" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.tmp/concat/scripts/scripts.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/controller/ValidationController.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/resources/messages/Message1.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/resources/profiles/VXU_Z22/VXU-Z22_Constraints.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/resources/profiles/VXU_Z22/VXU-Z22_Profile.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/resources/profiles/VXU_Z22/VXU-Z22_ValueSetLibrary.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/test/resources/messages/Message1.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/test/resources/profiles/IZ_Constraints.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/test/resources/profiles/IZ_Profile.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/test/resources/profiles/IZ_ValueSetLibrary.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/test/resources/profiles/VXU_Z22/VXU-Z22_Constraints.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/test/resources/profiles/VXU_Z22/VXU-Z22_Profile.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/test/resources/profiles/VXU_Z22/VXU-Z22_ValueSetLibrary.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/index.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editTestStep.html" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-acmgt/target/igl-acmgt.jar" afterPath="$PROJECT_DIR$/../tcamt-lite-acmgt/target/igl-acmgt.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-acmgt/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/../tcamt-lite-acmgt/target/maven-archiver/pom.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.tmp/styles/main.css" afterPath="$PROJECT_DIR$/.tmp/styles/main.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/dev/app.js" afterPath="$PROJECT_DIR$/app/dev/app.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/index.html" afterPath="$PROJECT_DIR$/app/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/resources/template.json" afterPath="$PROJECT_DIR$/app/resources/template.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestPlan.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestPlan.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/styles/main.scss" afterPath="$PROJECT_DIR$/app/styles/main.scss" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/config/MongoConfig.java" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/config/MongoConfig.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/index.html" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/webapp/views/edit/editTestStep.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/Categorization.java" afterPath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/Categorization.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/MessageTemplate.java" afterPath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/MessageTemplate.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/Template.java" afterPath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/Template.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/TestStep.java" afterPath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/TestStep.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/pom.xml" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/resources/profiles/IZ_Constraints.xml" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/resources/profiles/IZ_Constraints.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/resources/profiles/IZ_Profile.xml" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/resources/profiles/IZ_Profile.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/resources/profiles/IZ_ValueSetLibrary.xml" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/resources/profiles/IZ_ValueSetLibrary.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-domain/pom.xml" afterPath="$PROJECT_DIR$/../tcamt-lite-domain/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-service/pom.xml" afterPath="$PROJECT_DIR$/../tcamt-lite-service/pom.xml" />
     </list>
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,9 +55,13 @@
       <file leaf-file-name="editTestStep.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="200" column="34" selection-start-line="200" selection-start-column="34" selection-end-line="200" selection-end-column="34" />
-              <folding />
+            <state relative-caret-position="684">
+              <caret line="279" column="79" selection-start-line="279" selection-start-column="79" selection-end-line="279" selection-end-column="79" />
+              <folding>
+                <element signature="n#script#2;n#!!top" expanded="false" />
+                <element signature="n#script#3;n#!!top" expanded="false" />
+                <element signature="n#script#4;n#!!top" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -57,7 +76,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="editTestPlan.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="editTestPlan.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/edit/editTestPlan.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="690">
@@ -67,12 +86,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="testplans.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="testplans.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="464">
-              <caret line="881" column="33" selection-start-line="881" selection-start-column="33" selection-end-line="881" selection-end-column="33" />
-              <folding />
+            <state relative-caret-position="531">
+              <caret line="1003" column="11" selection-start-line="1003" selection-start-column="11" selection-end-line="1003" selection-end-column="113" />
+              <folding>
+                <element signature="e#37711#38802#0" expanded="false" />
+                <element signature="e#38832#40382#0" expanded="false" />
+                <element signature="e#40411#42247#0" expanded="false" />
+                <element signature="e#42276#42906#0" expanded="false" />
+                <element signature="e#42935#43151#0" expanded="false" />
+                <element signature="e#43180#43396#0" expanded="false" />
+                <element signature="e#43422#43747#0" expanded="false" />
+                <element signature="e#43861#43948#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -80,12 +108,9 @@
       <file leaf-file-name="TemplateToc.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/TemplateToc.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
+            <state relative-caret-position="1455">
               <caret line="97" column="60" selection-start-line="97" selection-start-column="60" selection-end-line="97" selection-end-column="60" />
-              <folding>
-                <marker date="1466704594000" expanded="true" signature="486:666" ph="{...}" />
-                <marker date="1466704594000" expanded="true" signature="1421:1601" ph="{...}" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -104,10 +129,10 @@
         <option value="$PROJECT_DIR$/app/resources/57450d2bd4c6f57e697c4078.json" />
         <option value="$PROJECT_DIR$/app/dev/profileBackEndStub.js" />
         <option value="$PROJECT_DIR$/app/resources/testplans.json" />
-        <option value="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
         <option value="$PROJECT_DIR$/app/resources/template.json" />
-        <option value="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
         <option value="$PROJECT_DIR$/app/views/edit/editTestPlan.html" />
+        <option value="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
+        <option value="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
       </list>
     </option>
   </component>
@@ -271,7 +296,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -462,6 +486,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -479,7 +504,7 @@
       <recent name="$PROJECT_DIR$/app/resources" />
     </key>
   </component>
-  <component name="RunManager" selected="Grunt.js.SERVE">
+  <component name="RunManager" selected="Grunt.js.Build">
     <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
       <method />
     </configuration>
@@ -589,11 +614,12 @@
       <workItem from="1466692309990" duration="16054000" />
       <workItem from="1467239652886" duration="4993000" />
       <workItem from="1467296624127" duration="8143000" />
+      <workItem from="1467317064967" duration="1503000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="48583000" />
+    <option name="totallyTimeSpent" value="50086000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1920" y="0" width="2560" height="1440" extended-state="0" />
@@ -603,7 +629,6 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1346987" sideWeight="0.20554066" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16864784" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1768202" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -616,6 +641,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16864784" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -632,7 +658,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="4" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -641,7 +667,11 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4155">
           <caret line="277" column="14" selection-start-line="277" selection-start-column="14" selection-end-line="277" selection-end-column="50" />
-          <folding />
+          <folding>
+            <element signature="n#script#2;n#!!top" expanded="false" />
+            <element signature="n#script#3;n#!!top" expanded="false" />
+            <element signature="n#script#4;n#!!top" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -657,7 +687,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#37711#38802#0" expanded="false" />
+            <element signature="e#38832#40382#0" expanded="false" />
+            <element signature="e#40411#42247#0" expanded="false" />
+            <element signature="e#42276#42906#0" expanded="false" />
+            <element signature="e#42935#43151#0" expanded="false" />
+            <element signature="e#43180#43396#0" expanded="false" />
+            <element signature="e#43422#43747#0" expanded="false" />
+            <element signature="e#43861#43948#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -665,7 +704,11 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4035">
           <caret line="269" column="14" selection-start-line="269" selection-start-column="14" selection-end-line="269" selection-end-column="14" />
-          <folding />
+          <folding>
+            <element signature="n#script#2;n#!!top" expanded="false" />
+            <element signature="n#script#3;n#!!top" expanded="false" />
+            <element signature="n#script#4;n#!!top" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -681,7 +724,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="6" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -705,7 +747,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -713,7 +754,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="735">
           <caret line="49" column="28" selection-start-line="49" selection-start-column="28" selection-end-line="52" selection-end-column="37" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -721,7 +761,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="10845">
           <caret line="723" column="21" selection-start-line="723" selection-start-column="21" selection-end-line="723" selection-end-column="21" />
-          <folding />
+          <folding>
+            <element signature="e#37711#38802#0" expanded="false" />
+            <element signature="e#38832#40382#0" expanded="false" />
+            <element signature="e#40411#42247#0" expanded="false" />
+            <element signature="e#42276#42906#0" expanded="false" />
+            <element signature="e#42935#43151#0" expanded="false" />
+            <element signature="e#43180#43396#0" expanded="false" />
+            <element signature="e#43422#43747#0" expanded="false" />
+            <element signature="e#43861#43948#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -729,7 +778,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -737,7 +785,11 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5190">
           <caret line="346" column="125" selection-start-line="346" selection-start-column="125" selection-end-line="346" selection-end-column="125" />
-          <folding />
+          <folding>
+            <element signature="n#script#2;n#!!top" expanded="false" />
+            <element signature="n#script#3;n#!!top" expanded="false" />
+            <element signature="n#script#4;n#!!top" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -745,7 +797,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#37711#38802#0" expanded="false" />
+            <element signature="e#38832#40382#0" expanded="false" />
+            <element signature="e#40411#42247#0" expanded="false" />
+            <element signature="e#42276#42906#0" expanded="false" />
+            <element signature="e#42935#43151#0" expanded="false" />
+            <element signature="e#43180#43396#0" expanded="false" />
+            <element signature="e#43422#43747#0" expanded="false" />
+            <element signature="e#43861#43948#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -760,7 +821,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#37711#38802#0" expanded="false" />
+            <element signature="e#38832#40382#0" expanded="false" />
+            <element signature="e#40411#42247#0" expanded="false" />
+            <element signature="e#42276#42906#0" expanded="false" />
+            <element signature="e#42935#43151#0" expanded="false" />
+            <element signature="e#43180#43396#0" expanded="false" />
+            <element signature="e#43422#43747#0" expanded="false" />
+            <element signature="e#43861#43948#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -789,7 +859,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
           <caret line="1" column="1514" selection-start-line="1" selection-start-column="1514" selection-end-line="1" selection-end-column="1514" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -918,7 +987,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -926,7 +994,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="735">
           <caret line="49" column="28" selection-start-line="49" selection-start-column="28" selection-end-line="52" selection-end-column="37" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -934,7 +1001,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="6" column="6" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -950,15 +1016,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="1" column="1514" selection-start-line="1" selection-start-column="1514" selection-end-line="1" selection-end-column="1514" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="200" column="34" selection-start-line="200" selection-start-column="34" selection-end-line="200" selection-end-column="34" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -972,19 +1029,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/TemplateToc.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
+        <state relative-caret-position="1455">
           <caret line="97" column="60" selection-start-line="97" selection-start-column="60" selection-end-line="97" selection-end-column="60" />
-          <folding>
-            <marker date="1466704594000" expanded="true" signature="486:666" ph="{...}" />
-            <marker date="1466704594000" expanded="true" signature="1421:1601" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="464">
-          <caret line="881" column="33" selection-start-line="881" selection-start-column="33" selection-end-line="881" selection-end-column="33" />
           <folding />
         </state>
       </provider>
@@ -1002,6 +1048,43 @@
         <state relative-caret-position="690">
           <caret line="67" column="0" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/karma/lib/init.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="123" column="2" selection-start-line="123" selection-start-column="2" selection-end-line="123" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="279" column="79" selection-start-line="279" selection-start-column="79" selection-end-line="279" selection-end-column="79" />
+          <folding>
+            <element signature="n#script#2;n#!!top" expanded="false" />
+            <element signature="n#script#3;n#!!top" expanded="false" />
+            <element signature="n#script#4;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="531">
+          <caret line="1003" column="11" selection-start-line="1003" selection-start-column="11" selection-end-line="1003" selection-end-column="113" />
+          <folding>
+            <element signature="e#37711#38802#0" expanded="false" />
+            <element signature="e#38832#40382#0" expanded="false" />
+            <element signature="e#40411#42247#0" expanded="false" />
+            <element signature="e#42276#42906#0" expanded="false" />
+            <element signature="e#42935#43151#0" expanded="false" />
+            <element signature="e#43180#43396#0" expanded="false" />
+            <element signature="e#43422#43747#0" expanded="false" />
+            <element signature="e#43861#43948#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

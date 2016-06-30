@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService) {
+angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce) {
 	$scope.loading = false;
     $scope.selectedTestStepTab = 1;
 	$rootScope.tps = [];
@@ -963,7 +963,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
                 segmentStr = $scope.reviseStr(segmentStr, '|');
             }
 
-
 		}
         if(segmentStr.substring(0,11) == "MSH|||^~\\&|") segmentStr = 'MSH|^~\\&|' + segmentStr.substring(11);
 
@@ -988,6 +987,42 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	};
 
+	$scope.result="";
+	//validation 
+	$scope.validate = function () {
+		$scope.result="";
+		var message = $rootScope.selectedTestStep.er7Message;
+		var igDocumentId = $rootScope.selectedTestStep.integrationProfileId;
+        var conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
+
+		var req = {
+		    method: 'POST',
+		    url: 'api/validation',
+		    headers: {
+		        'Content-Type': undefined
+		    },
+		    params: { message: message, igDocumentId: igDocumentId, conformanceProfileId : conformanceProfileId }
+		}
+		
+		
+
+        var promise = $http(req).success(function(data, status, headers, config) {
+			 //console.log(data);
+
+            $scope.result=$sce.trustAsHtml(data.html);
+            console.log($scope.result);
+                return data;
+        }).error(function(data,status,headers,config){
+            if(status === 404)
+                console.log("Could not reach the server");
+            else if(status === 403) {
+                console.log("limited access");
+            }
+        });
+
+        return promise;
+    };
+	
 	//Tree Functions
 	$scope.activeModel={};
 
@@ -1277,7 +1312,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}]
 
 	];
-	$scope.MessageOptions=[
+
+    $scope.MessageOptions=[
 
 
 
@@ -1289,10 +1325,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			$scope.applyMessageTemplate($itemScope.msgTmp);
 		}]
 	];
-	
 
-
-		$scope.SegmentOptions=[
+    $scope.SegmentOptions=[
 
 
 
@@ -1305,7 +1339,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}]
 	];
 
-
 	$scope.ApplyProfile = [
 
 	                  		['Apply Profile', function($itemScope) {
@@ -1317,15 +1350,16 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	                  	];
 
-
 	$scope.messagetempCollapsed=false;
 	$scope.segmenttempCollapsed=false;
-	$scope.switchermsg= function(bool){
+
+    $scope.switchermsg= function(bool){
 		console.log(bool);
 		$scope.messagetempCollapsed = !$scope.messagetempCollapsed;
 	};
-		$scope.switcherseg= function(bool){
-	$scope.segmenttempCollapsed = !$scope.segmenttempCollapsed;
+
+    $scope.switcherseg= function(bool){
+	    $scope.segmenttempCollapsed = !$scope.segmenttempCollapsed;
 	};
 
 
