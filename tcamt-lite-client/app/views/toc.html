@@ -105,7 +105,9 @@ body {
 											<span class="label label-segment label-icon draggable">S</span>
 											<span data-nodrag
 												ng-click="Activate(this); selectTestStep(step);"
-												ng-class="{selected : this.$modelValue===activeModel, used :  this.$modelValue.conformanceProfileId===message.id||this.$modelValue.integrationProfileId===igdocument.id}">
+												ng-class="{selected : this.$modelValue===activeModel, 
+
+															used :  this.$modelValue.conformanceProfileId===message.id||this.$modelValue.integrationProfileId===igdocument.id || this.$modelValue.conformanceProfileId===selectedTemplate.conformanceProfileId }">
 												[{{step.position}}] {{step.name}} </span>
 										</div>
 									</div>
@@ -130,7 +132,7 @@ body {
 										style="margin-left: 13px;">S</span> <span data-nodrag
 										ng-click="Activate(this); selectTestStep(step);"
 										ng-class="{selected : this.$modelValue===activeModel ,
-										used :this.$modelValue.conformanceProfileId===message.id||this.$modelValue.integrationProfileId===igdocument.id}">
+													used :  (this.$modelValue.conformanceProfileId ===message.id || this.$modelValue.integrationProfileId===igdocument.id || this.$modelValue.conformanceProfileId===selectedTemplate.conformanceProfileId) }">
 										[{{step.position}}]{{step.name}} </span>
 								</div>
 							</div>

@@ -9,6 +9,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.testPlanOptions=[];
 	$scope.accordi = {metaData: false, definition: true, igList: true, igDetails: false};
 	$rootScope.usageViewFilter = 'All';
+	$rootScope.selectedTemplate=null;
 
 	$scope.loadTestPlans = function () {
 		var delay = $q.defer();
@@ -184,10 +185,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.editTestPlan = function () {
+		$rootScope.selectedTemplate=null;
+		$rootScope.selectedSegmentNode =null;
+		$rootScope.selectedTestStep=null;
 		$scope.subview = "EditTestPlanMetadata.html";
 	};
 	
 	$scope.OpenIgMetadata= function(ig){
+		$rootScope.selectedTemplate=null;
+		$rootScope.selectedSegmentNode =null;
 		$rootScope.selectedTestStep=null;
 		$rootScope.igDocument=ig;
 		$scope.subview = "EditDocumentMetadata.html";
@@ -195,6 +201,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	}
 	
 	$scope.OpenMessageMetadata= function(msg){
+		$rootScope.selectedTemplate=null;
+		$rootScope.selectedSegmentNode =null;
 		$rootScope.selectedTestStep=null;
 		$rootScope.message=msg;
 		$scope.subview = "MessageMetadata.html";
@@ -213,6 +221,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.editTestCaseGroup = function () {
+		$rootScope.selectedTemplate=null;
+		$rootScope.selectedSegmentNode =null;
+		$rootScope.selectedTestStep=null;
 		$scope.subview = "EditTestCaseGroupMetadata.html";
 	};
 
@@ -229,6 +240,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.editTestCase = function () {
+		$rootScope.selectedTemplate=null;
+		$rootScope.selectedSegmentNode =null;
+		$rootScope.selectedTestStep=null;
 		$scope.subview = "EditTestCaseMetadata.html";
 	};
 
@@ -259,6 +273,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     };
 
 	$scope.editTestStep = function () {
+		$rootScope.selectedTemplate=null;
+		$rootScope.selectedSegmentNode =null;
 		$scope.subview = "EditTestStepMetadata.html";
 	};
 
@@ -1323,7 +1339,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}],
 		null, ['Apply Template', function($itemScope) {
 			$scope.applyMessageTemplate($itemScope.msgTmp);
+		}],
+		null,
+		['	Override Template', function($itemScope) {
+			$scope.overrideMessageTemplate($itemScope.msgTmp);
 		}]
+
 	];
 
     $scope.SegmentOptions=[
@@ -1336,8 +1357,35 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}],
 		null, ['Apply Template', function($itemScope) {
 			$scope.applySegmentTemplate($itemScope.segTmp);
+		}],
+		null,
+		['Override Template', function($itemScope) {
+			$scope.overrideSegmentTemplate($itemScope.segTmp);
 		}]
+
 	];
+
+	  $scope.Er7Options=[
+
+
+
+		['Delete Template', function($itemScope) {
+		$scope.deleteER7Template($itemScope.er7Tmp);
+
+		}],
+		null, 
+		['Apply Template', function($itemScope) {
+			$scope.applyER7Template($itemScope.er7Tmp);
+		}],
+		null,
+		['Override Template', function($itemScope) {
+		$scope.overrideER7Template($itemScope.er7Tmp);
+
+		}]
+
+
+	];
+
 
 	$scope.ApplyProfile = [
 
@@ -1352,6 +1400,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	$scope.messagetempCollapsed=false;
 	$scope.segmenttempCollapsed=false;
+	$scope.Er7Collapsed=false;
 
     $scope.switchermsg= function(bool){
 		console.log(bool);
@@ -1362,21 +1411,53 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	    $scope.segmenttempCollapsed = !$scope.segmenttempCollapsed;
 	};
 
+	$scope.switcherIg= function(bool){
+	    $scope.segmenttempCollapsed = !$scope.segmenttempCollapsed;
+	};
+	 $scope.switcherEr7= function(bool){
+	    $scope.Er7Collapsed = !$scope.Er7Collapsed;
+	};
+	$scope.ChildVisible=function(ig){
+		if($rootScope.selectedTestStep===null || ig.id===$rootScope.selectedTestStep.integrationProfileId){
+			return true;
+		}
+		else if($rootScope.selectedTestStep===null){
+			return true;
+		}
+		
 
+	}
 	$scope.OpenMsgTemplateMetadata=function(msgtemp){
+		$rootScope.selectedTemplate=msgtemp;
+		console.log($rootScope.selectedTemplate);
+		$rootScope.selectedSegmentNode =null;
+		
 		$scope.msgTemplate=msgtemp;
 
 		$scope.subview = "MessageTemplateMetadata.html";
 	}
 	$scope.OpenTemplateMetadata=function(temp){
+		$rootScope.selectedTemplate=null;
+		$rootScope.selectedSegmentNode=null;
+
 		$scope.rootTemplate=temp;
 		console.log("here");
 		$scope.subview = "TemplateMetadata.html";
 	}
-	$scope.OpenSegmentTemplateMetadata=function(segtemp){
-		$scope.segTemplate=segtemp;
+	$scope.OpenSegmentTemplateMetadata=function(segTemp){
+		$rootScope.selectedTemplate=segTemp; //never used
+		$rootScope.selectedSegmentNode=null;
+		$scope.segmentTemplateObject=segTemp;
 		$scope.subview = "SegmentTemplateMetadata.html";
 	}
+
+	$scope.OpenEr7TemplatesMetadata=function(er7temp){
+		$rootScope.selectedTemplate=er7temp;
+		$rootScope.selectedSegmentNode.segment =null;
+		$scope.er7Template=er7temp;
+		$scope.subview = "Er7TemplateMetadata.html";
+	}
+
 
 });
 

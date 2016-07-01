@@ -1,17 +1,17 @@
 <div ui-tree>
     <ol ui-tree-nodes="" ng-model="igs">
         <li ng-repeat="ig in igs" ui-tree-node data-nodrag>
-            <div ui-tree-handle ng-click="Activate(this);OpenIgMetadata(ig)" ng-class="{selected : this.$modelValue===activeModel,used:selectedTestStep&& selectedTestStep.integrationProfileId===this.$modelValue.id}">
+            <div ui-tree-handle  ng-class="{selected : this.$modelValue===activeModel,used:selectedTestStep&&selectedTestStep.integrationProfileId===this.$modelValue.id}">
                 <span data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-plus" ng-class="{
                           'glyphicon glyphicon-plus': collapsed,
                           'glyphicon glyphicon-minus': !collapsed
                         }">
-                  </span> <span class="badge label-info">CP</span> {{ig.metaData.title}}
+                  </span> <span ng-click="Activate(this);OpenIgMetadata(ig)"> <span class="badge label-info">IP</span> {{ig.metaData.title}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="ig.profile.messages.children" ng-if="!collapsed">
                 <li ng-repeat="msg in ig.profile.messages.children" ui-tree-node>
-                    <div ui-tree-handle ng-click="Activate(this);OpenMessageMetadata(msg)" ng-class="{selected : this.$modelValue===activeModel ,used:selectedTestStep&& selectedTestStep.conformanceProfileId===this.$modelValue.id}">
-                        <span ng-hide="selectedTestStep"><span class=" label-success badge">CP</span>{{msg.name}}</span>
+                    <div ui-tree-handle ng-click="Activate(this);OpenMessageMetadata(msg)" ng-class="{selected : this.$modelValue===activeModel ,used:selectedTestStep&& selectedTestStep.conformanceProfileId===this.$modelValue.id || selectedTemplate.conformanceProfileId===this.$modelValue.id}">
+                        <span ng-hide="selectedTestStep">[{{$index+1}}]<span class=" label-success badge">CP</span>{{msg.name}}</span>
                         <span context-menu="ApplyProfile" ng-hide="!selectedTestStep">[{{$index+1}}]<span class="label-success badge">CP</span>{{msg.name}}-{{msg.description}}</span>
                     </div>
                 </li>
