@@ -1453,7 +1453,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	$scope.OpenEr7TemplatesMetadata=function(er7temp){
 		$rootScope.selectedTemplate=er7temp;
-		$rootScope.selectedSegmentNode.segment =null;
+		$rootScope.selectedSegmentNode =null;
 		$scope.er7Template=er7temp;
 		$scope.subview = "Er7TemplateMetadata.html";
 	}
