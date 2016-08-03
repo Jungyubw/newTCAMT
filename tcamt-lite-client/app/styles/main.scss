@@ -2416,3 +2416,10 @@ table.forumline > tr > td {
 .col-fixed-130 {
     width: 130px;
 }
+.st-sort-ascent:before{
+  content: '\25B2';
+}
+
+.st-sort-descent:before{
+  content: '\25BC';
+}

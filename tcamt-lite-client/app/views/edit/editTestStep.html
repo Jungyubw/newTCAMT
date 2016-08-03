@@ -150,8 +150,10 @@ body {
 				<accordion close-others="false">
 					<accordion-group is-open="testDataAccordi.segmentList" panel-class="panel-primary">
 						<accordion-heading>
-							<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.segmentList, 'fa-caret-right': !testDataAccordi.segmentList}"></i>
-							<i class="fa fa-file-text-o fa-fw"></i> Segments List
+							<span ng-click="segmentListAccordionClicked()">
+								<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.segmentList, 'fa-caret-right': !testDataAccordi.segmentList}"></i>
+								<i class="fa fa-file-text-o fa-fw"></i> Segments List
+							</span>
 						</accordion-heading>
 						<div class="col-md-12">
 							<div class="table-responsive">
@@ -190,8 +192,10 @@ body {
 
 					<accordion-group is-open="testDataAccordi.selectedSegment" panel-class="panel-primary">
 						<accordion-heading>
-							<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.selectedSegment, 'fa-caret-right': !testDataAccordi.selectedSegment}"></i>
-							<i class="fa fa-pencil fa-fw"></i> Selected Segment
+							<span ng-click="segmentAccordionClicked()">
+								<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.selectedSegment, 'fa-caret-right': !testDataAccordi.selectedSegment}"></i>
+								<i class="fa fa-pencil fa-fw"></i> Selected Segment
+							</span>
 						</accordion-heading>
 
 
@@ -262,10 +266,32 @@ body {
 
 					<accordion-group is-open="testDataAccordi.constraintList" panel-class="panel-primary">
 						<accordion-heading>
-							<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.constraintList, 'fa-caret-right': !testDataAccordi.constraintList}"></i>
-							<i class="fa fa-file-text-o fa-fw"></i> Constraints List
+							<span ng-click="constraintAccordionClicked()">
+								<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.constraintList, 'fa-caret-right': !testDataAccordi.constraintList}"></i>
+								<i class="fa fa-file-text-o fa-fw"></i> TestData Categorization List
+							</span>
 						</accordion-heading>
-						<div>
+						<div class="col-md-12">
+							<div class="table-responsive">
+								<table st-table="displayedCollection" st-safe-src="listOfTDC" class="table table-striped">
+									<thead>
+									<tr>
+										<th st-sort="iPath">Path</th>
+										<th st-sort="name">Name</th>
+										<th st-sort="testDataCategorization">TestData Categorization</th>
+										<th st-sort="listData">List Data</th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr ng-repeat="cate in displayedCollection">
+										<td>{{cate.iPath}}</td>
+										<td>{{cate.name}}</td>
+										<td>{{cate.testDataCategorization}}</td>
+										<td>{{cate.listData}}</td>
+									</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</accordion-group>
 				</accordion>
@@ -298,10 +324,20 @@ body {
 			{{node.field.name}}
         </td>
 		<td class="col-md-1" ng-show="isShow(1)">
-			{{node.dt.label}}
+			<div ng-show="!node.dt.ext">
+				{{node.dt.name}}
+			</div>
+			<div ng-show="node.dt.ext">
+				{{node.dt.name}}_{{node.dt.ext}}
+			</div>
         </td>
 		<td class="col-md-1" ng-show="isShow(2)">
-			{{node.field.usage}}
+			<div ng-show="!node.predicate">
+				{{node.field.usage}}
+			</div>
+			<div ng-show="node.predicate">
+				{{node.field.usage}} ({{node.predicate.trueUsage}}/{{node.predicate.falseUsage}})
+			</div>
         </td>
 		<td class="col-md-1" ng-show="isShow(3)">
 			[{{node.field.min}}..{{node.field.max}}]
@@ -313,17 +349,33 @@ body {
 			{{findTable(node.field.table).bindingIdentifier}}
         </td>
 		<td class="col-md-1" ng-show="isShow(6)">
-			-
+			<span>{{node.predicate.description}}</span>
         </td>
 		<td class="col-md-1" ng-show="isShow(7)">
-			-
+			<div ng-repeat="cs in node.conformanceStatments">
+				<span>{{cs.constraintId}} : {{cs.description}}</span>
+			</div>
         </td>
 		<td class="col-md-1">
-			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
+			<div ng-hide="hasChildren(node)">
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.value}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
+				</div>
+			</div>
         </td>
 		<td class="col-md-1">
-			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);"  ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
-        </td>
+			<div ng-hide="hasChildren(node)">
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.testDataCategorization}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
+				</div>
+			</div>
+		</td>
 		<td class="col-md-1">
 			<button ng-show="!minimizePath(node.iPath).includes('[') && node.field.max != '0' && node.field.max != '1'" title="Delete Repeated Field" type="button" class="btn btn-info btn-xs" ng-click="addRepeatedField(node)">
 				<span><i class="fa fa-plus fa-fw"></i> </span>
@@ -344,10 +396,20 @@ body {
 			{{node.component.name}}
         </td>
 		<td class="col-md-1" ng-show="isShow(1)">
-			{{node.dt.label}}
+			<div ng-show="!node.dt.ext">
+				{{node.dt.name}}
+			</div>
+			<div ng-show="node.dt.ext">
+				{{node.dt.name}}_{{node.dt.ext}}
+			</div>
         </td>
 		<td class="col-md-1" ng-show="isShow(2)">
-			{{node.component.usage}}
+			<div ng-show="!node.predicate">
+				{{node.component.usage}}
+			</div>
+			<div ng-show="node.predicate">
+				{{node.component.usage}} ({{node.predicate.trueUsage}}/{{node.predicate.falseUsage}})
+			</div>
         </td>
 		<td class="col-md-1" ng-show="isShow(3)">
 			[{{node.component.min}}..{{node.component.max}}]
@@ -359,17 +421,33 @@ body {
 			{{findTable(node.component.table).bindingIdentifier}}
         </td>
 		<td class="col-md-1" ng-show="isShow(6)">
-			-
-        </td>
+			<span>{{node.predicate.description}}</span>
+		</td>
 		<td class="col-md-1" ng-show="isShow(7)">
-			-
-        </td>
+			<div ng-repeat="cs in node.conformanceStatments">
+				<span>{{cs.constraintId}} : {{cs.description}}</span>
+			</div>
+		</td>
 		<td class="col-md-1">
-			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
-        </td>
+			<div ng-hide="hasChildren(node)">
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.value}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
+				</div>
+			</div>
+		</td>
 		<td class="col-md-1">
-			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
-        </td>
+			<div ng-hide="hasChildren(node)">
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.testDataCategorization}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
+				</div>
+			</div>
+		</td>
 		<td class="col-md-1">
 			-
         </td>
@@ -385,10 +463,20 @@ body {
 			{{node.component.name}}
         </td>
 		<td class="col-md-1" ng-show="isShow(1)">
-			{{node.dt.label}}
+			<div ng-show="!node.dt.ext">
+				{{node.dt.name}}
+			</div>
+			<div ng-show="node.dt.ext">
+				{{node.dt.name}}_{{node.dt.ext}}
+			</div>
         </td>
 		<td class="col-md-1" ng-show="isShow(2)">
-			{{node.component.usage}}
+			<div ng-show="!node.predicate">
+				{{node.component.usage}}
+			</div>
+			<div ng-show="node.predicate">
+				{{node.component.usage}} ({{node.predicate.trueUsage}}/{{node.predicate.falseUsage}})
+			</div>
         </td>
 		<td class="col-md-1" ng-show="isShow(3)">
 			[{{node.component.min}}..{{node.component.max}}]
@@ -400,17 +488,33 @@ body {
 			{{findTable(node.component.table).bindingIdentifier}}
         </td>
 		<td class="col-md-1" ng-show="isShow(6)">
-			-
-        </td>
+			<span>{{node.predicate.description}}</span>
+		</td>
 		<td class="col-md-1" ng-show="isShow(7)">
-			-
-        </td>
+			<div ng-repeat="cs in node.conformanceStatments">
+				<span>{{cs.constraintId}} : {{cs.description}}</span>
+			</div>
+		</td>
 		<td class="col-md-1">
-			<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
-        </td>
+			<div ng-hide="hasChildren(node)">
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.value}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
+				</div>
+			</div>
+		</td>
 		<td class="col-md-1">
-			<select ng-hide="hasChildren(node)" class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
-        </td>
+			<div ng-hide="hasChildren(node)">
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.testDataCategorization}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
+				</div>
+			</div>
+		</td>
 		<td class="col-md-1">
 			-
         </td>
