@@ -142,16 +142,28 @@ body {
 		<div ng-show="isSelectedTestStepTab(4);">
 			<div class="row">
 				<div class="col-md-12">
-				<span class="pull-right">
-					<div class="btn-group btn-group-sm" data-toggle="buttons">
-    					<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'All'}">
-        					<input type="radio">All Usages</input>
-						</label>
-						<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'RREC'}">
-        					<input type="radio">R/RE/C Only</input>
-						</label>
-   					</div>
-				</span>
+					<div class="col-md-6">
+						<span class="pull-left">
+							<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateMessageTemplateModal()">
+								<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
+							</button>
+							<button ng-show="selectedSegmentNode" title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateSegmentTemplateModal()">
+								<span><i class="fa fa-pencil fa-fw"></i> Make Segment TestData Cate. Template</span>
+							</button>
+						</span>
+					</div>
+					<div class="col-md-6">
+						<span class="pull-right">
+							<div class="btn-group btn-group-sm" data-toggle="buttons">
+    							<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'All'}">
+        							<input type="radio">All Usages</input>
+								</label>
+								<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'RREC'}">
+        							<input type="radio">R/RE/C Only</input>
+								</label>
+   							</div>
+						</span>
+					</div>
 				</div>
 			</div>
 			<div class="row">
@@ -226,21 +238,9 @@ body {
 						</div>
 
 						<div class="col-md-12">
-							<div class="col-md-9">
-							<span class="pull-left">
-								<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateMessageTemplateModal()">
-                            		<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
-                            	</button>
-								<button title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateSegmentTemplateModal()">
-                            		<span><i class="fa fa-pencil fa-fw"></i> Make Segment TestData Cate. Template</span>
-                            	</button>
-							</span>
-							</div>
-							<div class="col-md-3">
 							<span class="pull-right">
 								<span ng-dropdown-multiselect="" options="colsData" selected-model="selectedCols" extra-settings="smartButtonSettings"></span>
 							</span>
-							</div>
 						</div>
 
 						<div class="col-md-12">
@@ -524,7 +524,6 @@ body {
         </td>
     </tr>
 </script>
-
 
 <script type="text/ng-template" id="MessageTemplateCreationModal.html">
 	<div class="modal-header">

@@ -398,6 +398,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$scope.testDataAccordi.selectedSegment = false;
 		$scope.testDataAccordi.constraintList = false;
 		$scope.updateMessage();
+		$rootScope.selectedSegmentNode = null;
 	};
 
 	$scope.selectSegment = function (segment) {

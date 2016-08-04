@@ -1,8 +1,13 @@
 /target/
 /bower_components/
 /node_modules/
-/.sass-cache/
 /bin/
 /target/
 .tern-project
 /.tmp/
+/.settings/
+/.idea/
+/.sass-cache/
+.classpath
+.DS_Store
+.project
