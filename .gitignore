@@ -1,0 +1,10 @@
+tcamt-lite-client/target/
+tcamt-lite-client/bower_components/
+tcamt-lite-client/node_modules/
+tcamt-lite-client/.tmp/
+tcamt-lite-client/.settings/
+tcamt-lite-client/.idea/
+tcamt-lite-client/.sass-cache/
+tcamt-lite-client/.classpath
+tcamt-lite-client/.DS_Store
+tcamt-lite-client/.project
