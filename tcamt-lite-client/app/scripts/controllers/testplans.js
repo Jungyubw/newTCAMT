@@ -146,6 +146,42 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		});
 	};
 
+	$scope.openCreateMessageTemplateModal = function() {
+		var modalInstance = $modal.open({
+			templateUrl: 'MessageTemplateCreationModal.html',
+			controller: 'MessageTemplateCreationModalCtrl',
+			size: 'md',
+			resolve: {
+			}
+		});
+		modalInstance.result.then(function() {
+		});
+	};
+
+	$scope.openCreateSegmentTemplateModal = function() {
+		var modalInstance = $modal.open({
+			templateUrl: 'SegmentTemplateCreationModal.html',
+			controller: 'SegmentTemplateCreationModalCtrl',
+			size: 'md',
+			resolve: {
+			}
+		});
+		modalInstance.result.then(function() {
+		});
+	};
+
+	$scope.openCreateEr7TemplateModal = function() {
+		var modalInstance = $modal.open({
+			templateUrl: 'Er7TemplateCreationModal.html',
+			controller: 'Er7TemplateCreationModalCtrl',
+			size: 'md',
+			resolve: {
+			}
+		});
+		modalInstance.result.then(function() {
+		});
+	};
+
 	$scope.createNewTestPlan = function () {
 		var newTestPlan = {
 			id: new ObjectId().toString(),
@@ -889,77 +925,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
         return path.split('.').join('-');
     };
 
-
-	$scope.createSegmentTemplate = function () {
-		var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
-			if(i.includes($scope.replaceDot2Dash($rootScope.selectedSegmentNode.segment.iPath)))
-				return i;
-		});
-		var segmentTemplate = {};
-        segmentTemplate.id = new ObjectId().toString();
-		segmentTemplate.name = 'new Template for ' + $rootScope.selectedSegmentNode.segment.obj.name;
-        segmentTemplate.descrption = 'No Desc';
-        segmentTemplate.segmentName = $rootScope.selectedSegmentNode.segment.obj.name;
-		segmentTemplate.date = new Date();
-		segmentTemplate.categorizations = [];
-		keys.forEach(function(key){
-            var testDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[key];
-
-            if(testDataCategorizationObj != undefined && testDataCategorizationObj != null){
-                var cate = {};
-                cate.iPath = testDataCategorizationObj.iPath.replace($rootScope.selectedSegmentNode.segment.iPath,'');
-                cate.name = testDataCategorizationObj.name;
-                cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
-                cate.listData = testDataCategorizationObj.listData;
-                segmentTemplate.categorizations.push(cate);
-            }
-		});
-		$rootScope.template.segmentTemplates.push(segmentTemplate)
-	};
-
-    $scope.createMessageTemplate = function () {
-        var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
-            return i;
-        });
-        var messageTemplate = {};
-        messageTemplate.id = new ObjectId().toString();
-        messageTemplate.name = 'new Template for ' + $rootScope.selectedConformanceProfile.name;
-        messageTemplate.descrption = 'No Desc';
-        messageTemplate.date = new Date();
-        messageTemplate.integrationProfileId = $rootScope.selectedIntegrationProfile.id;
-        messageTemplate.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
-
-        messageTemplate.categorizations = [];
-        keys.forEach(function(key){
-            var testDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[key];
-
-            if(testDataCategorizationObj != undefined && testDataCategorizationObj != null){
-				if(testDataCategorizationObj.testDataCategorization && testDataCategorizationObj.testDataCategorization !== ''){
-					var cate = {};
-					cate.iPath = testDataCategorizationObj.iPath;
-					cate.name = testDataCategorizationObj.name;
-					cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
-					cate.listData = testDataCategorizationObj.listData;
-					messageTemplate.categorizations.push(cate);
-				}
-            }
-        });
-        $rootScope.template.messageTemplates.push(messageTemplate)
-    };
-
-    $scope.createER7Template = function () {
-        var er7Template = {};
-        er7Template.id = new ObjectId().toString();
-        er7Template.name = 'new Template for ' + $rootScope.selectedConformanceProfile.name;
-        er7Template.descrption = 'No Desc';
-        er7Template.date = new Date();
-        er7Template.integrationProfileId = $rootScope.selectedIntegrationProfile.id;
-        er7Template.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
-
-        er7Template.er7Message = $rootScope.selectedTestStep.er7Message;
-        $rootScope.template.er7Templates.push(er7Template)
-    };
-
     $scope.deleteSegmentTemplate = function (template){
         var index = $rootScope.template.segmentTemplates.indexOf(template);
         if (index > -1) {
@@ -982,47 +947,75 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     };
 
     $scope.applySegmentTemplate = function (template){
-        $rootScope.selectedTestStep.testDataCategorizationMap = {};
+		if($rootScope.selectedTestStep && $rootScope.selectedSegmentNode){
+			for(var i in template.categorizations){
+				var cate = template.categorizations[i];
+				if(cate.testDataCategorization && cate.testDataCategorization !== ''){
+					$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash($rootScope.selectedSegmentNode.segment.iPath + cate.iPath)] = cate;
+				}
+			}
 
-        for(var i in template.categorizations){
-            var cate = template.categorizations[i];
-            $rootScope.selectedTestStep.testDataCategorizationMap[cate.iPath] = cate.testDataCategorization;
-        }
+			$scope.initTestData();
+
+			if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.segment){
+				$scope.selectSegment($rootScope.selectedSegmentNode.segment);
+				$scope.refreshTree();
+			}
+		}
     };
 
     $scope.applyMessageTemplate = function (template){
-        for(var i in template.categorizations){
-            var cate = template.categorizations[i];
-			if(cate.testDataCategorization && cate.testDataCategorization !== ''){
-				$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(cate.iPath)] = cate;
+		if($rootScope.selectedTestStep){
+			for(var i in template.categorizations){
+				var cate = template.categorizations[i];
+				if(cate.testDataCategorization && cate.testDataCategorization !== ''){
+					$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(cate.iPath)] = cate;
+				}
 			}
-        }
 
-		$scope.initTestData();
+			$scope.initTestData();
 
-		if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.segment){
-			$scope.selectSegment($rootScope.selectedSegmentNode.segment);
-			$scope.refreshTree();
+			if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.segment){
+				$scope.selectSegment($rootScope.selectedSegmentNode.segment);
+				$scope.refreshTree();
+			}
 		}
     };
 
 	$scope.overwriteMessageTemplate = function (template){
-		$rootScope.selectedTestStep.testDataCategorizationMap = {};
-		$scope.applyMessageTemplate(template);
+		if($rootScope.selectedTestStep){
+			$rootScope.selectedTestStep.testDataCategorizationMap = {};
+			$scope.applyMessageTemplate(template);
+		}
 	};
 
 
     $scope.overwriteSegmentTemplate = function (template){
-        $rootScope.selectedTestStep.testDataCategorizationMap = {};
+		if($rootScope.selectedTestStep && $rootScope.selectedSegmentNode){
+			var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
+				if(i.includes($rootScope.selectedSegmentNode.segment.iPath.split('.').join('-')))
+					return i;
+			});
 
-        for(var i in template.categorizations){
-            var cate = template.categorizations[i];
-            $rootScope.selectedTestStep.testDataCategorizationMap[cate.iPath] = cate.testDataCategorization;
-        }
+			keys.forEach(function(key){
+				$rootScope.selectedTestStep.testDataCategorizationMap[key] = null;
+			});
+
+			$scope.applySegmentTemplate(template);
+		}
     };
 
     $scope.overwriteER7Template = function (template){
+		if($rootScope.selectedTestStep){
+			$rootScope.selectedTestStep.er7Message = template.er7Message;
 
+			$scope.initTestData();
+
+			if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.segment){
+				$scope.selectSegment($rootScope.selectedSegmentNode.segment);
+				$scope.refreshTree();
+			}
+		}
     };
 
 	$scope.deleteRepeatedField = function(node){
@@ -1589,6 +1582,104 @@ angular.module('tcl').controller('ConfirmTestPlanDeleteCtrl', function ($scope, 
 	};
 
 	$scope.cancel = function () {
+		$modalInstance.dismiss('cancel');
+	};
+});
+
+angular.module('tcl').controller('MessageTemplateCreationModalCtrl', function($scope, $modalInstance, $rootScope) {
+
+	var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
+		return i;
+	});
+	$scope.newMessageTemplate = {};
+	$scope.newMessageTemplate.id = new ObjectId().toString();
+	$scope.newMessageTemplate.name = 'new Template for ' + $rootScope.selectedConformanceProfile.name;
+	$scope.newMessageTemplate.descrption = 'No Desc';
+	$scope.newMessageTemplate.date = new Date();
+	$scope.newMessageTemplate.integrationProfileId = $rootScope.selectedIntegrationProfile.id;
+	$scope.newMessageTemplate.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
+
+	$scope.newMessageTemplate.categorizations = [];
+	keys.forEach(function(key){
+		var testDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[key];
+
+		if(testDataCategorizationObj != undefined && testDataCategorizationObj != null){
+			if(testDataCategorizationObj.testDataCategorization && testDataCategorizationObj.testDataCategorization !== ''){
+				var cate = {};
+				cate.iPath = testDataCategorizationObj.iPath;
+				cate.name = testDataCategorizationObj.name;
+				cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
+				cate.listData = testDataCategorizationObj.listData;
+				$scope.newMessageTemplate.categorizations.push(cate);
+			}
+		}
+	});
+
+	$scope.createMessageTemplate = function() {
+		$rootScope.template.messageTemplates.push($scope.newMessageTemplate);
+		$modalInstance.close();
+
+	};
+
+	$scope.cancel = function() {
+		$modalInstance.dismiss('cancel');
+	};
+});
+
+angular.module('tcl').controller('SegmentTemplateCreationModalCtrl', function($scope, $modalInstance, $rootScope) {
+
+	var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
+		if(i.includes($rootScope.selectedSegmentNode.segment.iPath.split('.').join('-')))
+			return i;
+	});
+	$scope.newSegmentTemplate = {};
+	$scope.newSegmentTemplate.id = new ObjectId().toString();
+	$scope.newSegmentTemplate.name = 'new Template for ' + $rootScope.selectedSegmentNode.segment.obj.name;
+	$scope.newSegmentTemplate.descrption = 'No Desc';
+	$scope.newSegmentTemplate.segmentName = $rootScope.selectedSegmentNode.segment.obj.name;
+	$scope.newSegmentTemplate.date = new Date();
+	$scope.newSegmentTemplate.categorizations = [];
+	keys.forEach(function(key){
+		var testDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[key];
+
+		if(testDataCategorizationObj != undefined && testDataCategorizationObj != null){
+			var cate = {};
+			cate.iPath = testDataCategorizationObj.iPath.replace($rootScope.selectedSegmentNode.segment.iPath,'');
+			cate.name = testDataCategorizationObj.name;
+			cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
+			cate.listData = testDataCategorizationObj.listData;
+			$scope.newSegmentTemplate.categorizations.push(cate);
+		}
+	});
+
+	$scope.createSegmentTemplate = function() {
+		$rootScope.template.segmentTemplates.push($scope.newSegmentTemplate);
+		$modalInstance.close();
+
+	};
+
+	$scope.cancel = function() {
+		$modalInstance.dismiss('cancel');
+	};
+});
+
+angular.module('tcl').controller('Er7TemplateCreationModalCtrl', function($scope, $modalInstance, $rootScope) {
+	$scope.newEr7Template = {};
+	$scope.newEr7Template.id = new ObjectId().toString();
+	$scope.newEr7Template.name = 'new Er7 Template for ' + $rootScope.selectedConformanceProfile.name;
+	$scope.newEr7Template.descrption = 'No Desc';
+	$scope.newEr7Template.date = new Date();
+	$scope.newEr7Template.integrationProfileId = $rootScope.selectedIntegrationProfile.id;
+	$scope.newEr7Template.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
+	$scope.newEr7Template.er7Message = $rootScope.selectedTestStep.er7Message;
+
+	$scope.createEr7Template = function() {
+		$rootScope.template.er7Templates.push($scope.newEr7Template);
+		$modalInstance.close();
+
+	};
+
+	$scope.cancel = function() {
 		$modalInstance.dismiss('cancel');
 	};
 });

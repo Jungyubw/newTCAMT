@@ -128,7 +128,15 @@ body {
 		</div>
 
 		<div ng-show="isSelectedTestStepTab(3);">
-			<ui-codemirror ui-codemirror-opts="editorOptions" ng-change="recordChanged()" ng-model="selectedTestStep.er7Message"></ui-codemirror>
+			<span class="pull-left">
+				<button title="Make er7 Message Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateEr7TemplateModal()">
+					<span><i class="fa fa-pencil fa-fw"></i> Make er7 Message Template</span>
+				</button>
+			</span>
+				<div class="col-md-12">
+					<ui-codemirror ui-codemirror-opts="editorOptions" ng-change="recordChanged()" ng-model="selectedTestStep.er7Message"></ui-codemirror>
+				</div>
+
 		</div>
 
 		<div ng-show="isSelectedTestStepTab(4);">
@@ -220,14 +228,10 @@ body {
 						<div class="col-md-12">
 							<div class="col-md-9">
 							<span class="pull-left">
-								<button title="Make er7 Message Template" type="button" class="btn btn-primary btn-xs" ng-click="createER7Template()">
-                            		<span><i class="fa fa-pencil fa-fw"></i> Make er7 Message Template</span>
-                            	</button>
-
-								<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="createMessageTemplate()">
+								<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateMessageTemplateModal()">
                             		<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
                             	</button>
-								<button title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="createSegmentTemplate()">
+								<button title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateSegmentTemplateModal()">
                             		<span><i class="fa fa-pencil fa-fw"></i> Make Segment TestData Cate. Template</span>
                             	</button>
 							</span>
@@ -521,3 +525,69 @@ body {
     </tr>
 </script>
 
+
+<script type="text/ng-template" id="MessageTemplateCreationModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">Set Name of Message Template</h3>
+	</div>
+	<div class="modal-body">
+		<div class="row" style="margin:12px">
+			<div class="col-md-2">
+				<label class="control-label">Name:</label>
+			</div>
+			<div class="col-md-10">
+				<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="newMessageTemplate.name" required />
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default btn-sm" ng-click="cancel()"><span><i class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
+		</button>
+		<button class="btn btn-info btn-sm" ng-click="createMessageTemplate()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Create</span>
+		</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="SegmentTemplateCreationModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">Set Name of Segment Template</h3>
+	</div>
+	<div class="modal-body">
+		<div class="row" style="margin:12px">
+			<div class="col-md-2">
+				<label class="control-label">Name:</label>
+			</div>
+			<div class="col-md-10">
+				<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="newSegmentTemplate.name" required />
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default btn-sm" ng-click="cancel()"><span><i class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
+		</button>
+		<button class="btn btn-info btn-sm" ng-click="createSegmentTemplate()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Create</span>
+		</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="Er7TemplateCreationModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">Set Name of Er7 Template</h3>
+	</div>
+	<div class="modal-body">
+		<div class="row" style="margin:12px">
+			<div class="col-md-2">
+				<label class="control-label">Name:</label>
+			</div>
+			<div class="col-md-10">
+				<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="newEr7Template.name" required />
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default btn-sm" ng-click="cancel()"><span><i class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
+		</button>
+		<button class="btn btn-info btn-sm" ng-click="createEr7Template()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Create</span>
+		</button>
+	</div>
+</script>
