@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
     </list>
@@ -28,8 +27,8 @@
       <file leaf-file-name="editTestStep.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="589">
-              <caret line="324" column="143" selection-start-line="324" selection-start-column="143" selection-end-line="324" selection-end-column="143" />
+            <state relative-caret-position="604">
+              <caret line="328" column="65" selection-start-line="328" selection-start-column="65" selection-end-line="328" selection-end-column="65" />
               <folding>
                 <element signature="n#script#2;n#!!top" expanded="false" />
                 <element signature="n#script#3;n#!!top" expanded="false" />
@@ -45,8 +44,8 @@
       <file leaf-file-name="testplans.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-5716">
-              <caret line="640" column="16" selection-start-line="640" selection-start-column="16" selection-end-line="640" selection-end-column="16" />
+            <state relative-caret-position="269">
+              <caret line="416" column="34" selection-start-line="416" selection-start-column="34" selection-end-line="416" selection-end-column="34" />
               <folding />
             </state>
           </provider>
@@ -539,12 +538,12 @@
       <workItem from="1469025251616" duration="2466000" />
       <workItem from="1470071354708" duration="460000" />
       <workItem from="1470170652915" duration="20604000" />
-      <workItem from="1470323501092" duration="19866000" />
+      <workItem from="1470323501092" duration="26042000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="94593000" />
+    <option name="totallyTimeSpent" value="100769000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
@@ -936,8 +935,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="589">
-          <caret line="324" column="143" selection-start-line="324" selection-start-column="143" selection-end-line="324" selection-end-column="143" />
+        <state relative-caret-position="604">
+          <caret line="328" column="65" selection-start-line="328" selection-start-column="65" selection-end-line="328" selection-end-column="65" />
           <folding>
             <element signature="n#script#2;n#!!top" expanded="false" />
             <element signature="n#script#3;n#!!top" expanded="false" />
@@ -951,8 +950,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5716">
-          <caret line="640" column="16" selection-start-line="640" selection-start-column="16" selection-end-line="640" selection-end-column="16" />
+        <state relative-caret-position="269">
+          <caret line="416" column="34" selection-start-line="416" selection-start-column="34" selection-end-line="416" selection-end-column="34" />
           <folding />
         </state>
       </provider>

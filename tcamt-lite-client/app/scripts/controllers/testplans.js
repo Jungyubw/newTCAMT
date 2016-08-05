@@ -647,6 +647,325 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		return result;
 	};
 
+	$scope.generateMessageContentXML = function() {
+		var rootName = "MessageContent";
+		var xmlString = '<' + rootName + '>' + '</' + rootName + '>';
+		var parser = new DOMParser();
+		var xmlDoc = parser.parseFromString(xmlString, "text/xml");
+		var rootElement = xmlDoc.getElementsByTagName(rootName)[0];
+
+		$scope.initTestData();
+
+		$rootScope.segmentList.forEach(function(instanceSegment) {
+			var segment = instanceSegment.obj;
+			var segName = segment.name;
+			var segDesc = segment.description;
+			var segmentiPath = instanceSegment.iPath;
+
+			var segmentElement = xmlDoc.createElement("Segment");
+			segmentElement.setAttribute("Name", segName);
+			segmentElement.setAttribute("Description", segDesc);
+			segmentElement.setAttribute("InstancePath", instanceSegment.iPath);
+			rootElement.appendChild(segmentElement);
+
+			for (var i = 0; i < segment.fields.length; i++){
+				var field = segment.fields[i];
+				if (!$scope.isHideForMessageContentByUsage(segment, field, instanceSegment.path + "." + field.position, instanceSegment.positioniPath + "." + field.position + "[1]")) {
+					var wholeFieldStr = $scope.getFieldStrFromSegment(segName, instanceSegment, field.position);
+					var fieldRepeatIndex = 0;
+
+					for (var j = 0; j < wholeFieldStr.split("~").length; j++) {
+						var fieldStr = wholeFieldStr.split("~")[j];
+						var fieldDT = $scope.findDatatype(field.datatype);
+						if (segName == "MSH" && field.position == 1) {
+							fieldStr = "|";
+						}
+						if (segName == "MSH" && field.position == 2) {
+							fieldStr = "^~\\&";
+						}
+						fieldRepeatIndex = fieldRepeatIndex + 1;
+						var fieldiPath = "." + field.position + "[" + fieldRepeatIndex + "]";
+
+						if (fieldDT == null || fieldDT.components == null || fieldDT.components.length == 0) {
+							var tdcstrOfField = "";
+							var cateOfField = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath, fieldStr)];
+							if(cateOfField) tdcstrOfField = cateOfField.testDataCategorization;
+
+							var fieldElement = xmlDoc.createElement("Field");
+							fieldElement.setAttribute("Location", segName + "." + field.position);
+							fieldElement.setAttribute("DataElement", field.name);
+							fieldElement.setAttribute("Data", fieldStr);
+							fieldElement.setAttribute("Categrization", tdcstrOfField);
+							segmentElement.appendChild(fieldElement);
+						} else {
+							var fieldElement = xmlDoc.createElement("Field");
+							fieldElement.setAttribute("Location", segName + "." + field.position);
+							fieldElement.setAttribute("DataElement", field.name);
+							segmentElement.appendChild(fieldElement);
+
+							for (var k = 0 ; k < fieldDT.components.length; k++ ){
+								var c = fieldDT.components[k];
+								var componentiPath = "." + c.position + "[1]";
+								if (!$scope.isHideForMessageContentByUsage(fieldDT, c, instanceSegment.path + "." + field.position + "." + c.position, instanceSegment.positioniPath + "." + field.position + "[1]." + c.position + "[1]")) {
+									var componentStr = $scope.getComponentStrFromField(fieldStr, c.position);
+									if ($scope.findDatatype(c.datatype).components == null || $scope.findDatatype(c.datatype).components.length == 0) {
+										var tdcstrOfComponent = "";
+										var cateOfComponent = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath, componentStr)];
+										if(cateOfComponent) tdcstrOfComponent = cateOfComponent.testDataCategorization;
+
+										var componentElement = xmlDoc.createElement("Component");
+										componentElement.setAttribute("Location", segName + "." + field.position + "." + c.position);
+										componentElement.setAttribute("DataElement", c.name);
+										componentElement.setAttribute("Data", componentStr);
+										componentElement.setAttribute("Categrization", tdcstrOfComponent);
+										fieldElement.appendChild(componentElement);
+									} else {
+										var componentElement = xmlDoc.createElement("Component");
+										componentElement.setAttribute("Location", segName + "." + field.position + "." + c.position);
+										componentElement.setAttribute("DataElement", c.name);
+										fieldElement.appendChild(componentElement);
+
+										for (var l = 0; l < $scope.findDatatype(c.datatype).components.length; l++){
+											var sc = $scope.findDatatype(c.datatype).components[l];
+											if (!$scope.isHideForMessageContentByUsage($scope.findDatatype(c.datatype), sc, instanceSegment.path + "." + field.position + "." + c.position + "." + sc.position, instanceSegment.positioniPath + "." + field.position + "[1]." + c.position + "[1]." + sc.position + "[1]")) {
+												var subcomponentiPath = "." + sc.position + "[1]";
+												var subcomponentStr = $scope.getSubComponentStrFromField(componentStr, sc.position);
+												var tdcstrOfSubComponent = "";
+												var cateOfSubComponent = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath + subcomponentiPath, subcomponentStr)];
+												if(cateOfSubComponent) tdcstrOfSubComponent = cateOfSubComponent.testDataCategorization;
+												var subComponentElement = xmlDoc.createElement("SubComponent");
+												subComponentElement.setAttribute("Location", segName + "." + field.position + "." + c.position + "." + sc.position);
+												subComponentElement.setAttribute("DataElement", sc.name);
+												subComponentElement.setAttribute("Data", subcomponentStr);
+												subComponentElement.setAttribute("Categrization", tdcstrOfSubComponent);
+												componentElement.appendChild(subComponentElement);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		/*
+			if(segment.obj.dynamicMapping.mappings.length > 0) {
+				for(var z = 0; z < segment.obj.dynamicMapping.mappings.length ; z++){
+					var mapping = segment.obj.dynamicMapping.mappings[z];
+
+					if(mapping.position){
+						if(mapping.position === i + 1){
+
+							console.log(mapping);
+							var referenceValue = null;
+							var secondReferenceValue = null;
+
+							if(mapping.reference){
+								referenceValue =  fieldValues[mapping.reference - 1];
+								if(mapping.secondReference) {
+									secondReferenceValue =  fieldValues[mapping.secondReference - 1];
+								}
+
+								if(secondReferenceValue == null){
+									var caseFound = _.find(mapping.cases, function(c){ return referenceValue.split("^")[0] == c.value; });
+									if(caseFound){
+										fieldNode.dt = $scope.findDatatypeById(caseFound.datatype);
+									}
+
+								}else{
+									var caseFound = _.find(mapping.cases, function(c){
+										return referenceValue.split("^")[0] == c.value && secondReferenceValue.split("^")[0] == c.secondValue;
+									});
+
+									if(!caseFound){
+										caseFound = _.find(mapping.cases, function(c){
+											return referenceValue.split("^")[0] == c.value && (c.secondValue == '' || c.secondValue == undefined);
+										});
+									}
+									if(caseFound){
+										fieldNode.dt = $scope.findDatatypeById(caseFound.datatype);
+									}
+								}
+
+							}
+						}
+					}
+				}
+			}
+
+
+
+		*/
+
+
+
+
+
+
+
+
+		});
+		/*
+		for (InstanceSegment instanceSegment : instanceSegments) {
+			Segment segment = m.getSegments().findOneSegmentById(instanceSegment.getSegmentRef().getRef());
+			String segName = segment.getName();
+			String segDesc = segment.getDescription();
+			String segmentiPath = instanceSegment.getIpath();
+
+			Element segmentElement = doc.createElement("Segment");
+			segmentElement.setAttribute("Name", segName);
+			segmentElement.setAttribute("Description", segDesc);
+			segmentElement.setAttribute("InstancePath", instanceSegment.getIpath());
+			rootElement.appendChild(segmentElement);
+
+			if(segment.getDynamicMapping() != null){
+				for(Mapping mapping:segment.getDynamicMapping().getMappings()){
+					Integer position = mapping.getPosition();
+					Integer reference = mapping.getReference();
+
+					String refereceValue =  this.getFieldStrFromSegment(segName, instanceSegment, reference);
+
+					for(Case c:mapping.getCases()){
+						if(c.getValue().equals(refereceValue)){
+
+							for(Field field:segment.getFields()){
+								if(field.getPosition().equals(position)){
+									field.setDatatype(c.getDatatype());
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}
+		*/
+
+		var serializer = new XMLSerializer();
+		var xmlString = serializer.serializeToString(xmlDoc);
+
+		console.log(xmlString);
+	};
+
+
+	$scope.isHideForMessageContentByUsage = function (segment, field, path, iPositionPath){
+		if(field.hide) return true;
+
+		if(field.usage == 'R') return false;
+		if(field.usage == 'RE') return false;
+
+		if(field.usage == 'C'){
+			var p = $scope.findPreficate(segment.predicates, field.position + "[1]");
+
+			if(p == null) {
+				p = this.findPreficateForMessageAndGroup(path, iPositionPath);
+			}
+
+
+			if(p != null){
+				if(p.trueUsage == 'R') return false;
+				if(p.trueUsage == 'RE') return false;
+				if(p.falseUsage == 'R') return false;
+				if(p.falseUsage == 'RE') return false;
+			}
+		}
+		return true;
+	};
+
+	$scope.findPreficate = function (predicates, path){
+		for(var i = 0; i < predicates.length; i++){
+			var p = predicates[i];
+			if(p.constraintTarget == path) return p;
+		}
+		return null;
+	};
+
+	$scope.findPreficateForMessageAndGroup = function (path, iPositionPath){
+		var groupPath = $rootScope.selectedConformanceProfile.structID;
+		var paths = path.split(".");
+
+		for(var index = 0; index < paths.length; index++){
+			var pathData = paths[index];
+			groupPath = groupPath + "." + pathData;
+			var group = $scope.findGroup($rootScope.selectedConformanceProfile.children, groupPath);
+			var depth = groupPath.split(".").length -1;
+			var partIPositionPath = "";
+			for(var i=depth; i<paths.length; i++){
+				var s = iPositionPath.split(".")[i];
+				s = s.substring(0, s.indexOf("[")) + "[1]";
+				partIPositionPath = partIPositionPath + "." + s;
+			}
+			if(group != null){
+				for(var i = 0; i < group.predicates.length; i++){
+					var p = group.predicates[i];
+					if(p.constraintTarget == partIPositionPath.substring(1)) return p;
+				}
+			}
+		}
+
+		for(var i = 0; i < $rootScope.selectedConformanceProfile.length; i++){
+			var p = $rootScope.selectedConformanceProfile.predicates[i];
+			var partIPositionPath = "";
+			for(var i=0; i < paths.length; i++){
+				var s = iPositionPath.split(".")[i];
+				s = s.substring(0, s.indexOf("[")) + "[1]";
+				partIPositionPath = partIPositionPath + "." + s;
+			}
+			if(p.constraintTarget == partIPositionPath.substring(1)) return p;
+		}
+
+		return null;
+	};
+
+
+	$scope.findGroup = function (children, groupPath) {
+		for(var i = 0 ; i < children.length; i++){
+			if(children[i].type == 'group'){
+				var group = children[i];
+
+				if(group.name == groupPath) return group;
+
+				if(groupPath.startsWith(group.name)) {
+					return this.findGroup(group.children, groupPath);
+				}
+			}
+		}
+		return null;
+	};
+
+	$scope.getFieldStrFromSegment = function (segmentName, is, position) {
+		// &lt; (<), &amp; (&), &gt; (>), &quot; ("), and &apos; (').
+		var segmentStr = is.segmentStr;
+		if (segmentName == "MSH") {
+			segmentStr = "MSH|FieldSeperator|Encoding|" + segmentStr.substring(9);
+		}
+		var wholeFieldStr = segmentStr.split("|");
+
+		if (position > wholeFieldStr.length - 1)
+			return "";
+		else
+			return wholeFieldStr[position];
+	};
+
+	$scope.getComponentStrFromField = function (fieldStr, position) {
+		var componentStr = fieldStr.split("^");
+
+		if (position > componentStr.length)
+			return "";
+		else
+			return componentStr[position - 1];
+
+	};
+
+	$scope.getSubComponentStrFromField = function (componentStr, position) {
+		var subComponentStr = componentStr.split("&");
+
+		if (position > subComponentStr.length)
+			return "";
+		else
+			return subComponentStr[position - 1];
+	};
+
 	$scope.generateXML = function(testcaseName, isSTD) {
 		var rootName = $rootScope.selectedConformanceProfile.structID;
 		var xmlString = '<' + rootName + ' testcaseName=\"' + testcaseName + '\">' + '</' + rootName + '>';
