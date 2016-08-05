@@ -448,6 +448,50 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 					children : []
 				};
 
+
+				if(segment.obj.dynamicMapping.mappings.length > 0) {
+					for(var z = 0; z < segment.obj.dynamicMapping.mappings.length ; z++){
+						var mapping = segment.obj.dynamicMapping.mappings[z];
+
+						if(mapping.position){
+							if(mapping.position === i + 1){
+
+								console.log(mapping);
+								var referenceValue = null;
+								var secondReferenceValue = null;
+
+								if(mapping.reference){
+									referenceValue =  fieldValues[mapping.reference - 1];
+									if(mapping.secondReference) {
+										secondReferenceValue =  fieldValues[mapping.secondReference - 1];
+									}
+
+									if(secondReferenceValue == null){
+										var caseFound = _.find(mapping.cases, function(c){ return referenceValue.split("^")[0] == c.value; });
+										if(caseFound){
+											fieldNode.dt = $scope.findDatatypeById(caseFound.datatype);
+										}
+
+									}else{
+										var caseFound = _.find(mapping.cases, function(c){
+											return referenceValue.split("^")[0] == c.value && secondReferenceValue.split("^")[0] == c.secondValue;
+										});
+
+										if(!caseFound){
+											caseFound = _.find(mapping.cases, function(c){
+												return referenceValue.split("^")[0] == c.value && (c.secondValue == '' || c.secondValue == undefined);
+											});
+										}
+										if(caseFound){
+											fieldNode.dt = $scope.findDatatypeById(caseFound.datatype);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
                 var fieldTestDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(fieldNode.iPath)];
 
                 if(fieldTestDataCategorizationObj != undefined && fieldTestDataCategorizationObj != null){
@@ -782,6 +826,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		if($rootScope.selectedIntegrationProfile == undefined || $rootScope.selectedIntegrationProfile == null) return null;
 		return _.find($rootScope.selectedIntegrationProfile.datatypes.children,function(d){
 			return d.id == ref.id;
+		});
+	};
+
+	$scope.findDatatypeById = function (id){
+		if(id === undefined || id === null) return null;
+		if($rootScope.selectedIntegrationProfile == undefined || $rootScope.selectedIntegrationProfile == null) return null;
+		return _.find($rootScope.selectedIntegrationProfile.datatypes.children,function(d){
+			return d.id == id;
 		});
 	};
 
