@@ -1,10 +1,35 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.util.List;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import gov.nist.healthcare.nht.acmgt.dto.ResponseMessage;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanListException;
@@ -15,18 +40,6 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.TestPlanSaveResponse;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config.TestPlanChangeCommand;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAllowException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
-
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/testplans")
@@ -122,6 +135,33 @@ public class TestPlanController extends CommonController {
 			throw new TestPlanSaveException(e);
 		}
 	}
+	
+	
+	@RequestMapping(value = "/messageContentsGeneration", method = RequestMethod.POST)
+	public XMLContainer messageContentsGeneration(
+			@RequestBody XMLContainer xmlContainer) {
+		XMLContainer result = new XMLContainer();
+		try {
+			User u = userService.getCurrentUser();
+			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+			if (account == null) throw new UserAccountNotFoundException();
+			
+			ClassLoader classLoader = getClass().getClassLoader();
+			String mcXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" +  File.separator + xmlContainer.getType() + ".xsl")).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>", "<xsl:param name=\"output\" select=\"'plain-html'\"/>");
+			InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
+			InputStream sourceInputStream = new ByteArrayInputStream(xmlContainer.getXml().getBytes());
+			Reader xsltReader =  new InputStreamReader(xsltInputStream, "UTF-8");
+			Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
+			String xsltStr = IOUtils.toString(xsltReader);
+			String sourceStr = IOUtils.toString(sourceReader);
+			result.setType("html");
+			result.setXml(TestPlanController.parseXmlByXSLT(sourceStr, xsltStr));
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 
 	private TestPlan findTestPlan(String testplanId)
 			throws TestPlanNotFoundException {
@@ -130,5 +170,27 @@ public class TestPlanController extends CommonController {
 			throw new TestPlanNotFoundException(testplanId);
 		}
 		return tp;
+	}
+	
+	private static String parseXmlByXSLT(String sourceStr, String xsltStr) {
+		System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
+		TransformerFactory tFactory = TransformerFactory.newInstance();
+	    
+	    
+        try {
+            Transformer transformer = tFactory.newTransformer(new StreamSource(new java.io.StringReader(xsltStr)));
+            StringWriter outWriter = new StringWriter();
+            StreamResult result = new StreamResult(outWriter);
+            
+            transformer.transform(new StreamSource(new java.io.StringReader(sourceStr)), result);
+            StringBuffer sb = outWriter.getBuffer(); 
+            String finalstring = sb.toString();
+            
+            return finalstring;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+		return null;
 	}
 }

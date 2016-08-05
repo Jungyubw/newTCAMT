@@ -647,6 +647,20 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		return result;
 	};
 
+
+	$scope.generateMessageContentHTML = function () {
+		var data = {};
+		data.type = 'MC_HTML';
+		data.xml = $scope.generateMessageContentXML();
+
+		$http.post('api/testplans/messageContentsGeneration', data).then(function (response) {
+			$rootScope.messageContentHTML = angular.fromJson(response.data).xml;
+
+			console.log($rootScope.messageContentHTML);
+		}, function (error) {
+		});
+	};
+
 	$scope.generateMessageContentXML = function() {
 		var rootName = "MessageContent";
 		var xmlString = '<' + rootName + '>' + '</' + rootName + '>';
@@ -844,7 +858,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		var serializer = new XMLSerializer();
 		var xmlString = serializer.serializeToString(xmlDoc);
 
-		console.log(xmlString);
+		return xmlString;
 	};
 
 

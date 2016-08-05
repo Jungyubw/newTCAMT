@@ -45,6 +45,14 @@ angular.module('tcl').run(function ($httpBackend, $q, $http) {
             manualHandle: "false"}, {}];
     });
 
+    $httpBackend.whenPOST('api/testplans/messageContentsGeneration').respond(function (method, url, data, headers) {
+        var request = new XMLHttpRequest();
+        request.open('GET', '../../resources/messageContentsGeneration.json', false);
+        request.send(null);
+        var profile = angular.fromJson(request.response);
+        return [request.status, profile, {}];
+    });
+
 
     $httpBackend.whenPOST('api/accounts/1/suspendaccount').respond(function (method, url, data, headers) {
         return [200, {type: 'success',
@@ -102,7 +110,6 @@ angular.module('tcl').run(function ($httpBackend, $q, $http) {
         var profile = angular.fromJson(request.response);
         return [request.status, profile, {}];
     });
-    
     
     $httpBackend.whenGET('api/appInfo').respond(function (method, url, data, headers) {
         var request = new XMLHttpRequest();
