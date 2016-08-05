@@ -150,7 +150,10 @@
                         {{categorization.testDataCategorization}}
                     </td>
                     <td class="col-md-5">
+                                        <ng-if = "categorization.listData.length>0">
                         {{categorization.listData}}
+                    <ng-if>
+               
                     </td>
                 </tr>
             </tbody>
@@ -247,25 +250,23 @@
             <thead>
                 <tr class="tbl-header">
                     <th class="col-md-2">Path</th>
-                    <th ng-class="{col-md-5: conditionCat , col-md-10: !conditionCat}">Test Data Categorization</th>
-<!--                     <th class="col-md-5">Test Data Categorization</th>
- -->                    
-                    <th ng-if = "conditionCat" class="col-md-5">list Data</th>
-                 
+                    <th class="col-md-5">Test Data Categorization</th>
+                    <th class="col-md-5">list Data</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="categorization in segmentTemplateObject.categorizations">
                     <td class="col-md-2">
-                        {{segmentTemplateObject.segmentName}}-{{categorization.iPath.substring(1)}}
+                        {{segmentTemplateObject.segmentName}}{{categorization.iPath}}
                     </td>
-                    <td ng-class="{col-md-5: conditionCat , col-md-10: !conditionCat}">
+                    <td class="col-md-5">
                         {{categorization.testDataCategorization}}
                     </td>
-                    <td class="col-md-5" ng-if= "conditionCat">
+                    <td class="col-md-5">
+                    <ng-if = "cantegorization.listData.length>0">
                         {{categorization.listData}}
+                    <ng-if>
                     </td>
-
                 </tr>
             </tbody>
         </table>
