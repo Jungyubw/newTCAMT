@@ -22,6 +22,7 @@ body {
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(5)}"><a data-toggle="pill" ng-click="changeTestStepTab(5);"><i class="fa fa-file-text-o fa-fw"></i> Validation</a></li>
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(6)}"><a data-toggle="pill" ng-click="changeTestStepTab(6);"><i class="fa fa-file-text-o fa-fw"></i> STD/NIST XML</a></li>
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(7)}"><a data-toggle="pill" ng-click="changeTestStepTab(7);"><i class="fa fa-file-text-o fa-fw"></i> Supplement Documents</a></li>
+			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(8)}"><a data-toggle="pill" ng-click="changeTestStepTab(8);"><i class="fa fa-file-text-o fa-fw"></i> TEST TAB</a></li>
 		</ul>
 
 		<div ng-show="isSelectedTestStepTab(1);">
@@ -316,6 +317,16 @@ body {
 				<ng-bind-html ng-bind-html="result"/>
 			</div>
 		</div>
+
+		<div ng-show="selectedTestStepTab == 8">
+			<button title="NIST XML Generation" type="button" class="btn btn-primary btn-xs" ng-click="generateXML(findTestCaseNameOfTestStep(), false)">
+				<span><i class="fa fa-pencil fa-fw"></i> NIST XML</span>
+			</button>
+			<button title="NIST XML Generation" type="button" class="btn btn-primary btn-xs" ng-click="generateXML(findTestCaseNameOfTestStep(), true)">
+				<span><i class="fa fa-pencil fa-fw"></i> STD XML</span>
+			</button>
+		</div>
+
 	</div>
 </script>
 
