@@ -65,8 +65,33 @@ table{
   line-height: 40px;
   padding-bottom: 19px;
 }
+.header-main-panel{
+    background-color: #021a4c;
+}
+.panel-primary > .panel-heading {
+    //background-image: none;
+    background-color: red;
+    color: white;
 
+}
 
+.header-sub-panel{
+  
+}
+.header-testplan-panel{
+  
+}
+.header-IG-panel{
+  
+}
+.header-template-panel{
+  
+}
+.header-tables-panel{
+    background-color: #436165;
+
+  
+}
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing,
@@ -2247,7 +2272,7 @@ table.conformance-profiles-table td {
 } 
 
 .testStep{ 	
-	margin-left: 15px;
+	margin-left: 15000000px;
  	margin-top: 5px; 
 
  } 
@@ -2423,3 +2448,16 @@ table.forumline > tr > td {
 .st-sort-descent:before{
   content: '\25BC';
 }
+.panel-default>.panel-heading {
+  background-color: red;
+}
+.selected1{
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#2c539e+0,2c539e+100;Blue+3D+%232 */
+background: #2c539e; /* Old browsers */
+background: -moz-linear-gradient(top,  #2c539e 0%, #2c539e 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  #2c539e 0%,#2c539e 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  #2c539e 0%,#2c539e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2c539e', endColorstr='#2c539e',GradientType=0 ); /* IE6-9 */
+}
+
+
