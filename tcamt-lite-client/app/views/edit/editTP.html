@@ -35,76 +35,71 @@
 
 	<div class="row">
     	<div class="col-md-1 col-1-percent" ng-show="hideToc" style="margin-right:6px">
-        	<button title="Show Table of Contents" class="btn btn-xs btn-primary" ng-click="hideToc = !hideToc">
+        	<button title="Show Table of Contents" class="btn btn-xs btn-primary" ng-click="hideToc = !hideToc" style="background-color:#293856;">
             	<i class="fa fa-caret-right"></i>
         	</button>
    		</div>
     	<div ng-show="!hideToc" class="col-md-3">
         	<div class="panel panel-primary">
-            	<div class="panel-heading panel-heading-collapsable">
-                	<i class="glyphicon glyphicon-list"></i> TestPlan Navigation Tree
-                	<button title="Hide Table of Contents" class="btn btn-xs btn-default pull-right" style="margin:0px" ng-click="hideToc = !hideToc">
+            	<div class="panel-heading panel-heading-collapsable" style="background-color:#293856;">
+                	<i class="glyphicon glyphicon-list"></i> <strong>TestPlan Navigation Tree</strong>
+                	<button title="Hide Table of Contents" class="btn btn-xs btn-default pull-right" style="margin:0px;background-color:#eeeeee;" ng-click="hideToc = !hideToc">
                     	<i class="fa fa-caret-left"></i>
                 	</button>
             	</div>
-            	<div class="panel-body">
+            	<div class="panel-body" style="height:200px;overflow:scroll;">
                 	<div class="toc-container">
                     	<div ng-include="'views/toc.html'"></div>
                 	</div>
             	</div>
-				<br/>
-				<br/>
-				<br/>
-
-				<br/>
-				<br/>
-				<br/>
-
-				
-				
-				
-				
-				
-				<div class="panel-heading panel-heading-collapsable">
-					<i class="glyphicon glyphicon-list"></i> IG Documents Tree
+                </div>
+                <br/>
+                <br/> 
+                <br/>   
+  
+	
+				<div class="panel panel-warning">
+				<div class="panel-heading panel-heading-collapsable" style="background-color:#395286;">
+					<i class="glyphicon glyphicon-list"></i> <span><strong >IG Documents Tree</strong>
 				</div>
 				<div class="panel-body">
 					<div class="toc-container">
 						<div ng-include="'views/IgToc.html'"></div>
 					</div>
 				</div>
-
-
-                <div class="panel-heading panel-heading-collapsable">
-                    <i class="glyphicon glyphicon-list"></i> Templates
                 </div>
-                <div class="panel-body">
+
+                <div class="panel panel-warning">
+                <div class="panel-heading panel-heading-collapsable" style="background-color:#4c70bb;">
+                    <i class="glyphicon glyphicon-list"></i> <strong>Templates</strong>
+                </div>
+                <div class="panel-body" style="height:200px;overflow:scroll;">
                     <div class="toc-container">
                         <div ng-include="'views/TemplateToc.html'"></div>
                     </div>
                 </div>
-
-
-                <br/>
-                <br/>
-                <br/>
-
+                </div>
 
 
         	</div>
         	
         	
-    	</div>
+    	
     
     	<div ng-class="{'col-md-9': !hideToc, 'col-md-11 col-98-5-percent':hideToc}">
-        	<div class="panel panel-primary">
-            	<div class="panel-heading">Dashboard</div>
-            	<div class="panel-body" style="padding-bottom:100px">
+        	<div class="panel panel-primary" >
+            	<div class="panel-heading" style="background-color:#293856"><strong>Dashboard</strong></div>
+            	<div class="panel-body" style="padding-bottom:100px height:200px;overflow:scroll;">
+            <div class="col-md-12" ng-show="subview === null||subview===undefined|| !subview">
+            <p> No Element Selected </p>
+            </div>
+
                 	<div id="edit" ng-show="subview !== undefined" style="width:100%">
                     	<ng-include src="subview"></ng-include>
                 	</div>
             	</div>
         	</div>
     	</div>
+        </div>
 	</div>
 </div>

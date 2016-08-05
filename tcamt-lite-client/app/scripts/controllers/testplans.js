@@ -10,6 +10,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.accordi = {metaData: false, definition: true, igList: true, igDetails: false};
 	$rootScope.usageViewFilter = 'All';
 	$rootScope.selectedTemplate=null;
+	$scope.DocAccordi = {};
+	$scope.DocAccordi.testdata = false;
+	$scope.DocAccordi.er7Message = false;
+	$scope.DocAccordi.jurorDocument = false;
 
 	$scope.loadTestPlans = function () {
 		var delay = $q.defer();
@@ -1247,7 +1251,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			$scope.testDataAccordi.constraintList = false;
 		}
 	};
+	// $scope.documentAccordionClicked= function () {
 
+	// }
 	$scope.constraintAccordionClicked = function () {
 		if($scope.testDataAccordi.constraintList === false){
 			$scope.testDataAccordi = {};
@@ -2019,7 +2025,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	];
 
-	$scope.testCaseOptions =	[
+
+	$scope.testCaseOptions =[
 		['add new teststep', function($itemScope) {
 
 			if( !$itemScope.$nodeScope.$modelValue.teststeps){
@@ -2033,6 +2040,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
                 position : $itemScope.$nodeScope.$modelValue.teststeps.length+1,
                 testStepStory: {}
             };
+            console.log(newTestStep);
 
             newTestStep.testStepStory.comments = "No Comments";
             newTestStep.testStepStory.evaluationCriteria = "No evaluation criteria";
@@ -2041,9 +2049,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
             newTestStep.testStepStory.preCondition = "No PreCondition";
             newTestStep.testStepStory.testObjectives = "No Objectives";
             newTestStep.testStepStory.teststorydesc = "No Description";
-
+            console.log($itemScope.$nodeScope.$modelValue.teststeps);
+            newTestStep.conformanceProfileId=null;
+            newTestStep.integrationProfileId=null;
+            $rootScope.selectedTestStep=newTestStep;
+            $scope.selectTestStep(newTestStep);
+            $scope.activeModel=newTestStep;
 			$itemScope.$nodeScope.$modelValue.teststeps.push(newTestStep);
-
+			console.log($itemScope.$nodeScope.$modelValue.teststeps);
 			$scope.recordChanged();
 
 		}],
@@ -2105,6 +2118,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 
 		['Delete Template', function($itemScope) {
+			$scope.subview=null;
 		$scope.deleteMessageTemplate($itemScope.msgTmp);
 
 		}],
@@ -2123,7 +2137,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 
 		['Delete Template', function($itemScope) {
+			$scope.subview=null;
 		$scope.deleteSegmentTemplate($itemScope.segTmp);
+
 
 		}],
 		null, ['Apply Template', function($itemScope) {
@@ -2141,6 +2157,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 
 		['Delete Template', function($itemScope) {
+			$scope.subview=null;
 		$scope.deleteER7Template($itemScope.er7Tmp);
 
 		}],
