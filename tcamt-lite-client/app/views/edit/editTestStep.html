@@ -20,9 +20,8 @@ body {
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(3)}"><a data-toggle="pill" ng-click="changeTestStepTab(3); initHL7EncodedMessageTab();"><i class="fa fa-file-text-o fa-fw"></i> HL7 Encoded Message</a></li>
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(4)}"><a data-toggle="pill" ng-click="changeTestStepTab(4); initTestData();"><i class="fa fa-file-text-o fa-fw"></i> Test Data</a></li>
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(5)}"><a data-toggle="pill" ng-click="changeTestStepTab(5);"><i class="fa fa-file-text-o fa-fw"></i> Validation</a></li>
-			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(6)}"><a data-toggle="pill" ng-click="changeTestStepTab(6);"><i class="fa fa-file-text-o fa-fw"></i> STD/NIST XML</a></li>
-			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(7)}"><a data-toggle="pill" ng-click="changeTestStepTab(7);"><i class="fa fa-file-text-o fa-fw"></i> Supplement Documents</a></li>
-			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(8)}"><a data-toggle="pill" ng-click="changeTestStepTab(8);"><i class="fa fa-file-text-o fa-fw"></i> TEST TAB</a></li>
+			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(6)}"><a data-toggle="pill" ng-click="changeTestStepTab(6); genSTDNISTXML(findTestCaseNameOfTestStep());"><i class="fa fa-file-text-o fa-fw"></i> STD/NIST XML</a></li>
+			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(7)}"><a data-toggle="pill" ng-click="changeTestStepTab(7); generateMessageContentHTML();"><i class="fa fa-file-text-o fa-fw"></i> Supplement Documents</a></li>
 		</ul>
 
 		<div ng-show="isSelectedTestStepTab(1);">
@@ -320,15 +319,15 @@ body {
 
 		<div ng-show="selectedTestStepTab == 6">
 			<div class="row" style="margin:10px; margin-top:30px;">
-				<uib-accordion close-others="false">
+				<uib-accordion close-others="true">
 					<uib-accordion-group  panel-class="panel-level2" is-open="nistStd.nist">
 						<uib-accordion-heading>
-							<span >
+							<span>
 								<i class="fa" ng-class="{'fa-caret-down': nistStd.nist, 'fa-caret-right': !nistStd.nist}"></i>
 								 NIST XML  
 							</span>
 						</uib-accordion-heading>
-
+						<textarea style="width:100%" ng-model="nistXMLCode" readonly rows="30"/>
 					</uib-accordion-group>
 
 					<uib-accordion-group  panel-class="panel-level2" is-open="nistStd.std">
@@ -338,22 +337,23 @@ body {
 								 STD XML 
 							</span>
 						</uib-accordion-heading>
-
+						<textarea style="width:100%" ng-model="stdXMLCode"  readonly rows="30"/>
 					</uib-accordion-group>
 				</uib-accordion>
 			</div>
 		</div>
 		<div ng-show="selectedTestStepTab == 7">
 			<div class="row" style="margin:10px; margin-top:30px;">
-				<uib-accordion close-others="false">
-					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.er7Message">
+				<uib-accordion close-others="true">
+					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.messageContents">
 						<uib-accordion-heading>
 							<span >
-								<i class="fa" ng-class="{'fa-caret-down': DocAccordi.er7Message, 'fa-caret-right': !DocAccordi.er7Message}"></i>
-								 Er7 Message 
+								<i class="fa" ng-class="{'fa-caret-down': DocAccordi.messageContents, 'fa-caret-right': !DocAccordi.messageContents}"></i>
+								 Message messageContents
 							</span>
 						</uib-accordion-heading>
 
+						<ng-bind-html ng-bind-html="messageContentsHTML"/>
 					</uib-accordion-group>
 
 					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.testdata">
@@ -363,6 +363,7 @@ body {
 								 Test Data Specification
 							</span>
 						</uib-accordion-heading>
+						No TestData Specification
 					</uib-accordion-group>
 
 					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.jurorDocument">
@@ -372,26 +373,10 @@ body {
 								 Juror Document
 							</span>
 						</uib-accordion-heading>
-
+						No Juror Document
 					</uib-accordion-group>
 				</uib-accordion>
 			</div>
-		</div>
-
-		<div ng-show="selectedTestStepTab == 8">
-			<button title="NIST XML Generation" type="button" class="btn btn-primary btn-xs" ng-click="generateXML(findTestCaseNameOfTestStep(), false)">
-				<span><i class="fa fa-pencil fa-fw"></i> NIST XML</span>
-			</button>
-			<button title="NIST XML Generation" type="button" class="btn btn-primary btn-xs" ng-click="generateXML(findTestCaseNameOfTestStep(), true)">
-				<span><i class="fa fa-pencil fa-fw"></i> STD XML</span>
-			</button>
-			<button title="MessageContentXML Generation" type="button" class="btn btn-primary btn-xs" ng-click="generateMessageContentXML()">
-				<span><i class="fa fa-pencil fa-fw"></i> Message Content XML</span>
-			</button>
-
-			<button title="MessageContentHTML Generation" type="button" class="btn btn-primary btn-xs" ng-click="generateMessageContentHTML()">
-				<span><i class="fa fa-pencil fa-fw"></i> Message Content HTML</span>
-			</button>
 		</div>
 	</div>
 

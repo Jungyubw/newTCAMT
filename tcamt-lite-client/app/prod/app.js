@@ -286,7 +286,7 @@ app.config(function ($routeProvider, RestangularProvider, $httpProvider, Keepali
 
 
 app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, userInfoService, $http, AppInfo, StorageService, $templateCache, $window, notifications) {
-    $rootScope.igamtURL = 'http://localhost:8080/igamt/';
+    $rootScope.igamtURL = 'http://localhost:7070/igamt/';
 
     $rootScope.appInfo = {};
     //Check if the login dialog is already displayed.

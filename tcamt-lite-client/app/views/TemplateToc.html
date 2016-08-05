@@ -9,7 +9,8 @@
                           'glyphicon glyphicon-plus': messagetempCollapsed,
                           'glyphicon glyphicon-minus': !messagetempCollapsed
                         }">
-                  </span> Messages Templates
+                </span> Messages Template
+                <span ng-show="selectedTestStep">for {{selectedTestStep.conformanceProfileId}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.messageTemplates" ng-if="!messagetempCollapsed">
                 <li ng-repeat="msgTmp in template.messageTemplates" ui-tree-node ng-if="selectedTestStep.conformanceProfileId===msgTmp.conformanceProfileId|| selectedTestStep===null">
@@ -24,7 +25,8 @@
                           'glyphicon glyphicon-plus': segmenttempCollapsed,
                           'glyphicon glyphicon-minus': !segmenttempCollapsed
                         }">
-                  </span> Segment Templates
+                </span> Segment Templates
+                <span ng-show="selectedSegmentNode">for {{selectedSegmentNode.segment.obj.name}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.segmentTemplates" ng-if="!segmenttempCollapsed">
                 <li ng-repeat="segTmp in template.segmentTemplates" ui-tree-node ng-if="selectedSegmentNode===null ||selectedSegmentNode.segment.obj.name===segTmp.segmentName">
@@ -39,7 +41,8 @@
                           'glyphicon glyphicon-plus': Er7Collapsed,
                           'glyphicon glyphicon-minus': !Er7Collapsed
                         }">
-                  </span> Er7 Templates
+                </span> Er7 Templates
+                <span ng-show="selectedTestStep">for {{selectedTestStep.conformanceProfileId}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.er7Templates" ng-if="!Er7Collapsed">
                 <li ng-repeat="er7Tmp in template.er7Templates" ui-tree-node ng-if="selectedTestStep.integrationProfileId===er7Tmp.integrationProfileId || selectedTestStep.conformanceProfileId===er7Tmp.conformanceProfileId|| selectedTestStep===null">
