@@ -16,7 +16,7 @@ body {
         <span class="header4">TestCase Metadata</span>
     </div>
             
-	<form name="testcasegroupMetaDataForm" class="form-horizontal" novalidate>
+	<form name="testcaseMetaDataForm" class="form-horizontal" novalidate>
 		<div class="row" style="margin:10px">
 			<div class="col-md-12">
 				<div class="col-md-5 col-margin">
@@ -31,6 +31,16 @@ body {
 						<label class="control-label">Description</label>
 						<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestCase.description" required />
                     </div>
+				</div>
+			</div>
+			<div ng-show="selectedTestPlan.transport"class="col-md-12">
+				<div class="col-md-5 col-margin">
+					<div class="form-group">
+						<label class="control-label">Protocol</label>
+						<select class="form-control" name="type" ng-change="recordChanged();" ng-model="selectedTestCase.protocol">
+							<option value="soap">SOAP</option>
+						</select>
+					</div>
 				</div>
 			</div>
 		</div>

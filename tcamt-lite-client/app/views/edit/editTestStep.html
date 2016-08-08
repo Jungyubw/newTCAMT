@@ -25,50 +25,76 @@ body {
 		</ul>
 
 		<div ng-show="isSelectedTestStepTab(1);">
-			<form name="testcasegroupMetaDataForm" class="form-horizontal" novalidate>
-				<div class="row" style="margin:12px">
-					<div class="col-md-2">
-						<label class="control-label">Name:</label>
-					</div>
-					<div class="col-md-10">
-						<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestStep.name" required />
+			<form name="teststepMetaDataForm" class="form-horizontal" novalidate>
+				<div class="row" style="margin:10px">
+					<div class="col-md-12">
+						<div class="col-md-5 col-margin">
+							<div class="form-group">
+								<label class="control-label">Name</label>
+								<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestStep.name" required />
+							</div>
+						</div>
+
+						<div class="col-md-5 col-margin">
+							<div class="form-group">
+								<label class="control-label">Description</label>
+								<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestStep.description" required />
+							</div>
+						</div>
 					</div>
 				</div>
 
-				<div class="row" style="margin:12px">
-					<div class="col-md-2">
-						<label class="control-label">Description:</label>
+				<div class="row" style="margin:10px" ng-show="selectedTestPlan.transport">
+					<div class="col-md-12">
+						<div class="col-md-5 col-margin">
+							<div class="form-group">
+								<label class="control-label">Type</label>
+								<select class="form-control" name="type" ng-change="recordChanged();" ng-model="selectedTestCase.protocol">
+									<option value="TA_INITIATOR">TA_INITIATOR</option>
+									<option value="TA_RESPONDER">TA_RESPONDER</option>
+									<option value="SUT_INITIATOR">SUT_INITIATOR</option>
+									<option value="SUT_RESPONDER">SUT_RESPONDER</option>
+									<option value="SUT_MANUAL">SUT_MANUAL</option>
+									<option value="TA_MANUAL">TA_MANUAL</option>
+								</select>
+							</div>
+						</div>
 					</div>
-					<div class="col-md-10">
-						<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestStep.description" required />
+				</div>
+				<div class="row" style="margin:10px" ng-show="!selectedTestPlan.transport">
+					<div class="col-md-12">
+						<div class="col-md-5 col-margin">
+							<div class="form-group">
+								<label class="control-label">Type</label>
+								<select class="form-control" name="type" ng-change="recordChanged();" ng-model="selectedTestCase.protocol">
+									<option value="DATAINSTANCE">DATAINSTANCE</option>
+								</select>
+							</div>
+						</div>
 					</div>
 				</div>
 
-				<div ng-show="selectedIntegrationProfile">
-					<div class="row" style="margin:12px">
-						<div class="col-md-2">
-							<label class="control-label">Integration Profile:</label>
-						</div>
-						<div class="col-md-10">
-							<span ng-show="selectedIntegrationProfile">{{selectedIntegrationProfile.sectionTitle}}</span>
-						</div>
-					</div>
-
-					<div class="row" style="margin:12px">
-						<div class="col-md-2">
-							<label class="control-label">Conformance Profile:</label>
-						</div>
-						<div class="col-md-10">
-							<span ng-show="selectedConformanceProfile">{{selectedConformanceProfile.name}}</span>
-						</div>
-					</div>
-
-					<div class="row" style="margin:12px">
-					<span class="pull-right">
+				<div class="row" style="margin:10px" ng-show="selectedIntegrationProfile">
+					<div class="col-md-12">
 						<button title="Delete Profile" type="button" class="btn btn-danger btn-xs" ng-click="deleteProfile();">
 							<span><i class="fa fa-cross fa-fw"></i> Delete Profile (Make Manual TestStep)</span>
 						</button>
-					</span>
+					</div>
+					
+					<div class="col-md-12">
+						<div class="col-md-5 col-margin">
+							<div class="form-group">
+								<label class="control-label">Integration Profile</label>
+								<input class="form-control" type="text" name="integrationProfile" readonly ng-model="selectedIntegrationProfile.sectionTitle" />
+							</div>
+						</div>
+
+						<div class="col-md-5 col-margin">
+							<div class="form-group">
+								<label class="control-label">Conformance Profile</label>
+								<input class="form-control" type="text" name="conformanceProfile" readonly ng-model="selectedConformanceProfile.name" />
+							</div>
+						</div>
 					</div>
 				</div>
 			</form>
