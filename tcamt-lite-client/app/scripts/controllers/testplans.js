@@ -266,6 +266,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.selectTestCase = function (testCase) {
+		console.log(testCase);
 		if (testCase != null) {
 			waitingDialog.show('Opening Test Case ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
@@ -1210,8 +1211,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			}
 
 
-
-
 		},
 		dropped: function(event) {
 
@@ -1224,7 +1223,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			event.source.nodeScope.$modelValue.position = sortAfter+1;
 			$scope.updatePositions(event.dest.nodesScope.$modelValue);
 			$scope.updatePositions(event.source.nodesScope.$modelValue);
-			$scope.recordChanged();
+			//$scope.recordChanged();
 
 
 		}
@@ -1401,34 +1400,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}],
 		null,
 		['clone', function($itemScope) {
-			// var clone = angular.copy($itemScope.$nodeScope.$modelValue);
 
-			// var clone = {};
-
-			// var name =  $itemScope.$nodeScope.$modelValue.name;
-			// var model =  $itemScope.$nodeScope.$modelValue;
-			// clone.name=name+"(clone)";
-
-			// var teststeps=[];
-
-			// clone.teststeps=teststeps;
-
-
-			// for (var i = model.teststeps.length - 1; i >= 0; i--){
-			// 	var  teststep={};
-			// 	teststep.name=model.teststeps[i].name;
-			// 	teststep.position=model.teststeps[i].position;
-			// 	teststeps.push(teststep);
-			// }
-			// clone.teststeps=teststeps;
-			// clone.position=$itemScope.$nodeScope.$parent.$modelValue.length+1;
-			// $itemScope.$nodeScope.$parent.$modelValue.push(clone)
 			var clone = $scope.cloneTestCase($itemScope.$nodeScope.$modelValue);
 			clone.position=$itemScope.$nodeScope.$parent.$modelValue.length+1;
 			$itemScope.$nodeScope.$parent.$modelValue.push(clone);
 			$scope.activeModel=clone;
-
-
 
 		}],
 		null,
