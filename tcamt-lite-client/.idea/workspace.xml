@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/controller/SupplementDocumentController.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.tmp/styles/main.css" afterPath="$PROJECT_DIR$/.tmp/styles/main.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/index.html" afterPath="$PROJECT_DIR$/app/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/prod/app.js" afterPath="$PROJECT_DIR$/app/prod/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/TemplateToc.html" afterPath="$PROJECT_DIR$/app/views/TemplateToc.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
-    </list>
+    <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="" />
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -651,12 +642,12 @@
       <workItem from="1470071354708" duration="460000" />
       <workItem from="1470170652915" duration="20604000" />
       <workItem from="1470323501092" duration="28902000" />
-      <workItem from="1470409745613" duration="5027000" />
+      <workItem from="1470409745613" duration="5314000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="108656000" />
+    <option name="totallyTimeSpent" value="108943000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1920" y="0" width="2560" height="1440" extended-state="0" />
