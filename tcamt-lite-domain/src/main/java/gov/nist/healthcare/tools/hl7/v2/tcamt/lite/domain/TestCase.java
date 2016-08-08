@@ -20,12 +20,12 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 		this.type = "testcase";
 	}
 
-	
-	private String protocol;
 
 	private Set<TestStep> teststeps = new HashSet<TestStep>();
 
 	private TestStory testCaseStory = new TestStory();
+	
+	private String protocol;
 
 	
 	public Set<TestStep> getTeststeps() {
@@ -79,12 +79,16 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 	}
 
 	public String getProtocol() {
+		if(this.protocol == null || this.protocol.equals("")){
+			this.protocol = "soap";
+		}
 		return protocol;
 	}
 
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
 	}
+
 
 	public static Comparator<TestCase> testCasePositionComparator = new Comparator<TestCase>() {
 		public int compare(TestCase tc1, TestCase tc2) {

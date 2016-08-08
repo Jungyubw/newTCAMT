@@ -331,6 +331,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$rootScope.selectedTestPlan.isChanged = true;
 	};
 
+	$scope.updateTransport = function () {
+		if($rootScope.selectedTestPlan.type == 'DataInstance'){
+			$rootScope.selectedTestPlan.transport = false;
+		}else {
+			$rootScope.selectedTestPlan.transport = true;
+		}
+	};
+
 	$scope.saveAllChangedTestPlans = function() {
 		$rootScope.tps.forEach(function(testplan) {
 			if(testplan.isChanged){

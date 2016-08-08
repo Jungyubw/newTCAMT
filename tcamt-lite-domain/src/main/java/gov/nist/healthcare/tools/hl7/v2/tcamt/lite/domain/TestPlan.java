@@ -25,13 +25,19 @@ public class TestPlan implements Serializable, Cloneable {
 	private String version;
 	private String lastUpdateDate;
 	private Set<TestCaseOrGroup> children = new HashSet<TestCaseOrGroup>();
-	private String type;
 
 	private Long accountId;
 	private String coverPageTitle;
 	private String coverPageSubTitle;
 	private String coverPageVersion;
 	private String coverPageDate;
+	
+	private String type;
+	private boolean transport;
+	private Integer position;
+	private String domain;
+	private boolean skip;
+	
 	
 	public TestPlan() {
 		super();
@@ -165,4 +171,38 @@ public class TestPlan implements Serializable, Cloneable {
 	public void setChildren(Set<TestCaseOrGroup> children) {
 		this.children = children;
 	}
+	
+	public boolean isTransport() {
+		return transport;
+	}
+
+	public void setTransport(boolean transport) {
+		this.transport = transport;
+	}
+
+	public Integer getPosition() {
+		return position;
+	}
+
+	public void setPosition(Integer position) {
+		this.position = position;
+	}
+
+	public String getDomain() {
+		return domain;
+	}
+
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+
+	public boolean isSkip() {
+		return skip;
+	}
+
+	public void setSkip(boolean skip) {
+		this.skip = skip;
+	}
+	
+	
 }

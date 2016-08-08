@@ -38,7 +38,7 @@ body {
 				<div class="col-md-5 col-margin">
 					<div class="form-group">
 						<label class="control-label">Type</label>
-						<select class="form-control" name="type" ng-change="recordChanged()" ng-model="selectedTestPlan.type">
+						<select class="form-control" name="type" ng-change="recordChanged(); updateTransport();" ng-model="selectedTestPlan.type">
 							<option value="DataInstance">Data Instance</option>
       						<option value="Isolated">Isolated</option>
                     	</select>
@@ -54,6 +54,13 @@ body {
 			</div>
                     
 			<div class="col-md-12">
+				<div class="col-md-5 col-margin">
+					<div class="form-group">
+						<label class="control-label">Domain</label>
+						<input class="form-control" type="text" ng-change="recordChanged()" name="date" ng-model="selectedTestPlan.domain" required />
+					</div>
+				</div>
+
 				<div class="col-md-5 col-margin">
 					<div class="form-group">
 						<label class="control-label">Date</label>
