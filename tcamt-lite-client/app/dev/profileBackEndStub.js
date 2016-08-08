@@ -45,7 +45,7 @@ angular.module('tcl').run(function ($httpBackend, $q, $http) {
             manualHandle: "false"}, {}];
     });
 
-    $httpBackend.whenPOST('api/testplans/messageContentsGeneration').respond(function (method, url, data, headers) {
+    $httpBackend.whenPOST('api/testplans/supplementsGeneration').respond(function (method, url, data, headers) {
         var request = new XMLHttpRequest();
         request.open('GET', '../../resources/messageContentsGeneration.json', false);
         request.send(null);

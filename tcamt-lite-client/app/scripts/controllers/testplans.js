@@ -664,13 +664,38 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		return result;
 	};
 
+	$scope.generateTestDataSpecificationHTML = function () {
+		if($rootScope.selectedTestStep.tdsXSL && $rootScope.selectedTestStep.tdsXSL !== ""){
+			var data = {};
+			data.type = $rootScope.selectedTestStep.tdsXSL;
+			data.xml = $scope.formatXml($scope.generateXML($scope.findTestCaseNameOfTestStep(),false))
+
+			$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
+				$rootScope.testDataSpecificationHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
+			}, function (error) {
+			});
+		}
+	};
+
+	$scope.generateJurorDocumentHTML = function () {
+		if($rootScope.selectedTestStep.jdXSL && $rootScope.selectedTestStep.jdXSL !== ""){
+			var data = {};
+			data.type = $rootScope.selectedTestStep.jdXSL;
+			data.xml = $scope.formatXml($scope.generateXML($scope.findTestCaseNameOfTestStep(),false))
+
+			$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
+				$rootScope.jurorDocumentsHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
+			}, function (error) {
+			});
+		}
+	};
 
 	$scope.generateMessageContentHTML = function () {
 		var data = {};
-		data.type = 'MC_HTML';
+		data.type = 'MessageContents';
 		data.xml = $scope.generateMessageContentXML();
 
-		$http.post('api/testplans/messageContentsGeneration', data).then(function (response) {
+		$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
 			$rootScope.messageContentsHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
 		}, function (error) {
 		});
@@ -876,7 +901,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		return xmlString;
 	};
 
-
 	$scope.isHideForMessageContentByUsage = function (segment, field, path, iPositionPath){
 		if(field.hide) return true;
 
@@ -945,7 +969,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 		return null;
 	};
-
 
 	$scope.findGroup = function (children, groupPath) {
 		for(var i = 0 ; i < children.length; i++){

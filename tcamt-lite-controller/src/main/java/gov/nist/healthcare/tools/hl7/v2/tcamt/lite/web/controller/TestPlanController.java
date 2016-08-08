@@ -137,8 +137,8 @@ public class TestPlanController extends CommonController {
 	}
 	
 	
-	@RequestMapping(value = "/messageContentsGeneration", method = RequestMethod.POST)
-	public XMLContainer messageContentsGeneration(
+	@RequestMapping(value = "/supplementsGeneration", method = RequestMethod.POST)
+	public XMLContainer supplementsGeneration(
 			@RequestBody XMLContainer xmlContainer) {
 		XMLContainer result = new XMLContainer();
 		try {
@@ -147,8 +147,8 @@ public class TestPlanController extends CommonController {
 			if (account == null) throw new UserAccountNotFoundException();
 			
 			ClassLoader classLoader = getClass().getClassLoader();
-			String mcXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" +  File.separator + xmlContainer.getType() + ".xsl")).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>", "<xsl:param name=\"output\" select=\"'plain-html'\"/>");
-			InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
+			String xsl = IOUtils.toString(classLoader.getResourceAsStream("xsl" +  File.separator + xmlContainer.getType() + ".xsl"));
+			InputStream xsltInputStream = new ByteArrayInputStream(xsl.getBytes());
 			InputStream sourceInputStream = new ByteArrayInputStream(xmlContainer.getXml().getBytes());
 			Reader xsltReader =  new InputStreamReader(xsltInputStream, "UTF-8");
 			Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");

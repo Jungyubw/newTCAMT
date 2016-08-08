@@ -36,7 +36,11 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	private String type;
 	
-	private HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>(); 
+	private String tdsXSL;
+	
+	private String jdXSL;
+	
+	private HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>();
 
 	public TestStep(String id, String name, String description, Integer version) {
 		super();
@@ -162,6 +166,22 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	public void setTestDataCategorizationMap(HashMap<String, Categorization> testDataCategorizationMap) {
 		this.testDataCategorizationMap = testDataCategorizationMap;
+	}
+
+	public String getTdsXSL() {
+		return tdsXSL;
+	}
+
+	public void setTdsXSL(String tdsXSL) {
+		this.tdsXSL = tdsXSL;
+	}
+
+	public String getJdXSL() {
+		return jdXSL;
+	}
+
+	public void setJdXSL(String jdXSL) {
+		this.jdXSL = jdXSL;
 	}
 
 	public static Comparator<TestStep> testCasePositionComparator = new Comparator<TestStep>() {
