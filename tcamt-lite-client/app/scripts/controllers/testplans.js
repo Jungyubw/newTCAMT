@@ -1163,6 +1163,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			//destNodesScope.expand();
 			var dataTypeSource = sourceNodeScope.$element.attr('data-type');
 			var dataTypeDest = destNodesScope.$element.attr('data-type');
+							console.log("source"+ dataTypeSource );
+				console.log("destination "+ dataTypeDest);
 			if(dataTypeSource==="childrens"){
 				return false;
 			}
@@ -1172,11 +1174,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 				}else if(!sourceNodeScope.$modelValue.testcases && dataTypeDest==='group'){
 
 					return true;
-				} else{
-					return false;
 				}
-
-
+				else{
+				 return false;
+				}
 			}
 			else if(dataTypeSource==="group"){
 				if(dataTypeDest==="childrens"){
@@ -1200,9 +1201,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			else if(dataTypeSource==="step"){
 				if(dataTypeDest==="case"){
 					return true;
-				}else{
+				}else{ 
 					return false;
-				}
+				}			
 			}
 			else{
 				return false;
@@ -1400,26 +1401,33 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}],
 		null,
 		['clone', function($itemScope) {
-			var clone = {};
+			// var clone = angular.copy($itemScope.$nodeScope.$modelValue);
 
-			var name =  $itemScope.$nodeScope.$modelValue.name;
-			var model =  $itemScope.$nodeScope.$modelValue;
-			clone.name=name+"(clone)";
+			// var clone = {};
 
-			var teststeps=[];
+			// var name =  $itemScope.$nodeScope.$modelValue.name;
+			// var model =  $itemScope.$nodeScope.$modelValue;
+			// clone.name=name+"(clone)";
 
-			clone.teststeps=teststeps;
+			// var teststeps=[];
+
+			// clone.teststeps=teststeps;
 
 
-			for (var i = model.teststeps.length - 1; i >= 0; i--){
-				var  teststep={};
-				teststep.name=model.teststeps[i].name;
-				teststep.position=model.teststeps[i].position;
-				teststeps.push(teststep);
-			}
-			clone.teststeps=teststeps;
+			// for (var i = model.teststeps.length - 1; i >= 0; i--){
+			// 	var  teststep={};
+			// 	teststep.name=model.teststeps[i].name;
+			// 	teststep.position=model.teststeps[i].position;
+			// 	teststeps.push(teststep);
+			// }
+			// clone.teststeps=teststeps;
+			// clone.position=$itemScope.$nodeScope.$parent.$modelValue.length+1;
+			// $itemScope.$nodeScope.$parent.$modelValue.push(clone)
+			var clone = $scope.cloneTestCase($itemScope.$nodeScope.$modelValue);
 			clone.position=$itemScope.$nodeScope.$parent.$modelValue.length+1;
-			$itemScope.$nodeScope.$parent.$modelValue.push(clone)
+			$itemScope.$nodeScope.$parent.$modelValue.push(clone);
+			$scope.activeModel=clone;
+
 
 
 		}],
@@ -1434,14 +1442,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.testStepOptions = [
 
 		['clone', function($itemScope) {
-			var cloneModel= {};
-			var name =  $itemScope.$nodeScope.$modelValue.name;
-			name=name+"(copy)";
-			cloneModel.name=name;
-			cloneModel.position=$itemScope.$nodeScope.$parentNodesScope.$modelValue.length+1
-			$itemScope.$nodeScope.$parentNodesScope.$modelValue.push(cloneModel);
+			//var cloneModel= {};
+			//var name =  $itemScope.$nodeScope.$modelValue.name;
+			//name=name+"(copy)";
+			//cloneModel.name=name;
+			var clone=$scope.cloneTestStep($itemScope.$nodeScope.$modelValue);
+			clone.position=$itemScope.$nodeScope.$parentNodesScope.$modelValue.length+1
+			$scope.activeModel=clone;
+			//cloneModel.position=$itemScope.$nodeScope.$parentNodesScope.$modelValue.length+1
+			$itemScope.$nodeScope.$parentNodesScope.$modelValue.push(clone);
 
-			$scope.activeModel=$itemScope.$nodeScope.$parentNodesScope.$modelValue[$itemScope.$nodeScope.$parentNodesScope.$modelValue.length-1];
+			//$scope.activeModel=$itemScope.$nodeScope.$parentNodesScope.$modelValue[$itemScope.$nodeScope.$parentNodesScope.$modelValue.length-1];
 
 		}],
 		null, ['delete', function($itemScope) {
@@ -1460,11 +1471,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$scope.deleteMessageTemplate($itemScope.msgTmp);
 
 		}],
-		null, ['Apply Template', function($itemScope) {
+		null, ['Apply', function($itemScope) {
 			$scope.applyMessageTemplate($itemScope.msgTmp);
 		}],
 		null,
-		['Overwrite Template', function($itemScope) {
+		['Overwrite', function($itemScope) {
 			$scope.overwriteMessageTemplate($itemScope.msgTmp);
 		}]
 
@@ -1574,6 +1585,27 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$scope.subview = "Er7TemplateMetadata.html";
 	}
 
+	$scope.cloneTestStep=function(testStep){
+		var clone= angular.copy(testStep);
+		clone.name= testStep.name+"_copy";
+		clone.id= new ObjectId();
+		console.log(clone);
+		return clone;
+	}
+	$scope.cloneTestCase= function(testCase){
+		var clone= angular.copy(testCase);
+		clone.name= testCase.name+"_copy";
+		clone.id= new ObjectId();
+		clone.teststeps=[];
+		if(testCase.teststeps.length>0){
+			angular.forEach(testCase.teststeps, function(teststep){
+				clone.teststeps.push($scope.cloneTestStep(teststep));
+
+			});
+
+		}
+		return clone;
+	}
 
 });
 

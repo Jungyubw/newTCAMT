@@ -15,7 +15,7 @@ if (self === top) {
     <ol ui-tree-nodes="" ng-model="testplans">
         <li ng-repeat="test in testplans" ui-tree-node data-type="childrens">
             <div ui-tree-handle data-type="childrens">
-                <div context-menu="testPlanOptions" data-type="childrens" data-target="" style="margin-left:5px;">
+                <div context-menu="testPlanOptions" data-type="childrens" style="margin-left:5px;">
                     <span data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-plus" ng-class="{'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed}">
 					</span>
                     <span class="label label-sub-component label-icon">T</span> </span> <span data-nodrag ng-class="{selected1 : this.$modelValue===activeModel}" ng-click="Activate(this); selectTestPlan(test);">
@@ -52,7 +52,7 @@ if (self === top) {
                     <ol ui-tree-nodes="" ng-model="child.testcases" ng-if="!$parentNodeScope.collapsed || child.hasOwnProperty('testcases')" data-type="group">
                         <li ng-hide="$parentNodeScope.collapsed" ng-repeat="case in child.testcases " ui-tree-node data-type="case">
                             <div ui-tree-handle style="margin-left:14px; ng-click=" Activate(this) ">
-								<div context-menu="testCaseOptions " data-target=" ">
+								<div context-menu="testCaseOptions ">
 									<span data-nodrag ng-click="toggle(this);print(this) "
 										class="glyphicon glyphicon-plus "
 										ng-class="{ 'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed } ">
@@ -72,9 +72,9 @@ if (self === top) {
 								data-type="case ">
 
 								<li ng-repeat="step in case.teststeps " ui-tree-node
-									data-type="step ">
+									data-type="step">
 									<div ui-tree-handle  style="margin-left:21px; ">
-										<div context-menu="testStepOptions " data-target=" ">
+										<div context-menu="testStepOptions " >
 											<span class="label label-segment label-icon draggable ">S</span>
 											<span data-nodrag
 												ng-click="Activate(this); selectTestStep(step); "
@@ -93,9 +93,9 @@ if (self === top) {
 								data-type="case">
 
 								<li ng-repeat="step in child.teststeps " ui-tree-node ng-if= "!collapsed"
-									data-type="step ">
+									data-type="step">
 									<div ui-tree-handle  style="margin-left:21px; ">
-										<div context-menu="testStepOptions " data-target="">
+										<div context-menu="testStepOptions">
 											<span class="label label-segment label-icon draggable ">S</span>
 											<span data-nodrag
 												ng-click="Activate(this); selectTestStep(step); "

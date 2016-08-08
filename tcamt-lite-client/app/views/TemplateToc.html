@@ -150,16 +150,15 @@
                         {{categorization.testDataCategorization}}
                     </td>
                     <td class="col-md-5">
-                                        <ng-if = "categorization.listData.length>0">
+                    <div ng-if="cantegorization.listData.length>0">
                         {{categorization.listData}}
-                    <ng-if>
+                    </div>
                
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-    {{msgTemplate}}
 </script>
 <script type="text/ng-template" id="Er7TemplateMetadata.html">
     <div class="page-header">
@@ -263,9 +262,9 @@
                         {{categorization.testDataCategorization}}
                     </td>
                     <td class="col-md-5">
-                    <ng-if = "cantegorization.listData.length>0">
+                    <div ng-if="cantegorization.listData.length>0">
                         {{categorization.listData}}
-                    <ng-if>
+                    </div>
                     </td>
                 </tr>
             </tbody>

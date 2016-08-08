@@ -11,7 +11,7 @@
             <ol ui-tree-nodes="" ng-model="ig.profile.messages.children" ng-if="!collapsed">
                 <li ng-repeat="msg in ig.profile.messages.children" ui-tree-node>
                     <div ui-tree-handle ng-click="Activate(this);OpenMessageMetadata(msg)" ng-class="{selected : this.$modelValue===activeModel ,used:selectedTestStep&& selectedTestStep.conformanceProfileId===this.$modelValue.id || selectedTemplate.conformanceProfileId===this.$modelValue.id}">
-                        <span ng-hide="selectedTestStep">[{{$index+1}}]<span class=" label-success badge">CP</span>{{msg.name}}</span>
+                        <span ng-hide="selectedTestStep">[{{$index+1}}]<span class=" label-success badge">CP</span>{{msg.name}}-{{msg.description}}</span>
                         <span context-menu="ApplyProfile" ng-hide="!selectedTestStep">[{{$index+1}}]<span class="label-success badge">CP</span>{{msg.name}}-{{msg.description}}</span>
                     </div>
                 </li>
