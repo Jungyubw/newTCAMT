@@ -2114,33 +2114,33 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}],
 		null,
 		['clone', function($itemScope) {
-			var clone = {};
+			var clone = $scope.cloneTestCaseGroup($itemScope.$nodeScope.$modelValue);
 
 			var name =  $itemScope.$nodeScope.$modelValue.name;
 			var model =  $itemScope.$nodeScope.$modelValue;
-			clone.name=name+"(clone)";
+			// clone.name=name+"(clone)";
 
-			var testcases=[];
+			// var testcases=[];
 
-			clone.testcases=testcases;
+			// clone.testcases=testcases;
 
 
-			for (var i = model.testcases.length - 1; i >= 0; i--){
-				var  testcase={};
-				testcase.name=model.testcases[i].name;
-				testcase.position=model.testcases[i].position;
+			// for (var i = model.testcases.length - 1; i >= 0; i--){
+			// 	var  testcase={};
+			// 	testcase.name=model.testcases[i].name;
+			// 	testcase.position=model.testcases[i].position;
 
-				testcase.teststeps=[];
-				for (var j = model.testcases[i].teststeps.length - 1; j >= 0; j--){
-					var teststep={};
-					teststep.name=model.testcases[i].teststeps[j].name;
-					teststep.position=model.testcases[i].teststeps[j].position;
-					testcase.teststeps.push(teststep);
-				}
+			// 	testcase.teststeps=[];
+			// 	for (var j = model.testcases[i].teststeps.length - 1; j >= 0; j--){
+			// 		var teststep={};
+			// 		teststep.name=model.testcases[i].teststeps[j].name;
+			// 		teststep.position=model.testcases[i].teststeps[j].position;
+			// 		testcase.teststeps.push(teststep);
+			// 	}
 
-				testcases.push(testcase);
-			}
-			clone.testcases=testcases;
+			// 	testcases.push(testcase);
+			// }
+			// clone.testcases=testcases;
 			clone.position=$itemScope.$nodeScope.$parent.$modelValue.length+1;
 			$itemScope.$nodeScope.$parent.$modelValue.push(clone);
 			$scope.activeModel=clone;
@@ -2372,7 +2372,25 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 		}
 		return clone;
-	}
+	};
+
+	$scope.cloneTestCaseGroup=function(testCaseGroup){
+		var clone = angular.copy(testCaseGroup);
+		clone.name= testCaseGroup.name+"_copy";
+		clone.id= new ObjectId().toString();
+		clone.testcases=[];
+		if(testCaseGroup.testcases.length>0){
+			angular.forEach(testCaseGroup.testcases, function(testcase){
+				clone.testcases.push($scope.cloneTestCase(testcase));
+
+			});
+		}
+
+		return clone;
+	};
+
+
+
 
 });
 
