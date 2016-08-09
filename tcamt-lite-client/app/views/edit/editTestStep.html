@@ -21,7 +21,7 @@ body {
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(4)}"><a data-toggle="pill" ng-click="changeTestStepTab(4); initTestData();"><i class="fa fa-file-text-o fa-fw"></i> Test Data</a></li>
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(5)}"><a data-toggle="pill" ng-click="changeTestStepTab(5);"><i class="fa fa-file-text-o fa-fw"></i> Validation</a></li>
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(6)}"><a data-toggle="pill" ng-click="changeTestStepTab(6); genSTDNISTXML(findTestCaseNameOfTestStep());"><i class="fa fa-file-text-o fa-fw"></i> STD/NIST XML</a></li>
-			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(7)}"><a data-toggle="pill" ng-click="changeTestStepTab(7); generateMessageContentHTML(); generateTestDataSpecificationHTML(); generateJurorDocumentHTML();"><i class="fa fa-file-text-o fa-fw"></i> Supplement Documents</a></li>
+			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(7)}"><a data-toggle="pill" ng-click="changeTestStepTab(7); generateSupplementDocuments();"><i class="fa fa-file-text-o fa-fw"></i> Supplement Documents</a></li>
 		</ul>
 
 		<div ng-show="isSelectedTestStepTab(1);">
@@ -377,7 +377,7 @@ body {
 								 NIST XML  
 							</span>
 						</uib-accordion-heading>
-						<textarea style="width:100%" ng-model="nistXMLCode" readonly rows="30"/>
+						<textarea style="width:100%" ng-model="selectedTestStep.nistXMLCode" readonly rows="30"/>
 					</uib-accordion-group>
 
 					<uib-accordion-group  panel-class="panel-level2" is-open="nistStd.std">
@@ -387,7 +387,7 @@ body {
 								 STD XML 
 							</span>
 						</uib-accordion-heading>
-						<textarea style="width:100%" ng-model="stdXMLCode"  readonly rows="30"/>
+						<textarea style="width:100%" ng-model="selectedTestStep.stdXMLCode"  readonly rows="30"/>
 					</uib-accordion-group>
 				</uib-accordion>
 			</div>

@@ -18,7 +18,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Stability;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Table;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.util.ExportUtil;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 
 import java.io.IOException;
 import java.io.StringReader;

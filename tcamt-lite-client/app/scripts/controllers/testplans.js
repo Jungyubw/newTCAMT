@@ -19,6 +19,128 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.nistStd.std = false;
 
 
+	$scope.exportTestPackageHTML = function () {
+		$scope.populateTestSteps();
+
+		var changes = angular.toJson([]);
+		var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
+		$http.post('api/testplans/save', data).then(function (response) {
+			var saveResponse = angular.fromJson(response.data);
+			$rootScope.selectedTestPlan.lastUpdateDate = saveResponse.date;
+			$rootScope.saved = true;
+		}, function (error) {
+			$rootScope.saved = false;
+		});
+
+
+		var form = document.createElement("form");
+		form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportRB/');
+		form.method = "POST";
+		form.target = "_target";
+		var csrfInput = document.createElement("input");
+		csrfInput.name = "X-XSRF-TOKEN";
+		csrfInput.value = $cookies['XSRF-TOKEN'];
+		form.appendChild(csrfInput);
+		form.style.display = 'none';
+		document.body.appendChild(form);
+		form.submit();
+
+	};
+
+	$scope.exportCoverHTML = function () {
+		$scope.populateTestSteps();
+
+		var changes = angular.toJson([]);
+		var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
+		$http.post('api/testplans/save', data).then(function (response) {
+			var saveResponse = angular.fromJson(response.data);
+			$rootScope.selectedTestPlan.lastUpdateDate = saveResponse.date;
+			$rootScope.saved = true;
+		}, function (error) {
+			$rootScope.saved = false;
+		});
+
+
+		var form = document.createElement("form");
+		form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportCover/');
+		form.method = "POST";
+		form.target = "_target";
+		var csrfInput = document.createElement("input");
+		csrfInput.name = "X-XSRF-TOKEN";
+		csrfInput.value = $cookies['XSRF-TOKEN'];
+		form.appendChild(csrfInput);
+		form.style.display = 'none';
+		document.body.appendChild(form);
+		form.submit();
+
+	};
+
+	$scope.populateTestSteps = function () {
+		$rootScope.selectedTestPlan.children.forEach(function(child) {
+			if(child.type == "testcasegroup"){
+				child.testcases.forEach(function(testcase){
+					var testCaseName = testcase.name;
+					testcase.teststeps.forEach(function(teststep){
+						teststep = $scope.populateTestStep(teststep, testCaseName);
+					});
+				});
+			}else if(child.type == "testcase"){
+				child.teststeps.forEach(function(teststep){
+					var testCaseName = testcase.name;
+					teststep = $scope.populateTestStep(teststep, testCaseName);
+				});
+			}
+		});
+	};
+
+	$scope.populateTestStep = function (teststep, testCaseName) {
+
+		if(teststep != null){
+			if(teststep.testDataCategorizationMap == undefined){
+				teststep.testDataCategorizationMap = {};
+			}
+
+			if(teststep.integrationProfileId != undefined && teststep.integrationProfileId !== null){
+				$http.get('api/igdocuments/' + teststep.integrationProfileId + '/tcamtProfile').then(function (response) {
+					var selectedIntegrationProfile = angular.fromJson(response.data);
+					if(teststep.conformanceProfileId != undefined && teststep.conformanceProfileId !== ''){
+						var selectedConformanceProfile =_.find(selectedIntegrationProfile.messages.children, function(m) {
+							return m.id == teststep.conformanceProfileId;
+						});
+
+						if(selectedConformanceProfile){
+							var listLineOfMessage = teststep.er7Message.split("\n");
+
+							var nodeList = [];
+							$scope.travelConformanceProfile(selectedConformanceProfile, "", "", "", "" , "",  nodeList, 10, selectedIntegrationProfile);
+
+							var segmentList = [];
+							var currentPosition = 0;
+
+							for(var i in listLineOfMessage){
+								currentPosition = $scope.getSegment(segmentList, nodeList, currentPosition, listLineOfMessage[i]);
+							};
+							teststep.messageContentsXMLCode = $scope.generateMessageContentXML(segmentList, teststep, selectedConformanceProfile);
+							teststep.nistXMLCode = $scope.generateXML(segmentList, selectedIntegrationProfile, selectedConformanceProfile, testCaseName,false);
+							teststep.stdXMLCode = $scope.generateXML(segmentList, selectedIntegrationProfile, selectedConformanceProfile, testCaseName,true);
+						}
+
+					}
+				}, function (error) {
+					teststep.integrationProfileId = null;
+					teststep.conformanceProfileId = null;
+				});
+			}else {
+				teststep.integrationProfileId = null;
+				teststep.conformanceProfileId = null;
+			}
+		}
+
+		return teststep;
+
+	};
+
+
 	$scope.loadTestPlans = function () {
 		var delay = $q.defer();
 		$scope.error = null;
@@ -50,7 +172,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$rootScope.igs = [];
 		$scope.loading = true;
 
-		$http.get($rootScope.igamtURL + 'api/igdocuments', { params: { "type": "USER" } }).then(function(response) {
+		$http.get('api/igdocuments').then(function(response) {
 			$rootScope.igs = angular.fromJson(response.data);
 			$scope.loading = false;
 			delay.resolve(true);
@@ -110,7 +232,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	$scope.loadIntegrationProfile = function () {
 		if($rootScope.selectedTestStep.integrationProfileId != undefined && $rootScope.selectedTestStep.integrationProfileId !== null){
-			$http.get($rootScope.igamtURL + 'api/igdocuments/' + $rootScope.selectedTestStep.integrationProfileId + '/tcamtProfile').then(function (response) {
+			$http.get('api/igdocuments/' + $rootScope.selectedTestStep.integrationProfileId + '/tcamtProfile').then(function (response) {
 				$rootScope.selectedIntegrationProfile = angular.fromJson(response.data);
 				$scope.loadConformanceProfile();
 			}, function (error) {
@@ -270,7 +392,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.selectTestCase = function (testCase) {
-		console.log(testCase);
 		if (testCase != null) {
 			waitingDialog.show('Opening Test Case ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
@@ -379,23 +500,23 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		var listLineOfMessage = $rootScope.selectedTestStep.er7Message.split("\n");
 
 		var nodeList = [];
-		$scope.travelConformanceProfile(conformanceProfile, "", "", "", "" , "",  nodeList, 10);
+		$scope.travelConformanceProfile(conformanceProfile, "", "", "", "" , "",  nodeList, 10, $rootScope.selectedIntegrationProfile);
 
 		$rootScope.segmentList = [];
 		var currentPosition = 0;
 
 		for(var i in listLineOfMessage){
-			currentPosition = $scope.getSegment(nodeList, currentPosition, listLineOfMessage[i]);
+			currentPosition = $scope.getSegment($rootScope.segmentList, nodeList, currentPosition, listLineOfMessage[i]);
 		};
 	};
 
-	$scope.getSegment = function (nodeList, currentPosition, segmentStr) {
+	$scope.getSegment = function (segmentList, nodeList, currentPosition, segmentStr) {
 		var segmentName = segmentStr.substring(0,3);
 
 		for(var index = currentPosition; index < nodeList.length; index++){
 			if(nodeList[index].obj.name === segmentName){
 				nodeList[index].segmentStr = segmentStr;
-				$rootScope.segmentList.push(nodeList[index]);
+				segmentList.push(nodeList[index]);
 				return index + 1;
 			}
 		}
@@ -460,7 +581,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 					positioniPath : segment.positioniPath + "." + (i + 1) + "[" + (h + 1) + "]",
 					usagePath : segment.usagePath + "-" + segment.obj.fields[i].usage,
 					field: segment.obj.fields[i],
-					dt: $scope.findDatatype(segment.obj.fields[i].datatype),
+					dt: $scope.findDatatype(segment.obj.fields[i].datatype, $rootScope.selectedIntegrationProfile),
 					value: fieldInstanceValues[h],
 					children : []
 				};
@@ -472,8 +593,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 						if(mapping.position){
 							if(mapping.position === i + 1){
-
-								console.log(mapping);
 								var referenceValue = null;
 								var secondReferenceValue = null;
 
@@ -551,7 +670,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 						positioniPath : fieldNode.positioniPath + "." + (j + 1) + "[1]",
 						usagePath : fieldNode.usagePath + "-" + fieldNode.dt.components[j].usage,
 						component: fieldNode.dt.components[j],
-						dt: $scope.findDatatype(fieldNode.dt.components[j].datatype),
+						dt: $scope.findDatatype(fieldNode.dt.components[j].datatype, $rootScope.selectedIntegrationProfile),
 						value: componentValues[j],
 						children : []
 					};
@@ -593,7 +712,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 							positioniPath : componentNode.positioniPath + "." + (k + 1) + "[1]",
 							usagePath : componentNode.usagePath + "-" + componentNode.dt.components[k].usage,
 							component: componentNode.dt.components[k],
-							dt: $scope.findDatatype(componentNode.dt.components[k].datatype),
+							dt: $scope.findDatatype(componentNode.dt.components[k].datatype, $rootScope.selectedIntegrationProfile),
 							value: subComponentValues[k],
 							children : []
 						};
@@ -664,16 +783,25 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		return result;
 	};
 
+	$scope.generateSupplementDocuments = function () {
+		$scope.initTestData();
+		$scope.generateTestDataSpecificationHTML();
+		$scope.generateJurorDocumentHTML();
+		$scope.generateMessageContentHTML();
+	};
+
 	$scope.generateTestDataSpecificationHTML = function () {
 		if($rootScope.selectedTestStep.tdsXSL && $rootScope.selectedTestStep.tdsXSL !== ""){
 			var data = {};
 			data.type = $rootScope.selectedTestStep.tdsXSL;
-			data.xml = $scope.formatXml($scope.generateXML($scope.findTestCaseNameOfTestStep(),false))
+			data.xml = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),false));
 
 			$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
 				$rootScope.testDataSpecificationHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
 			}, function (error) {
 			});
+		}else{
+			$rootScope.testDataSpecificationHTML = "No TestData Specification";
 		}
 	};
 
@@ -681,19 +809,21 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		if($rootScope.selectedTestStep.jdXSL && $rootScope.selectedTestStep.jdXSL !== ""){
 			var data = {};
 			data.type = $rootScope.selectedTestStep.jdXSL;
-			data.xml = $scope.formatXml($scope.generateXML($scope.findTestCaseNameOfTestStep(),false))
+			data.xml = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),false));
 
 			$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
 				$rootScope.jurorDocumentsHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
 			}, function (error) {
 			});
+		}else{
+			$rootScope.jurorDocumentsHTML = "No Juror Document";
 		}
 	};
 
 	$scope.generateMessageContentHTML = function () {
 		var data = {};
 		data.type = 'MessageContents';
-		data.xml = $scope.generateMessageContentXML();
+		data.xml = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile);
 
 		$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
 			$rootScope.messageContentsHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
@@ -701,16 +831,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		});
 	};
 
-	$scope.generateMessageContentXML = function() {
+	//TODO Check OBX-5
+	$scope.generateMessageContentXML = function(segmentList, testStep, selectedConformanceProfile, selectedIntegrationProfile) {
 		var rootName = "MessageContent";
 		var xmlString = '<' + rootName + '>' + '</' + rootName + '>';
 		var parser = new DOMParser();
 		var xmlDoc = parser.parseFromString(xmlString, "text/xml");
 		var rootElement = xmlDoc.getElementsByTagName(rootName)[0];
 
-		$scope.initTestData();
-
-		$rootScope.segmentList.forEach(function(instanceSegment) {
+		segmentList.forEach(function(instanceSegment) {
 			var segment = instanceSegment.obj;
 			var segName = segment.name;
 			var segDesc = segment.description;
@@ -724,13 +853,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 			for (var i = 0; i < segment.fields.length; i++){
 				var field = segment.fields[i];
-				if (!$scope.isHideForMessageContentByUsage(segment, field, instanceSegment.path + "." + field.position, instanceSegment.positioniPath + "." + field.position + "[1]")) {
+				if (!$scope.isHideForMessageContentByUsage(segment, field, instanceSegment.path + "." + field.position, instanceSegment.positioniPath + "." + field.position + "[1]", selectedConformanceProfile)) {
 					var wholeFieldStr = $scope.getFieldStrFromSegment(segName, instanceSegment, field.position);
 					var fieldRepeatIndex = 0;
 
 					for (var j = 0; j < wholeFieldStr.split("~").length; j++) {
 						var fieldStr = wholeFieldStr.split("~")[j];
-						var fieldDT = $scope.findDatatype(field.datatype);
+						var fieldDT = $scope.findDatatype(field.datatype, selectedIntegrationProfile);
 						if (segName == "MSH" && field.position == 1) {
 							fieldStr = "|";
 						}
@@ -742,7 +871,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 						if (fieldDT == null || fieldDT.components == null || fieldDT.components.length == 0) {
 							var tdcstrOfField = "";
-							var cateOfField = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath, fieldStr)];
+							var cateOfField = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath, fieldStr)];
 							if(cateOfField) tdcstrOfField = cateOfField.testDataCategorization;
 
 							var fieldElement = xmlDoc.createElement("Field");
@@ -760,11 +889,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 							for (var k = 0 ; k < fieldDT.components.length; k++ ){
 								var c = fieldDT.components[k];
 								var componentiPath = "." + c.position + "[1]";
-								if (!$scope.isHideForMessageContentByUsage(fieldDT, c, instanceSegment.path + "." + field.position + "." + c.position, instanceSegment.positioniPath + "." + field.position + "[1]." + c.position + "[1]")) {
+								if (!$scope.isHideForMessageContentByUsage(fieldDT, c, instanceSegment.path + "." + field.position + "." + c.position, instanceSegment.positioniPath + "." + field.position + "[1]." + c.position + "[1]", selectedConformanceProfile)) {
 									var componentStr = $scope.getComponentStrFromField(fieldStr, c.position);
-									if ($scope.findDatatype(c.datatype).components == null || $scope.findDatatype(c.datatype).components.length == 0) {
+									if ($scope.findDatatype(c.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(c.datatype, selectedIntegrationProfile).components.length == 0) {
 										var tdcstrOfComponent = "";
-										var cateOfComponent = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath, componentStr)];
+										var cateOfComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath, componentStr)];
 										if(cateOfComponent) tdcstrOfComponent = cateOfComponent.testDataCategorization;
 
 										var componentElement = xmlDoc.createElement("Component");
@@ -779,13 +908,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 										componentElement.setAttribute("DataElement", c.name);
 										fieldElement.appendChild(componentElement);
 
-										for (var l = 0; l < $scope.findDatatype(c.datatype).components.length; l++){
-											var sc = $scope.findDatatype(c.datatype).components[l];
-											if (!$scope.isHideForMessageContentByUsage($scope.findDatatype(c.datatype), sc, instanceSegment.path + "." + field.position + "." + c.position + "." + sc.position, instanceSegment.positioniPath + "." + field.position + "[1]." + c.position + "[1]." + sc.position + "[1]")) {
+										for (var l = 0; l < $scope.findDatatype(c.datatype, selectedIntegrationProfile).components.length; l++){
+											var sc = $scope.findDatatype(c.datatype, selectedIntegrationProfile).components[l];
+											if (!$scope.isHideForMessageContentByUsage($scope.findDatatype(c.datatype, selectedIntegrationProfile), sc, instanceSegment.path + "." + field.position + "." + c.position + "." + sc.position, instanceSegment.positioniPath + "." + field.position + "[1]." + c.position + "[1]." + sc.position + "[1]", selectedConformanceProfile)) {
 												var subcomponentiPath = "." + sc.position + "[1]";
 												var subcomponentStr = $scope.getSubComponentStrFromField(componentStr, sc.position);
 												var tdcstrOfSubComponent = "";
-												var cateOfSubComponent = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath + subcomponentiPath, subcomponentStr)];
+												var cateOfSubComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath + subcomponentiPath, subcomponentStr)];
 												if(cateOfSubComponent) tdcstrOfSubComponent = cateOfSubComponent.testDataCategorization;
 												var subComponentElement = xmlDoc.createElement("SubComponent");
 												subComponentElement.setAttribute("Location", segName + "." + field.position + "." + c.position + "." + sc.position);
@@ -802,98 +931,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 					}
 				}
 			}
-		/*
-			if(segment.obj.dynamicMapping.mappings.length > 0) {
-				for(var z = 0; z < segment.obj.dynamicMapping.mappings.length ; z++){
-					var mapping = segment.obj.dynamicMapping.mappings[z];
-
-					if(mapping.position){
-						if(mapping.position === i + 1){
-
-							console.log(mapping);
-							var referenceValue = null;
-							var secondReferenceValue = null;
-
-							if(mapping.reference){
-								referenceValue =  fieldValues[mapping.reference - 1];
-								if(mapping.secondReference) {
-									secondReferenceValue =  fieldValues[mapping.secondReference - 1];
-								}
-
-								if(secondReferenceValue == null){
-									var caseFound = _.find(mapping.cases, function(c){ return referenceValue.split("^")[0] == c.value; });
-									if(caseFound){
-										fieldNode.dt = $scope.findDatatypeById(caseFound.datatype);
-									}
-
-								}else{
-									var caseFound = _.find(mapping.cases, function(c){
-										return referenceValue.split("^")[0] == c.value && secondReferenceValue.split("^")[0] == c.secondValue;
-									});
-
-									if(!caseFound){
-										caseFound = _.find(mapping.cases, function(c){
-											return referenceValue.split("^")[0] == c.value && (c.secondValue == '' || c.secondValue == undefined);
-										});
-									}
-									if(caseFound){
-										fieldNode.dt = $scope.findDatatypeById(caseFound.datatype);
-									}
-								}
-
-							}
-						}
-					}
-				}
-			}
-
-
-
-		*/
-
-
-
-
-
-
-
-
 		});
-		/*
-		for (InstanceSegment instanceSegment : instanceSegments) {
-			Segment segment = m.getSegments().findOneSegmentById(instanceSegment.getSegmentRef().getRef());
-			String segName = segment.getName();
-			String segDesc = segment.getDescription();
-			String segmentiPath = instanceSegment.getIpath();
-
-			Element segmentElement = doc.createElement("Segment");
-			segmentElement.setAttribute("Name", segName);
-			segmentElement.setAttribute("Description", segDesc);
-			segmentElement.setAttribute("InstancePath", instanceSegment.getIpath());
-			rootElement.appendChild(segmentElement);
-
-			if(segment.getDynamicMapping() != null){
-				for(Mapping mapping:segment.getDynamicMapping().getMappings()){
-					Integer position = mapping.getPosition();
-					Integer reference = mapping.getReference();
-
-					String refereceValue =  this.getFieldStrFromSegment(segName, instanceSegment, reference);
-
-					for(Case c:mapping.getCases()){
-						if(c.getValue().equals(refereceValue)){
-
-							for(Field field:segment.getFields()){
-								if(field.getPosition().equals(position)){
-									field.setDatatype(c.getDatatype());
-								}
-							}
-						}
-					}
-				}
-			}
-
-		}
-		*/
 
 		var serializer = new XMLSerializer();
 		var xmlString = serializer.serializeToString(xmlDoc);
@@ -901,7 +939,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		return xmlString;
 	};
 
-	$scope.isHideForMessageContentByUsage = function (segment, field, path, iPositionPath){
+	$scope.isHideForMessageContentByUsage = function (segment, field, path, iPositionPath, selectedConformanceProfile){
 		if(field.hide) return true;
 
 		if(field.usage == 'R') return false;
@@ -911,7 +949,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			var p = $scope.findPreficate(segment.predicates, field.position + "[1]");
 
 			if(p == null) {
-				p = this.findPreficateForMessageAndGroup(path, iPositionPath);
+				p = this.findPreficateForMessageAndGroup(path, iPositionPath, selectedConformanceProfile);
 			}
 
 
@@ -933,14 +971,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		return null;
 	};
 
-	$scope.findPreficateForMessageAndGroup = function (path, iPositionPath){
-		var groupPath = $rootScope.selectedConformanceProfile.structID;
+	$scope.findPreficateForMessageAndGroup = function (path, iPositionPath, selectedConformanceProfile){
+		var groupPath = selectedConformanceProfile.structID;
 		var paths = path.split(".");
 
 		for(var index = 0; index < paths.length; index++){
 			var pathData = paths[index];
 			groupPath = groupPath + "." + pathData;
-			var group = $scope.findGroup($rootScope.selectedConformanceProfile.children, groupPath);
+			var group = $scope.findGroup(selectedConformanceProfile.children, groupPath);
 			var depth = groupPath.split(".").length -1;
 			var partIPositionPath = "";
 			for(var i=depth; i<paths.length; i++){
@@ -956,8 +994,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			}
 		}
 
-		for(var i = 0; i < $rootScope.selectedConformanceProfile.length; i++){
-			var p = $rootScope.selectedConformanceProfile.predicates[i];
+		for(var i = 0; i < selectedConformanceProfile.length; i++){
+			var p = selectedConformanceProfile.predicates[i];
 			var partIPositionPath = "";
 			for(var i=0; i < paths.length; i++){
 				var s = iPositionPath.split(".")[i];
@@ -1019,11 +1057,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.genSTDNISTXML = function(testcaseName){
-		$rootScope.nistXMLCode = $scope.formatXml($scope.generateXML(testcaseName,false));
-		$rootScope.stdXMLCode = $scope.formatXml($scope.generateXML(testcaseName,true));
-		// $rootScope.nistXMLCode = $sce.trustAsHtml($scope.generateXML(testcaseName,true));
-		// $rootScope.stdXMLCode = $sce.trustAsHtml($scope.generateXML(testcaseName,true));
-
+		$scope.initTestData();
+		$rootScope.selectedTestStep.nistXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,false));
+		$rootScope.selectedTestStep.stdXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,true));
 	};
 
 	$scope.formatXml = function (xml) {
@@ -1079,27 +1115,25 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		return formatted;
 	};
 
-	$scope.generateXML = function(testcaseName, isSTD) {
-		var rootName = $rootScope.selectedConformanceProfile.structID;
+	$scope.generateXML = function(segmentList, selectedIntegrationProfile, selectedConformanceProfile, testcaseName, isSTD) {
+		var rootName = selectedConformanceProfile.structID;
 		var xmlString = '<' + rootName + ' testcaseName=\"' + testcaseName + '\">' + '</' + rootName + '>';
 		var parser = new DOMParser();
 		var xmlDoc = parser.parseFromString(xmlString, "text/xml");
 
 		var rootElm = xmlDoc.getElementsByTagName(rootName)[0];
 
-		$scope.initTestData();
-
-		$rootScope.segmentList.forEach(function(segment) {
+		segmentList.forEach(function(segment) {
 			var iPathList = segment.iPath.split(".");
 			if (iPathList.length == 1) {
 				var segmentElm = xmlDoc.createElement(iPathList[0].substring(0,iPathList[0].lastIndexOf("[")));
 
 				if (isSTD){
-					$scope.generateSegment(segmentElm, segment, xmlDoc);
+					$scope.generateSegment(segmentElm, segment, xmlDoc, selectedIntegrationProfile);
 				}
 
 				else {
-					$scope.generateNISTSegment(segmentElm, segment, xmlDoc);
+					$scope.generateNISTSegment(segmentElm, segment, xmlDoc, selectedIntegrationProfile);
 				}
 
 
@@ -1113,11 +1147,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 					if (i == iPathList.length - 1) {
 						var segmentElm = xmlDoc.createElement(iPath.substring(0, iPath.lastIndexOf("[")));
 						if (isSTD){
-							$scope.generateSegment(segmentElm, segment, xmlDoc);
+							$scope.generateSegment(segmentElm, segment, xmlDoc, selectedIntegrationProfile);
 						}
 
 						else {
-							$scope.generateNISTSegment(segmentElm, segment, xmlDoc);
+							$scope.generateNISTSegment(segmentElm, segment, xmlDoc, selectedIntegrationProfile);
 						}
 						parentElm.appendChild(segmentElm);
 					} else {
@@ -1144,7 +1178,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		return xmlString;
 	};
 
-	$scope.generateSegment = function (segmentElm, instanceSegment, xmlDoc) {
+	$scope.generateSegment = function (segmentElm, instanceSegment, xmlDoc, selectedIntegrationProfile) {
 		var lineStr = instanceSegment.segmentStr;
 		var segmentName = lineStr.substring(0, 3);
 		var segment = instanceSegment.obj;
@@ -1175,7 +1209,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 						if (i < segment.fields.length) {
 							var field = segment.fields[i];
 							var fieldElm = xmlDoc.createElement(segmentName + "." + field.position);
-							if ($scope.findDatatype(field.datatype).components == null || $scope.findDatatype(field.datatype).components.length == 0) {
+							if ($scope.findDatatype(field.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(field.datatype, selectedIntegrationProfile).components.length == 0) {
 								if (lineStr.startsWith("OBX")) {
 									if (field.position == 2) {
 										variesDT = fieldStr;
@@ -1201,19 +1235,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 								}
 							} else {
 								var componentStrs = fieldStr.split("^");
-								var componentDataTypeName = $scope.findDatatype(field.datatype).name;
+								var componentDataTypeName = $scope.findDatatype(field.datatype, selectedIntegrationProfile).name;
 								for (var j = 0; j < componentStrs.length; j++) {
-									if (j < $scope.findDatatype(field.datatype).components.length) {
-										var component = $scope.findDatatype(field.datatype).components[j];
+									if (j < $scope.findDatatype(field.datatype, selectedIntegrationProfile).components.length) {
+										var component = $scope.findDatatype(field.datatype, selectedIntegrationProfile).components[j];
 										var componentStr = componentStrs[j];
 										if (componentStr != null && componentStr !== "") {
 											var componentElm = xmlDoc.createElement(componentDataTypeName + "." + (j + 1));
-											if ($scope.findDatatype(component.datatype).components == null || $scope.findDatatype(component.datatype).components.length == 0) {
+											if ($scope.findDatatype(component.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(component.datatype, selectedIntegrationProfile).components.length == 0) {
 												var value = xmlDoc.createTextNode(componentStr);
 												componentElm.appendChild(value);
 											} else {
 												var subComponentStrs = componentStr.split("&");
-												var subComponentDataTypeName = $scope.findDatatype(component.datatype).name;
+												var subComponentDataTypeName = $scope.findDatatype(component.datatype, selectedIntegrationProfile).name;
 
 												for (var k = 0; k < subComponentStrs.length; k++) {
 													var subComponentStr = subComponentStrs[k];
@@ -1240,7 +1274,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}
 	};
 
-	$scope.generateNISTSegment = function (segmentElm, instanceSegment, xmlDoc) {
+	$scope.generateNISTSegment = function (segmentElm, instanceSegment, xmlDoc, selectedIntegrationProfile) {
 		var lineStr = instanceSegment.segmentStr;
 		var segmentName = lineStr.substring(0, 3);
 		var segment = instanceSegment.obj;
@@ -1271,7 +1305,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 						if (i < segment.fields.length) {
 							var field = segment.fields[i];
 							var fieldElm = xmlDoc.createElement(segmentName + "." + field.position);
-							if ($scope.findDatatype(field.datatype).components == null || $scope.findDatatype(field.datatype).components.length == 0) {
+							if ($scope.findDatatype(field.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(field.datatype, selectedIntegrationProfile).components.length == 0) {
 								if (lineStr.startsWith("OBX")) {
 									if (field.position == 2) {
 										var value = xmlDoc.createTextNode(fieldStr);
@@ -1296,12 +1330,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 							} else {
 								var componentStrs = fieldStr.split("^");
 								for (var j = 0; j < componentStrs.length; j++) {
-									if (j < $scope.findDatatype(field.datatype).components.length) {
-										var component = $scope.findDatatype(field.datatype).components[j];
+									if (j < $scope.findDatatype(field.datatype, selectedIntegrationProfile).components.length) {
+										var component = $scope.findDatatype(field.datatype, selectedIntegrationProfile).components[j];
 										var componentStr = componentStrs[j];
 										if (componentStr != null && componentStr !== "") {
 											var componentElm = xmlDoc.createElement(segmentName + "." + (i + 1) + "." + (j + 1));
-											if ($scope.findDatatype(component.datatype).components == null || $scope.findDatatype(component.datatype).components.length == 0){
+											if ($scope.findDatatype(component.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(component.datatype, selectedIntegrationProfile).components.length == 0){
 												var value = xmlDoc.createTextNode(componentStr);
 												componentElm.appendChild(value);
 											} else {
@@ -1395,11 +1429,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		});
 	};
 
-	$scope.travelConformanceProfile = function (parent, path, ipath, positionPath, positioniPath, usagePath, nodeList, maxSize) {
+	$scope.travelConformanceProfile = function (parent, path, ipath, positionPath, positioniPath, usagePath, nodeList, maxSize, selectedIntegrationProfile) {
 		for(var i in parent.children){
 			var child = parent.children[i];
 			if(child.type === 'segmentRef'){
-				var obj = $scope.findSegment(child.ref);
+				var obj = $scope.findSegment(child.ref, selectedIntegrationProfile);
 
 				if(child.max === '1'){
 					var segmentPath = null;
@@ -1494,7 +1528,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 						groupUsagePath = usagePath + "-" + child.usage;
 					}
 
-					$scope.travelConformanceProfile(child, groupPath, groupiPath, groupPositionPath, groupiPositionPath, groupUsagePath, nodeList, maxSize);
+					$scope.travelConformanceProfile(child, groupPath, groupiPath, groupPositionPath, groupiPositionPath, groupUsagePath, nodeList, maxSize, selectedIntegrationProfile);
 				}else {
 					for (var index = 1; index < maxSize + 1; index++) {
 						var groupPath = null;
@@ -1517,12 +1551,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 							groupUsagePath = usagePath + "-" + child.usage;
 						}
 
-						$scope.travelConformanceProfile(child, groupPath, groupiPath, groupPositionPath, groupiPositionPath, groupUsagePath, nodeList,  maxSize);
+						$scope.travelConformanceProfile(child, groupPath, groupiPath, groupPositionPath, groupiPositionPath, groupUsagePath, nodeList,  maxSize, selectedIntegrationProfile);
 					}
 				}
 			}
 		};
 	};
+
 
 	$scope.findTable = function (ref){
         if(ref === undefined || ref === null) return null;
@@ -1532,10 +1567,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		});
 	};
 
-	$scope.findDatatype = function (ref){
+	$scope.findDatatype = function (ref, selectedIntegrationProfile){
         if(ref === undefined || ref === null) return null;
-		if($rootScope.selectedIntegrationProfile == undefined || $rootScope.selectedIntegrationProfile == null) return null;
-		return _.find($rootScope.selectedIntegrationProfile.datatypes.children,function(d){
+		if(selectedIntegrationProfile == undefined || selectedIntegrationProfile == null) return null;
+		return _.find(selectedIntegrationProfile.datatypes.children,function(d){
 			return d.id == ref.id;
 		});
 	};
@@ -1548,10 +1583,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		});
 	};
 
-	$scope.findSegment = function (ref){
-        if(ref === undefined || ref === null) return null;
-		if($rootScope.selectedIntegrationProfile == undefined || $rootScope.selectedIntegrationProfile == null) return null;
-		return _.find($rootScope.selectedIntegrationProfile.segments.children,function(s){
+	$scope.findSegment = function (ref, selectedIntegrationProfile){
+		if(ref === undefined || ref === null) return null;
+		if(selectedIntegrationProfile == undefined || selectedIntegrationProfile == null) return null;
+		return _.find(selectedIntegrationProfile.segments.children,function(s){
 			return s.id == ref.id;
 		});
 	};

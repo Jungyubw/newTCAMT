@@ -286,8 +286,6 @@ app.config(function ($routeProvider, RestangularProvider, $httpProvider, Keepali
 
 
 app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, userInfoService, $http, AppInfo, StorageService, $templateCache, $window, notifications) {
-    $rootScope.igamtURL = 'http://localhost:7070/igamt/';
-
     $rootScope.appInfo = {};
     //Check if the login dialog is already displayed.
     $rootScope.loginDialogShown = false;
@@ -388,9 +386,7 @@ app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, u
     $rootScope.$on('event:loginRequest', function (event, username, password) {
         httpHeaders.common['Accept'] = 'application/json';
         httpHeaders.common['Authorization'] = 'Basic ' + base64.encode(username + ':' + password);
-//        httpHeaders.common['withCredentials']=true;
-//        httpHeaders.common['Origin']="http://localhost:9000";
-        $http.get($rootScope.igamtURL + 'api/accounts/login');
+
         $http.get('api/accounts/login').success(function () {
             //If we are here in this callback, login was successfull
             //Let's get user info now
@@ -432,16 +428,6 @@ app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, u
 //                console.log('detected msg with text: ' + msg.text);
             msg.show = false;
         }
-    });
-
-    $rootScope.$watch(function(){
-        return $rootScope.msg().text;
-    }, function (value) {
-        $rootScope.showNotification($rootScope.msg());
-    });
-
-    $rootScope.$watch('language()', function (value) {
-        $rootScope.showNotification($rootScope.msg());
     });
 
     $rootScope.loadUserFromCookie = function () {
@@ -526,26 +512,6 @@ app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, u
 
     $rootScope.reloadPage = function () {
         $window.location.reload();
-    };
-
-    $rootScope.showNotification = function (m) {
-        if(m != undefined && m.show && m.text != null && m.text) {
-            var msg = angular.copy(m);
-            var message = $.i18n.prop(msg.text);
-            var type = msg.type;
-            notifications.closeAll();
-            if (type === "danger") {
-                notifications.showError({message: message});
-            } else if (type === 'warning') {
-                notifications.showWarning({message: message});
-            } else if (type === 'success') {
-                notifications.showSuccess({message: message});
-            }
-            //reset
-            m.text = null;
-            m.type = null;
-            m.show = false;
-        }
     };
 
     $rootScope.scrollbarWidth = 0;

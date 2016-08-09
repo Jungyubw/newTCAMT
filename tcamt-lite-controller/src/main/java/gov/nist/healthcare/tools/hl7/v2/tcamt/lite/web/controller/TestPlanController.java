@@ -6,8 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -18,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +45,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.TestPlanSaveResponse;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config.TestPlanChangeCommand;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAllowException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 
 @RestController
 @RequestMapping("/testplans")
@@ -55,7 +61,6 @@ public class TestPlanController extends CommonController {
 
 	@Autowired
 	AccountRepository accountRepository;
-
 
 	/**
 	 * 
@@ -85,8 +90,7 @@ public class TestPlanController extends CommonController {
 		try {
 			log.info("Fetching profile with id=" + id);
 			User u = userService.getCurrentUser();
-			Account account = accountRepository.findByTheAccountsUsername(u
-					.getUsername());
+			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 			if (account == null)
 				throw new UserAccountNotFoundException();
 			TestPlan tp = findTestPlan(id);
@@ -103,7 +107,8 @@ public class TestPlanController extends CommonController {
 		try {
 			User u = userService.getCurrentUser();
 			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-			if (account == null) throw new UserAccountNotFoundException();
+			if (account == null)
+				throw new UserAccountNotFoundException();
 			log.info("Delete TestPlan with id=" + id);
 			TestPlan tp = findTestPlan(id);
 			if (tp.getAccountId() == account.getId()) {
@@ -120,13 +125,12 @@ public class TestPlanController extends CommonController {
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public TestPlanSaveResponse save(
-			@RequestBody TestPlanChangeCommand command)
-			throws TestPlanSaveException {
+	public TestPlanSaveResponse save(@RequestBody TestPlanChangeCommand command) throws TestPlanSaveException {
 		try {
 			User u = userService.getCurrentUser();
 			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-			if (account == null) throw new UserAccountNotFoundException();
+			if (account == null)
+				throw new UserAccountNotFoundException();
 			TestPlan saved = testPlanService.apply(command.getTp());
 			return new TestPlanSaveResponse(saved.getLastUpdateDate(), saved.getVersion());
 		} catch (RuntimeException e) {
@@ -135,22 +139,22 @@ public class TestPlanController extends CommonController {
 			throw new TestPlanSaveException(e);
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/supplementsGeneration", method = RequestMethod.POST)
-	public XMLContainer supplementsGeneration(
-			@RequestBody XMLContainer xmlContainer) {
+	public XMLContainer supplementsGeneration(@RequestBody XMLContainer xmlContainer) {
 		XMLContainer result = new XMLContainer();
 		try {
 			User u = userService.getCurrentUser();
 			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-			if (account == null) throw new UserAccountNotFoundException();
-			
+			if (account == null)
+				throw new UserAccountNotFoundException();
+
 			ClassLoader classLoader = getClass().getClassLoader();
-			String xsl = IOUtils.toString(classLoader.getResourceAsStream("xsl" +  File.separator + xmlContainer.getType() + ".xsl"));
+			String xsl = IOUtils.toString(
+					classLoader.getResourceAsStream("xsl" + File.separator + xmlContainer.getType() + ".xsl"));
 			InputStream xsltInputStream = new ByteArrayInputStream(xsl.getBytes());
 			InputStream sourceInputStream = new ByteArrayInputStream(xmlContainer.getXml().getBytes());
-			Reader xsltReader =  new InputStreamReader(xsltInputStream, "UTF-8");
+			Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
 			Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
 			String xsltStr = IOUtils.toString(xsltReader);
 			String sourceStr = IOUtils.toString(sourceReader);
@@ -163,34 +167,63 @@ public class TestPlanController extends CommonController {
 		return result;
 	}
 
-	private TestPlan findTestPlan(String testplanId)
-			throws TestPlanNotFoundException {
+	private TestPlan findTestPlan(String testplanId) throws TestPlanNotFoundException {
 		TestPlan tp = testPlanService.findOne(testplanId);
 		if (tp == null) {
 			throw new TestPlanNotFoundException(testplanId);
 		}
 		return tp;
 	}
-	
+
 	private static String parseXmlByXSLT(String sourceStr, String xsltStr) {
 		System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
 		TransformerFactory tFactory = TransformerFactory.newInstance();
-	    
-	    
-        try {
-            Transformer transformer = tFactory.newTransformer(new StreamSource(new java.io.StringReader(xsltStr)));
-            StringWriter outWriter = new StringWriter();
-            StreamResult result = new StreamResult(outWriter);
-            
-            transformer.transform(new StreamSource(new java.io.StringReader(sourceStr)), result);
-            StringBuffer sb = outWriter.getBuffer(); 
-            String finalstring = sb.toString();
-            
-            return finalstring;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+		try {
+			Transformer transformer = tFactory.newTransformer(new StreamSource(new java.io.StringReader(xsltStr)));
+			StringWriter outWriter = new StringWriter();
+			StreamResult result = new StreamResult(outWriter);
+
+			transformer.transform(new StreamSource(new java.io.StringReader(sourceStr)), result);
+			StringBuffer sb = outWriter.getBuffer();
+			String finalstring = sb.toString();
+
+			return finalstring;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		return null;
 	}
+
+	@RequestMapping(value = "/{id}/exportRB", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	public void exportTestPackage(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		TestPlan tp = findTestPlan(id);
+		InputStream content = null;
+		content = new ExportUtil().exportTestPackageAsHtml(tp);
+		response.setContentType("text/html");
+		response.setHeader("Content-disposition", "attachment;filename=" + escapeSpace(tp.getName()) + "-"
+				+ new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_TestPackage.html");
+		FileCopyUtils.copy(content, response.getOutputStream());
+
+	}
+	
+	@RequestMapping(value = "/{id}/exportCover", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	public void exportCoverPage(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		TestPlan tp = findTestPlan(id);
+		InputStream content = null;
+		content = new ExportUtil().exportCoverAsHtml(tp);
+		response.setContentType("text/html");
+		response.setHeader("Content-disposition", "attachment;filename=" + escapeSpace(tp.getName()) + "-"
+				+ new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_CoverPage.html");
+		FileCopyUtils.copy(content, response.getOutputStream());
+
+	}
+
+	private String escapeSpace(String str) {
+		return str.replaceAll(" ", "-");
+	}
+
 }

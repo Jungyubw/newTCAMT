@@ -23,7 +23,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.Co
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.Context;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.Predicate;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.Reference;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.util.ExportUtil;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -87,7 +87,7 @@ angular.module('tcl').run(function ($httpBackend, $q, $http) {
     });
 
 
-    $httpBackend.whenGET('api/igdocuments?type=USER').respond(function (method, url, data, headers) {
+    $httpBackend.whenGET('api/igdocuments').respond(function (method, url, data, headers) {
         var request = new XMLHttpRequest();
         request.open('GET', '../../resources/igdocuments.json', false);
         request.send(null);

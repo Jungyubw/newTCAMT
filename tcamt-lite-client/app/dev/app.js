@@ -327,9 +327,6 @@ app.filter("sanitize", ['$sce', function($sce) {
 
 
 app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, userInfoService, $http, AppInfo,StorageService,$templateCache,$window,notifications) {
-    $rootScope.igamtURL = '';
-
-
     $rootScope.appInfo = {};
     //Check if the login dialog is already displayed.
     $rootScope.loginDialogShown = false;

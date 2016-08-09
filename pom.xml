@@ -12,7 +12,6 @@
 		<module>tcamt-lite-domain</module>
 		<module>tcamt-lite-repo</module>
 		<module>tcamt-lite-service</module>
-		<module>tcamt-lite-acmgt</module>
 		<module>tcamt-lite-controller</module>
 	</modules>
 

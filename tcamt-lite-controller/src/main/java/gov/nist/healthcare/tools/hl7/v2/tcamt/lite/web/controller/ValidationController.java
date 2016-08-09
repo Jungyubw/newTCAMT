@@ -2,41 +2,21 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
 
 
-import static org.junit.Assert.assertNotNull;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.itextpdf.text.pdf.codec.Base64.InputStream;
-
-import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.repo.ProfileRepository;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanListException;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanService;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.ProfileServiceImpl;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 import gov.nist.healthcare.unified.enums.Context;
 import gov.nist.healthcare.unified.model.EnhancedReport;
 import gov.nist.healthcare.unified.proxy.ValidationProxy;
-import hl7.v2.validation.vs.ValueSetLibrary;
-import validator.Util;
 @RestController
 public class ValidationController {
 
@@ -49,8 +29,6 @@ public class ValidationController {
 
 	@Autowired
 	AccountRepository accountRepository;
-	@Autowired
-	ProfileRepository profileRepository;
 	
 	
 	
