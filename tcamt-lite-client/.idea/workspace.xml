@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.tmp/styles/main.css" afterPath="$PROJECT_DIR$/.tmp/styles/main.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/index.html" afterPath="$PROJECT_DIR$/app/index.html" />
     </list>
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -48,10 +50,7 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-765">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <marker date="1470735871000" expanded="true" signature="4824:4981" ph="..." />
-                <marker date="1470735871000" expanded="true" signature="4917:4949" ph="..." />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -59,8 +58,8 @@
       <file leaf-file-name="testplans.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3110">
-              <caret line="2124" column="37" selection-start-line="2124" selection-start-column="28" selection-end-line="2124" selection-end-column="37" />
+            <state relative-caret-position="435">
+              <caret line="2389" column="6" selection-start-line="2388" selection-start-column="21" selection-end-line="2389" selection-end-column="6" />
               <folding>
                 <element signature="e#35093#35643#0" expanded="false" />
                 <element signature="e#35697#35836#0" expanded="false" />
@@ -128,12 +127,12 @@
         <entry file="file://$PROJECT_DIR$/.tmp/concat/scripts/scripts.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-10522">
-              <caret line="2754" column="7" selection-start-line="2754" selection-start-column="7" selection-end-line="2754" selection-end-column="7" />
+              <caret line="2771" column="7" selection-start-line="2771" selection-start-column="7" selection-end-line="2771" selection-end-column="7" />
               <folding>
-                <marker date="1470735885000" expanded="true" signature="201239:202037" ph="/** jQuery Lined Textarea Plugin ...*/" />
-                <marker date="1470735885000" expanded="true" signature="205248:205873" ph="/** jquery.i18n.properties ...*/" />
-                <marker date="1470735885000" expanded="true" signature="227062:227100" ph="/** Created by haffo on 6/9/14. ...*/" />
-                <marker date="1470735885000" expanded="true" signature="229512:229627" ph="/** @ngdoc overview ...*/" />
+                <marker date="1470757243000" expanded="true" signature="201239:202037" ph="/** jQuery Lined Textarea Plugin ...*/" />
+                <marker date="1470757243000" expanded="true" signature="205248:205873" ph="/** jquery.i18n.properties ...*/" />
+                <marker date="1470757243000" expanded="true" signature="227062:227100" ph="/** Created by haffo on 6/9/14. ...*/" />
+                <marker date="1470757243000" expanded="true" signature="229512:229627" ph="/** @ngdoc overview ...*/" />
               </folding>
             </state>
           </provider>
@@ -299,8 +298,9 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1920" />
-    <option name="height" value="1200" />
+    <option name="x" value="1920" />
+    <option name="width" value="2560" />
+    <option name="height" value="1440" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -643,25 +643,25 @@
       <workItem from="1470721902596" duration="6050000" />
       <workItem from="1470729008157" duration="1026000" />
       <workItem from="1470730092227" duration="1557000" />
-      <workItem from="1470734321039" duration="2665000" />
+      <workItem from="1470734321039" duration="4072000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="103246000" />
+    <option name="totallyTimeSpent" value="104653000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
-    <editor active="true" />
+    <frame x="1920" y="0" width="2560" height="1440" extended-state="0" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14375988" sideWeight="0.79445934" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.107522644" sideWeight="0.79445934" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1346987" sideWeight="0.20554066" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27757686" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3119349" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.256315" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24970461" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.116071425" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="2" side_tool="true" content_ui="tabs" />
@@ -944,9 +944,9 @@
         <state relative-caret-position="15">
           <caret line="188" column="21" selection-start-line="188" selection-start-column="21" selection-end-line="188" selection-end-column="21" />
           <folding>
-            <marker date="1470686490000" expanded="true" signature="493:673" ph="{...}" />
-            <marker date="1470686490000" expanded="true" signature="1773:1953" ph="{...}" />
-            <marker date="1470686490000" expanded="true" signature="3046:3210" ph="{...}" />
+            <marker date="1470737958000" expanded="true" signature="493:673" ph="{...}" />
+            <marker date="1470737958000" expanded="true" signature="1773:1953" ph="{...}" />
+            <marker date="1470737958000" expanded="true" signature="3046:3210" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -1052,22 +1052,19 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-765">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1470735871000" expanded="true" signature="4824:4981" ph="..." />
-            <marker date="1470735871000" expanded="true" signature="4917:4949" ph="..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.tmp/concat/scripts/scripts.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-10522">
-          <caret line="2754" column="7" selection-start-line="2754" selection-start-column="7" selection-end-line="2754" selection-end-column="7" />
+          <caret line="2771" column="7" selection-start-line="2771" selection-start-column="7" selection-end-line="2771" selection-end-column="7" />
           <folding>
-            <marker date="1470735885000" expanded="true" signature="201239:202037" ph="/** jQuery Lined Textarea Plugin ...*/" />
-            <marker date="1470735885000" expanded="true" signature="205248:205873" ph="/** jquery.i18n.properties ...*/" />
-            <marker date="1470735885000" expanded="true" signature="227062:227100" ph="/** Created by haffo on 6/9/14. ...*/" />
-            <marker date="1470735885000" expanded="true" signature="229512:229627" ph="/** @ngdoc overview ...*/" />
+            <marker date="1470757243000" expanded="true" signature="201239:202037" ph="/** jQuery Lined Textarea Plugin ...*/" />
+            <marker date="1470757243000" expanded="true" signature="205248:205873" ph="/** jquery.i18n.properties ...*/" />
+            <marker date="1470757243000" expanded="true" signature="227062:227100" ph="/** Created by haffo on 6/9/14. ...*/" />
+            <marker date="1470757243000" expanded="true" signature="229512:229627" ph="/** @ngdoc overview ...*/" />
           </folding>
         </state>
       </provider>
@@ -1082,8 +1079,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3110">
-          <caret line="2124" column="37" selection-start-line="2124" selection-start-column="28" selection-end-line="2124" selection-end-column="37" />
+        <state relative-caret-position="435">
+          <caret line="2389" column="6" selection-start-line="2388" selection-start-column="21" selection-end-line="2389" selection-end-column="6" />
           <folding>
             <element signature="e#35093#35643#0" expanded="false" />
             <element signature="e#35697#35836#0" expanded="false" />
