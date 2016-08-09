@@ -2,30 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/controller/IntegrationProfileController.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/ProfileService.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/impl/ProfileServiceImpl.java" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/util/ExportUtil.java" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/util/ExportUtil.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../pom.xml" afterPath="$PROJECT_DIR$/../pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/dev/app.js" afterPath="$PROJECT_DIR$/app/dev/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/dev/profileBackEndStub.js" afterPath="$PROJECT_DIR$/app/dev/profileBackEndStub.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/prod/app.js" afterPath="$PROJECT_DIR$/app/prod/app.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTP.html" afterPath="$PROJECT_DIR$/app/views/edit/editTP.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestPlan.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestPlan.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/listTP.html" afterPath="$PROJECT_DIR$/app/views/edit/listTP.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/tp.html" afterPath="$PROJECT_DIR$/app/views/tp.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/pom.xml" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/config/Bootstrap.java" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/config/Bootstrap.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/controller/TestPlanController.java" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/controller/TestPlanController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/controller/ValidationController.java" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/controller/ValidationController.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/TestStep.java" afterPath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/TestStep.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-service/pom.xml" afterPath="$PROJECT_DIR$/../tcamt-lite-service/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/serialization/ConstraintsSerializationImpl.java" afterPath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/serialization/ConstraintsSerializationImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/serialization/ProfileSerializationImpl.java" afterPath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/serialization/ProfileSerializationImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/serialization/TableSerializationImpl.java" afterPath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/serialization/TableSerializationImpl.java" />
     </list>
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -79,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="testplans.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="testplans.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="32925">
-              <caret line="2237" column="51" selection-start-line="2237" selection-start-column="48" selection-end-line="2237" selection-end-column="51" />
+            <state relative-caret-position="-3110">
+              <caret line="2124" column="37" selection-start-line="2124" selection-start-column="28" selection-end-line="2124" selection-end-column="37" />
               <folding>
                 <element signature="e#35093#35643#0" expanded="false" />
                 <element signature="e#35697#35836#0" expanded="false" />
@@ -137,7 +114,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="app.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/prod/app.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1253">
@@ -183,11 +160,11 @@
         <option value="$PROJECT_DIR$/app/dev/app.js" />
         <option value="$PROJECT_DIR$/app/dev/profileBackEndStub.js" />
         <option value="$PROJECT_DIR$/app/views/edit/listTP.html" />
-        <option value="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
         <option value="$PROJECT_DIR$/app/views/edit/editTP.html" />
         <option value="$PROJECT_DIR$/app/views/edit/editTestPlan.html" />
         <option value="$PROJECT_DIR$/app/views/tp.html" />
         <option value="$PROJECT_DIR$/app/prod/app.js" />
+        <option value="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
       </list>
     </option>
   </component>
@@ -666,16 +643,16 @@
       <workItem from="1470721902596" duration="6050000" />
       <workItem from="1470729008157" duration="1026000" />
       <workItem from="1470730092227" duration="1557000" />
-      <workItem from="1470734321039" duration="1565000" />
+      <workItem from="1470734321039" duration="2665000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="102146000" />
+    <option name="totallyTimeSpent" value="103246000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14375988" sideWeight="0.79445934" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -684,7 +661,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27757686" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3119349" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3119349" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24970461" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.116071425" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="2" side_tool="true" content_ui="tabs" />
@@ -1082,17 +1059,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32925">
-          <caret line="2237" column="51" selection-start-line="2237" selection-start-column="48" selection-end-line="2237" selection-end-column="51" />
-          <folding>
-            <element signature="e#35093#35643#0" expanded="false" />
-            <element signature="e#35697#35836#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.tmp/concat/scripts/scripts.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-10522">
@@ -1111,6 +1077,17 @@
         <state relative-caret-position="1253">
           <caret line="514" column="6" selection-start-line="514" selection-start-column="6" selection-end-line="514" selection-end-column="6" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3110">
+          <caret line="2124" column="37" selection-start-line="2124" selection-start-column="28" selection-end-line="2124" selection-end-column="37" />
+          <folding>
+            <element signature="e#35093#35643#0" expanded="false" />
+            <element signature="e#35697#35836#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

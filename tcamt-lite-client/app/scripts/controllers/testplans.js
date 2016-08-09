@@ -2355,14 +2355,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.cloneTestStep=function(testStep){
 		var clone= angular.copy(testStep);
 		clone.name= testStep.name+"_copy";
-		clone.id= new ObjectId();
+		clone.id= new ObjectId().toString();
 		console.log(clone);
 		return clone;
 	}
 	$scope.cloneTestCase= function(testCase){
 		var clone= angular.copy(testCase);
 		clone.name= testCase.name+"_copy";
-		clone.id= new ObjectId();
+		clone.id= new ObjectId().toString();
 		clone.teststeps=[];
 		if(testCase.teststeps.length>0){
 			angular.forEach(testCase.teststeps, function(teststep){
