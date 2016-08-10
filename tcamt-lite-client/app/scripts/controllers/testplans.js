@@ -120,7 +120,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 							for(var i in listLineOfMessage){
 								currentPosition = $scope.getSegment(segmentList, nodeList, currentPosition, listLineOfMessage[i]);
 							};
-							teststep.messageContentsXMLCode = $scope.generateMessageContentXML(segmentList, teststep, selectedConformanceProfile);
+							teststep.messageContentsXMLCode = $scope.generateMessageContentXML(segmentList, teststep, selectedConformanceProfile, selectedIntegrationProfile);
 							teststep.nistXMLCode = $scope.generateXML(segmentList, selectedIntegrationProfile, selectedConformanceProfile, testCaseName,false);
 							teststep.stdXMLCode = $scope.generateXML(segmentList, selectedIntegrationProfile, selectedConformanceProfile, testCaseName,true);
 						}
@@ -605,7 +605,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 									if(secondReferenceValue == null){
 										var caseFound = _.find(mapping.cases, function(c){ return referenceValue.split("^")[0] == c.value; });
 										if(caseFound){
-											fieldNode.dt = $scope.findDatatypeById(caseFound.datatype);
+											fieldNode.dt = $scope.findDatatypeById(caseFound.datatype, $rootScope.selectedIntegrationProfile);
 										}
 
 									}else{
@@ -619,7 +619,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 											});
 										}
 										if(caseFound){
-											fieldNode.dt = $scope.findDatatypeById(caseFound.datatype);
+											fieldNode.dt = $scope.findDatatypeById(caseFound.datatype, $rootScope.selectedIntegrationProfile);
 										}
 									}
 
@@ -823,7 +823,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.generateMessageContentHTML = function () {
 		var data = {};
 		data.type = 'MessageContents';
-		data.xml = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile);
+		data.xml = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 
 		$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
 			$rootScope.messageContentsHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
@@ -869,6 +869,51 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 						fieldRepeatIndex = fieldRepeatIndex + 1;
 						var fieldiPath = "." + field.position + "[" + fieldRepeatIndex + "]";
 
+
+
+						if(segment.dynamicMapping.mappings.length > 0) {
+							for(var z = 0; z < segment.dynamicMapping.mappings.length ; z++){
+								var mapping = segment.dynamicMapping.mappings[z];
+
+								if(mapping.position){
+									if(mapping.position === field.position){
+										var referenceValue = null;
+										var secondReferenceValue = null;
+
+										if(mapping.reference){
+											referenceValue =  $scope.getFieldStrFromSegment(segName, instanceSegment, mapping.reference);
+											if(mapping.secondReference) {
+												secondReferenceValue =  $scope.getFieldStrFromSegment(segName, instanceSegment, mapping.secondReference);
+											}
+
+											if(secondReferenceValue == null){
+												var caseFound = _.find(mapping.cases, function(c){ return referenceValue.split("^")[0] == c.value; });
+												if(caseFound){
+													fieldDT = $scope.findDatatypeById(caseFound.datatype, selectedIntegrationProfile);
+												}
+
+											}else{
+												var caseFound = _.find(mapping.cases, function(c){
+													return referenceValue.split("^")[0] == c.value && secondReferenceValue.split("^")[0] == c.secondValue;
+												});
+
+												if(!caseFound){
+													caseFound = _.find(mapping.cases, function(c){
+														return referenceValue.split("^")[0] == c.value && (c.secondValue == '' || c.secondValue == undefined);
+													});
+												}
+												if(caseFound){
+													fieldDT = $scope.findDatatypeById(caseFound.datatype, selectedIntegrationProfile);
+												}
+											}
+
+										}
+									}
+								}
+							}
+						}
+
+						console.log(fieldDT);
 						if (fieldDT == null || fieldDT.components == null || fieldDT.components.length == 0) {
 							var tdcstrOfField = "";
 							var cateOfField = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath, fieldStr)];
@@ -936,6 +981,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		var serializer = new XMLSerializer();
 		var xmlString = serializer.serializeToString(xmlDoc);
 
+		console.log(xmlString);
 		return xmlString;
 	};
 
@@ -1575,10 +1621,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		});
 	};
 
-	$scope.findDatatypeById = function (id){
+	$scope.findDatatypeById = function (id, selectedIntegrationProfile){
 		if(id === undefined || id === null) return null;
-		if($rootScope.selectedIntegrationProfile == undefined || $rootScope.selectedIntegrationProfile == null) return null;
-		return _.find($rootScope.selectedIntegrationProfile.datatypes.children,function(d){
+		if(selectedIntegrationProfile == undefined || selectedIntegrationProfile == null) return null;
+		return _.find(selectedIntegrationProfile.datatypes.children,function(d){
 			return d.id == id;
 		});
 	};
