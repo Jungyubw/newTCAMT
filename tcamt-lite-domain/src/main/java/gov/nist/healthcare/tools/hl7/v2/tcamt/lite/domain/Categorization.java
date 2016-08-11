@@ -8,7 +8,7 @@ public class Categorization {
 	private String iPath;
 	private String name;
 	private List<String> listData = new ArrayList<String>();
-	private TestDataCategorization testDataCategorization;
+	private String testDataCategorization;
 	
 	
 	public String getiPath() {
@@ -17,10 +17,10 @@ public class Categorization {
 	public void setiPath(String iPath) {
 		this.iPath = iPath;
 	}
-	public TestDataCategorization getTestDataCategorization() {
+	public String getTestDataCategorization() {
 		return testDataCategorization;
 	}
-	public void setTestDataCategorization(TestDataCategorization testDataCategorization) {
+	public void setTestDataCategorization(String testDataCategorization) {
 		this.testDataCategorization = testDataCategorization;
 	}
 	public String getName() {

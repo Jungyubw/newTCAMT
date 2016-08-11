@@ -123,6 +123,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 							teststep.messageContentsXMLCode = $scope.generateMessageContentXML(segmentList, teststep, selectedConformanceProfile, selectedIntegrationProfile);
 							teststep.nistXMLCode = $scope.generateXML(segmentList, selectedIntegrationProfile, selectedConformanceProfile, testCaseName,false);
 							teststep.stdXMLCode = $scope.generateXML(segmentList, selectedIntegrationProfile, selectedConformanceProfile, testCaseName,true);
+							teststep.constraintsXML = $scope.generateConstraintsXML(segmentList, teststep, selectedConformanceProfile, selectedIntegrationProfile);
 						}
 
 					}
@@ -831,7 +832,387 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		});
 	};
 
-	//TODO Check OBX-5
+	$scope.generateConstraintsXML = function (segmentList, testStep, selectedConformanceProfile, selectedIntegrationProfile){
+		var rootName = "ConformanceContext";
+		var xmlString = '<' + rootName + '>' + '</' + rootName + '>';
+		var parser = new DOMParser();
+		var xmlDoc = parser.parseFromString(xmlString, "text/xml");
+		var rootElement = xmlDoc.getElementsByTagName(rootName)[0];
+		rootElement.setAttribute("UUID", new ObjectId().toString());
+
+		var constraintsElement = xmlDoc.createElement("Constraints");
+		var messageElement = xmlDoc.createElement("Message");
+		var byIDElement = xmlDoc.createElement("ByID");
+		byIDElement.setAttribute("ID", selectedConformanceProfile.id);
+
+		rootElement.appendChild(constraintsElement);
+		constraintsElement.appendChild(messageElement);
+		messageElement.appendChild(byIDElement);
+
+		segmentList.forEach(function(instanceSegment) {
+			var segment = instanceSegment.obj;
+			var segName = segment.name;
+			var segmentiPath = instanceSegment.iPath;
+			var segmentiPositionPath = instanceSegment.positioniPath;
+			var segUsagePath = instanceSegment.usagePath;
+			for (var i = 0; i < segment.fields.length; i++){
+				var field = segment.fields[i];
+				var wholeFieldStr = $scope.getFieldStrFromSegment(segName, instanceSegment, field.position);
+				var fieldRepeatIndex = 0;
+
+				var fieldUsagePath = segUsagePath + '-' + field.usage;
+				for (var j = 0; j < wholeFieldStr.split("~").length; j++) {
+					var fieldStr = wholeFieldStr.split("~")[j];
+					var fieldDT = $scope.findDatatype(field.datatype, selectedIntegrationProfile);
+					if (segName == "MSH" && field.position == 1) {
+						fieldStr = "|";
+					}
+					if (segName == "MSH" && field.position == 2) {
+						fieldStr = "^~\\&";
+					}
+					fieldRepeatIndex = fieldRepeatIndex + 1;
+					var fieldiPath = "." + field.position + "[" + fieldRepeatIndex + "]";
+
+					if(segment.dynamicMapping.mappings.length > 0) {
+						for(var z = 0; z < segment.dynamicMapping.mappings.length ; z++){
+							var mapping = segment.dynamicMapping.mappings[z];
+
+							if(mapping.position){
+								if(mapping.position === field.position){
+									var referenceValue = null;
+									var secondReferenceValue = null;
+
+									if(mapping.reference){
+										referenceValue =  $scope.getFieldStrFromSegment(segName, instanceSegment, mapping.reference);
+										if(mapping.secondReference) {
+											secondReferenceValue =  $scope.getFieldStrFromSegment(segName, instanceSegment, mapping.secondReference);
+										}
+
+										if(secondReferenceValue == null){
+											var caseFound = _.find(mapping.cases, function(c){ return referenceValue.split("^")[0] == c.value; });
+											if(caseFound){
+												fieldDT = $scope.findDatatypeById(caseFound.datatype, selectedIntegrationProfile);
+											}
+
+										}else{
+											var caseFound = _.find(mapping.cases, function(c){
+												return referenceValue.split("^")[0] == c.value && secondReferenceValue.split("^")[0] == c.secondValue;
+											});
+
+											if(!caseFound){
+												caseFound = _.find(mapping.cases, function(c){
+													return referenceValue.split("^")[0] == c.value && (c.secondValue == '' || c.secondValue == undefined);
+												});
+											}
+											if(caseFound){
+												fieldDT = $scope.findDatatypeById(caseFound.datatype, selectedIntegrationProfile);
+											}
+										}
+
+									}
+								}
+							}
+						}
+					}
+
+					if (fieldDT == null || fieldDT.components == null || fieldDT.components.length == 0) {
+						var cateOfField = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath)];
+						$scope.createConstraint(segmentiPositionPath + fieldiPath, cateOfField, fieldUsagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, fieldStr);
+					} else {
+						for (var k = 0 ; k < fieldDT.components.length; k++ ){
+							var c = fieldDT.components[k];
+							var componentUsagePath = fieldUsagePath + '-' + c.usage;
+							var componentiPath = "." + c.position + "[1]";
+
+							var componentStr = $scope.getComponentStrFromField(fieldStr, c.position);
+							if ($scope.findDatatype(c.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(c.datatype, selectedIntegrationProfile).components.length == 0) {
+								var cateOfComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath)];
+								$scope.createConstraint(segmentiPositionPath + fieldiPath + componentiPath, cateOfComponent, componentUsagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, componentStr);
+							} else {
+								for (var l = 0; l < $scope.findDatatype(c.datatype, selectedIntegrationProfile).components.length; l++){
+									var sc = $scope.findDatatype(c.datatype, selectedIntegrationProfile).components[l];
+									var subComponentUsagePath = componentUsagePath + '-' + sc.usage;
+									var subcomponentiPath = "." + sc.position + "[1]";
+									var subcomponentStr = $scope.getSubComponentStrFromField(componentStr, sc.position);
+									var cateOfSubComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath + subcomponentiPath)];
+									$scope.createConstraint(segmentiPositionPath + fieldiPath + componentiPath + subcomponentiPath, cateOfSubComponent, subComponentUsagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, subcomponentStr);
+								}
+							}
+						}
+					}
+				}
+			}
+
+		});
+
+		var serializer = new XMLSerializer();
+		var xmlString = serializer.serializeToString(xmlDoc);
+		return xmlString;
+	};
+
+	$scope.createConstraint = function (iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, value){
+
+		/*
+		 'Presence-Content Indifferent', 'Presence-Configuration',
+		 'Presence-System Generated', 'Presence-Test Case Proper', 'Presence Length-Content Indifferent',
+		 'Presence Length-Configuration', 'Presence Length-System Generated', 'Presence Length-Test Case Proper',
+		 'Value-Test Case Fixed', 'Value-Test Case Fixed List',
+
+		 */
+		if(cate){
+			var byIDElm = xmlDoc.getElementsByTagName('ByID')[0];
+			if(cate.testDataCategorization == 'Indifferent'){
+
+			}else if(cate.testDataCategorization == 'NonPresence'){
+				$scope.createNonPresenceCheck(iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, byIDElm);
+			}else if(cate.testDataCategorization == 'Presence-Content Indifferent' ||
+				cate.testDataCategorization == 'Presence-Configuration' ||
+				cate.testDataCategorization == 'Presence-System Generated' ||
+				cate.testDataCategorization == 'Presence-Test Case Proper'){
+				$scope.createPresenceCheck(iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, byIDElm);
+			}else if(cate.testDataCategorization == 'Presence Length-Content Indifferent' ||
+				cate.testDataCategorization == 'Presence Length-Configuration' ||
+				cate.testDataCategorization == 'Presence Length-System Generated' ||
+				cate.testDataCategorization == 'Presence Length-Test Case Proper'){
+				$scope.createPresenceCheck(iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, byIDElm);
+				$scope.createLengthCheck(iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, value, byIDElm);
+			}else if(cate.testDataCategorization == 'Value-Test Case Fixed'){
+				$scope.createPresenceCheck(iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, byIDElm);
+				$scope.createPlainTextCheck(iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, value, byIDElm);
+			}else if(cate.testDataCategorization == 'Value-Test Case Fixed List'){
+				$scope.createPresenceCheck(iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, byIDElm);
+				$scope.createStringListCheck(iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, value, byIDElm);
+			}
+		}
+	};
+
+
+	$scope.createStringListCheck = function (iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, value, byIDElm) {
+		var values = cate.listData.toString();
+		var elmConstraint = xmlDoc.createElement("Constraint");
+		var elmReference = xmlDoc.createElement("Reference");
+		elmReference.setAttribute("Source", "testcase");
+		elmReference.setAttribute("GeneratedBy", "Test Case Authoring & Management Tool(TCAMT)");
+		elmReference.setAttribute("ReferencePath", cate.iPath);
+		elmReference.setAttribute("TestDataCategorization", cate.testDataCategorization);
+		elmConstraint.appendChild(elmReference);
+
+		elmConstraint.setAttribute("ID", "Content");
+		elmConstraint.setAttribute("Target", iPositionPath);
+		var elmDescription = xmlDoc.createElement("Description");
+		elmDescription.appendChild(xmlDoc.createTextNode("Invalid content (based on test case fixed data). The value at " + $scope.modifyFormIPath(cate.iPath) + " ("+ $scope.findNodeNameByIPath(selectedIntegrationProfile, selectedConformanceProfile, iPositionPath) +") does not match one of the expected values: " + values));
+		var elmAssertion = xmlDoc.createElement("Assertion");
+		var elmStringList = xmlDoc.createElement("StringList");
+		elmStringList.setAttribute("Path", iPositionPath);
+
+		elmStringList.setAttribute("CSV", values);
+		elmStringList.setAttribute("IgnoreCase", "false");
+		elmAssertion.appendChild(elmStringList);
+		elmConstraint.appendChild(elmDescription);
+		elmConstraint.appendChild(elmAssertion);
+		byIDElm.appendChild(elmConstraint);
+	};
+	
+	
+	$scope.createPlainTextCheck = function(iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, value, byIDElm) {
+		var elmConstraint = xmlDoc.createElement("Constraint");
+		var elmReference = xmlDoc.createElement("Reference");
+		elmReference.setAttribute("Source", "testcase");
+		elmReference.setAttribute("GeneratedBy", "Test Case Authoring & Management Tool(TCAMT)");
+		elmReference.setAttribute("ReferencePath", cate.iPath);
+		elmReference.setAttribute("TestDataCategorization", cate.testDataCategorization);
+		elmConstraint.appendChild(elmReference);
+
+		elmConstraint.setAttribute("ID", "Content");
+		elmConstraint.setAttribute("Target", iPositionPath);
+		var elmDescription = xmlDoc.createElement("Description");
+		elmDescription.appendChild(xmlDoc.createTextNode("Invalid content (based on test case fixed data). The value at " + $scope.modifyFormIPath(cate.iPath) + " ("+ $scope.findNodeNameByIPath(selectedIntegrationProfile, selectedConformanceProfile, iPositionPath) +") does not match the expected value: '" + value + "'."));
+		var elmAssertion = xmlDoc.createElement("Assertion");
+		var elmPlainText = xmlDoc.createElement("PlainText");
+		elmPlainText.setAttribute("Path", iPositionPath);
+		elmPlainText.setAttribute("Text", value);
+		elmPlainText.setAttribute("IgnoreCase", "true");
+		elmAssertion.appendChild(elmPlainText);
+		elmConstraint.appendChild(elmDescription);
+		elmConstraint.appendChild(elmAssertion);
+		byIDElm.appendChild(elmConstraint);
+	};
+
+	$scope.createLengthCheck = function (iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, value, byIDElm){
+		var elmConstraint = xmlDoc.createElement("Constraint");
+		var elmReference = xmlDoc.createElement("Reference");
+		elmReference.setAttribute("Source", "testcase");
+		elmReference.setAttribute("GeneratedBy", "Test Case Authoring & Management Tool(TCAMT)");
+		elmReference.setAttribute("ReferencePath", cate.iPath);
+		elmReference.setAttribute("TestDataCategorization", cate.testDataCategorization);
+		elmConstraint.appendChild(elmReference);
+
+		elmConstraint.setAttribute("ID", "Content");
+		elmConstraint.setAttribute("Target", iPositionPath);
+		var elmDescription = xmlDoc.createElement("Description");
+		elmDescription.appendChild(xmlDoc.createTextNode("Content does not meet the minimum length requirement. The value at " + $scope.modifyFormIPath(cate.iPath) + " ("+ $scope.findNodeNameByIPath(selectedIntegrationProfile, selectedConformanceProfile, iPositionPath) +") is expected to be at minimum '" + value.length + "' characters."));
+		var elmAssertion = xmlDoc.createElement("Assertion");
+		var elmFormat = xmlDoc.createElement("Format");
+		elmFormat.setAttribute("Path", iPositionPath);
+		elmFormat.setAttribute("Regex", "^.{"+ value.length +",}$");
+		elmAssertion.appendChild(elmFormat);
+		elmConstraint.appendChild(elmDescription);
+		elmConstraint.appendChild(elmAssertion);
+		byIDElm.appendChild(elmConstraint);
+	}
+
+	$scope.createNonPresenceCheck = function (iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, byIDElm){
+		var elmConstraint = xmlDoc.createElement("Constraint");
+		var elmReference = xmlDoc.createElement("Reference");
+		elmReference.setAttribute("Source", "testcase");
+		elmReference.setAttribute("GeneratedBy", "Test Case Authoring & Management Tool(TCAMT)");
+		elmReference.setAttribute("ReferencePath", cate.iPath);
+		elmReference.setAttribute("TestDataCategorization", cate.testDataCategorization);
+		elmConstraint.appendChild(elmReference);
+
+		elmConstraint.setAttribute("ID", "Content");
+		elmConstraint.setAttribute("Target", iPositionPath);
+		var elmDescription = xmlDoc.createElement("Description");
+		elmDescription.appendChild(xmlDoc.createTextNode("Unexpected content found. The value at " + $scope.modifyFormIPath(cate.iPath) + " ("+ $scope.findNodeNameByIPath(selectedIntegrationProfile, selectedConformanceProfile, iPositionPath) +") is not expected to be valued for test case."));
+		var elmAssertion = xmlDoc.createElement("Assertion");
+		var elmPresence = xmlDoc.createElement("Presence");
+		var elmNOT = xmlDoc.createElement("NOT");
+		elmPresence.setAttribute("Path", iPositionPath);
+		elmNOT.appendChild(elmPresence);
+		elmAssertion.appendChild(elmNOT);
+		elmConstraint.appendChild(elmDescription);
+		elmConstraint.appendChild(elmAssertion);
+		byIDElm.appendChild(elmConstraint);
+	};
+
+	$scope.createPresenceCheck = function (iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, byIDElm){
+		var usageCheck = true;
+		var usage = usagePath.split("-");
+		for(var i=0; i < usage.length; i++){
+			var u = usage[i];
+			if(u !== "R") {
+				usageCheck = false;
+			}
+		}
+
+		if(!usageCheck){
+			var elmConstraint = xmlDoc.createElement("Constraint");
+			var elmReference = xmlDoc.createElement("Reference");
+			elmReference.setAttribute("Source", "testcase");
+			elmReference.setAttribute("GeneratedBy", "Test Case Authoring & Management Tool(TCAMT)");
+			elmReference.setAttribute("ReferencePath", cate.iPath);
+			elmReference.setAttribute("TestDataCategorization", cate.testDataCategorization);
+			elmConstraint.appendChild(elmReference);
+
+			elmConstraint.setAttribute("ID", "Content");
+			elmConstraint.setAttribute("Target", iPositionPath);
+			var elmDescription = xmlDoc.createElement("Description");
+			elmDescription.appendChild(xmlDoc.createTextNode("Expected content is missing. The empty value at " + $scope.modifyFormIPath(cate.iPath) + " ("+ $scope.findNodeNameByIPath(selectedIntegrationProfile, selectedConformanceProfile, iPositionPath) +") is expected to be present."));
+			var elmAssertion = xmlDoc.createElement("Assertion");
+			var elmPresence = xmlDoc.createElement("Presence");
+			elmPresence.setAttribute("Path", iPositionPath);
+			elmAssertion.appendChild(elmPresence);
+			elmConstraint.appendChild(elmDescription);
+			elmConstraint.appendChild(elmAssertion);
+			byIDElm.appendChild(elmConstraint);
+		}
+	};
+
+	$scope.findNodeNameByIPath = function (ip, m, iPositionPath){
+		var currentChildren = m.children;
+		var currentObject = null;
+		var pathList = iPositionPath.split(".");
+		for(var i=0; i < pathList.length; i++){
+			var p = pathList[i];
+			var position = parseInt(p.substring(0,p.indexOf("[")));
+			var o = $scope.findChildByPosition(position, currentChildren, m, ip);
+
+			if(o.type ==  'group'){
+				var group = o;
+				currentObject = group;
+				currentChildren = group.children;
+			}else if(o.type ==  'segment'){
+				var s = o;
+				currentObject = s;
+				currentChildren = s.fields;
+			}else if(o.type ==  'field'){
+				var f = o;
+				currentObject = f;
+				currentChildren = $scope.findDatatype(f.datatype, ip).components;
+			}else if(o.type == 'component'){
+				var c = o;
+				currentObject = c;
+				currentChildren = $scope.findDatatype(c.datatype, ip).components;
+			}
+		}
+
+		if(currentObject == null){
+			return null;
+		}else {
+			return currentObject.name;
+		}
+
+		return null;
+	};
+
+	$scope.findChildByPosition = function (position, children, m, ip){
+		for(var i=0; i < children.length; i++){
+			var o = children[i];
+			if(o.type ==  'group'){
+				if(o.position == position) return o;
+			}else if(o.type == 'segmentRef'){
+				if(o.position == position) return $scope.findSegment(o.ref, ip);
+			}else if(o.type == 'field'){
+				if(o.position == position) return o;
+			}else if(o.type == 'component'){
+				if(o.position == position) return o;
+			}
+		}
+
+		return null;
+
+	}
+
+	$scope.modifyFormIPath = function (iPath){
+		var result = "";
+		if(iPath == null || iPath == "") return result;
+		var pathList = iPath.split(".");
+		var currentType = "GroupOrSegment";
+		var previousType = "GroupOrSegment";
+
+		for(var i=0; i < pathList.length; i++){
+			var p = pathList[i];
+			var path = p.substring(0,p.indexOf("["));
+			var instanceNum = parseInt(p.substring(p.indexOf("[") + 1 , p.indexOf("]")));
+
+			if($scope.isNumeric(path)){
+				currentType = "FieldOrComponent";
+			}else {
+				currentType = "GroupOrSegment";
+			}
+
+			if(instanceNum == 1){
+				if(currentType == "FieldOrComponent" && previousType == "GroupOrSegment"){
+					result = result + "-" + path;
+				}else{
+					result = result + "." + path;
+				}
+			}else {
+				if(currentType == "FieldOrComponent" && previousType == "GroupOrSegment"){
+					result = result + "-" + path + "[" + instanceNum + "]";
+				}else{
+					result = result + "." + path + "[" + instanceNum + "]";
+				}
+			}
+			previousType = currentType;
+		}
+		return result.substring(1);
+	};
+
+	$scope.isNumeric = function(n) {
+		return !isNaN(parseFloat(n)) && isFinite(n);
+	}
+
 	$scope.generateMessageContentXML = function(segmentList, testStep, selectedConformanceProfile, selectedIntegrationProfile) {
 		var rootName = "MessageContent";
 		var xmlString = '<' + rootName + '>' + '</' + rootName + '>';
@@ -912,8 +1293,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 								}
 							}
 						}
-
-						console.log(fieldDT);
 						if (fieldDT == null || fieldDT.components == null || fieldDT.components.length == 0) {
 							var tdcstrOfField = "";
 							var cateOfField = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath, fieldStr)];
@@ -938,7 +1317,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 									var componentStr = $scope.getComponentStrFromField(fieldStr, c.position);
 									if ($scope.findDatatype(c.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(c.datatype, selectedIntegrationProfile).components.length == 0) {
 										var tdcstrOfComponent = "";
-										var cateOfComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath, componentStr)];
+										var cateOfComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath)];
 										if(cateOfComponent) tdcstrOfComponent = cateOfComponent.testDataCategorization;
 
 										var componentElement = xmlDoc.createElement("Component");
@@ -959,7 +1338,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 												var subcomponentiPath = "." + sc.position + "[1]";
 												var subcomponentStr = $scope.getSubComponentStrFromField(componentStr, sc.position);
 												var tdcstrOfSubComponent = "";
-												var cateOfSubComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath + subcomponentiPath, subcomponentStr)];
+												var cateOfSubComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath + subcomponentiPath)];
 												if(cateOfSubComponent) tdcstrOfSubComponent = cateOfSubComponent.testDataCategorization;
 												var subComponentElement = xmlDoc.createElement("SubComponent");
 												subComponentElement.setAttribute("Location", segName + "." + field.position + "." + c.position + "." + sc.position);
@@ -980,8 +1359,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 		var serializer = new XMLSerializer();
 		var xmlString = serializer.serializeToString(xmlDoc);
-
-		console.log(xmlString);
 		return xmlString;
 	};
 

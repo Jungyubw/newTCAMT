@@ -44,6 +44,8 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	
 	private String stdXMLCode;
 	
+	private String constraintsXML;
+	
 	private String messageContentsXMLCode;
 	
 	private HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>();
@@ -198,12 +200,12 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 		this.nistXMLCode = nistXMLCode;
 	}
 
-	public String getStdXMLCode() {
-		return stdXMLCode;
+	public String getConstraintsXML() {
+		return constraintsXML;
 	}
 
-	public void setStdXMLCode(String stdXMLCode) {
-		this.stdXMLCode = stdXMLCode;
+	public void setConstraintsXML(String constraintsXML) {
+		this.constraintsXML = constraintsXML;
 	}
 
 	public String getMessageContentsXMLCode() {
@@ -212,6 +214,14 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	public void setMessageContentsXMLCode(String messageContentsXMLCode) {
 		this.messageContentsXMLCode = messageContentsXMLCode;
+	}
+
+	public String getStdXMLCode() {
+		return stdXMLCode;
+	}
+
+	public void setStdXMLCode(String stdXMLCode) {
+		this.stdXMLCode = stdXMLCode;
 	}
 
 	public static Comparator<TestStep> testCasePositionComparator = new Comparator<TestStep>() {

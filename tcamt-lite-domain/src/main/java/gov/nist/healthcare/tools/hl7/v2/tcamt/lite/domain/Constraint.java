@@ -24,13 +24,13 @@ public class Constraint implements Serializable, Cloneable{
 	private String iPosition;
 	private String comments;
 	private String level;
-	private TestDataCategorization categorization;
+	private String categorization;
 	private String data;
 	private String assertionScript;
 	
 	
 	public Constraint(String messageName, String usageList, String ipath, String iPosition, String comments,
-			String level, TestDataCategorization categorization, String data,
+			String level, String categorization, String data,
 			String assertionScript) {
 		super();
 		this.messageName = messageName;
@@ -80,11 +80,11 @@ public class Constraint implements Serializable, Cloneable{
 		this.level = level;
 	}
 
-	public TestDataCategorization getCategorization() {
+	public String getCategorization() {
 		return categorization;
 	}
 
-	public void setCategorization(TestDataCategorization categorization) {
+	public void setCategorization(String categorization) {
 		this.categorization = categorization;
 	}
 
