@@ -98,7 +98,7 @@ public class IGAMTDBConn {
 	
 	
 
-	public ProfilePreLib convertIGAMT2TCAMT(Profile p, String igName) {
+	public ProfilePreLib convertIGAMT2TCAMT(Profile p, String igName, String igId) {
 		ProfilePreLib ppl = new ProfilePreLib();
 		ppl.setAccountId(p.getAccountId());
 		ppl.setBaseId(p.getBaseId());
@@ -120,7 +120,7 @@ public class IGAMTDBConn {
 		profileMetaDataPreLib.setExt(p.getMetaData().getExt());
 		profileMetaDataPreLib.setHl7Version(p.getMetaData().getHl7Version());
 		profileMetaDataPreLib.setSchemaVersion(p.getMetaData().getSchemaVersion());
-		profileMetaDataPreLib.setProfileID(null);
+		profileMetaDataPreLib.setXmlId(igId);
 		profileMetaDataPreLib.setSpecificationName(p.getMetaData().getSpecificationName());
 		profileMetaDataPreLib.setStatus(p.getMetaData().getStatus());
 		profileMetaDataPreLib.setSubTitle(p.getMetaData().getSubTitle());
@@ -188,6 +188,6 @@ public class IGAMTDBConn {
 		IGAMTDBConn con = new IGAMTDBConn();		
 		IGDocument igd = con.getUserDocument(10).get(0);
 
-		con.convertIGAMT2TCAMT(igd.getProfile(), "XXX");
+		con.convertIGAMT2TCAMT(igd.getProfile(), "XXX", "RRR");
 	}
 }

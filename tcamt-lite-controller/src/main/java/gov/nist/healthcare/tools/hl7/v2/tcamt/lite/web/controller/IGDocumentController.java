@@ -57,6 +57,6 @@ public class IGDocumentController extends CommonController {
 		IGDocument igDocument = con.findIGDocument(id);
 		
 		
-		return con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle());
+		return con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), id);
 	}
 }

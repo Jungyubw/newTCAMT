@@ -28,23 +28,52 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			var saveResponse = angular.fromJson(response.data);
 			$rootScope.selectedTestPlan.lastUpdateDate = saveResponse.date;
 			$rootScope.saved = true;
+
+
+			var form = document.createElement("form");
+			form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportTestPackageHTML/');
+			form.method = "POST";
+			form.target = "_target";
+			var csrfInput = document.createElement("input");
+			csrfInput.name = "X-XSRF-TOKEN";
+			csrfInput.value = $cookies['XSRF-TOKEN'];
+			form.appendChild(csrfInput);
+			form.style.display = 'none';
+			document.body.appendChild(form);
+			form.submit();
+
 		}, function (error) {
 			$rootScope.saved = false;
 		});
 
+	};
 
-		var form = document.createElement("form");
-		form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportRB/');
-		form.method = "POST";
-		form.target = "_target";
-		var csrfInput = document.createElement("input");
-		csrfInput.name = "X-XSRF-TOKEN";
-		csrfInput.value = $cookies['XSRF-TOKEN'];
-		form.appendChild(csrfInput);
-		form.style.display = 'none';
-		document.body.appendChild(form);
-		form.submit();
+	$scope.exportResourceBundleZip = function () {
+		$scope.populateTestSteps();
 
+		var changes = angular.toJson([]);
+		var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
+		$http.post('api/testplans/save', data).then(function (response) {
+			var saveResponse = angular.fromJson(response.data);
+			$rootScope.selectedTestPlan.lastUpdateDate = saveResponse.date;
+			$rootScope.saved = true;
+
+			var form = document.createElement("form");
+			form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportRBZip/');
+			form.method = "POST";
+			form.target = "_target";
+			var csrfInput = document.createElement("input");
+			csrfInput.name = "X-XSRF-TOKEN";
+			csrfInput.value = $cookies['XSRF-TOKEN'];
+			form.appendChild(csrfInput);
+			form.style.display = 'none';
+			document.body.appendChild(form);
+			form.submit();
+
+
+		}, function (error) {
+			$rootScope.saved = false;
+		});
 	};
 
 	$scope.exportCoverHTML = function () {
@@ -651,6 +680,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 								if(assertionElm.childNodes[1].nodeName === 'PlainText'){
 									fieldNode.testDataCategorization = 'Value-Profile Fixed';
 									fieldNode.testDataCategorizationListData = null;
+								}else if(assertionElm.childNodes[1].nodeName === 'StringList'){
+									fieldNode.testDataCategorization = 'Value-Profile Fixed List';
+									fieldNode.testDataCategorizationListData = null;
 								}
 							}
 						}
@@ -695,6 +727,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 									if(assertionElm.childNodes[1].nodeName === 'PlainText'){
 										componentNode.testDataCategorization = 'Value-Profile Fixed';
 										componentNode.testDataCategorizationListData = null;
+									}else if(assertionElm.childNodes[1].nodeName === 'StringList'){
+										componentNode.testDataCategorization = 'Value-Profile Fixed List';
+										componentNode.testDataCategorizationListData = null;
 									}
 								}
 							}
@@ -737,6 +772,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 									if(assertionElm.childNodes.length > 1){
 										if(assertionElm.childNodes[1].nodeName === 'PlainText'){
 											subComponentNode.testDataCategorization = 'Value-Profile Fixed';
+											subComponentNode.testDataCategorizationListData = null;
+										}else if(assertionElm.childNodes[1].nodeName === 'StringList'){
+											subComponentNode.testDataCategorization = 'Value-Profile Fixed List';
 											subComponentNode.testDataCategorizationListData = null;
 										}
 									}

@@ -33,6 +33,7 @@ import gov.nist.healthcare.nht.acmgt.dto.ResponseMessage;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
@@ -196,7 +197,7 @@ public class TestPlanController extends CommonController {
 		return null;
 	}
 
-	@RequestMapping(value = "/{id}/exportRB", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	@RequestMapping(value = "/{id}/exportTestPackageHTML", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
 	public void exportTestPackage(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		TestPlan tp = findTestPlan(id);
@@ -207,6 +208,20 @@ public class TestPlanController extends CommonController {
 				+ new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_TestPackage.html");
 		FileCopyUtils.copy(content, response.getOutputStream());
 
+	}
+	
+	@RequestMapping(value = "/{id}/exportRBZip", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	public void exportResourceBundleZip(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		log.info("Exporting as zip file RB with id=" + id);
+		TestPlan tp = findTestPlan(id);
+	    InputStream content = null;
+	    content = new ExportUtil().exportResourceBundleAsZip(tp);
+	    response.setContentType("application/zip");
+	    response.setHeader("Content-disposition",
+	        "attachment;filename=" + escapeSpace(tp.getName()) + "-"
+	            + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".zip");
+	    FileCopyUtils.copy(content, response.getOutputStream());
 	}
 	
 	@RequestMapping(value = "/{id}/exportCover", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
