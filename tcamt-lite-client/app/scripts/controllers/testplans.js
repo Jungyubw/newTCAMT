@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce) {
+angular.module('tcl').controller('TestPlanCtrl', function ($document,$scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce) {
 	$scope.loading = false;
     $scope.selectedTestStepTab = 1;
 	$rootScope.tps = [];
@@ -17,7 +17,28 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.nistStd = {};
 	$scope.nistStd.nist = false;
 	$scope.nistStd.std = false;
+// 	var rx = /INPUT|SELECT|TEXTAREA/i;
 
+// 	$document.on("keydown keypress", function(e){
+//     if( e.which == 8 ){ // 8 == backspace
+//         if(!rx.test(e.target.tagName) || e.target.disabled || e.target.readOnly ){
+//             e.preventDefault();
+//         }
+//     }
+// });
+
+	$(document).keydown(function(e) {
+    var nodeName = e.target.nodeName.toLowerCase();
+
+    if (e.which === 8) {
+        if ((nodeName === 'input' && e.target.type === 'text') ||
+            nodeName === 'textarea') {
+            // do nothing
+        } else {
+            e.preventDefault();
+        }
+    }
+	});
 
 	$scope.exportTestPackageHTML = function () {
 		$scope.populateTestSteps();
