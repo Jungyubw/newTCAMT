@@ -14,6 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
+import gov.nist.healthcare.tools.hl7.v2.igamt.prelib.domain.ProfilePreLib;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 import gov.nist.healthcare.unified.enums.Context;
 import gov.nist.healthcare.unified.model.EnhancedReport;
 import gov.nist.healthcare.unified.proxy.ValidationProxy;
@@ -58,9 +63,21 @@ public class ValidationController {
 	
 	
 	@RequestMapping(value="/validation", method= RequestMethod.POST)
-    public String Validate( @RequestParam(value="message") String message,@RequestParam(value="igDocumentId") String igDocumentId ,@RequestParam(value="conformanceProfileId") String conformanceProfileId) throws Exception{
+    public String Validate( @RequestParam(value="message") String message,@RequestParam(value="igDocumentId") String igDocumentId ,@RequestParam(value="conformanceProfileId") String conformanceProfileId, @RequestParam(value="teststep") TestStep teststep) throws Exception{
+		//I added TestStep parameter. Please update client.
+		
 
-
+		//TODO 
+		
+		ExportUtil util = new ExportUtil();
+		IGAMTDBConn con = new IGAMTDBConn();
+		IGDocument igDocument = con.findIGDocument(igDocumentId);
+		ProfilePreLib ppl = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), igDocumentId);
+		String profileXML = util.serializeProfileToDoc(ppl, igDocument).toXML();
+		String valueSetXML = util.serializeTableLibraryToElement(ppl, igDocument).toXML();
+		String constraintsXML = util.serializeConstraintsToDoc(ppl, igDocument).toXML();
+		String testStepConstraintXML = teststep.getConstraintsXML();
+		//TODO
 		
 //		System.out.println(message);
 //		//EnhancedReport report = vp.validate(message,profileString,conformanceContext, valueSetLibrary,profile, Context.Free);

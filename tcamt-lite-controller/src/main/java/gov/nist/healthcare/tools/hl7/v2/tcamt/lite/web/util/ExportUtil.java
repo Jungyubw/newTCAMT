@@ -862,7 +862,7 @@ public class ExportUtil {
 		inTP.close();
 	}
 
-	private nu.xom.Document serializeProfileToDoc(ProfilePreLib profile, IGDocument igDoc) {
+	public nu.xom.Document serializeProfileToDoc(ProfilePreLib profile, IGDocument igDoc) {
 		nu.xom.Element e = new nu.xom.Element("ConformanceProfile");
 		this.serializeProfileMetaData(e, profile.getMetaData(), igDoc.getMetaData(), igDoc.getId());
 
@@ -1139,7 +1139,7 @@ public class ExportUtil {
 		return elmDatatype;
 	}
 
-	private nu.xom.Element serializeTableLibraryToElement(ProfilePreLib profile, IGDocument igdoc) {
+	public nu.xom.Element serializeTableLibraryToElement(ProfilePreLib profile, IGDocument igdoc) {
 		Tables tableLibrary = profile.getTables();
 		nu.xom.Element elmTableLibrary = new nu.xom.Element("ValueSetLibrary");
 		elmTableLibrary.addAttribute(new Attribute("ValueSetLibraryIdentifier", igdoc.getId()));
