@@ -132,6 +132,7 @@ public class TestPlanController extends CommonController {
 			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 			if (account == null)
 				throw new UserAccountNotFoundException();
+			
 			TestPlan saved = testPlanService.apply(command.getTp());
 			return new TestPlanSaveResponse(saved.getLastUpdateDate(), saved.getVersion());
 		} catch (RuntimeException e) {

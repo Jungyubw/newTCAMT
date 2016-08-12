@@ -18,39 +18,33 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.nistStd.nist = false;
 	$scope.nistStd.std = false;
 
-
 	$scope.exportTestPackageHTML = function () {
-		$scope.populateTestSteps();
-
-		var changes = angular.toJson([]);
-		var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
-		$http.post('api/testplans/save', data).then(function (response) {
-			var saveResponse = angular.fromJson(response.data);
-			$rootScope.selectedTestPlan.lastUpdateDate = saveResponse.date;
-			$rootScope.saved = true;
+			var changes = angular.toJson([]);
+			var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
+			$http.post('api/testplans/save', data).then(function (response) {
+				var saveResponse = angular.fromJson(response.data);
+				$rootScope.selectedTestPlan.lastUpdateDate = saveResponse.date;
+				$rootScope.saved = true;
 
 
-			var form = document.createElement("form");
-			form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportTestPackageHTML/');
-			form.method = "POST";
-			form.target = "_target";
-			var csrfInput = document.createElement("input");
-			csrfInput.name = "X-XSRF-TOKEN";
-			csrfInput.value = $cookies['XSRF-TOKEN'];
-			form.appendChild(csrfInput);
-			form.style.display = 'none';
-			document.body.appendChild(form);
-			form.submit();
+				var form = document.createElement("form");
+				form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportTestPackageHTML/');
+				form.method = "POST";
+				form.target = "_target";
+				var csrfInput = document.createElement("input");
+				csrfInput.name = "X-XSRF-TOKEN";
+				csrfInput.value = $cookies['XSRF-TOKEN'];
+				form.appendChild(csrfInput);
+				form.style.display = 'none';
+				document.body.appendChild(form);
+				form.submit();
 
-		}, function (error) {
-			$rootScope.saved = false;
-		});
-
+			}, function (error) {
+				$rootScope.saved = false;
+			});
 	};
 
 	$scope.exportResourceBundleZip = function () {
-		$scope.populateTestSteps();
-
 		var changes = angular.toJson([]);
 		var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
 		$http.post('api/testplans/save', data).then(function (response) {
@@ -77,8 +71,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.exportCoverHTML = function () {
-		$scope.populateTestSteps();
-
 		var changes = angular.toJson([]);
 		var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
 		$http.post('api/testplans/save', data).then(function (response) {
@@ -103,73 +95,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		form.submit();
 
 	};
-
-	$scope.populateTestSteps = function () {
-		$rootScope.selectedTestPlan.children.forEach(function(child) {
-			if(child.type == "testcasegroup"){
-				child.testcases.forEach(function(testcase){
-					var testCaseName = testcase.name;
-					testcase.teststeps.forEach(function(teststep){
-						teststep = $scope.populateTestStep(teststep, testCaseName);
-					});
-				});
-			}else if(child.type == "testcase"){
-				child.teststeps.forEach(function(teststep){
-					var testCaseName = testcase.name;
-					teststep = $scope.populateTestStep(teststep, testCaseName);
-				});
-			}
-		});
-	};
-
-	$scope.populateTestStep = function (teststep, testCaseName) {
-
-		if(teststep != null){
-			if(teststep.testDataCategorizationMap == undefined){
-				teststep.testDataCategorizationMap = {};
-			}
-
-			if(teststep.integrationProfileId != undefined && teststep.integrationProfileId !== null){
-				$http.get('api/igdocuments/' + teststep.integrationProfileId + '/tcamtProfile').then(function (response) {
-					var selectedIntegrationProfile = angular.fromJson(response.data);
-					if(teststep.conformanceProfileId != undefined && teststep.conformanceProfileId !== ''){
-						var selectedConformanceProfile =_.find(selectedIntegrationProfile.messages.children, function(m) {
-							return m.id == teststep.conformanceProfileId;
-						});
-
-						if(selectedConformanceProfile){
-							var listLineOfMessage = teststep.er7Message.split("\n");
-
-							var nodeList = [];
-							$scope.travelConformanceProfile(selectedConformanceProfile, "", "", "", "" , "",  nodeList, 10, selectedIntegrationProfile);
-
-							var segmentList = [];
-							var currentPosition = 0;
-
-							for(var i in listLineOfMessage){
-								currentPosition = $scope.getSegment(segmentList, nodeList, currentPosition, listLineOfMessage[i]);
-							};
-							teststep.messageContentsXMLCode = $scope.generateMessageContentXML(segmentList, teststep, selectedConformanceProfile, selectedIntegrationProfile);
-							teststep.nistXMLCode = $scope.generateXML(segmentList, selectedIntegrationProfile, selectedConformanceProfile, testCaseName,false);
-							teststep.stdXMLCode = $scope.generateXML(segmentList, selectedIntegrationProfile, selectedConformanceProfile, testCaseName,true);
-							teststep.constraintsXML = $scope.generateConstraintsXML(segmentList, teststep, selectedConformanceProfile, selectedIntegrationProfile);
-						}
-
-					}
-				}, function (error) {
-					teststep.integrationProfileId = null;
-					teststep.conformanceProfileId = null;
-				});
-			}else {
-				teststep.integrationProfileId = null;
-				teststep.conformanceProfileId = null;
-			}
-		}
-
-		return teststep;
-
-	};
-
 
 	$scope.loadTestPlans = function () {
 		var delay = $q.defer();
@@ -370,21 +295,21 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 			$rootScope.testplans.push(testplan);
 
 			$timeout(function () {
-                $scope.editTestPlan();
 				$rootScope.selectedTestPlan = testplan;
-                $rootScope.selectedTestStep = null;
+				$scope.subview = "EditTestPlanMetadata.html";
+			}, 0);
+
+			$timeout(function () {
+				$rootScope.selectedTemplate=null;
+				$rootScope.selectedSegmentNode =null;
+				$rootScope.selectedTestStep=null;
+				$rootScope.selectedTestCaseGroup = null;
+				$rootScope.selectedTestCase = null;
 				waitingDialog.hide();
 			}, 100);
 		}
 	};
 
-	$scope.editTestPlan = function () {
-		$rootScope.selectedTemplate=null;
-		$rootScope.selectedSegmentNode =null;
-		$rootScope.selectedTestStep=null;
-		$scope.subview = "EditTestPlanMetadata.html";
-	};
-	
 	$scope.OpenIgMetadata= function(ig){
 		$rootScope.selectedTemplate=null;
 		$rootScope.selectedSegmentNode =null;
@@ -392,7 +317,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$rootScope.igDocument=ig;
 		$scope.subview = "EditDocumentMetadata.html";
 
-	}
+	};
 	
 	$scope.OpenMessageMetadata= function(msg){
 		$rootScope.selectedTemplate=null;
@@ -401,43 +326,40 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$rootScope.message=msg;
 		$scope.subview = "MessageMetadata.html";
 
-	}
+	};
+
 	$scope.selectTestCaseGroup = function (testCaseGroup) {
 		if (testCaseGroup != null) {
 			waitingDialog.show('Opening Test Case Group...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
-                $scope.editTestCaseGroup();
 				$rootScope.selectedTestCaseGroup = testCaseGroup;
-                $rootScope.selectedTestStep = null;
+				$scope.subview = "EditTestCaseGroupMetadata.html";
+			}, 0);
+			$timeout(function() {
+				$rootScope.selectedTestStep=null;
+				$rootScope.selectedTestCase = null;
+				$rootScope.selectedTemplate=null;
+				$rootScope.selectedSegmentNode =null;
 				waitingDialog.hide();
 			}, 100);
 		}
-	};
-
-	$scope.editTestCaseGroup = function () {
-		$rootScope.selectedTemplate=null;
-		$rootScope.selectedSegmentNode =null;
-		$rootScope.selectedTestStep=null;
-		$scope.subview = "EditTestCaseGroupMetadata.html";
 	};
 
 	$scope.selectTestCase = function (testCase) {
 		if (testCase != null) {
 			waitingDialog.show('Opening Test Case ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
-                $scope.editTestCase();
 				$rootScope.selectedTestCase = testCase;
-                $rootScope.selectedTestStep = null;
+				$scope.subview = "EditTestCaseMetadata.html";
+			}, 0);
+			$timeout(function () {
+				$rootScope.selectedTestStep=null;
+				$rootScope.selectedTestCaseGroup=null;
+				$rootScope.selectedTemplate=null;
+				$rootScope.selectedSegmentNode =null;
 				waitingDialog.hide();
 			}, 100);
 		}
-	};
-
-	$scope.editTestCase = function () {
-		$rootScope.selectedTemplate=null;
-		$rootScope.selectedSegmentNode =null;
-		$rootScope.selectedTestStep=null;
-		$scope.subview = "EditTestCaseMetadata.html";
 	};
 
 	$scope.selectTestStep = function (testStep) {
@@ -450,11 +372,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 					$rootScope.selectedTestStep.testDataCategorizationMap = {};
 				}
 				$scope.selectedTestStepTab = 1;
-				$scope.editTestStep();
 				$scope.loadIntegrationProfile();
-                waitingDialog.hide();
-			}, 100);
+				$scope.subview = "EditTestStepMetadata.html";
+			}, 0);
 
+			$timeout(function () {
+				$rootScope.selectedTestCaseGroup=null;
+				$rootScope.selectedTestCase = null;
+				$rootScope.selectedTemplate=null;
+				$rootScope.selectedSegmentNode =null;
+				waitingDialog.hide();
+			}, 100);
 		}
 	};
 
@@ -465,12 +393,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
     $scope.isSelectedTestStepTab = function (tabNum) {
       return   tabNum == $scope.selectedTestStepTab;
     };
-
-	$scope.editTestStep = function () {
-		$rootScope.selectedTemplate=null;
-		$rootScope.selectedSegmentNode =null;
-		$scope.subview = "EditTestStepMetadata.html";
-	};
 
 	$scope.selectIgTab = function (value) {
 		if (value === 1) {
@@ -798,6 +720,26 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		$scope.refreshTree();
 	};
 
+	$scope.removeValueForTestDataCategorization = function(node, index) {
+		$scope.errortext = "";
+		node.testDataCategorizationListData.splice(index, 1);
+		$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(node.iPath)].listData = node.testDataCategorizationListData;
+		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+	};
+
+	$scope.addValueForTestDataCategorization = function (node, addMe){
+		if(node.testDataCategorizationListData == null) node.testDataCategorizationListData = [];
+		$scope.errortext = "";
+		if (!addMe || addMe == '') {return;}
+		if (node.testDataCategorizationListData.indexOf(addMe) == -1) {
+			node.testDataCategorizationListData.push(addMe);
+			$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(node.iPath)].listData = node.testDataCategorizationListData;
+		} else {
+			$scope.errortext = "The value is already in your list.";
+		}
+		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+	};
+
 	$scope.findTestCaseNameOfTestStep = function(){
 		var result = "NoName";
 		$rootScope.selectedTestPlan.children.forEach(function(child) {
@@ -989,14 +931,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	};
 
 	$scope.createConstraint = function (iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, value){
-
-		/*
-		 'Presence-Content Indifferent', 'Presence-Configuration',
-		 'Presence-System Generated', 'Presence-Test Case Proper', 'Presence Length-Content Indifferent',
-		 'Presence Length-Configuration', 'Presence Length-System Generated', 'Presence Length-Test Case Proper',
-		 'Value-Test Case Fixed', 'Value-Test Case Fixed List',
-
-		 */
 		if(cate){
 			var byIDElm = xmlDoc.getElementsByTagName('ByID')[0];
 			if(cate.testDataCategorization == 'Indifferent'){
@@ -1049,6 +983,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		elmConstraint.appendChild(elmDescription);
 		elmConstraint.appendChild(elmAssertion);
 		byIDElm.appendChild(elmConstraint);
+
 	};
 	
 	
@@ -2170,15 +2105,25 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
         else if (node.type == 'component') name = node.component.name;
         else if (node.type == 'subcomponent') name = node.component.name;
 
-        var testDataCategorizationObj = {
-            iPath: node.iPath,
-            testDataCategorization: node.testDataCategorization,
-            name: name,
-            listData : []
-        };
+		if(node.testDataCategorization == null || node.testDataCategorization == ''){
+			$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(node.iPath)] = null;
+		}else {
+			var testDataCategorizationObj = {
+				iPath: node.iPath,
+				testDataCategorization: node.testDataCategorization,
+				name: name,
+				listData : []
+			};
 
-		$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(node.iPath)] = testDataCategorizationObj;
+			if(node.testDataCategorization == 'Value-Test Case Fixed List'){
+				node.testDataCategorizationListData = [];
+				node.testDataCategorizationListData.push(node.value);
+				testDataCategorizationObj.listData.push(node.value);
+			}
+			$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(node.iPath)] = testDataCategorizationObj;
+		}
 
+		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 	};
 
     $scope.replaceDot2Dash = function(path){
@@ -2221,6 +2166,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 				$scope.selectSegment($rootScope.selectedSegmentNode.segment);
 				$scope.refreshTree();
 			}
+
+			$rootScope.selectedTestStep.messageContentsXMLCode = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+			$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+
 		}
     };
 
@@ -2239,6 +2188,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 				$scope.selectSegment($rootScope.selectedSegmentNode.segment);
 				$scope.refreshTree();
 			}
+
+			$rootScope.selectedTestStep.messageContentsXMLCode = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+			$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 		}
     };
 
@@ -2269,7 +2221,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		if($rootScope.selectedTestStep){
 			$rootScope.selectedTestStep.er7Message = template.er7Message;
 
-			$scope.initTestData();
+			$scope.updateEr7Message();
 
 			if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.segment){
 				$scope.selectSegment($rootScope.selectedSegmentNode.segment);
@@ -2362,6 +2314,29 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		}
 
 		$rootScope.selectedTestStep.er7Message = updatedER7Message;
+
+		if(node.testDataCategorization == 'Value-Test Case Fixed List'){
+			if(node.testDataCategorizationListData.indexOf(node.value) == -1){
+				node.testDataCategorizationListData.push(node.value);
+			}
+			var testDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(node.iPath)];
+			if(testDataCategorizationObj.listData.indexOf(node.value) == -1){
+				testDataCategorizationObj.listData.push(node.value);
+			}
+		}
+
+		$rootScope.selectedTestStep.messageContentsXMLCode = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+		$rootScope.selectedTestStep.nistXMLCode = $scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),false);
+		$rootScope.selectedTestStep.stdXMLCode = $scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),true);
+		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+	};
+
+	$scope.updateEr7Message = function () {
+		$scope.initTestData();
+		$rootScope.selectedTestStep.messageContentsXMLCode = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+		$rootScope.selectedTestStep.nistXMLCode = $scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),false);
+		$rootScope.selectedTestStep.stdXMLCode = $scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),true);
+		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 	};
 
 	$scope.reviseStr = function (str, seperator) {

@@ -15,14 +15,14 @@ body {
     <div class="page-header">
         <span class="header4">TestCase Metadata</span>
     </div>
-            
+
 	<form name="testcaseMetaDataForm" class="form-horizontal" novalidate>
 		<div class="row" style="margin:10px">
 			<div class="col-md-12">
 				<div class="col-md-5 col-margin">
 					<div class="form-group">
 						<label class="control-label">Name</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestCase.name" required />
+						<input class="form-control" type="text" ng-change="recordChanged();" name="name" ng-model="selectedTestCase.name" required />
                     </div>
 				</div>
 
@@ -59,7 +59,7 @@ body {
 						<textarea froala type="text" ng-change="recordChanged()" name="teststorydesc" ng-model="selectedTestCase.testCaseStory.teststorydesc" required />
                     </div>
 				</div>
-				
+
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Comments</label>
