@@ -10,7 +10,7 @@
                           'glyphicon glyphicon-minus': !messagetempCollapsed
                         }">
                 </span> Messages Template
-                <span ng-show="selectedTestStep">for {{selectedTestStep.conformanceProfileId}}</span>
+                <span ng-if="selectedTestStep">for {{getTemplateSourceName()}}{{tmpNAme}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.messageTemplates" ng-if="!messagetempCollapsed">
                 <li ng-repeat="msgTmp in template.messageTemplates" ui-tree-node ng-if="selectedTestStep.conformanceProfileId===msgTmp.conformanceProfileId|| selectedTestStep===null">
@@ -42,7 +42,7 @@
                           'glyphicon glyphicon-minus': !Er7Collapsed
                         }">
                 </span> Er7 Templates
-                <span ng-show="selectedTestStep">for {{selectedTestStep.conformanceProfileId}}</span>
+                <span ng-show="selectedTestStep">for {{tmpNAme}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.er7Templates" ng-if="!Er7Collapsed">
                 <li ng-repeat="er7Tmp in template.er7Templates" ui-tree-node ng-if="selectedTestStep.integrationProfileId===er7Tmp.integrationProfileId || selectedTestStep.conformanceProfileId===er7Tmp.conformanceProfileId|| selectedTestStep===null">

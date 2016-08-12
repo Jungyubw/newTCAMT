@@ -190,6 +190,9 @@ body {
 		</div>
 
 		<div ng-show="isSelectedTestStepTab(4);">
+			<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateMessageTemplateModal()">
+                            		<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
+                            	</button>
 			<div class="row">
 				<div class="col-md-12">
 				<span class="pull-right">
@@ -255,7 +258,7 @@ body {
 								<i class="fa fa-pencil fa-fw"></i> Selected Segment
 							</span>
 						</uib-accordion-heading>
-
+						<div ng-if="selectedSegmentNode.segment">
 
 						<div class="row" style="margin:12px">
 							<div class="col-md-2">
@@ -274,6 +277,8 @@ body {
 								<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.segmentStr" />
 							</div>
 						</div>
+						</div>
+						<div class="col-md-10" ng-if="!selectedSegmentNode.segment"><p style ="color:red;"> No Segment Selected</p></div>
 
 						<div class="col-md-12">
 							<div class="col-md-9">
@@ -281,7 +286,7 @@ body {
 								<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateMessageTemplateModal()">
                             		<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
                             	</button>
-								<button title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateSegmentTemplateModal()">
+								<button  ng-if="selectedSegmentNode.segment" title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateSegmentTemplateModal()">
                             		<span><i class="fa fa-pencil fa-fw"></i> Make Segment TestData Cate. Template</span>
                             	</button>
 							</span>
