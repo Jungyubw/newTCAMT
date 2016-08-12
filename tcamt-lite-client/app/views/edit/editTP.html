@@ -24,6 +24,7 @@
         	<span class="header4 pull-left">Test Plan: {{selectedTestPlan.name}}
             	<span style="margin-left:10px; font-size:12px;font-weight: normal" ng-show="autoSaving && !saved">Saving....</span>
             	<span style="margin-left:10px; font-size:14px;font-weight: normal" ng-show="saved && !hasChanges()"><i class="fa fa-check fa-fw green"></i> Saved</span>
+				<span style="margin-left:10px; font-size:14px;font-weight: normal" ng-show="hasChanges()"><i class="fa fa-check fa-fw green"></i> Changed</span>
         	</span>
         	<span class="pull-right">
 				<div class="btn-group">
