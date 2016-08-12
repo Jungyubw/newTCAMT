@@ -139,7 +139,11 @@ public class IGAMTDBConn {
 		datatypes.setType(p.getDatatypeLibrary().getType());
 		for (DatatypeLink link : p.getDatatypeLibrary().getChildren()) {
 			Datatype dt = this.findDatatypeById(link.getId());
-			dt.setLabel(dt.getName() + dt.getExt());
+			if(link.getExt() != null && !link.getExt().equals("")){
+				dt.setLabel(link.getName() + "_" + link.getExt());
+			}else {
+				dt.setLabel(link.getName());
+			}
 			datatypes.addDatatype(dt);
 		}
 		ppl.setDatatypes(datatypes);
@@ -153,7 +157,11 @@ public class IGAMTDBConn {
 		segments.setType(p.getSegmentLibrary().getType());
 		for (SegmentLink link : p.getSegmentLibrary().getChildren()) {
 			Segment seg = this.findSegmentById(link.getId());
-			seg.setLabel(link.getLabel());
+			if(link.getExt() != null && !link.getExt().equals("")){
+				seg.setLabel(link.getName()  + "_" + link.getExt()); 
+			}else {
+				seg.setLabel(link.getName());
+			}
 			segments.addSegment(seg);
 		}
 		ppl.setSegments(segments);

@@ -225,6 +225,20 @@ public class TestPlanController extends CommonController {
 	    FileCopyUtils.copy(content, response.getOutputStream());
 	}
 	
+	@RequestMapping(value = "/{ipid}/exportProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	public void exportProfileXMLs(@PathVariable("ipid") String[] ipid, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		log.info("Exporting as zip file Profiles with id=" + ipid);
+	    InputStream content = null;
+	    content = new ExportUtil().exportProfileXMLZip(ipid);
+	    response.setContentType("application/zip");
+	    response.setHeader("Content-disposition",
+	        "attachment;filename=Profiles-"
+	            + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".zip");
+	    FileCopyUtils.copy(content, response.getOutputStream());
+	}
+	
+	
 	@RequestMapping(value = "/{id}/exportCover", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
 	public void exportCoverPage(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {

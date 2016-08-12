@@ -96,6 +96,39 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	};
 
+	$scope.exportProfileXMLs = function () {
+
+		var listOfIGID = [];
+		$rootScope.selectedTestPlan.children.forEach(function(child) {
+			if(child.type == "testcasegroup"){
+				child.testcases.forEach(function(testcase){
+					var testCaseName = testcase.name;
+					testcase.teststeps.forEach(function(teststep){
+						listOfIGID.push(teststep.integrationProfileId);
+					});
+				});
+			}else if(child.type == "testcase"){
+				child.teststeps.forEach(function(teststep){
+					var testCaseName = testcase.name;
+					listOfIGID.push(teststep.integrationProfileId);
+				});
+			}
+		});
+
+		var form = document.createElement("form");
+		form.action = $rootScope.api('api/testplans/' + listOfIGID + '/exportProfileXMLs/');
+		form.method = "POST";
+		form.target = "_target";
+		var csrfInput = document.createElement("input");
+		csrfInput.name = "X-XSRF-TOKEN";
+		csrfInput.value = $cookies['XSRF-TOKEN'];
+		form.appendChild(csrfInput);
+		form.style.display = 'none';
+		document.body.appendChild(form);
+		form.submit();
+	};
+
+
 	$scope.loadTestPlans = function () {
 		var delay = $q.defer();
 		$scope.error = null;
