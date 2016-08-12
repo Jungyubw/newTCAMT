@@ -9545,41 +9545,42 @@ ul.dropdown-menu, ul.dropdown-menu > li {
 /* line 2087, ../../app/styles/main.scss */
 li.active {
   background-color: #ffcc00;
+  background-color: #4ca0af;
 }
 
-/* line 2092, ../../app/styles/main.scss */
+/* line 2093, ../../app/styles/main.scss */
 tr.current {
   background-color: #ffef8f;
 }
 
-/* line 2096, ../../app/styles/main.scss */
+/* line 2097, ../../app/styles/main.scss */
 div.col-margin {
   margin-right: 15px;
 }
 
-/* line 2100, ../../app/styles/main.scss */
+/* line 2101, ../../app/styles/main.scss */
 input.form-control {
   padding: 0px;
 }
 
-/* line 2104, ../../app/styles/main.scss */
+/* line 2105, ../../app/styles/main.scss */
 input.form-control-invalid {
   background-color: #FA787E !important;
 }
 
-/* line 2108, ../../app/styles/main.scss */
+/* line 2109, ../../app/styles/main.scss */
 input.form-control-short {
   width: 100px !important;
   display: initial !important;
 }
 
-/* line 2113, ../../app/styles/main.scss */
+/* line 2114, ../../app/styles/main.scss */
 input.form-control-short80 {
   width: 80% !important;
   display: initial !important;
 }
 
-/* line 2118, ../../app/styles/main.scss */
+/* line 2119, ../../app/styles/main.scss */
 .info-dlg {
   font-size: 20px;
   line-height: 1.4;
@@ -9590,7 +9591,7 @@ input.form-control-short80 {
   margin: 0 auto;
 }
 
-/* line 2129, ../../app/styles/main.scss */
+/* line 2130, ../../app/styles/main.scss */
 .error-dlg {
   font-size: 20px;
   line-height: 1.4;
@@ -9601,19 +9602,19 @@ input.form-control-short80 {
   margin: 0 auto;
 }
 
-/* line 2139, ../../app/styles/main.scss */
+/* line 2140, ../../app/styles/main.scss */
 #exception > p {
   margin: 1em 0;
   text-align: center;
 }
 
-/* line 2145, ../../app/styles/main.scss */
+/* line 2146, ../../app/styles/main.scss */
 #exception > ul {
   padding: 0 0 0 40px;
   margin: 1em 0;
 }
 
-/* line 2150, ../../app/styles/main.scss */
+/* line 2151, ../../app/styles/main.scss */
 .igamt-home {
   background: white;
   color: black;
@@ -9621,25 +9622,25 @@ input.form-control-short80 {
   margin: 10px;
 }
 
-/* line 2158, ../../app/styles/main.scss */
+/* line 2159, ../../app/styles/main.scss */
 .home-page-panel {
   height: 300px;
 }
 
-/* line 2163, ../../app/styles/main.scss */
+/* line 2164, ../../app/styles/main.scss */
 .home-page-panel-content {
   max-height: 100px !important;
   overflow: auto;
   text-align: left;
 }
 
-/* line 2169, ../../app/styles/main.scss */
+/* line 2170, ../../app/styles/main.scss */
 .igl-page-header {
   border-bottom: 1px solid #eeeeee;
   margin-bottom: 20px;
 }
 
-/* line 2173, ../../app/styles/main.scss */
+/* line 2174, ../../app/styles/main.scss */
 tr.tbl-header {
   background-color: #00bcd4;
   color: rgba(255, 255, 255, 0.84);
@@ -9647,7 +9648,7 @@ tr.tbl-header {
   border-color: #00bcd4;
 }
 
-/* line 2180, ../../app/styles/main.scss */
+/* line 2181, ../../app/styles/main.scss */
 table > theader {
   background-color: #00bcd4;
   color: rgba(255, 255, 255, 0.84);
@@ -9655,61 +9656,61 @@ table > theader {
   border-color: #00bcd4;
 }
 
-/* line 2187, ../../app/styles/main.scss */
+/* line 2188, ../../app/styles/main.scss */
 .hl7-versions-modal .modal-dialog {
   width: 920px;
   height: 60%;
 }
 
-/* line 2194, ../../app/styles/main.scss */
+/* line 2195, ../../app/styles/main.scss */
 .conformance-profiles-modal .modal-dialog {
   width: 920px;
   height: 60%;
 }
 
-/* line 2201, ../../app/styles/main.scss */
+/* line 2202, ../../app/styles/main.scss */
 table.hl7-versions-table {
   max-height: 500px !important;
   width: 905px !important;
 }
 
-/* line 2206, ../../app/styles/main.scss */
+/* line 2207, ../../app/styles/main.scss */
 table.hl7-versions-valueset {
   max-height: 500px !important;
 }
 
-/* line 2210, ../../app/styles/main.scss */
+/* line 2211, ../../app/styles/main.scss */
 table.hl7-versions-table td {
   text-align: left;
 }
 
-/* line 2214, ../../app/styles/main.scss */
+/* line 2215, ../../app/styles/main.scss */
 table.hl7-versions-valueset td {
   text-align: left;
 }
 
-/* line 2220, ../../app/styles/main.scss */
+/* line 2221, ../../app/styles/main.scss */
 table.conformance-profiles-table {
   max-height: 500px !important;
   width: 905px !important;
 }
 
-/* line 2225, ../../app/styles/main.scss */
+/* line 2226, ../../app/styles/main.scss */
 table.conformance-profiles-table td {
   text-align: left;
 }
 
-/* line 2229, ../../app/styles/main.scss */
+/* line 2230, ../../app/styles/main.scss */
 .col-98-5-percent {
   width: 98.5%;
 }
 
-/* line 2233, ../../app/styles/main.scss */
+/* line 2234, ../../app/styles/main.scss */
 .col-1-percent {
   width: 1%;
 }
 
-/* line 2241, ../../app/styles/main.scss */
+/* line 2242, ../../app/styles/main.scss */
 .toc-container {
   max-width: 100% !important;
   max-height: 700px !important;
@@ -9717,17 +9718,17 @@ table.conformance-profiles-table td {
   white-space: nowrap;
 }
 
-/* line 2248, ../../app/styles/main.scss */
+/* line 2249, ../../app/styles/main.scss */
 .red {
   color: #f2aaaa;
 }
 
-/* line 2252, ../../app/styles/main.scss */
+/* line 2253, ../../app/styles/main.scss */
 .green {
   color: #c1f0a2;
 }
 
-/* line 2256, ../../app/styles/main.scss */
+/* line 2257, ../../app/styles/main.scss */
 .btn-xxs {
   padding: 5px 10px !important;
   font-size: 12px;
@@ -9736,39 +9737,39 @@ table.conformance-profiles-table td {
   margin: 0px !important;
 }
 
-/* line 2265, ../../app/styles/main.scss */
+/* line 2266, ../../app/styles/main.scss */
 .testPlan {
   margin-left: 3px;
 }
 
-/* line 2270, ../../app/styles/main.scss */
+/* line 2271, ../../app/styles/main.scss */
 .testCase {
   margin-left: 1px;
 }
 
-/* line 2274, ../../app/styles/main.scss */
+/* line 2275, ../../app/styles/main.scss */
 .testStep {
   margin-left: 15000000px;
   margin-top: 5px;
 }
 
-/* line 2280, ../../app/styles/main.scss */
+/* line 2281, ../../app/styles/main.scss */
 .testGroup {
   margin-left: 10px;
 }
 
-/* line 2284, ../../app/styles/main.scss */
+/* line 2285, ../../app/styles/main.scss */
 .testGroupCase {
   margin-left: 15px;
 }
 
-/* line 2287, ../../app/styles/main.scss */
+/* line 2288, ../../app/styles/main.scss */
 .testGroupCaseStep {
   margin-left: 20px;
   margin-top: 5px;
 }
 
-/* line 2292, ../../app/styles/main.scss */
+/* line 2293, ../../app/styles/main.scss */
 .selected {
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e1ffff+0,e1ffff+7,e1ffff+12,fdffff+12,e6f8fd+30,c8eefb+54,bee4f8+75,b1d8f5+100;Blue+Pipe+%232 */
   background: #e1ffff;
@@ -9781,7 +9782,7 @@ table.conformance-profiles-table td {
   /* IE6-9 */
 }
 
-/* line 2301, ../../app/styles/main.scss */
+/* line 2302, ../../app/styles/main.scss */
 .used {
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fefcea+0,f1da36+100;Gold+3D */
   background: #fefcea;
@@ -9794,17 +9795,17 @@ table.conformance-profiles-table td {
   /* IE6-9 */
 }
 
-/* line 2310, ../../app/styles/main.scss */
+/* line 2311, ../../app/styles/main.scss */
 span {
   cursor: pointer;
 }
 
-/* line 2314, ../../app/styles/main.scss */
+/* line 2315, ../../app/styles/main.scss */
 .draggable {
   cursor: move;
 }
 
-/* line 2318, ../../app/styles/main.scss */
+/* line 2319, ../../app/styles/main.scss */
 .angular-ui-tree-handle {
   cursor: move;
   text-decoration: none;
@@ -9814,37 +9815,37 @@ span {
   font-weight: 700;
 }
 
-/* line 2328, ../../app/styles/main.scss */
+/* line 2329, ../../app/styles/main.scss */
 .CodeMirror {
   border: 1px solid #eee;
   height: auto;
   min-height: 400px !important;
 }
 
-/* line 2333, ../../app/styles/main.scss */
+/* line 2334, ../../app/styles/main.scss */
 .CodeMirror-scroll {
   overflow-y: hidden;
   overflow-x: auto;
 }
 
-/* line 2340, ../../app/styles/main.scss */
+/* line 2341, ../../app/styles/main.scss */
 .row4 a, .row3 a {
   color: #003399;
   text-decoration: underline;
 }
 
-/* line 2345, ../../app/styles/main.scss */
+/* line 2346, ../../app/styles/main.scss */
 .row4 a:hover, .row3 a:hover {
   color: #000000;
   text-decoration: underline;
 }
 
-/* line 2350, ../../app/styles/main.scss */
+/* line 2351, ../../app/styles/main.scss */
 .headerReport {
   width: 250px;
 }
 
-/* line 2354, ../../app/styles/main.scss */
+/* line 2355, ../../app/styles/main.scss */
 .row1 {
   font-weight: bold;
   font-size: 15px;
@@ -9854,39 +9855,39 @@ span {
   width: 100px;
 }
 
-/* line 2363, ../../app/styles/main.scss */
+/* line 2364, ../../app/styles/main.scss */
 .row2 {
   background-color: #f0f0f0;
   width: 100px;
 }
 
-/* line 2368, ../../app/styles/main.scss */
+/* line 2369, ../../app/styles/main.scss */
 .row3 {
   vertical-align: top;
 }
 
-/* line 2372, ../../app/styles/main.scss */
+/* line 2373, ../../app/styles/main.scss */
 .row5 {
   font-weight: bold;
   background-color: #FFD630;
   vertical-align: top;
 }
 
-/* line 2378, ../../app/styles/main.scss */
+/* line 2379, ../../app/styles/main.scss */
 .row6 {
   vertical-align: top;
   background-color: #f0f0f0;
   width: 100px;
 }
 
-/* line 2384, ../../app/styles/main.scss */
+/* line 2385, ../../app/styles/main.scss */
 .forumline {
   background-color: #FFFFFF;
   border: 1px #006699 solid;
   width: 90%;
 }
 
-/* line 2390, ../../app/styles/main.scss */
+/* line 2391, ../../app/styles/main.scss */
 .maintitle {
   font-weight: bold;
   font-size: 22px;
@@ -9896,69 +9897,69 @@ span {
   color: #000000;
 }
 
-/* line 2399, ../../app/styles/main.scss */
+/* line 2400, ../../app/styles/main.scss */
 .title-background {
   background-color: #d9edf7;
 }
 
-/* line 2403, ../../app/styles/main.scss */
+/* line 2404, ../../app/styles/main.scss */
 .report-section {
   margin-bottom: 20px;
 }
 
-/* line 2415, ../../app/styles/main.scss */
+/* line 2416, ../../app/styles/main.scss */
 .alert-info-2 {
   background-color: #428bca;
   border-color: #bce8f1;
   color: #40629f;
 }
 
-/* line 2421, ../../app/styles/main.scss */
+/* line 2422, ../../app/styles/main.scss */
 .border_bottom {
   border-bottom: 1pt #006699 solid;
 }
 
-/* line 2425, ../../app/styles/main.scss */
+/* line 2426, ../../app/styles/main.scss */
 .border_right {
   border-right: 1pt #006699 solid;
 }
 
-/* line 2429, ../../app/styles/main.scss */
+/* line 2430, ../../app/styles/main.scss */
 .alternate0 {
   background: white;
 }
 
-/* line 2433, ../../app/styles/main.scss */
+/* line 2434, ../../app/styles/main.scss */
 .alternate1 {
   background: #f0f0f0;
 }
 
-/* line 2437, ../../app/styles/main.scss */
+/* line 2438, ../../app/styles/main.scss */
 table.forumline > tr > td {
   border: 1px;
 }
 
-/* line 2441, ../../app/styles/main.scss */
+/* line 2442, ../../app/styles/main.scss */
 .col-fixed-130 {
   width: 130px;
 }
 
-/* line 2444, ../../app/styles/main.scss */
+/* line 2445, ../../app/styles/main.scss */
 .st-sort-ascent:before {
   content: '\25B2';
 }
 
-/* line 2448, ../../app/styles/main.scss */
+/* line 2449, ../../app/styles/main.scss */
 .st-sort-descent:before {
   content: '\25BC';
 }
 
-/* line 2451, ../../app/styles/main.scss */
+/* line 2452, ../../app/styles/main.scss */
 .panel-default > .panel-heading {
   background-color: red;
 }
 
-/* line 2454, ../../app/styles/main.scss */
+/* line 2455, ../../app/styles/main.scss */
 .selected1 {
   /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#2c539e+0,2c539e+100;Blue+3D+%232 */
   background: #2c539e;
@@ -9969,4 +9970,12 @@ table.forumline > tr > td {
   /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2c539e', endColorstr='#2c539e',GradientType=0 );
   /* IE6-9 */
+  color: white;
+}
+
+/* line 2466, ../../app/styles/main.scss */
+.nav-tabs {
+  background-color: #7fb7b0;
+  border-bottom: 1px solid #ffec9d;
+  color: black;
 }
