@@ -124,3 +124,8 @@
     background-color: #efefef;
     cursor: pointer;
 }
+.nav-tabs {
+    background-color: #7fb7b0;
+    border-bottom: 1px solid #ffec9d;
+    color: black;
+}
