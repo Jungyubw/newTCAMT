@@ -35,7 +35,8 @@ var app = angular
         'ui.bootstrap',
         'ui.bootstrap.contextMenu',
         'ui.codemirror',
-        'angularjs-dropdown-multiselect'
+        'angularjs-dropdown-multiselect',
+        'ui-notification'
     ]);
 
 var

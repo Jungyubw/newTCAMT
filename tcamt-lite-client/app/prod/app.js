@@ -30,9 +30,20 @@ var app = angular
         'ui.tree', 
         'ui.bootstrap.contextMenu',
         'ui.bootstrap',
-        'ui.codemirror'
+        'ui.codemirror',
+        'ui-notification'
     ]);
-
+app.config(function(NotificationProvider) {
+    NotificationProvider.setOptions({
+        delay: 1000000000,
+        startTop: 20,
+        startRight: 10,
+        verticalSpacing: 20,
+        horizontalSpacing: 20,
+        positionX: 'left',
+        positionY: 'bottom'
+    });
+});
 var
 //the HTTP headers to be used by all requests
     httpHeaders,

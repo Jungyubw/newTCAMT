@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce) {
+angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce,Notification) {
 	$scope.loading = false;
     $scope.selectedTestStepTab = 1;
 	$rootScope.tps = [];
@@ -522,8 +522,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.selectedTestPlan.transport = true;
 		}
 	};
-
+	
 	$scope.saveAllChangedTestPlans = function() {
+		
 		$rootScope.tps.forEach(function(testplan) {
 			if(testplan.isChanged){
 				var changes = angular.toJson([]);
@@ -534,10 +535,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 					testplan.lastUpdateDate = saveResponse.date;
 					$rootScope.saved = true;
 					testplan.isChanged = false;
+					Notification.success("Test Plan Saved");
 
 
 				}, function (error) {
 					$rootScope.saved = false;
+					Notification.error("Error Saving");
+
 				});
 			}
 		});
@@ -2697,6 +2701,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				position:$itemScope.$nodeScope.$modelValue.children.length+1});
 
 			$scope.activeModel=$itemScope.$nodeScope.$modelValue.children[$itemScope.$nodeScope.$modelValue.children.length-1];
+			Notification.success("New Test Group Added");
 
 			$scope.recordChanged();
 
@@ -2714,6 +2719,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 					teststeps:[],
 					position:$itemScope.$nodeScope.$modelValue.children.length+1
 				});
+			Notification.success("New Test Case Added");
 
 			$scope.activeModel=$itemScope.$nodeScope.$modelValue.children[$itemScope.$nodeScope.$modelValue.children.length-1];
 			$scope.recordChanged();
@@ -2733,7 +2739,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 			});
 			$scope.activeModel=$itemScope.$nodeScope.$modelValue.testcases[$itemScope.$nodeScope.$modelValue.testcases.length-1];
-
+			Notification.success("New Test Case Added");
 			$scope.recordChanged();
 		}],
 		null,
@@ -2742,29 +2748,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 			var name =  $itemScope.$nodeScope.$modelValue.name;
 			var model =  $itemScope.$nodeScope.$modelValue;
-			// clone.name=name+"(clone)";
-
-			// var testcases=[];
-
-			// clone.testcases=testcases;
-
-
-			// for (var i = model.testcases.length - 1; i >= 0; i--){
-			// 	var  testcase={};
-			// 	testcase.name=model.testcases[i].name;
-			// 	testcase.position=model.testcases[i].position;
-
-			// 	testcase.teststeps=[];
-			// 	for (var j = model.testcases[i].teststeps.length - 1; j >= 0; j--){
-			// 		var teststep={};
-			// 		teststep.name=model.testcases[i].teststeps[j].name;
-			// 		teststep.position=model.testcases[i].teststeps[j].position;
-			// 		testcase.teststeps.push(teststep);
-			// 	}
-
-			// 	testcases.push(testcase);
-			// }
-			// clone.testcases=testcases;
 			clone.position=$itemScope.$nodeScope.$parent.$modelValue.length+1;
 			$itemScope.$nodeScope.$parent.$modelValue.push(clone);
 			$scope.activeModel=clone;
@@ -2773,6 +2756,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		null,
 		['delete', function($itemScope) {
 			$itemScope.$nodeScope.remove();
+			Notification.success("Test Group "+$itemScope.$modelValue.name +" Deleted");
 			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue)
 		}]
 
@@ -2781,7 +2765,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.testCaseOptions =[
 		['add new teststep', function($itemScope) {
-
+			
 			if( !$itemScope.$nodeScope.$modelValue.teststeps){
 				$itemScope.$nodeScope.$modelValue.teststeps=[];
 			}
@@ -2810,6 +2794,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $scope.activeModel=newTestStep;
 			$itemScope.$nodeScope.$modelValue.teststeps.push(newTestStep);
 			console.log($itemScope.$nodeScope.$modelValue.teststeps);
+			Notification.success("New Test Step Added");
+
 			$scope.recordChanged();
 
 		}],
@@ -2820,12 +2806,16 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			clone.position=$itemScope.$nodeScope.$parent.$modelValue.length+1;
 			$itemScope.$nodeScope.$parent.$modelValue.push(clone);
 			$scope.activeModel=clone;
+			Notification.success("Test Case "+$itemScope.$modelValue.name+" Cloned");
+
 
 		}],
 		null,
 		['delete', function($itemScope) {
 			$itemScope.$nodeScope.remove();
 			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue)
+			Notification.success("Test Case "+$itemScope.$modelValue.name+" Deleted");
+
 		}]
 
 	];
@@ -2842,13 +2832,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.activeModel=clone;
 			//cloneModel.position=$itemScope.$nodeScope.$parentNodesScope.$modelValue.length+1
 			$itemScope.$nodeScope.$parentNodesScope.$modelValue.push(clone);
+			Notification.success("Test Step "+$itemScope.$modelValue.name+" Cloned");
+
+			
 
 			//$scope.activeModel=$itemScope.$nodeScope.$parentNodesScope.$modelValue[$itemScope.$nodeScope.$parentNodesScope.$modelValue.length-1];
 
 		}],
 		null, ['delete', function($itemScope) {
 			$itemScope.$nodeScope.remove();
-			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue)
+			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue);
+			Notification.success("Test Step "+$itemScope.$modelValue.name+" Deleted");
+
+			
 		}]
 
 	];
@@ -2860,14 +2856,20 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		['Delete Template', function($itemScope) {
 			$scope.subview=null;
 		$scope.deleteMessageTemplate($itemScope.msgTmp);
+		Notification.success("Template "+$itemScope.$modelValue.name+" Deleted");
+
 
 		}],
 		null, ['Apply', function($itemScope) {
 			$scope.applyMessageTemplate($itemScope.msgTmp);
+			Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
+
 		}],
 		null,
 		['Overwrite', function($itemScope) {
 			$scope.overwriteMessageTemplate($itemScope.msgTmp);
+			Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
+
 		}]
 
 	];
@@ -2877,17 +2879,27 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 		['Delete Template', function($itemScope) {
+			
 			$scope.subview=null;
 		$scope.deleteSegmentTemplate($itemScope.segTmp);
+		Notification.success("Template "+$itemScope.$modelValue.name+" Deleted");
+
 
 
 		}],
 		null, ['Apply Template', function($itemScope) {
+
 			$scope.applySegmentTemplate($itemScope.segTmp);
+			Notification.success("Template"+$itemScope.$modelValue.name+" Applied");
+
+
 		}],
 		null,
 		['Overwrite Template', function($itemScope) {
+
 			$scope.overwriteSegmentTemplate($itemScope.segTmp);
+			Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
+
 		}]
 
 	];
@@ -2899,11 +2911,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		['Delete Template', function($itemScope) {
 			$scope.subview=null;
 		$scope.deleteER7Template($itemScope.er7Tmp);
+		Notification.success("Template "+$itemScope.$modelValue.name+"Deleted");
+
 
 		}],
 		null,
 		['Overwrite Template', function($itemScope) {
 		$scope.overwriteER7Template($itemScope.er7Tmp);
+		Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
+
 		}]
 
 
@@ -3009,10 +3025,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 			});
 		}
-
+		 Notification.success("Test Group "+testCaseGroup.name +" Clonned");
 		return clone;
 	};
-
+	
 
 
 

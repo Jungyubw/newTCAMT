@@ -195,28 +195,16 @@ body {
                             	</button>
 			<div class="row">
 				<div class="col-md-12">
-					<div class="col-md-9">
-						<span class="pull-left">
-							<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateMessageTemplateModal()">
-								<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
-							</button>
-							<button  ng-if="selectedSegmentNode.segment" title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateSegmentTemplateModal()">
-								<span><i class="fa fa-pencil fa-fw"></i> Make Segment TestData Cate. Template</span>
-							</button>
-						</span>
-					</div>
-					<div class="col-md-3">
-						<span class="pull-right">
-							<div class="btn-group btn-group-sm" data-toggle="buttons">
-								<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'All'}">
-									<input type="radio">All Usages</input>
-								</label>
-								<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'RREC'}">
-									<input type="radio">R/RE/C Only</input>
-								</label>
-							</div>
-						</span>
-					</div>
+				<span class="pull-right">
+					<div class="btn-group btn-group-sm" data-toggle="buttons">
+    					<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'All'}">
+        					<input type="radio">All Usages</input>
+						</label>
+						<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'RREC'}">
+        					<input type="radio">R/RE/C Only</input>
+						</label>
+   					</div>
+				</span>
 				</div>
 			</div>
 			<div class="row" style="margin:10px;">
@@ -307,6 +295,7 @@ body {
 							<span class="pull-right">
 								<span ng-dropdown-multiselect="" options="colsData" selected-model="selectedCols" extra-settings="smartButtonSettings"></span>
 							</span>
+							</div>
 						</div>
 
 						<div class="col-md-12">
@@ -579,18 +568,8 @@ body {
 				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
 					<span>{{node.testDataCategorization}}</span>
 				</div>
-				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List' && node.testDataCategorization !== 'Value-Test Case Fixed List'">
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
 					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
-				</div>
-				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
-					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
-					<ul class="w3-ul">
-						<li ng-repeat="x in node.testDataCategorizationListData track by $index">{{x}}<span ng-show="x !== node.value" ng-click="removeValueForTestDataCategorization(node, $index);"><i class="fa fa-times fa-fw"></i> </span></li>
-					</ul>
-
-					<input placeholder="Add value in List" ng-model="addMe" class="input.form-control-short80">
-					<span ng-click="addValueForTestDataCategorization(node, addMe); addMe = '';"><i class="fa fa-plus fa-fw"></i> </span></li>
-					<p class="w3-padding-left w3-text-red">{{errortext}}</p>
 				</div>
 			</div>
 		</td>
@@ -656,18 +635,8 @@ body {
 				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
 					<span>{{node.testDataCategorization}}</span>
 				</div>
-				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List' && node.testDataCategorization !== 'Value-Test Case Fixed List'">
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
 					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
-				</div>
-				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
-					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
-					<ul class="w3-ul">
-						<li ng-repeat="x in node.testDataCategorizationListData track by $index">{{x}}<span ng-show="x !== node.value" ng-click="removeValueForTestDataCategorization(node, $index);"><i class="fa fa-times fa-fw"></i> </span></li>
-					</ul>
-
-					<input placeholder="Add value in List" ng-model="addMe" class="input.form-control-short80">
-					<span ng-click="addValueForTestDataCategorization(node, addMe); addMe = '';"><i class="fa fa-plus fa-fw"></i> </span></li>
-					<p class="w3-padding-left w3-text-red">{{errortext}}</p>
 				</div>
 			</div>
 		</td>

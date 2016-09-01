@@ -11,8 +11,8 @@
             <ol ui-tree-nodes="" ng-model="ig.profile.messages.children" ng-if="!collapsed">
                 <li ng-repeat="msg in ig.profile.messages.children" ui-tree-node>
                     <div ui-tree-handle ng-click="Activate(this);OpenMessageMetadata(msg)" ng-class="{selected : this.$modelValue===activeModel ,used:selectedTestStep&& selectedTestStep.conformanceProfileId===this.$modelValue.id || selectedTemplate.conformanceProfileId===this.$modelValue.id}">
-                        <span ng-hide="selectedTestStep">[{{$index+1}}]<span class=" label-success badge">CP</span>{{msg.name}}-{{msg.description}}</span>
-                        <span context-menu="ApplyProfile" ng-hide="!selectedTestStep">[{{$index+1}}]<span class="label-success badge">CP</span>{{msg.name}}-{{msg.description}}</span>
+                        <span ng-hide="selectedTestStep"><span class=" label-success badge">CP</span>{{msg.structID}}--{{msg.name}}</span>
+                        <span context-menu="ApplyProfile" ng-hide="!selectedTestStep"><span class="label-success badge">CP</span>{{msg.structID}}--{{msg.name}}</span>
                     </div>
                 </li>
             </ol>
@@ -87,7 +87,7 @@
 <script type="text/ng-template" id="MessageMetadata.html">
     <div class="page-header" style="margin-bottom: 20px">
         <span class="header4">Conformance Profile: {{message.name}} </span>
-        <div>
+        <div class="container">
             <div style="margin-top: 20px">
                 <div class="form-group control-group" ng-class="{'igl-has-error' : editForm.name.$invalid}">
                     <label class="col-md-2 control-label">Name</label>
@@ -453,7 +453,7 @@
             <div>-</div>
         </td>
         <td class="col-xs-1 col-fixed-100 ">
-            <div>-</div>
+            <div></div>
         </td>
         <td class="col-xs-1 col-fixed-130 ">
             <div>-</div>
