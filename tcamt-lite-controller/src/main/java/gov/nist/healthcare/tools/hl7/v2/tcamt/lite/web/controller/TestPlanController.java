@@ -162,6 +162,7 @@ public class TestPlanController extends CommonController {
 			String sourceStr = IOUtils.toString(sourceReader);
 			result.setType("html");
 			result.setXml(TestPlanController.parseXmlByXSLT(sourceStr, xsltStr));
+			result.setXml(result.getXml().replace("accordion", "uib-accordion"));
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();

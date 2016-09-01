@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce) {
+angular.module('tcl').controller('TestPlanCtrl', function ($document,$scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce) {
 	$scope.loading = false;
     $scope.selectedTestStepTab = 1;
 	$rootScope.tps = [];
@@ -17,6 +17,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 	$scope.nistStd = {};
 	$scope.nistStd.nist = false;
 	$scope.nistStd.std = false;
+
+// or
+
+
 
 	$scope.exportTestPackageHTML = function () {
 			var changes = angular.toJson([]);
@@ -406,6 +410,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 				}
 				$scope.selectedTestStepTab = 1;
 				$scope.loadIntegrationProfile();
+				$scope.MessageForMirror=$rootScope.selectedTestStep.er7Message;
 				$scope.subview = "EditTestStepMetadata.html";
 			}, 0);
 
@@ -840,7 +845,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 		data.xml = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 
 		$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
-			$rootScope.messageContentsHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
+//			$rootScope.messageContentsHTML = angular.fromJson(response.data).xml;
+			$scope.messageContentsHTML=angular.fromJson(response.data).xml;
+		$scope.messageContentsHTML.html=(angular.fromJson(response.data).xml).replace("accordion","uib-accordion");
+		//$scope.messageContentsHTML.html=$scope.messageContentsHTML.html.replace("accordion","uib-accordion");
+		
 		}, function (error) {
 		});
 	};
@@ -2384,22 +2393,23 @@ angular.module('tcl').controller('TestPlanCtrl', function ($scope, $rootScope, $
 
 	$scope.result="";
 	//validation 
-	$scope.validate = function () {
+	$scope.validate = function (mode) {
 		$scope.result="";
 		var message = $rootScope.selectedTestStep.er7Message;
 		var igDocumentId = $rootScope.selectedTestStep.integrationProfileId;
         var conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
+        var teststep= JSON.stringify($rootScope.selectedTestStep);
+        var context=mode;
 
 		var req = {
 		    method: 'POST',
 		    url: 'api/validation',
-		    headers: {
-		        'Content-Type': undefined
-		    },
-		    params: { message: message, igDocumentId: igDocumentId, conformanceProfileId : conformanceProfileId }
+		    params: { message: message, igDocumentId: igDocumentId, conformanceProfileId : conformanceProfileId ,  context:context}
+		    ,
+		    data:{
+		    	teststep:teststep
+		    }
 		}
-		
-		
 
         var promise = $http(req).success(function(data, status, headers, config) {
             $scope.result=$sce.trustAsHtml(data.html);

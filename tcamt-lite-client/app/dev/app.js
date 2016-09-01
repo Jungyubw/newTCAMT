@@ -18,6 +18,7 @@ var app = angular
         'ngRoute',
         'ngSanitize',
         'ngTouch',
+        'angular-bind-html-compile',
         'ngIdle',
         'ui.bootstrap',
         'smart-table',
@@ -52,8 +53,6 @@ var
 
 //the message to be shown to the user
 var msg = {};
-
-
 app.config(function ($routeProvider, RestangularProvider, $httpProvider, KeepaliveProvider, IdleProvider,notificationsConfigProvider,$compileProvider) {
 
     app.requires.push('ngMockE2E');

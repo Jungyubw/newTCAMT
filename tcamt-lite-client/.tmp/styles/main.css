@@ -9970,3 +9970,30 @@ table.forumline > tr > td {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2c539e', endColorstr='#2c539e',GradientType=0 );
   /* IE6-9 */
 }
+
+/* line 2462, ../../app/styles/main.scss */
+tabset {
+  margin-top: 50px;
+  padding: 50px;
+}
+
+/* line 2466, ../../app/styles/main.scss */
+tab {
+  margin-top: 20;
+}
+
+/* line 2469, ../../app/styles/main.scss */
+a, a:hover, a:focus {
+  color: black !important;
+  font-weight: bold;
+}
+
+/* line 2474, ../../app/styles/main.scss */
+.panel-info > .panel-heading {
+  background-color: #49a7d2;
+}
+
+/* line 2477, ../../app/styles/main.scss */
+.nav-tabs {
+  background: #000102 !important;
+}

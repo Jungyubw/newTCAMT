@@ -184,12 +184,15 @@ body {
 				</button>
 			</span>
 				<div class="col-md-12">
-					<ui-codemirror ui-codemirror-opts="editorOptions" ng-change="recordChanged(); updateEr7Message();" ng-model="selectedTestStep.er7Message"></ui-codemirror>
+					<ui-codemirror ui-codemirror-opts="editorOptions" ng-change="recordChanged()" ng-model="selectedTestStep.er7Message"></ui-codemirror>
 				</div>
 
 		</div>
 
 		<div ng-show="isSelectedTestStepTab(4);">
+			<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateMessageTemplateModal()">
+                            		<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
+                            	</button>
 			<div class="row">
 				<div class="col-md-12">
 				<span class="pull-right">
@@ -255,7 +258,7 @@ body {
 								<i class="fa fa-pencil fa-fw"></i> Selected Segment
 							</span>
 						</uib-accordion-heading>
-
+						<div ng-if="selectedSegmentNode.segment">
 
 						<div class="row" style="margin:12px">
 							<div class="col-md-2">
@@ -274,6 +277,8 @@ body {
 								<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.segmentStr" />
 							</div>
 						</div>
+						</div>
+						<div class="col-md-10" ng-if="!selectedSegmentNode.segment"><p style ="color:red;"> No Segment Selected</p></div>
 
 						<div class="col-md-12">
 							<div class="col-md-9">
@@ -281,7 +286,7 @@ body {
 								<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateMessageTemplateModal()">
                             		<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
                             	</button>
-								<button title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateSegmentTemplateModal()">
+								<button  ng-if="selectedSegmentNode.segment" title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateSegmentTemplateModal()">
                             		<span><i class="fa fa-pencil fa-fw"></i> Make Segment TestData Cate. Template</span>
                             	</button>
 							</span>
@@ -353,15 +358,19 @@ body {
 		</div>
 
 		<div ng-show="selectedTestStepTab == 5">
-			<ui-codemirror ui-codemirror-opts="editorOptions" ng-model="selectedTestStep.er7Message"></ui-codemirror>
+
 
 			<div class="row">
-				<span class="col-md-4"></span>
-				<button class="btn btn-xs btn-success col-md-4" ng-click="validate()">Validate</button>
-				<span class="col-md-4"></span>
+
+				<button class="btn btn-xs btn-success" ng-click="validate('free')">Conext Free</button>
+	
+				<button class="btn btn-xs btn-primary " ng-click="validate('based')">Context Based</button>
+			</div>
+			<div class="col-md-10" style="padding:40px">
+			<ui-codemirror id="codemir" ui-codemirror-opts="editorOptions" ng-model="selectedTestStep.er7Message"></ui-codemirror>
 			</div>
 
-			<div class="panel-body"  style="padding: center; max-height: 500px;	overflow-y: scroll;">
+			<div class="col-md-10"  style="padding: center; max-height: 500px;	overflow-y: scroll; ">
 
 				<ng-bind-html ng-bind-html="result"/>
 			</div>
@@ -402,8 +411,7 @@ body {
 								 Message messageContents
 							</span>
 						</uib-accordion-heading>
-
-						<ng-bind-html ng-bind-html="messageContentsHTML"/>
+						<div dynamic="messageContentsHTML"></div>
 					</uib-accordion-group>
 
 					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.testdata">
@@ -488,18 +496,8 @@ body {
 				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
 					<span>{{node.testDataCategorization}}</span>
 				</div>
-				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List' && node.testDataCategorization !== 'Value-Test Case Fixed List'">
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
 					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
-				</div>
-				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
-					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
-					<ul class="w3-ul">
-						<li ng-repeat="x in node.testDataCategorizationListData track by $index">{{x}}<span ng-show="x !== node.value" ng-click="removeValueForTestDataCategorization(node, $index);"><i class="fa fa-times fa-fw"></i> </span></li>
-					</ul>
-
-					<input placeholder="Add value in List" ng-model="addMe" class="input.form-control-short80">
-					<span ng-click="addValueForTestDataCategorization(node, addMe); addMe = '';"><i class="fa fa-plus fa-fw"></i> </span></li>
-					<p class="w3-padding-left w3-text-red">{{errortext}}</p>
 				</div>
 			</div>
 		</td>
@@ -647,6 +645,7 @@ body {
         </td>
     </tr>
 </script>
+
 
 <script type="text/ng-template" id="MessageTemplateCreationModal.html">
 	<div class="modal-header">

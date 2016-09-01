@@ -2459,5 +2459,21 @@ background: -webkit-linear-gradient(top,  #2c539e 0%,#2c539e 100%); /* Chrome10-
 background: linear-gradient(to bottom,  #2c539e 0%,#2c539e 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2c539e', endColorstr='#2c539e',GradientType=0 ); /* IE6-9 */
 }
+tabset{
+margin-top:50px;
+padding:50px;
+}
+tab{
+margin-top:20;
+}
+a, a:hover, a:focus {
+     color: black !important; 
+      font-weight: bold;
 
-
+}
+.panel-info > .panel-heading {
+    background-color: #49a7d2;
+}
+.nav-tabs {
+    background: #000102 !important; 
+}
