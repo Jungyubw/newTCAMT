@@ -472,6 +472,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if (testStep != null) {
 			waitingDialog.show('Opening Test Step ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
+				$rootScope.segmentList = [];
 				$rootScope.selectedIntegrationProfile = null;
 				$rootScope.selectedTestStep = testStep;
 				if($rootScope.selectedTestStep.testDataCategorizationMap == undefined || $rootScope.selectedTestStep == null){
