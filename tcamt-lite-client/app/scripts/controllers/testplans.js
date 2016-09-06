@@ -392,6 +392,18 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.selectTestPlan(newTestPlan);
 	};
 
+	$scope.initCodemirror = function () {
+		$scope.editor = CodeMirror.fromTextArea(document.getElementById("er7-textarea"), {
+			lineNumbers: true,
+			fixedGutter: true,
+			theme: "elegant",
+			readOnly: false,
+			showCursorWhenSelecting: true
+		});
+		$scope.editor.setSize("100%", 345);
+		$scope.editor.refresh();
+	};
+
 	$scope.selectTestPlan = function (testplan) {
 		if (testplan != null) {
 			waitingDialog.show('Opening Test Plan...', {dialogSize: 'xs', progressType: 'info'});
@@ -489,6 +501,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.selectedTestCase = null;
 				$rootScope.selectedTemplate=null;
 				$rootScope.selectedSegmentNode =null;
+				$scope.initCodemirror();
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -591,6 +604,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.initHL7EncodedMessageTab = function () {
+		$scope.editor.setValue($rootScope.selectedTestStep.er7Message);
+		setTimeout(function () {
+			$scope.editor.refresh();
+		}, 100);
 	};
 
 	$scope.initTestData = function () {
