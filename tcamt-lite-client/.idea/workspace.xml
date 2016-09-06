@@ -26,9 +26,15 @@
       <file leaf-file-name="testplans.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="608" column="36" selection-start-line="608" selection-start-column="36" selection-end-line="608" selection-end-column="36" />
-              <folding />
+            <state relative-caret-position="351">
+              <caret line="407" column="82" selection-start-line="407" selection-start-column="82" selection-end-line="407" selection-end-column="82" />
+              <folding>
+                <element signature="e#111955#112758#0" expanded="false" />
+                <element signature="e#112876#114382#0" expanded="false" />
+                <element signature="e#114500#115930#0" expanded="false" />
+                <element signature="e#116044#116781#0" expanded="false" />
+                <element signature="e#116866#117754#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -36,8 +42,8 @@
       <file leaf-file-name="editTestStep.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="19" column="157" selection-start-line="19" selection-start-column="157" selection-end-line="19" selection-end-column="157" />
+            <state relative-caret-position="221">
+              <caret line="186" column="87" selection-start-line="186" selection-start-column="87" selection-end-line="186" selection-end-column="87" />
               <folding>
                 <element signature="n#script#5;n#!!top" expanded="false" />
                 <element signature="n#script#6;n#!!top" expanded="false" />
@@ -596,12 +602,12 @@
       <workItem from="1470984436646" duration="4074000" />
       <workItem from="1471016708125" duration="4142000" />
       <workItem from="1472004400922" duration="5000" />
-      <workItem from="1473134898853" duration="11622000" />
+      <workItem from="1473134898853" duration="12993000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="155698000" />
+    <option name="totallyTimeSpent" value="157069000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -976,22 +982,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/edit/editTP.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="13" column="34" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bower.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="33" column="25" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
@@ -1011,10 +1001,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/bower.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="33" column="25" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/edit/editTP.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="13" column="34" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="19" column="157" selection-start-line="19" selection-start-column="157" selection-end-line="19" selection-end-column="157" />
+        <state relative-caret-position="221">
+          <caret line="186" column="87" selection-start-line="186" selection-start-column="87" selection-end-line="186" selection-end-column="87" />
           <folding>
             <element signature="n#script#5;n#!!top" expanded="false" />
             <element signature="n#script#6;n#!!top" expanded="false" />
@@ -1025,9 +1031,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="608" column="36" selection-start-line="608" selection-start-column="36" selection-end-line="608" selection-end-column="36" />
-          <folding />
+        <state relative-caret-position="351">
+          <caret line="407" column="82" selection-start-line="407" selection-start-column="82" selection-end-line="407" selection-end-column="82" />
+          <folding>
+            <element signature="e#111955#112758#0" expanded="false" />
+            <element signature="e#112876#114382#0" expanded="false" />
+            <element signature="e#114500#115930#0" expanded="false" />
+            <element signature="e#116044#116781#0" expanded="false" />
+            <element signature="e#116866#117754#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

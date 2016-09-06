@@ -393,15 +393,21 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.initCodemirror = function () {
-		$scope.editor = CodeMirror.fromTextArea(document.getElementById("er7-textarea"), {
-			lineNumbers: true,
-			fixedGutter: true,
-			theme: "elegant",
-			readOnly: false,
-			showCursorWhenSelecting: true
-		});
-		$scope.editor.setSize("100%", 345);
-		$scope.editor.refresh();
+		if($scope.editor == null){
+			$scope.editor = CodeMirror.fromTextArea(document.getElementById("er7-textarea"), {
+				lineNumbers: true,
+				fixedGutter: true,
+				theme: "elegant",
+				readOnly: false,
+				showCursorWhenSelecting: true
+			});
+			$scope.editor.setSize("100%", 345);
+			$scope.editor.refresh();
+
+			$scope.editor.on("change", function () {
+				$rootScope.selectedTestStep.er7Message = $scope.editor.getValue();
+			});
+		}
 	};
 
 	$scope.selectTestPlan = function (testplan) {
@@ -604,7 +610,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.initHL7EncodedMessageTab = function () {
-		$scope.editor.setValue($rootScope.selectedTestStep.er7Message);
+		if($rootScope.selectedTestStep.er7Message == null){
+			$scope.editor.setValue("");
+		}else {
+			$scope.editor.setValue($rootScope.selectedTestStep.er7Message);
+		}
+
+
 		setTimeout(function () {
 			$scope.editor.refresh();
 		}, 100);
@@ -3046,9 +3058,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		 Notification.success("Test Group "+testCaseGroup.name +" Clonned");
 		return clone;
 	};
-	
-
-
 
 });
 
