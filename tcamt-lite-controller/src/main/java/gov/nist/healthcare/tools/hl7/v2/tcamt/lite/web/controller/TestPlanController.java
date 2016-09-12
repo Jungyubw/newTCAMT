@@ -127,6 +127,8 @@ public class TestPlanController extends CommonController {
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public TestPlanSaveResponse save(@RequestBody TestPlanChangeCommand command) throws TestPlanSaveException {
+		
+		System.out.println("SAVE REQ");
 		try {
 			User u = userService.getCurrentUser();
 			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
@@ -134,6 +136,7 @@ public class TestPlanController extends CommonController {
 				throw new UserAccountNotFoundException();
 			
 			TestPlan saved = testPlanService.apply(command.getTp());
+			System.out.println("WOOOO" + saved.getName());
 			return new TestPlanSaveResponse(saved.getLastUpdateDate(), saved.getVersion());
 		} catch (RuntimeException e) {
 			throw new TestPlanSaveException(e);

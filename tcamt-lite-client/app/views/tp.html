@@ -13,37 +13,38 @@
 
 <div ng-show="isAuthenticated()">
     <div ng-show="!isPending()">
-        <div class="row page-header">
-            <span class="pull-left"><h5> Hello, <span ng-bind="getFullName()"></span></h5></span>
-            <span class="pull-right">
-                <button type="button" class="btn btn-primary btn-sm" ng-click="createNewTestPlan()"><i class="fa fa-plus"></i>
-                    Create New Test Plan
-                </button>
-                <button title="Save Changes" type="button" class="btn btn-sm btn-success" ng-click="saveAllChangedTestPlans()" ng-disabled="!isChanged">
-                    <span><i class="fa fa-check fa-fw"></i> Save</span>
-                </button>
-            </span>
+        <div id="testplan-header">
+            <div class="pull-right">
+                    <button type="button" class="btn btn-primary btn-sm" ng-click="createNewTestPlan()"><i class="fa fa-plus"></i>
+                        Create New Test Plan
+                    </button>
+                    <button title="Save Changes" type="button" class="btn btn-sm btn-success" ng-click="saveAllChangedTestPlans()" ng-disabled="!isChanged">
+                        <span><i class="fa fa-check fa-fw"></i> Save</span>
+                    </button>
         </div>
-        <div class="row">
-            <uib-accordion close-others="true">
-                <uib-accordion-group is-open="accordi.igList" class="panel-level1">
-                    <uib-accordion-heading class="test">
+        </div>
+        <div id="testplan-main">
+            <div class="row">
+                <uib-accordion close-others="true">
+                    <uib-accordion-group is-open="accordi.igList" class="panel-level1">
+                        <uib-accordion-heading class="test">
                         <span style="color:#ffec9d; font-weight: bold;">
                         <i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
                         <i class="fa fa-file-text-o fa-fw"></i> Test Plan List</span>
-                    </uib-accordion-heading>
-                    <div ng-include="'views/edit/listTP.html'"></div>
-                </uib-accordion-group>
+                        </uib-accordion-heading>
+                        <div ng-include="'views/edit/listTP.html'"></div>
+                    </uib-accordion-group>
 
-                <uib-accordion-group is-open="accordi.igDetails" panel-class="panel-level1">
-                    <uib-accordion-heading>
+                    <uib-accordion-group is-open="accordi.igDetails" panel-class="panel-level1">
+                        <uib-accordion-heading>
                     <span style="color:#ffec9d; font-weight: bold;">
                         <i class="fa" ng-class="{'fa-caret-down': accordi.igDetails, 'fa-caret-right': !accordi.igDetails}"></i>
                         <i class="fa fa-pencil fa-fw"></i>Edit Test Plan</span>
-                    </uib-accordion-heading>
-                    <div ng-include="'views/edit/editTP.html'"></div>
-                </uib-accordion-group>
-            </uib-accordion>
+                        </uib-accordion-heading>
+                        <div ng-include="'views/edit/editTP.html'"></div>
+                    </uib-accordion-group>
+                </uib-accordion>
+            </div>
         </div>
     </div>
 

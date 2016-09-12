@@ -22,6 +22,37 @@ $icon-font-path: "../fonts/";
   background-color: #fafafa;
 }
 
+#header-wrap {
+  position: fixed;
+  height: 85px;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+#appcontainer {
+  border: 1px;
+  border-color: #000000;
+  min-height: 500px;
+  margin-top: 85px;
+}
+
+#testplan-header {
+  position: fixed;
+  height: 45px;
+  top: 85px;
+  left: 0;
+  margin-right: 100px;
+  width: 100%;
+  z-index: 100;
+  background-color: white;
+}
+
+#testplan-main {
+  margin-top: 45px;
+}
+
+
 /* Space out content a bit */
 body {
   background: #021a4c url(../images/bg_body4.jpg) no-repeat 50% -10px;
@@ -76,21 +107,21 @@ table{
 }
 
 .header-sub-panel{
-  
+
 }
 .header-testplan-panel{
-  
+
 }
 .header-IG-panel{
-  
+
 }
 .header-template-panel{
-  
+
 }
 .header-tables-panel{
     background-color: #436165;
 
-  
+
 }
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
@@ -176,40 +207,6 @@ table{
   font-size: .9em;
 }
 
-//
-//#appheader {
-//  float: none;
-//  font-family: Verdana;
-//  font-weight: bold;
-//  background-color: #021a4c;
-//  margin-left: 0px;
-//}
-//
-//
-////#apptitle {
-////  margin-bottom: 5px;
-////  display: inline-block;
-////  margin-left: 10px;
-////  font-size: 32px;
-////  color: #F3C60D;
-////}
-//
-//#apptitle {
-//  margin-bottom: 5px;
-//  display: inline-block;
-//  margin-left: 10px;
-//  font-size: 32px;
-//  color: #F3C60D;
-//}
-//
-//
-//#appsubtitle {
-//  font-size: 14px;
-//  margin-left: 10px;
-//  color: white;
-//  text-shadow: none;
-//}
-
 .footeritem {
   display: inline-block;
   vertical-align: top;
@@ -224,23 +221,6 @@ table{
   padding-left: 20px;
   width: 350px;
 }
-
-//
-//.navbar-collapse {
-//  background: #ffec9d;
-//  background-color: #ffec9d;
-//  filter: none;
-//  border: 0px;
-//  border-radius: 0px;
-//  border-bottom: 1px solid #ffcc00;
-//}
-//
-//.nav {
-//  //  background: #ffec9d;
-//}
-//
-
-
 
 .dropdown-menu {
   background-color: #ffec9d;
@@ -266,42 +246,6 @@ table{
 .nav-tabs > li > a:hover {
   color: #222222;
 }
-
-//
-//.navbar-text > a {
-//  color: #666666;
-//}
-//
-//.navbar-text > a:hover {
-//  color: #222222;
-//}
-
-//.nav-tabs {
-//  border-bottom: 1px solid #ffcc00;
-//  cursor: pointer;
-//}
-//
-//.nav-tabs > .active > a {
-//  border: 1px solid #ffcc00;
-//}
-//
-//.nav-tabs > .active > a:hover {
-//  border: 1px solid #ffcc00;
-//}
-
-//.nav-tabs > li > a {
-//  border-color: #bce8f1;
-//  background-color: #d9edf7;
-//  color: #3a87ad;
-//}
-//
-//.nav-tabs > li.active > a,.nav-tabs > li > a:hover,.nav-tabs > li.active > a:hover {
-//  background-color: #428bca;
-//  border-color: #bce8f1;
-//  border: 0px;
-//  color: white;
-//  cursor: pointer;
-//}
 
 .nav.bs-docs-nav > .active > a, .nav.bs-docs-nav > .active > a, .nav.bs-docs-nav > .active > a:hover {
   background-color: #d3d3d3;
@@ -408,13 +352,6 @@ div.ngRow.selected {
 .igl-tab {
   margin-top: 20px;
 }
-
-//.tbl-header{
-//  background-color: #d9edf7;
-//  color: #3a87ad;
-//  font-weight: normal;
-//  border-color: #bce8f1;
-//}
 
 .st-selected {
   border-left: 4px solid black;
@@ -1145,34 +1082,6 @@ h4.addPOAFormDateSectionTitle {
   display: inline-block;
 }
 
-/*#mainview {
-  min-height: 250px;
-}*/
-
-#appheader {
-  float: none;
-  font-family: Verdana;
-  font-weight: bold;
-  background-color: #021a4c;
-  margin-left: 0px;
-}
-
-#apptitle {
-  margin-bottom: 5px;
-  display: inline-block;
-  margin-left: 10px;
-  font-size: 32px;
-  color: #F3C60D;
-}
-
-
-//#appsubtitle {
-//  font-size: 14px;
-//  margin-left: 10px;
-//  color: #ffcc00;
-//  text-shadow: none;
-//}
-
 #ehrbody {
   //  background: #f5f5f5;
 }
@@ -1387,65 +1296,11 @@ input.account-input {
   width: 350px;
 }
 
-//.modal {
-//  display: block;
-//}
 .app-modal-window .modal-dialog {
   width: 90%;
   height: 90%;
   overflow-y: auto;
 }
-
-//table {
-//  box-sizing: border-box;
-//  -moz-box-sizing: border-box;
-//  display: flex;
-//  flex-direction: column;
-//  align-items: stretch;
-//  height: 500px; /* this can vary */
-//}
-//
-//table * {
-//  box-sizing: inherit;
-//  -moz-box-sizing: inherit;
-//}
-//
-//thead {
-//  display: flex;
-//  flex-direction: column;
-//  align-items: stretch;
-//}
-//
-//tbody {
-//  overflow-y: scroll;
-//  display: inline-block;
-//}
-//
-//thead > tr, tbody > tr, tfoot > tr {
-//  display: flex;
-//  flex-direction: row;
-//  flex-wrap: nowrap;
-//}
-//
-//thead, tfoot {
-//  flex-shrink: 0;
-//}
-//
-//th, tbody td {
-//  width: 20%; /* this can vary */
-//  overflow-x: hidden;
-//  text-overflow: ellipsis;
-//  display: inline-block;
-//}
-//
-//tfoot {
-//  display: inline-block;
-//}
-//
-//tfoot td {
-//  width: 100%;
-//  display: inline-block;
-//}
 
 .app-modal-window .modal-dialog {
   width: 90%;
@@ -1471,34 +1326,10 @@ input.account-input {
   min-height: 32px !important
 }
 
-//.navbar-text {
-//   margin-bottom: 0px;
-//   margin-top: 0px;
-//}
-
-#appcontainer {
-  border: 1px;
-  border-color: #000000;
-  min-height: 500px;
-}
-
 .appcontent {
   margin-top: 7px;
-  //  border:2px;
-  //  border-color: #ffec9d;
-  //  border-bottom: 0px solid #ffcc00;
   border: 1px solid #bce8f1;
 }
-
-//#apptitle {
-//  position: relative;
-//  width: 95%;
-//  margin: 0 auto;
-//  background: #f5f5f5;
-//  color: black;
-//  box-shadow: 0 0 6px #021a4c;
-//
-//}
 
 .box {
   display: block;
@@ -1617,7 +1448,6 @@ input.account-input {
 }
 
 .danger {
-  //  background-color: #f2dede;
   border-color: #ebccd1;
   color: #b94a48;
 }
@@ -1627,9 +1457,6 @@ input.account-input {
 }
 
 .nav-tabs > li.focus > a, .nav-tabs > li > a:focus, .nav-tabs > li.active > a:focus {
-  //  background-color: #428bca;
-  //  border-color: #bce8f1;
-  //  color: white;
 }
 
 .panel {
@@ -2268,27 +2095,27 @@ table.conformance-profiles-table td {
 
 }
 
- .testCase{ 
- 	margin-left: 1px; 
-} 
+ .testCase{
+ 	margin-left: 1px;
+}
 
-.testStep{ 	
+.testStep{
 	margin-left: 15000000px;
- 	margin-top: 5px; 
+ 	margin-top: 5px;
 
- } 
+ }
 
- .testGroup{ 
+ .testGroup{
 	margin-left: 10px;
- } 
+ }
 
-.testGroupCase{ 
+.testGroupCase{
  	margin-left: 15px;
-} 
-.testGroupCaseStep{ 
+}
+.testGroupCaseStep{
  margin-left: 20px;
- margin-top: 5px; 
- } 
+ margin-top: 5px;
+ }
 
 .selected{
 /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#e1ffff+0,e1ffff+7,e1ffff+12,fdffff+12,e6f8fd+30,c8eefb+54,bee4f8+75,b1d8f5+100;Blue+Pipe+%232 */
@@ -2310,7 +2137,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fefcea', end
 
 span {
      cursor:pointer;
-    
+
 }
 .draggable{
 	cursor:move;
@@ -2322,7 +2149,7 @@ span {
         text-decoration-line: none;
         text-decoration-style: solid;
     font-weight: 700;
-  
+
 
 }
 
@@ -2470,7 +2297,7 @@ tab{
 margin-top:20;
 }
 a, a:hover, a:focus {
-     color: black !important; 
+     color: black !important;
       font-weight: bold;
 
 
@@ -2479,7 +2306,7 @@ a, a:hover, a:focus {
     background-color: #49a7d2;
 }
 .nav-tabs {
-    background: #000102 !important; 
+    background: #000102 !important;
 }
 .nav-tabs {
     background-color: #7fb7b0;

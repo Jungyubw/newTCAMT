@@ -310,6 +310,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.selectedConformanceProfile =_.find($rootScope.selectedIntegrationProfile.messages.children, function(m) {
 				return m.id == $rootScope.selectedTestStep.conformanceProfileId;
 			});
+			if($rootScope.selectedTestStep.er7Message == null || $rootScope.selectedTestStep.er7Message == '') $scope.generateDefaultSegmentsList();
+
+			$scope.updateMessage();
 		}else {
 			$rootScope.selectedConformanceProfile = null;
 		}
@@ -533,6 +536,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.recordChanged = function () {
 		$rootScope.isChanged = true;
+		$rootScope.selectedTestPlan.isChanged = true;
 	};
 
 	$scope.updateTransport = function () {
@@ -544,7 +548,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 	
 	$scope.saveAllChangedTestPlans = function() {
-		
 		$rootScope.tps.forEach(function(testplan) {
 			if(testplan.isChanged){
 				var changes = angular.toJson([]);
@@ -590,6 +593,53 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		for(var i in listLineOfMessage){
 			currentPosition = $scope.getSegment($rootScope.segmentList, nodeList, currentPosition, listLineOfMessage[i]);
 		};
+
+
+		var testcaseName = $scope.findTestCaseNameOfTestStep();
+
+		$rootScope.selectedTestStep.nistXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,false));
+		$rootScope.selectedTestStep.stdXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,true));
+		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+		$rootScope.selectedTestStep.messageContentsXMLCode = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+	};
+
+
+	$scope.generateDefaultSegmentsList =function() {
+		var defaultEr7Message = '';
+		defaultEr7Message = $scope.travelConformanceProfileToGenerateDefaultEr7Message($rootScope.selectedConformanceProfile.children, defaultEr7Message);
+		$rootScope.selectedTestStep.er7Message = defaultEr7Message;
+	};
+
+	$scope.travelConformanceProfileToGenerateDefaultEr7Message = function(children, defaultEr7Message) {
+
+		for(var i in children){
+			var segmentRefOrGroup = children[i];
+
+			if(segmentRefOrGroup.type == 'segmentRef'){
+				if(segmentRefOrGroup.usage == 'R' || segmentRefOrGroup.usage == 'RE' || segmentRefOrGroup.usage == 'C'){
+					var segment = $scope.findSegment(segmentRefOrGroup.ref, $rootScope.selectedIntegrationProfile);
+					if(segment.name == 'MSH'){
+						defaultEr7Message = defaultEr7Message + 'MSH|^~\&|';
+						for(var j in segment.fields){
+							if(j > 1) defaultEr7Message = defaultEr7Message + '|';
+						}
+					}else{
+						defaultEr7Message = defaultEr7Message + segment.name;
+						for(var j in segment.fields){
+							defaultEr7Message = defaultEr7Message + '|';
+						}
+					}
+
+					defaultEr7Message = defaultEr7Message + '\n';
+				}
+			}else if (segmentRefOrGroup.type == 'group'){
+				if(segmentRefOrGroup.usage == 'R' || segmentRefOrGroup.usage == 'RE' || segmentRefOrGroup.usage == 'C'){
+					defaultEr7Message = $scope.travelConformanceProfileToGenerateDefaultEr7Message(segmentRefOrGroup.children, defaultEr7Message);
+				}
+			}
+		}
+
+		return defaultEr7Message;
 	};
 
 	$scope.getSegment = function (segmentList, nodeList, currentPosition, segmentStr) {
@@ -949,11 +999,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		data.xml = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 
 		$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
-//			$rootScope.messageContentsHTML = angular.fromJson(response.data).xml;
 			$scope.messageContentsHTML=angular.fromJson(response.data).xml;
 			$scope.messageContentsHTML.html=(angular.fromJson(response.data).xml).replace("accordion","uib-accordion");
-		//$scope.messageContentsHTML.html=$scope.messageContentsHTML.html.replace("accordion","uib-accordion");
-		
 		}, function (error) {
 		});
 	};
