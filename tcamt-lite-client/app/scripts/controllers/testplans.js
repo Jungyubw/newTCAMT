@@ -7,7 +7,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
     $scope.selectedTestStepTab = 1;
 	$rootScope.tps = [];
 	$scope.testPlanOptions=[];
-	$scope.accordi = {metaData: false, definition: true, igList: true, igDetails: false};
+	$scope.accordi = {metaData: false, definition: true, tpList: true, tpDetails: false};
 	$rootScope.usageViewFilter = 'All';
 	$rootScope.selectedTemplate=null;
 	$scope.DocAccordi = {};
@@ -413,10 +413,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	};
 
+	$scope.closeTestPlanEdit = function () {
+        $scope.selectTPTab(0);
+    };
+
 	$scope.selectTestPlan = function (testplan) {
 		if (testplan != null) {
 			waitingDialog.show('Opening Test Plan...', {dialogSize: 'xs', progressType: 'info'});
-			$scope.selectIgTab(1);
+			$scope.selectTPTab(1);
 
 			$rootScope.testplans = [];
 			$rootScope.testplans.push(testplan);
@@ -524,13 +528,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
       return   tabNum == $scope.selectedTestStepTab;
     };
 
-	$scope.selectIgTab = function (value) {
+	$scope.selectTPTab = function (value) {
 		if (value === 1) {
-			$scope.accordi.igList = false;
-			$scope.accordi.igDetails = true;
+			$scope.accordi.tpList = false;
+			$scope.accordi.tpDetails = true;
 		} else {
-			$scope.accordi.igList = true;
-			$scope.accordi.igDetails = false;
+			$scope.accordi.tpList = true;
+			$scope.accordi.tpDetails = false;
 		}
 	};
 

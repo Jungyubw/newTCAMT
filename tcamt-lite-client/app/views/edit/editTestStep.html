@@ -26,99 +26,99 @@ body {
 
 		<div ng-show="isSelectedTestStepTab(1);">
 			<form name="teststepMetaDataForm" class="form-horizontal" novalidate>
-				<div class="row" style="margin:10px">
+				<div class="row" style="margin-top:35px">
 					<div class="col-md-12">
-						<div class="col-md-5 col-margin">
-							<div class="form-group">
-								<label class="control-label">Name</label>
-								<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestStep.name" required />
-							</div>
-						</div>
+                        <div class="col-md-6">
+                            <md-input-container style="width: 100%;">
+                                <label>Name</label>
+                                <input ng-model="selectedTestStep.name" ng-change="recordChanged()" type="text"/>
+                            </md-input-container>
+                        </div>
 
-						<div class="col-md-5 col-margin">
-							<div class="form-group">
-								<label class="control-label">Description</label>
-								<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestStep.description" required />
-							</div>
-						</div>
+                        <div class="col-md-6">
+                            <md-input-container style="width: 100%;">
+                                <label>Description</label>
+                                <input ng-model="selectedTestStep.description" ng-change="recordChanged()" type="text"/>
+                            </md-input-container>
+                        </div>
 					</div>
 				</div>
 
-				<div class="row" style="margin:10px" ng-show="selectedTestPlan.transport">
+				<div class="row" ng-show="selectedTestPlan.transport">
 					<div class="col-md-12">
-						<div class="col-md-5 col-margin">
-							<div class="form-group">
-								<label class="control-label">Type</label>
-								<select class="form-control" name="type" ng-change="recordChanged();" ng-model="selectedTestStep.type">
-									<option value="TA_INITIATOR">TA_INITIATOR</option>
-									<option value="TA_RESPONDER">TA_RESPONDER</option>
-									<option value="SUT_INITIATOR">SUT_INITIATOR</option>
-									<option value="SUT_RESPONDER">SUT_RESPONDER</option>
-									<option value="SUT_MANUAL">SUT_MANUAL</option>
-									<option value="TA_MANUAL">TA_MANUAL</option>
-								</select>
-							</div>
-						</div>
+                        <div class="col-md-6">
+                            <md-input-container style="width: 100%;">
+                                <label>Type</label>
+                                <md-select ng-model="selectedTestStep.type" ng-change="recordChanged();">
+                                    <md-option ng-value="TA_INITIATOR">TA_INITIATOR</md-option>
+                                    <md-option ng-value="TA_RESPONDER">TA_RESPONDER</md-option>
+                                    <md-option ng-value="SUT_INITIATOR">SUT_INITIATOR</md-option>
+                                    <md-option ng-value="SUT_RESPONDER">SUT_RESPONDER</md-option>
+                                    <md-option ng-value="SUT_MANUAL">SUT_MANUAL</md-option>
+                                    <md-option ng-value="TA_MANUAL">TA_MANUAL</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
 					</div>
 				</div>
-				<div class="row" style="margin:10px" ng-show="!selectedTestPlan.transport">
+				<div class="row" ng-show="!selectedTestPlan.transport">
 					<div class="col-md-12">
-						<div class="col-md-5 col-margin">
-							<div class="form-group">
-								<label class="control-label">Type</label>
-								<select class="form-control" name="type" ng-change="recordChanged();" ng-model="selectedTestStep.type">
-									<option value="DATAINSTANCE">DATAINSTANCE</option>
-								</select>
-							</div>
-						</div>
+                        <div class="col-md-6">
+                            <md-input-container style="width: 100%;">
+                                <label>Type</label>
+                                <md-select ng-model="selectedTestStep.type" ng-change="recordChanged();">
+                                    <md-option ng-value="DATAINSTANCE">DATAINSTANCE</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
 					</div>
 				</div>
 
-				<div class="row" style="margin:10px" ng-show="selectedIntegrationProfile">
+				<div class="row" ng-show="selectedIntegrationProfile">
 					<div class="col-md-12">
 						<button title="Delete Profile" type="button" class="btn btn-danger btn-xs" ng-click="deleteProfile();">
 							<span><i class="fa fa-cross fa-fw"></i> Delete Profile (Make Manual TestStep)</span>
 						</button>
 					</div>
 					
-					<div class="col-md-12">
-						<div class="col-md-5 col-margin">
-							<div class="form-group">
-								<label class="control-label">Integration Profile</label>
-								<input class="form-control" type="text" name="integrationProfile" readonly ng-model="selectedIntegrationProfile.sectionTitle" />
-							</div>
-						</div>
+					<div class="col-md-12" style="margin-top:35px">
+                        <div class="col-md-6">
+                            <md-input-container style="width: 100%;">
+                                <label>Integration Profile</label>
+                                <input ng-model="selectedIntegrationProfile.sectionTitle" type="text"/>
+                            </md-input-container>
+                        </div>
 
-						<div class="col-md-5 col-margin">
-							<div class="form-group">
-								<label class="control-label">Conformance Profile</label>
-								<input class="form-control" type="text" name="conformanceProfile" readonly ng-model="selectedConformanceProfile.name" />
-							</div>
-						</div>
+                        <div class="col-md-6">
+                            <md-input-container style="width: 100%;">
+                                <label>Conformance Profile</label>
+                                <input ng-model="selectedConformanceProfile.name" type="text"/>
+                            </md-input-container>
+                        </div>
 					</div>
 
 					<div class="col-md-12">
-						<div class="col-md-5 col-margin">
-							<div class="form-group">
-								<label class="control-label">Test Data Specification</label>
-								<select class="form-control" name="TDS" ng-change="recordChanged();" ng-model="selectedTestStep.tdsXSL">
-									<option value="">No Test Data Specification</option>
-									<option value="Basic-TestDataSpecification">Basic TestDataSpecification</option>
-								</select>
-							</div>
-						</div>
+                        <div class="col-md-6">
+                            <md-input-container style="width: 100%;">
+                                <label>Test Data Specification</label>
+                                <md-select ng-model="selectedTestStep.tdsXSL" ng-change="recordChanged();">
+                                    <md-option ng-value="">No Test Data Specification</md-option>
+                                    <md-option ng-value="Basic-TestDataSpecification">Basic TestDataSpecification</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
 
-						<div class="col-md-5 col-margin">
-							<div class="form-group">
-								<label class="control-label">Juror Document</label>
-								<select class="form-control" name="JD" ng-change="recordChanged();" ng-model="selectedTestStep.jdXSL">
-									<option value="">No Juror Document</option>
-									<option value="Superset-JurorDocument">Superset Juror Document</option>
-									<option value="Z23-JurorDocument">Z23 Juror Document</option>
-									<option value="Z32-Z33-Z42-JurorDocument">Z32-Z33-Z42 Juror Document</option>
-								</select>
-							</div>
-						</div>
+                        <div class="col-md-6">
+                            <md-input-container style="width: 100%;">
+                                <label>Juror Document</label>
+                                <md-select ng-model="selectedTestStep.jdXSL" ng-change="recordChanged();">
+                                    <md-option ng-value="">No Juror Document</md-option>
+                                    <md-option ng-value="Superset-JurorDocument">Superset Juror Document</md-option>
+                                    <md-option ng-value="Z23-JurorDocument">Z23 Juror Document</md-option>
+                                    <md-option ng-value="Z32-Z33-Z42-JurorDocument">Z32-Z33-Z42 Juror Document</md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
 					</div>
 				</div>
 			</form>

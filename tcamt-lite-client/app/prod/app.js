@@ -10,6 +10,7 @@
  */
 var app = angular
     .module('tcl', [
+        'ngMaterial',
         'ngAnimate',
         'LocalStorageModule',
         'ngCookies',

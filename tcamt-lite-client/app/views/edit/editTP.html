@@ -20,37 +20,6 @@
 </div>
 <div ng-show="selectedTestPlan">
 	<div class="row">
-    	<div class="col-md-12 igl-page-header">
-        	<span class="header4 pull-left">Test Plan: {{selectedTestPlan.name}}
-            	<span style="margin-left:10px; font-size:12px;font-weight: normal" ng-show="autoSaving && !saved">Saving....</span>
-        	</span>
-        	<span class="pull-right">
-        					<span style="margin-left:10px; font-size:14px;font-weight: bold; color:red" ng-show="isChanged"><i class="fa fa-exclamation-triangle"></i> Unsaved Changes</span>
-        	
-				<div class="btn-group">
-					<button type="button" class="btn btn-info btn-sm">
-						<span><i class="fa fa-download fa-fw"></i> Export</span>
-					</button>
-					<button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						<span class="caret"></span>
-						<span class="sr-only">Toggle Dropdown</span>
-					</button>
-					<ul class="dropdown-menu igl-menu" role="menu">
-						<li><a class="point" ng-click="exportResourceBundleZip()">Export Resource Bundle</a></li>
-						<li ng-disabled="true"><a ng-disabled="true" class="point">Export Json (Coming Soon)</a></li>
-						<li><a class="point" ng-click="exportCoverHTML()">Cover Page HTML</a></li>
-						<li><a class="point" ng-click="exportTestPackageHTML()">Test Package HTML</a></li>
-						<li><a class="point" ng-click="exportProfileXMLs()">Export Profile XML ZIP</a></li>
-					</ul>
-				</div>
-            	<button title="Close the IG Document" type="button" class="btn btn-sm btn-warning" ng-click="closeTestPlanEdit()">
-            		<span><i class="fa fa-close fa-fw"></i>Close</span>
-            	</button>
-    		</span>
-    	</div>
-	</div>
-
-	<div class="row">
     	<div class="col-md-1 col-1-percent" ng-show="hideToc" style="margin-right:6px">
         	<button title="Show Table of Contents" class="btn btn-xs btn-primary" ng-click="hideToc = !hideToc" style="background-color:#293856;">
             	<i class="fa fa-caret-right"></i>
@@ -105,9 +74,9 @@
         	<div class="panel panel-primary" >
             	<div class="panel-heading" style="background-color:#293856"><strong>Dashboard</strong></div>
             	<div class="panel-body" style="padding-bottom:100px height:200px;overflow:scroll;">
-            <div class="col-md-12" ng-show="subview === null||subview===undefined|| !subview">
-            <p> No Element Selected </p>
-            </div>
+            		<div class="col-md-12" ng-show="subview === null||subview===undefined|| !subview">
+            			<p> No Element Selected </p>
+            		</div>
 
                 	<div id="edit" ng-show="subview !== undefined" style="width:100%">
                     	<ng-include src="subview"></ng-include>

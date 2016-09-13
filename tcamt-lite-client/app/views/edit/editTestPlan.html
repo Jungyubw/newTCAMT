@@ -13,101 +13,100 @@ body {
 </script>
 <script type="text/ng-template" id="EditTestPlanMetadata.html">
     <div class="page-header">
-        <span class="header4">TestPlan Metadata</span>
+        <span class="header5">TestPlan Metadata</span>
     </div>
             
 	<form name="testplanMetaDataForm" class="form-horizontal" novalidate>
-		<div class="row" style="margin:10px">
+		<div class="row">
 			<div class="col-md-12">
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Name</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="selectedTestPlan.name" required />
-                    </div>
+				<div class="col-md-6">
+					<md-input-container style="width: 100%;">
+						<label>Name</label>
+						<input ng-model="selectedTestPlan.name" ng-change="recordChanged()" type="text"/>
+					</md-input-container>
 				</div>
-
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Description</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="description" ng-model="selectedTestPlan.description" required />
-                    </div>
+				<div class="col-md-6">
+					<md-input-container style="width: 100%;">
+						<label>Description</label>
+						<input ng-model="selectedTestPlan.description" ng-change="recordChanged()" type="text"/>
+					</md-input-container>
 				</div>
 			</div>
                     
 			<div class="col-md-12">
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Type</label>
-						<select class="form-control" name="type" ng-change="recordChanged(); updateTransport();" ng-model="selectedTestPlan.type">
-							<option value="DataInstance">Data Instance</option>
-      						<option value="Isolated">Isolated</option>
-                    	</select>
-                    </div>
+				<div class="col-md-6">
+					<md-input-container style="width: 100%;">
+						<label>Type</label>
+						<md-select ng-model="selectedTestPlan.type">
+							<md-option ng-value="DataInstance">Data Instance</md-option>
+							<md-option ng-value="Isolated">Isolated</md-option>
+						</md-select>
+					</md-input-container>
 				</div>
 
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Version</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="version" ng-model="selectedTestPlan.version" required />
-                    </div>
+				<div class="col-md-6">
+					<md-input-container style="width: 100%;">
+						<label>Version</label>
+						<input ng-model="selectedTestPlan.version" ng-change="recordChanged()" type="text"/>
+					</md-input-container>
 				</div>
 			</div>
                     
 			<div class="col-md-12">
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Domain</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="date" ng-model="selectedTestPlan.domain" required />
-					</div>
+				<div class="col-md-6">
+					<md-input-container style="width: 100%;">
+						<label>Domain</label>
+						<input ng-model="selectedTestPlan.domain" ng-change="recordChanged()" type="text"/>
+					</md-input-container>
 				</div>
 
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Date</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" ng-disabled="true" name="date" ng-model="selectedTestPlan.lastUpdateDate" required />
-                    </div>
-                </div>
+				<div class="col-md-6">
+					<md-input-container style="width: 100%;">
+						<label>Date</label>
+						<input ng-model="selectedTestPlan.lastUpdateDate" ng-change="recordChanged()" ng-disabled="true" type="text"/>
+					</md-input-container>
+				</div>
 			</div>
 		</div>
 	</form>
 
 
 	<div class="page-header">
-        <span class="header4">Resource Bundle Cover Page</span>
+        <span class="header5">Resource Bundle Cover Page</span>
     </div>
 
 	<form name="resoruceBundleCoverPageForm" class="form-horizontal" novalidate>
-		<div class="row" style="margin:10px">
+		<div class="row">
 			<div class="col-md-12">
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Title</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="coverPageTitle" ng-model="selectedTestPlan.coverPageTitle" required />
-                    </div>
+				<div class="col-md-6">
+					<md-input-container flex style="width: 100%;">
+						<label>Title</label>
+						<input ng-model="selectedTestPlan.coverPageTitle" ng-change="recordChanged()" type="text"/>
+					</md-input-container>
 				</div>
 
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Sub Title</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="coverPageSubTitle" ng-model="selectedTestPlan.coverPageSubTitle" required />
-                    </div>
+				<div class="col-md-6">
+					<md-input-container style="width: 100%;">
+						<label>Sub Title</label>
+						<input ng-model="selectedTestPlan.coverPageSubTitle" ng-change="recordChanged()" type="text"/>
+					</md-input-container>
 				</div>
 			</div>
                     
 			<div class="col-md-12">
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Version</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="coverPageVersion" ng-model="selectedTestPlan.coverPageVersion" required />
-                    </div>
+				<div class="col-md-6">
+					<md-input-container style="width: 100%;">
+						<label>Version</label>
+						<input ng-model="selectedTestPlan.coverPageVersion" ng-change="recordChanged()" type="text"/>
+					</md-input-container>
 				</div>
 
-				<div class="col-md-5 col-margin">
-					<div class="form-group">
-						<label class="control-label">Date</label>
-						<input class="form-control" type="text" ng-change="recordChanged()" name="coverPageDate" ng-model="selectedTestPlan.coverPageDate" required />
-                    </div>
-                </div>
+				<div class="col-md-6">
+					<md-input-container style="width: 100%;">
+						<label>Date</label>
+						<input ng-model="selectedTestPlan.coverPageDate" ng-change="recordChanged()" type="text"/>
+					</md-input-container>
+				</div>
 			</div>
 		</div>
 	</form>

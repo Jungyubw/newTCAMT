@@ -14,36 +14,45 @@
 <div ng-show="isAuthenticated()">
     <div ng-show="!isPending()">
         <div id="testplan-header">
+            <div class="pull-left">
+                <span ng-show="accordi.tpList" class="header4" style="margin-top:50px !important;">List of Test Plans</span>
+                <span ng-show="accordi.tpDetails" class="header4" style="margin-top:50px !important;">Test Plan: {{selectedTestPlan.name}}</span>
+                <span style="margin-left:10px; font-size:14px;font-weight: bold; color:red" ng-show="isChanged"><i class="fa fa-exclamation-triangle"></i> Unsaved Changes</span>
+            </div>
+
             <div class="pull-right">
-                    <button type="button" class="btn btn-primary btn-sm" ng-click="createNewTestPlan()"><i class="fa fa-plus"></i>
-                        Create New Test Plan
+                <button ng-show="accordi.tpList" type="button" class="btn btn-info btn-sm" ng-click="createNewTestPlan()"><i class="fa fa-plus"></i>
+                    New
+                </button>
+                <button ng-show="accordi.tpDetails" title="View TestPlan List" type="button" class="btn btn-sm btn-info" ng-click="closeTestPlanEdit()">
+                    <span><i class="fa fa-list fa-fw"></i>List</span>
+                </button>
+
+                <div ng-show="accordi.tpDetails" class="btn-group">
+                    <button type="button" class="btn btn-info btn-sm">
+                        <span><i class="fa fa-download fa-fw"></i> Export</span>
                     </button>
-                    <button title="Save Changes" type="button" class="btn btn-sm btn-success" ng-click="saveAllChangedTestPlans()" ng-disabled="!isChanged">
-                        <span><i class="fa fa-check fa-fw"></i> Save</span>
+                    <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
                     </button>
-        </div>
+                    <ul class="dropdown-menu igl-menu" role="menu">
+                        <li><a class="point" ng-click="exportResourceBundleZip()">Export Resource Bundle</a></li>
+                        <li ng-disabled="true"><a ng-disabled="true" class="point">Export Json (Coming Soon)</a></li>
+                        <li><a class="point" ng-click="exportCoverHTML()">Cover Page HTML</a></li>
+                        <li><a class="point" ng-click="exportTestPackageHTML()">Test Package HTML</a></li>
+                        <li><a class="point" ng-click="exportProfileXMLs()">Export Profile XML ZIP</a></li>
+                    </ul>
+                </div>
+                <button title="Save Changes" type="button" class="btn btn-sm btn-success" ng-click="saveAllChangedTestPlans()" ng-disabled="!isChanged">
+                    <span><i class="fa fa-floppy-o fa-fw"></i> Save</span>
+                </button>
+            </div>
         </div>
         <div id="testplan-main">
             <div class="row">
-                <uib-accordion close-others="true">
-                    <uib-accordion-group is-open="accordi.igList" class="panel-level1">
-                        <uib-accordion-heading class="test">
-                        <span style="color:#ffec9d; font-weight: bold;">
-                        <i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                        <i class="fa fa-file-text-o fa-fw"></i> Test Plan List</span>
-                        </uib-accordion-heading>
-                        <div ng-include="'views/edit/listTP.html'"></div>
-                    </uib-accordion-group>
-
-                    <uib-accordion-group is-open="accordi.igDetails" panel-class="panel-level1">
-                        <uib-accordion-heading>
-                    <span style="color:#ffec9d; font-weight: bold;">
-                        <i class="fa" ng-class="{'fa-caret-down': accordi.igDetails, 'fa-caret-right': !accordi.igDetails}"></i>
-                        <i class="fa fa-pencil fa-fw"></i>Edit Test Plan</span>
-                        </uib-accordion-heading>
-                        <div ng-include="'views/edit/editTP.html'"></div>
-                    </uib-accordion-group>
-                </uib-accordion>
+                <div ng-show="accordi.tpList" ng-include="'views/edit/listTP.html'"></div>
+                <div ng-show="accordi.tpDetails" ng-include="'views/edit/editTP.html'"></div>
             </div>
         </div>
     </div>
