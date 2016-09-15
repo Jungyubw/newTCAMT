@@ -24,9 +24,9 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
     <link rel="stylesheet" href="bower_components/sass-bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-css-only/css/bootstrap.css" />
-    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/material.css" />
     <link rel="stylesheet" href="bower_components/bootstrap-material-design/dist/css/ripples.css" />
     <link rel="stylesheet" href="bower_components/froala-wysiwyg-editor/css/froala_editor.min.css" />
@@ -62,7 +62,7 @@
 <body ng-controller="MainCtrl" ng-app="tcl" ng-init="init()" window-exit>
 <notifications-bar class="notifications" closeIcon="fa fa-times-circle"></notifications-bar>
 <div id="wrapper">
-    <div id="header-wrap" ng-include="'views/header.html'"></div>
+    <div ng-include="'views/header.html'"></div>
     <!--[if lt IE 7]>
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
         your browser</a> to improve your experience.</p>

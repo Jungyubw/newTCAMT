@@ -23,33 +23,22 @@ $icon-font-path: "../fonts/";
 }
 
 #header-wrap {
-  position: fixed;
   height: 85px;
-  top: 0;
   width: 100%;
-  z-index: 100;
 }
 
 #appcontainer {
   border: 1px;
   border-color: #000000;
   min-height: 500px;
-  margin-top: 85px;
 }
 
 #testplan-header {
-  position: fixed;
   height: 45px;
-  top: 85px;
-  left: 0;
-  margin-right: 100px;
   width: 100%;
-  z-index: 100;
-  background-color: white;
 }
 
 #testplan-main {
-  margin-top: 45px;
 }
 
 
@@ -1409,7 +1398,7 @@ input.account-input {
   float: none;
   font-family: fantasy;
   font-weight: bold;
-  background-color: #3e40ec;
+  background-color: #021a4c;
   margin-left: 0px;
 }
 
@@ -1787,7 +1776,7 @@ ul.dropdown-menu, ul.dropdown-menu > li {
   border-bottom: 1px solid #ffec9d;
   border-width: 0 0 0px;
   background: #ffec9d;
-  background-color: #feff35;
+  background-color: #ffec9d;
 
   color: black;
 }
