@@ -924,11 +924,8 @@ public class ExportUtil {
 	private nu.xom.Element serializeMessage(Message m, Segments segments) {
 		nu.xom.Element elmMessage = new nu.xom.Element("Message");
 
-		if (m.getMessageID() == null || m.getMessageID().equals("")) {
-			elmMessage.addAttribute(new Attribute("ID", UUID.randomUUID().toString()));
-		} else {
-			elmMessage.addAttribute(new Attribute("ID", m.getMessageID()));
-		}
+		elmMessage.addAttribute(new Attribute("ID", m.getId()));
+		
 		if (m.getIdentifier() != null && !m.getIdentifier().equals(""))
 			elmMessage.addAttribute(new Attribute("Identifier", ExportUtil.str(m.getIdentifier())));
 		if (m.getName() != null && !m.getName().equals(""))

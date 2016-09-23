@@ -36,13 +36,13 @@ var app = angular
     ]);
 app.config(function(NotificationProvider) {
     NotificationProvider.setOptions({
-        delay: 1000000000,
+        delay: 10000,
         startTop: 20,
         startRight: 10,
         verticalSpacing: 20,
         horizontalSpacing: 20,
-        positionX: 'left',
-        positionY: 'bottom'
+        positionX: 'right',
+        positionY: 'top'
     });
 });
 var

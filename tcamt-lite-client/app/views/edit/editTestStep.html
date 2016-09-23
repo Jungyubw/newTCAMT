@@ -19,7 +19,7 @@ body {
 			<li ng-class="{active: isSelectedTestStepTab(2)}"><a data-toggle="pill" ng-click="changeTestStepTab(2);"><i class="fa fa-file-text-o fa-fw"></i> Test Story</a></li>
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(3)}"><a data-toggle="pill" ng-click="changeTestStepTab(3); initHL7EncodedMessageTab();"><i class="fa fa-file-text-o fa-fw"></i> HL7 Encoded Message</a></li>
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(4)}"><a data-toggle="pill" ng-click="changeTestStepTab(4); initTestData();"><i class="fa fa-file-text-o fa-fw"></i> Test Data</a></li>
-			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(5)}"><a data-toggle="pill" ng-click="changeTestStepTab(5);"><i class="fa fa-file-text-o fa-fw"></i> Validation</a></li>
+			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(5)}"><a data-toggle="pill" ng-click="changeTestStepTab(5); initHL7EncodedMessageForOnlineValidationTab();"><i class="fa fa-file-text-o fa-fw"></i> Validation</a></li>
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(6)}"><a data-toggle="pill" ng-click="changeTestStepTab(6); genSTDNISTXML(findTestCaseNameOfTestStep());"><i class="fa fa-file-text-o fa-fw"></i> STD/NIST XML</a></li>
 			<li ng-show="isNotManualTestStep()" ng-class="{active: isSelectedTestStepTab(7)}"><a data-toggle="pill" ng-click="changeTestStepTab(7); generateSupplementDocuments();"><i class="fa fa-file-text-o fa-fw"></i> Supplement Documents</a></li>
 		</ul>
@@ -363,22 +363,25 @@ body {
 			</div>
 		</div>
 
-		<div ng-show="selectedTestStepTab == 5">
-
-
+		<div ng-show="isSelectedTestStepTab(5);">
 			<div class="row">
-
-				<button class="btn btn-xs btn-success" ng-click="validate('free')">Conext Free</button>
-	
-				<button class="btn btn-xs btn-primary " ng-click="validate('based')">Context Based</button>
+				<div class="pull-right">
+					<button class="btn btn-xs btn-info" ng-click="validate('free')">Context Free Validation</button>
+					<button class="btn btn-xs btn-primary " ng-click="validate('based')">Context Based Validation</button>
+				</div>
 			</div>
-			<div class="col-md-10" style="padding:40px">
-			<ui-codemirror id="codemir" ui-codemirror-opts="editorOptions" ng-model="selectedTestStep.er7Message"></ui-codemirror>
+			<div class="col-md-12">
+					<textarea rows="10" type="cb" class="form-control" id="er7-textarea-validation"
+							  ng-change="recordChanged()"
+							  ng-model="er7MessageOnlineValidation"
+							  wrap="off" style="overflow:auto;"></textarea>
 			</div>
 
-			<div class="col-md-10"  style="padding: center; max-height: 500px;	overflow-y: scroll; ">
-
-				<ng-bind-html ng-bind-html="result"/>
+			<div ng-show="result && result != ''">
+				<span class="header5">Validation Reports</span>
+				<div class="col-md-12"  style="padding: center; max-height: 500px;	overflow-y: scroll; ">
+					<ng-bind-html ng-bind-html="result"/>
+				</div>
 			</div>
 		</div>
 
@@ -508,11 +511,11 @@ body {
 			</div>
 		</td>
 		<td class="col-md-1">
-			<button ng-show="!minimizePath(node.iPath).includes('[') && node.field.max != '0' && node.field.max != '1'" title="Delete Repeated Field" type="button" class="btn btn-info btn-xs" ng-click="addRepeatedField(node)">
-				<span><i class="fa fa-plus fa-fw"></i> </span>
+			<button ng-show="!minimizePath(node.iPath).includes('[') && node.field.max != '0' && node.field.max != '1'" title="Delete Repeated Field" type="button" class="btn btn-info btn-xxs" ng-click="addRepeatedField(node)">
+				<span><i class="fa fa-plus fa-fw"></i> Add Field</span>
 			</button>
-			<button ng-show="minimizePath(node.iPath).includes('[')" title="Delete Repeated Field" type="button" class="btn btn-danger btn-xs" ng-click="deleteRepeatedField(node)">
-				<span><i class="fa fa-times fa-fw"></i> </span>
+			<button ng-show="minimizePath(node.iPath).includes('[')" title="Delete Repeated Field" type="button" class="btn btn-danger btn-xxs" ng-click="deleteRepeatedField(node)">
+				<span><i class="fa fa-times fa-fw"></i> Del Field</span>
 			</button>
         </td>
     </tr>

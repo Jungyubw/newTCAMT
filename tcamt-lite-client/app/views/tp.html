@@ -13,7 +13,7 @@
 
 <div ng-show="isAuthenticated()">
     <div ng-show="!isPending()">
-        <div id="testplan-header">
+        <div class="row">
             <div class="pull-left">
                 <span ng-show="accordi.tpList" class="header4" style="margin-top:50px !important;">List of Test Plans</span>
                 <span ng-show="accordi.tpDetails" class="header4" style="margin-top:50px !important;">Test Plan: {{selectedTestPlan.name}}</span>
@@ -49,11 +49,10 @@
                 </button>
             </div>
         </div>
-        <div id="testplan-main">
-            <div class="row">
-                <div ng-show="accordi.tpList" ng-include="'views/edit/listTP.html'"></div>
-                <div ng-show="accordi.tpDetails" ng-include="'views/edit/editTP.html'"></div>
-            </div>
+
+        <div class="row">
+            <div ng-show="accordi.tpList" ng-include="'views/edit/listTP.html'"></div>
+            <div ng-show="accordi.tpDetails" ng-include="'views/edit/editTP.html'"></div>
         </div>
     </div>
 

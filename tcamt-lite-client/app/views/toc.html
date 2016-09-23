@@ -31,7 +31,7 @@ if (self === top) {
                 {{updatePositions(test.children)}}
             </div>
             <ol ui-tree-nodes="" ng-model="test.children" data-type="childrens">
-                <li ng-repeat="child in test.children" ui-tree-node data-type="child" class="testGroup">
+                <li ng-repeat="child in test.children | orderBy :'position'" ui-tree-node data-type="child" class="testGroup">
 
                     <div ui-tree-handle style="margin-left:7px;" ng-if="child.hasOwnProperty( 'testcases') " data-type="group">
                         <div context-menu="testGroupOptions " data-type="group ">
@@ -49,7 +49,7 @@ if (self === top) {
                     </div>
 
                     <ol ui-tree-nodes="" ng-model="child.testcases" ng-if="child.hasOwnProperty('testcases')" data-type="group" >
-                        <li  ng-hide="$parentNodeScope.collapsed" ng-repeat="case in child.testcases " ui-tree-node data-type="case">
+                        <li  ng-hide="$parentNodeScope.collapsed" ng-repeat="case in child.testcases  | orderBy :'position'" ui-tree-node data-type="case">
                             <div ui-tree-handle style="margin-left:14px;" ng-click=" Activate(this) ">
                                 <div context-menu="testCaseOptions">
                                     <span data-nodrag ng-click="toggle(this);print(this) " class="glyphicon glyphicon-plus " ng-class="{ 'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed } ">
@@ -60,7 +60,7 @@ if (self === top) {
                                 </div>
                             </div>
                             <ol ui-tree-nodes=" " ng-model="case.teststeps " data-type="case" ng-if ="!collapsed">
-                                <li ng-repeat="step in case.teststeps " ui-tree-node data-type="step">
+                                <li ng-repeat="step in case.teststeps | orderBy :'position'" ui-tree-node data-type="step">
                                     <div ui-tree-handle style="margin-left:21px;">
                                         <div context-menu="testStepOptions ">
                                             <span class="label label-segment label-icon draggable ">S</span>
@@ -77,7 +77,7 @@ if (self === top) {
                     <!-- <div ui-tree-handle data-type="group"/> -->
 
                     <ol ui-tree-nodes=" " ng-model="child.teststeps " data-type="case" ng-if ="child.teststeps && !collapsed" > 
-                        <li ng-repeat="step in child.teststeps " ui-tree-node data-type="step">
+                        <li ng-repeat="step in child.teststeps | orderBy :'position'" ui-tree-node data-type="step">
                             <div ui-tree-handle style="margin-left:21px;">
                                 <div context-menu="testStepOptions">
                                     <span class="label label-segment label-icon draggable ">S</span>

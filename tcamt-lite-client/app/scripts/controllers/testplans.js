@@ -413,6 +413,24 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	};
 
+	$scope.initCodemirrorOnline = function () {
+		if($scope.editorValidation == null){
+			$scope.editorValidation = CodeMirror.fromTextArea(document.getElementById("er7-textarea-validation"), {
+				lineNumbers: true,
+				fixedGutter: true,
+				theme: "elegant",
+				readOnly: false,
+				showCursorWhenSelecting: true
+			});
+			$scope.editorValidation.setSize("100%", 345);
+			$scope.editorValidation.refresh();
+
+			$scope.editorValidation.on("change", function () {
+				$scope.er7MessageOnlineValidation = $scope.editorValidation.getValue();
+			});
+		}
+	};
+
 	$scope.closeTestPlanEdit = function () {
         $scope.selectTPTab(0);
     };
@@ -515,6 +533,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.selectedTemplate=null;
 				$rootScope.selectedSegmentNode =null;
 				$scope.initCodemirror();
+				$scope.initCodemirrorOnline();
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -562,12 +581,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 					testplan.lastUpdateDate = saveResponse.date;
 					$rootScope.saved = true;
 					testplan.isChanged = false;
-					Notification.success("Test Plan Saved");
+					Notification.success({message:"Test Plan Saved", delay: 1000});
 
 
 				}, function (error) {
 					$rootScope.saved = false;
-					Notification.error("Error Saving");
+					Notification.error({message:"Error Saving", delay:1000});
 
 				});
 			}
@@ -676,6 +695,21 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}, 100);
 	};
 
+	$scope.initHL7EncodedMessageForOnlineValidationTab = function (){
+		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+
+		if($rootScope.selectedTestStep.er7Message == null){
+			$scope.editorValidation.setValue("");
+			$scope.er7MessageOnlineValidation = '';
+		}else {
+			$scope.er7MessageOnlineValidation = $rootScope.selectedTestStep.er7Message;
+			$scope.editorValidation.setValue($scope.er7MessageOnlineValidation);
+		}
+		setTimeout(function () {
+			$scope.editorValidation.refresh();
+		}, 100);
+	};
+
 	$scope.initTestData = function () {
 		$scope.testDataAccordi = {};
 		$scope.testDataAccordi.segmentList = true;
@@ -715,7 +749,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			if(splittedSegment[0] === 'MSH' && i == 1) {
 				fieldInstanceValues.push('^~\\&');
 			}else {
-				if (fieldValues[i] != undefined) fieldInstanceValues = fieldValues[i].split("~");
+				if (fieldValues[i] != undefined) {
+					fieldInstanceValues = fieldValues[i].split("~");
+				}else {
+					fieldInstanceValues.push('');
+				}
 			}
 
 			for(var h = 0; h < fieldInstanceValues.length; h++){
@@ -1080,6 +1118,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var xmlDoc = parser.parseFromString(xmlString, "text/xml");
 		var rootElement = xmlDoc.getElementsByTagName(rootName)[0];
 		rootElement.setAttribute("UUID", new ObjectId().toString());
+
+
+		//TODO METADATA need to update
+		var elmMetaData = xmlDoc.createElement("MetaData");
+		elmMetaData.setAttribute("Name", 'No Name');
+		elmMetaData.setAttribute("OrgName", 'NIST');
+		elmMetaData.setAttribute("Version", 'No Version Info');
+		elmMetaData.setAttribute("Date", 'No date');
+		elmMetaData.setAttribute("Status", 'Draft');
+
+		rootElement.appendChild(elmMetaData);
 
 		var constraintsElement = xmlDoc.createElement("Constraints");
 		var messageElement = xmlDoc.createElement("Message");
@@ -2628,16 +2677,18 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var message = $rootScope.selectedTestStep.er7Message;
 		var igDocumentId = $rootScope.selectedTestStep.integrationProfileId;
         var conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
-        var teststep= JSON.stringify($rootScope.selectedTestStep);
+		var cbConstraints = $rootScope.selectedTestStep.constraintsXML;
+
+		console.log(cbConstraints);
         var context=mode;
 
 		var req = {
 		    method: 'POST',
 		    url: 'api/validation',
-		    params: { message: message, igDocumentId: igDocumentId, conformanceProfileId : conformanceProfileId ,  context:context}
+		    params: { message: message, igDocumentId: igDocumentId, conformanceProfileId : conformanceProfileId , context:context}
 		    ,
 		    data:{
-		    	teststep:teststep
+				constraint:cbConstraints
 		    }
 		}
 
@@ -2782,7 +2833,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				position:$itemScope.$nodeScope.$modelValue.children.length+1});
 
 			$scope.activeModel=$itemScope.$nodeScope.$modelValue.children[$itemScope.$nodeScope.$modelValue.children.length-1];
-			Notification.success("New Test Group Added");
+			Notification.success({message:"New Test Group Added", delay:1000});
 
 			$scope.recordChanged();
 
