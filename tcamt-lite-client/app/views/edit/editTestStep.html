@@ -50,12 +50,12 @@ body {
                             <md-input-container style="width: 100%;">
                                 <label>Type</label>
                                 <md-select ng-model="selectedTestStep.type" ng-change="recordChanged();">
-                                    <md-option ng-value="TA_INITIATOR">TA_INITIATOR</md-option>
-                                    <md-option ng-value="TA_RESPONDER">TA_RESPONDER</md-option>
-                                    <md-option ng-value="SUT_INITIATOR">SUT_INITIATOR</md-option>
-                                    <md-option ng-value="SUT_RESPONDER">SUT_RESPONDER</md-option>
-                                    <md-option ng-value="SUT_MANUAL">SUT_MANUAL</md-option>
-                                    <md-option ng-value="TA_MANUAL">TA_MANUAL</md-option>
+                                    <md-option value="TA_INITIATOR">TA_INITIATOR</md-option>
+                                    <md-option value="TA_RESPONDER">TA_RESPONDER</md-option>
+                                    <md-option value="SUT_INITIATOR">SUT_INITIATOR</md-option>
+                                    <md-option value="SUT_RESPONDER">SUT_RESPONDER</md-option>
+                                    <md-option value="SUT_MANUAL">SUT_MANUAL</md-option>
+                                    <md-option value="TA_MANUAL">TA_MANUAL</md-option>
                                 </md-select>
                             </md-input-container>
                         </div>
@@ -85,14 +85,14 @@ body {
                         <div class="col-md-6">
                             <md-input-container style="width: 100%;">
                                 <label>Integration Profile</label>
-                                <input ng-model="selectedIntegrationProfile.sectionTitle" type="text"/>
+                                <input ng-model="selectedIntegrationProfile.sectionTitle" disabled type="text"/>
                             </md-input-container>
                         </div>
 
                         <div class="col-md-6">
                             <md-input-container style="width: 100%;">
                                 <label>Conformance Profile</label>
-                                <input ng-model="selectedConformanceProfile.name" type="text"/>
+                                <input ng-model="selectedConformanceProfile.name" disabled type="text"/>
                             </md-input-container>
                         </div>
 					</div>
