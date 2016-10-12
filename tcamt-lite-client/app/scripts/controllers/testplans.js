@@ -563,6 +563,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.updateTransport = function () {
+		console.log($rootScope.selectedTestPlan.type);
 		if($rootScope.selectedTestPlan.type == 'DataInstance'){
 			$rootScope.selectedTestPlan.transport = false;
 		}else {

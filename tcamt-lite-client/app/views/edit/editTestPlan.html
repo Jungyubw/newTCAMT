@@ -37,9 +37,9 @@ body {
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Type</label>
-						<md-select ng-model="selectedTestPlan.type">
-							<md-option ng-value="DataInstance">Data Instance</md-option>
-							<md-option ng-value="Isolated">Isolated</md-option>
+						<md-select ng-model="selectedTestPlan.type" ng-change="updateTransport();recordChanged();">
+							<md-option value="DataInstance">Data Instance</md-option>
+							<md-option value="Isolated">Isolated</md-option>
 						</md-select>
 					</md-input-container>
 				</div>
