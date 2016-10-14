@@ -2625,8 +2625,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             }
 
 		}
-		console.log(segmentStr.substring(0,11));
-        if(segmentStr.substring(0,11) == "MSH|||^~\\&") segmentStr = 'MSH|^~\\&' + segmentStr.substring(11);
+		console.log(segmentStr.substring(0,10));
+        if(segmentStr.substring(0,10) == "MSH|||^~\\&") segmentStr = 'MSH|^~\\&' + segmentStr.substring(10);
 
         $rootScope.selectedSegmentNode.segment.segmentStr = segmentStr;
 
@@ -2897,7 +2897,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$itemScope.$nodeScope.remove();
 			Notification.success("Test Group "+$itemScope.$modelValue.name +" Deleted");
 			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue);
-			$scope.recordChanged($itemScope.$nodeScope.$parentNodesScope.$modelValue);
+			$scope.recordChanged($itemScope.$nodeScope.$parentNodeScope.$modelValue);
 		}]
 
 	];
@@ -2953,7 +2953,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		['delete', function($itemScope) {
 			$itemScope.$nodeScope.remove();
 			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue);
-			$scope.recordChanged($itemScope.$nodeScope.$parentNodesScope.$modelValue);
+			$scope.recordChanged($itemScope.$nodeScope.$parentNodeScope.$modelValue);
 			Notification.success("Test Case "+$itemScope.$modelValue.name+" Deleted");
 
 		}]
@@ -2983,7 +2983,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		['delete', function($itemScope) {
 			$itemScope.$nodeScope.remove();
 			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue);
-			$scope.recordChanged($itemScope.$nodeScope.$parentNodesScope.$modelValue);
+			$scope.recordChanged($itemScope.$nodeScope.$parentNodeScope.$modelValue);
 			Notification.success("Test Step "+$itemScope.$modelValue.name+" Deleted");
 
 			

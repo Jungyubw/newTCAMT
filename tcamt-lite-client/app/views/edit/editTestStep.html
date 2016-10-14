@@ -490,7 +490,7 @@ body {
 					</select>
 				</div>
 				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
-					<label>List: <input ng-model="node.testDataCategorizationListData" ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);"></label>
+					<input ng-model="node.testDataCategorizationListData" class="form-control"  ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);">
 				</div>
 			</div>
 		</td>
@@ -566,6 +566,9 @@ body {
 						<option value="">No test data Cate.</option>
 					</select>
 				</div>
+				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
+					<input ng-model="node.testDataCategorizationListData" class="form-control"  ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);">
+				</div>
 			</div>
 		</td>
 		<td class="col-md-1">
@@ -634,6 +637,9 @@ body {
 					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
 						<option value="">No test data Cate.</option>
 					</select>
+				</div>
+				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
+					<input ng-model="node.testDataCategorizationListData" class="form-control"  ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);">
 				</div>
 			</div>
 		</td>
