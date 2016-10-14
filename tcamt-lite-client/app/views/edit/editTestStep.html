@@ -31,14 +31,14 @@ body {
                         <div class="col-md-6">
                             <md-input-container style="width: 100%;">
                                 <label>Name</label>
-                                <input ng-model="selectedTestStep.name" ng-change="recordChanged()" type="text"/>
+                                <input ng-model="selectedTestStep.name" ng-change="recordChanged(selectedTestStep)" type="text"/>
                             </md-input-container>
                         </div>
 
                         <div class="col-md-6">
                             <md-input-container style="width: 100%;">
                                 <label>Description</label>
-                                <input ng-model="selectedTestStep.description" ng-change="recordChanged()" type="text"/>
+                                <input ng-model="selectedTestStep.description" ng-change="recordChanged(selectedTestStep)" type="text"/>
                             </md-input-container>
                         </div>
 					</div>
@@ -49,7 +49,7 @@ body {
                         <div class="col-md-6">
                             <md-input-container style="width: 100%;">
                                 <label>Type</label>
-                                <md-select ng-model="selectedTestStep.type" ng-change="recordChanged();">
+                                <md-select ng-model="selectedTestStep.type" ng-change="recordChanged(selectedTestStep);">
                                     <md-option value="TA_INITIATOR">TA_INITIATOR</md-option>
                                     <md-option value="TA_RESPONDER">TA_RESPONDER</md-option>
                                     <md-option value="SUT_INITIATOR">SUT_INITIATOR</md-option>
@@ -66,7 +66,7 @@ body {
                         <div class="col-md-6">
                             <md-input-container style="width: 100%;">
                                 <label>Type</label>
-                                <md-select ng-model="selectedTestStep.type" ng-change="recordChanged();">
+                                <md-select ng-model="selectedTestStep.type" ng-change="recordChanged(selectedTestStep);">
                                     <md-option ng-value="DATAINSTANCE">DATAINSTANCE</md-option>
                                 </md-select>
                             </md-input-container>
@@ -101,7 +101,7 @@ body {
                         <div class="col-md-6">
                             <md-input-container style="width: 100%;">
                                 <label>Test Data Specification</label>
-                                <md-select ng-model="selectedTestStep.tdsXSL" ng-change="recordChanged();">
+                                <md-select ng-model="selectedTestStep.tdsXSL" ng-change="recordChanged(selectedTestStep);">
                                     <md-option ng-value="">No Test Data Specification</md-option>
                                     <md-option ng-value="Basic-TestDataSpecification">Basic TestDataSpecification</md-option>
                                 </md-select>
@@ -111,7 +111,7 @@ body {
                         <div class="col-md-6">
                             <md-input-container style="width: 100%;">
                                 <label>Juror Document</label>
-                                <md-select ng-model="selectedTestStep.jdXSL" ng-change="recordChanged();">
+                                <md-select ng-model="selectedTestStep.jdXSL" ng-change="recordChanged(selectedTestStep);">
                                     <md-option ng-value="">No Juror Document</md-option>
                                     <md-option ng-value="Superset-JurorDocument">Superset Juror Document</md-option>
                                     <md-option ng-value="Z23-JurorDocument">Z23 Juror Document</md-option>
@@ -129,76 +129,65 @@ body {
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Description</label>
-						<textarea froala ng-change="recordChanged()" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc"></textarea>
+						<textarea froala ng-change="recordChanged(selectedTestStep)" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc"></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Comments</label>
-						<textarea froala ng-change="recordChanged()" name="comments" ng-model="selectedTestStep.testStepStory.comments" required ></textarea>
+						<textarea froala ng-change="recordChanged(selectedTestStep)" name="comments" ng-model="selectedTestStep.testStepStory.comments" required ></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Pre Condition</label>
-						<textarea froala ng-change="recordChanged()" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required ></textarea>
+						<textarea froala ng-change="recordChanged(selectedTestStep)" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required ></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Post Condition</label>
-						<textarea froala ng-change="recordChanged()" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required ></textarea>
+						<textarea froala ng-change="recordChanged(selectedTestStep)" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required ></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Test Objectives</label>
-						<textarea froala ng-change="recordChanged()" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required></textarea>
+						<textarea froala ng-change="recordChanged(selectedTestStep)" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Evaluation Criteria</label>
-						<textarea froala ng-change="recordChanged()" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required ></textarea>
+						<textarea froala ng-change="recordChanged(selectedTestStep)" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required ></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Notes</label>
-						<textarea froala ng-change="recordChanged()" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
+						<textarea froala ng-change="recordChanged(selectedTestStep)" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<div ng-show="isSelectedTestStepTab(3);">
-			<span class="pull-left">
-				<button title="Make er7 Message Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateEr7TemplateModal()">
-					<span><i class="fa fa-pencil fa-fw"></i> Make er7 Message Template</span>
-				</button>
-			</span>
 				<div class="col-md-12">
 					<textarea rows="10" type="cb" class="form-control" id="er7-textarea"
-							  ng-change="recordChanged()"
+							  ng-change="recordChanged(selectedTestStep)"
 							  ng-model="selectedTestStep.er7Message"
-							  wrap="off" style="overflow:auto;"></textarea>
+							  wrap="off" style="overflow:auto;"/>
 				</div>
 
 		</div>
 
 		<div ng-show="isSelectedTestStepTab(4);">
-			<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateMessageTemplateModal()">
-				<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
-			</button>
-			<button title="Generate Default Segments List" type="button" class="btn btn-primary btn-xs" ng-click="generateDefaultSegmentsList()">
-				<span><i class="fa fa-pencil fa-fw"></i> Generate Default Segments List</span>
-			</button>
 			<div class="row">
 				<div class="col-md-12">
 				<span class="pull-right">
@@ -287,21 +276,9 @@ body {
 						<div class="col-md-10" ng-if="!selectedSegmentNode.segment"><p style ="color:red;"> No Segment Selected</p></div>
 
 						<div class="col-md-12">
-							<div class="col-md-9">
-							<span class="pull-left">
-								<button title="Make Message TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateMessageTemplateModal()">
-                            		<span><i class="fa fa-pencil fa-fw"></i> Make Message TestData Cate. Template</span>
-                            	</button>
-								<button  ng-if="selectedSegmentNode.segment" title="Make Segment TestData Cate. Template" type="button" class="btn btn-primary btn-xs" ng-click="openCreateSegmentTemplateModal()">
-                            		<span><i class="fa fa-pencil fa-fw"></i> Make Segment TestData Cate. Template</span>
-                            	</button>
-							</span>
-							</div>
-							<div class="col-md-3">
 							<span class="pull-right">
 								<span ng-dropdown-multiselect="" options="colsData" selected-model="selectedCols" extra-settings="smartButtonSettings"></span>
 							</span>
-							</div>
 						</div>
 
 						<div class="col-md-12">
@@ -344,7 +321,7 @@ body {
 										<th st-sort="iPath">Path</th>
 										<th st-sort="name">Name</th>
 										<th st-sort="testDataCategorization">TestData Categorization</th>
-										<th st-sort="listData">List Data</th>
+										<th st-sort="listData">Data</th>
 									</tr>
 									</thead>
 									<tbody>
@@ -352,7 +329,9 @@ body {
 										<td>{{cate.iPath}}</td>
 										<td>{{cate.name}}</td>
 										<td>{{cate.testDataCategorization}}</td>
-										<td>{{cate.listData}}</td>
+										<td>
+											<input ng-show="cate.testDataCategorization == 'Value-Test Case Fixed List'" class="form-control" ng-model="cate.listData" ng-list disabled>
+										</td>
 									</tr>
 									</tbody>
 								</table>
@@ -372,7 +351,7 @@ body {
 			</div>
 			<div class="col-md-12">
 					<textarea rows="10" type="cb" class="form-control" id="er7-textarea-validation"
-							  ng-change="recordChanged()"
+							  ng-change="recordChanged(selectedTestStep)"
 							  ng-model="er7MessageOnlineValidation"
 							  wrap="off" style="overflow:auto;"></textarea>
 			</div>
@@ -496,7 +475,7 @@ body {
 					<span>{{node.value}}</span>
 				</div>
 				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
-					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
+					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
 				</div>
 			</div>
         </td>
@@ -506,7 +485,12 @@ body {
 					<span>{{node.testDataCategorization}}</span>
 				</div>
 				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
-					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
+					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
+						<option value="">No test data Cate.</option>
+					</select>
+				</div>
+				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
+					<label>List: <input ng-model="node.testDataCategorizationListData" ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);"></label>
 				</div>
 			</div>
 		</td>
@@ -568,7 +552,7 @@ body {
 					<span>{{node.value}}</span>
 				</div>
 				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
-					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
+					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
 				</div>
 			</div>
 		</td>
@@ -578,7 +562,9 @@ body {
 					<span>{{node.testDataCategorization}}</span>
 				</div>
 				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
-					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
+					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
+						<option value="">No test data Cate.</option>
+					</select>
 				</div>
 			</div>
 		</td>
@@ -635,7 +621,7 @@ body {
 					<span>{{node.value}}</span>
 				</div>
 				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
-					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged();updateValue(node);" ng-model="node.value" required />
+					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
 				</div>
 			</div>
 		</td>
@@ -645,7 +631,9 @@ body {
 					<span>{{node.testDataCategorization}}</span>
 				</div>
 				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
-					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations"/>
+					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
+						<option value="">No test data Cate.</option>
+					</select>
 				</div>
 			</div>
 		</td>
@@ -666,7 +654,7 @@ body {
 				<label class="control-label">Name:</label>
 			</div>
 			<div class="col-md-10">
-				<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="newMessageTemplate.name" required />
+				<input class="form-control" type="text" ng-change="recordChanged(selectedTestStep)" name="name" ng-model="newMessageTemplate.name" required />
 			</div>
 		</div>
 	</div>
@@ -688,7 +676,7 @@ body {
 				<label class="control-label">Name:</label>
 			</div>
 			<div class="col-md-10">
-				<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="newSegmentTemplate.name" required />
+				<input class="form-control" type="text" ng-change="recordChanged(selectedTestStep)" name="name" ng-model="newSegmentTemplate.name" required />
 			</div>
 		</div>
 	</div>
@@ -710,7 +698,7 @@ body {
 				<label class="control-label">Name:</label>
 			</div>
 			<div class="col-md-10">
-				<input class="form-control" type="text" ng-change="recordChanged()" name="name" ng-model="newEr7Template.name" required />
+				<input class="form-control" type="text" ng-change="recordChanged(selectedTestStep)" name="name" ng-model="newEr7Template.name" required />
 			</div>
 		</div>
 	</div>

@@ -22,13 +22,13 @@ body {
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Name</label>
-						<input ng-model="selectedTestPlan.name" ng-change="recordChanged()" type="text"/>
+						<input ng-model="selectedTestPlan.name" ng-change="recordChanged(selectedTestPlan)" type="text"/>
 					</md-input-container>
 				</div>
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Description</label>
-						<input ng-model="selectedTestPlan.description" ng-change="recordChanged()" type="text"/>
+						<input ng-model="selectedTestPlan.description" ng-change="recordChanged(selectedTestPlan)" type="text"/>
 					</md-input-container>
 				</div>
 			</div>
@@ -37,7 +37,7 @@ body {
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Type</label>
-						<md-select ng-model="selectedTestPlan.type" ng-change="updateTransport();recordChanged();">
+						<md-select ng-model="selectedTestPlan.type" ng-change="updateTransport();recordChanged(selectedTestPlan);">
 							<md-option value="DataInstance">Data Instance</md-option>
 							<md-option value="Isolated">Isolated</md-option>
 						</md-select>
@@ -47,7 +47,7 @@ body {
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Version</label>
-						<input ng-model="selectedTestPlan.version" ng-change="recordChanged()" type="text"/>
+						<input ng-model="selectedTestPlan.version" ng-change="recordChanged(selectedTestPlan)" type="text"/>
 					</md-input-container>
 				</div>
 			</div>
@@ -56,14 +56,14 @@ body {
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Domain</label>
-						<input ng-model="selectedTestPlan.domain" ng-change="recordChanged()" type="text"/>
+						<input ng-model="selectedTestPlan.domain" ng-change="recordChanged(selectedTestPlan)" type="text"/>
 					</md-input-container>
 				</div>
 
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Date</label>
-						<input ng-model="selectedTestPlan.lastUpdateDate" ng-change="recordChanged()" ng-disabled="true" type="text"/>
+						<input ng-model="selectedTestPlan.lastUpdateDate" ng-change="recordChanged(selectedTestPlan)" ng-disabled="true" type="text"/>
 					</md-input-container>
 				</div>
 			</div>
@@ -81,14 +81,14 @@ body {
 				<div class="col-md-6">
 					<md-input-container flex style="width: 100%;">
 						<label>Title</label>
-						<input ng-model="selectedTestPlan.coverPageTitle" ng-change="recordChanged()" type="text"/>
+						<input ng-model="selectedTestPlan.coverPageTitle" ng-change="recordChanged(selectedTestPlan)" type="text"/>
 					</md-input-container>
 				</div>
 
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Sub Title</label>
-						<input ng-model="selectedTestPlan.coverPageSubTitle" ng-change="recordChanged()" type="text"/>
+						<input ng-model="selectedTestPlan.coverPageSubTitle" ng-change="recordChanged(selectedTestPlan)" type="text"/>
 					</md-input-container>
 				</div>
 			</div>
@@ -97,14 +97,14 @@ body {
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Version</label>
-						<input ng-model="selectedTestPlan.coverPageVersion" ng-change="recordChanged()" type="text"/>
+						<input ng-model="selectedTestPlan.coverPageVersion" ng-change="recordChanged(selectedTestPlan)" type="text"/>
 					</md-input-container>
 				</div>
 
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Date</label>
-						<input ng-model="selectedTestPlan.coverPageDate" ng-change="recordChanged()" type="text"/>
+						<input ng-model="selectedTestPlan.coverPageDate" ng-change="recordChanged(selectedTestPlan)" type="text"/>
 					</md-input-container>
 				</div>
 			</div>

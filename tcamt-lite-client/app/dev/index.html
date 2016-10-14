@@ -43,36 +43,20 @@
     <link rel="stylesheet" href="lib/froala-plugins/css/plugins/image.css">
     <link rel="stylesheet" href="lib/froala-plugins/css/plugins/line_breaker.css">
     <link rel="stylesheet" href="lib/froala-plugins/css/plugins/table.css">
-
 </head>
 <body ng-controller="MainCtrl" ng-app="tcl" ng-init="init()">
 <notifications-bar class="notifications" closeIcon="fa fa-times-circle"></notifications-bar>
-
-<div id="wrapper">
-    <div ng-include="'views/header.html'"></div>
     <!--[if lt IE 7]>
-    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
-        your browser</a> to improve your experience.</p>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-
-    <!-- Add your site or application content here -->
-    <div id="appcontainer" class="">
-
-        <!--<div class="container">-->
-            <!--<div class="row">-->
-                <!--<div ng-class="'alert alert-'+msg().type" ng-show="msg().show && !msg().skip" id="ehralert">-->
-                    <!--<button type="button" class="close" ng-click="msg().show=false">×</button>-->
-                    <!--<div msg key-expr="msg().text"></div>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-
-        <div ng-view></div>
-
+    <div class="container-fluid" style="height:100px;">
+        <div ng-include="'views/header.html'"></div>
     </div>
 
-    <div ng-include="'views/footer.html'"></div>
+
+    <div ng-view></div>
+
     <div ng-include="'views/templates.html'"></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
@@ -93,18 +77,17 @@
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
-	<!-- include: "type": "js", "files": "lib/**/*.js" --> 	
-	<!-- include: "type": "js", "files": "dev/**/*.js" --> 	
-	<!-- include: "type": "js", "files": "scripts/services**/*.js" --> 	
-	<!-- include: "type": "js", "files": "scripts/filters/**/*.js" --> 	
-	<!-- include: "type": "js", "files": "scripts/directives/**/*.js" --> 	
-	<!-- include: "type": "js", "files": "scripts/controllers/**/*.js" --> 	
+	<!-- include: "type": "js", "files": "lib/**/*.js" -->
+	<!-- include: "type": "js", "files": "dev/**/*.js" -->
+	<!-- include: "type": "js", "files": "scripts/services**/*.js" -->
+	<!-- include: "type": "js", "files": "scripts/filters/**/*.js" -->
+	<!-- include: "type": "js", "files": "scripts/directives/**/*.js" -->
+	<!-- include: "type": "js", "files": "scripts/controllers/**/*.js" -->
     <!-- endbuild -->
 
     <script>
         $.material.init();
     </script>
 
-</div>
 </body>
 </html>
