@@ -357,7 +357,11 @@ body {
 									<tr ng-repeat="cate in displayedCollection">
 										<td>{{cate.iPath}}</td>
 										<td>{{cate.name}}</td>
-										<td>{{cate.testDataCategorization}}</td>
+								<ul>
+								<li ng-repeat="data in cate.listData">
+                        			{{data}}
+									</li>
+								</ul>
 										<td>
 											<input ng-show="cate.testDataCategorization == 'Value-Test Case Fixed List'" class="form-control" ng-model="cate.listData" ng-list disabled>
 										</td>
