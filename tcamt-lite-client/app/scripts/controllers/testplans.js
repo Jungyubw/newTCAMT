@@ -17,6 +17,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.nistStd = {};
 	$scope.nistStd.nist = false;
 	$scope.nistStd.std = false;
+	$scope.changesMap={};
 	$(document).keydown(function(e) {
 		var nodeName = e.target.nodeName.toLowerCase();
 
@@ -336,6 +337,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.tps.splice(idxP, 1);
 		});
 	};
+	
 
 	$scope.openCreateMessageTemplateModal = function() {
 		var modalInstance = $modal.open({
@@ -561,7 +563,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.recordChanged = function (obj) {
 		$rootScope.isChanged = true;
-		if(obj) obj.isChanged = true;
+		if(obj){
+			$scope.changesMap[obj.id] = true;
+		}
 
 		console.log(obj);
 	};
@@ -586,6 +590,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 					testplan.lastUpdateDate = saveResponse.date;
 					$rootScope.saved = true;
 					testplan.isChanged = false;
+					$scope.changesMap={};
 					Notification.success({message:"Test Plan Saved", delay: 1000});
 
 
@@ -1074,7 +1079,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedTemplate = null;
 		$rootScope.selectedSegmentNode = null;
 		$rootScope.selectedTestStep = null;
-
+		$scope.subview = "EditMessages.html";
 		if($rootScope.messageTree && $rootScope.messageParams){
 			$rootScope.message=msg;
 			$rootScope.processMessageTree($rootScope.message);
@@ -1085,12 +1090,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 			$rootScope.message=msg;
 			$rootScope.processMessageTree($rootScope.message);
-
-			$rootScope.messageParams = $scope.getMessageParams();
+			//$rootScope.messageParams.refresh();
+			$rootScope.messageParams = $rootScope.getMessageParams();
 
 		}
 
-		$scope.subview = "EditMessages.html";
+		
 
 	};
 
@@ -2771,6 +2776,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 			var sourceNode = event.source.nodeScope;
 			var destNodes = event.dest.nodesScope;
+			$scope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
+			$scope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
+
+			
 			var sortBefore = event.source.index ;
 			var sortAfter = event.dest.index ;
 
@@ -2778,6 +2787,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			event.source.nodeScope.$modelValue.position = sortAfter+1;
 			$scope.updatePositions(event.dest.nodesScope.$modelValue);
 			$scope.updatePositions(event.source.nodesScope.$modelValue);
+			
 			//$scope.recordChanged();
 
 
@@ -2829,10 +2839,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			if( !$itemScope.$nodeScope.$modelValue.children){
 				$itemScope.$nodeScope.$modelValue.children=[];
 			}
+			var genId=new ObjectId().toString();
+			$scope.changesMap[genId]=true;
+			$scope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
 			$itemScope.$nodeScope.$modelValue.children.push({
-				id: new ObjectId().toString(),
+				id: genId,
 				type : "testcasegroup",
-				name: "newTestGroup",
+				name: "New Test Group",
 				testcases:[],
 				isChanged:true,
 				position:$itemScope.$nodeScope.$modelValue.children.length+1});
@@ -2848,11 +2861,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			if( !$itemScope.$nodeScope.$modelValue.children){
 				$itemScope.$nodeScope.$modelValue.children=[];
 			}
+			var testCaseId=new ObjectId().toString();
+			$scope.changesMap[testCaseId]=true;
+			$scope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
 			$itemScope.$nodeScope.$modelValue.children.push(
 				{
-					id: new ObjectId().toString(),
+					id: testCaseId,
 					type : "testcase",
-					name: "newTestCase",
+					name: "New Test Case",
 					teststeps:[],
 					isChanged:true,
 					position:$itemScope.$nodeScope.$modelValue.children.length+1
@@ -2867,11 +2883,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.testGroupOptions = [
 		['add new testCase', function($itemScope) {
-
+			var caseId=new ObjectId().toString();
+			$scope.changesMap[caseId]=true;
+			$scope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
 			$itemScope.$nodeScope.$modelValue.testcases.push({
-				id: new ObjectId().toString(),
+				id: caseId,
 				type : "testcase",
-				name: "testCaseAdded",
+				name: "New Test Case",
 				isChanged:true,
 				position: $itemScope.$nodeScope.$modelValue.testcases.length+1,
 				teststeps:[]
@@ -2894,6 +2912,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}],
 
 		['delete', function($itemScope) {
+			$scope.deleteGroup($itemScope.$modelValue);
 			$itemScope.$nodeScope.remove();
 			Notification.success("Test Group "+$itemScope.$modelValue.name +" Deleted");
 			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue);
@@ -2902,18 +2921,20 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	];
 
-
+	
 	$scope.testCaseOptions =[
 		['add new teststep', function($itemScope) {
 			
 			if( !$itemScope.$nodeScope.$modelValue.teststeps){
 				$itemScope.$nodeScope.$modelValue.teststeps=[];
 			}
-
+			var stepId = new ObjectId().toString();
+			$scope.changesMap[stepId]=true;
+			$scope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
             var newTestStep = {
-                id: new ObjectId().toString(),
+                id: stepId,
                 type : "teststep",
-                name : "newteststep",
+                name : "New Test Step",
 				isChanged : true,
                 position : $itemScope.$nodeScope.$modelValue.teststeps.length+1,
                 testStepStory: {}
@@ -2951,6 +2972,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}],
 
 		['delete', function($itemScope) {
+			$scope.deleteCase($itemScope.$modelValue)
 			$itemScope.$nodeScope.remove();
 			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue);
 			$scope.recordChanged($itemScope.$nodeScope.$parentNodeScope.$modelValue);
@@ -2981,6 +3003,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}],
 
 		['delete', function($itemScope) {
+			$scope.deleteStep($itemScope.$modelValue);
 			$itemScope.$nodeScope.remove();
 			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue);
 			$scope.recordChanged($itemScope.$nodeScope.$parentNodeScope.$modelValue);
@@ -3004,6 +3027,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}],
 
 		['Apply', function($itemScope) {
+			$scope.changesMap[$rootScope.selectedTestStep.id]=true;
 			$scope.applyMessageTemplate($itemScope.msgTmp);
 			Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
 
@@ -3037,7 +3061,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}],
 
 		['Overwrite Template', function($itemScope) {
-
+			$scope.changesMap[$rootScope.selectedTestStep.id]=true;
 			$scope.overwriteSegmentTemplate($itemScope.segTmp);
 			Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
 
@@ -3055,6 +3079,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}],
 
 		['Overwrite Template', function($itemScope) {
+			$scope.changesMap[$rootScope.selectedTestStep.id]=true;
 		$scope.overwriteER7Template($itemScope.er7Tmp);
 		Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
 
@@ -3066,6 +3091,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	                  		['Apply Profile', function($itemScope) {
 	                  			$scope.applyConformanceProfile($itemScope.ig.id, $itemScope.msg.id);
+	                  			$scope.changesMap[$rootScope.selectedTestStep.id]=true;
 	                  		}]
 	                  		
 
@@ -3130,15 +3156,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.cloneTestStep=function(testStep){
 		var clone= angular.copy(testStep);
-		clone.name= testStep.name+"_copy";
+		clone.name= testStep.name+" Copy";
 		clone.id= new ObjectId().toString();
+		$scope.changesMap[clone.id]=true;
 		$scope.recordChanged(clone);
 		return clone;
 	}
 	$scope.cloneTestCase= function(testCase){
 		var clone= angular.copy(testCase);
-		clone.name= testCase.name+"_copy";
+		clone.name= testCase.name+" Copy";
 		clone.id= new ObjectId().toString();
+		$scope.changesMap[clone.id]=true;
 		clone.teststeps=[];
 		if(testCase.teststeps.length>0){
 			angular.forEach(testCase.teststeps, function(teststep){
@@ -3148,11 +3176,46 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.recordChanged(clone);
 		return clone;
 	};
-
+	$scope.deleteGroup=function(group){
+		if(group.id==$scope.activeModel.id){
+			$scope.displayNullView();
+		}
+		else if(group.testcases&&group.testcases.length>0){
+			angular.forEach(group.testcases,function(testcase){
+				$scope.deleteCase(testcase);
+			});
+		}
+	}
+	
+	$scope.deleteCase=function(testCase){
+		if(testCase.id&&testCase.id===$scope.activeModel.id){
+			$scope.displayNullView();
+		}else{
+			angular.forEach(testCase.teststeps,function(step){
+				$scope.deleteStep(step);
+			});
+		}
+		
+	};
+	$scope.deleteStep=function(step){
+		if(step.id&&step.id===$scope.activeModel.id){
+			$scope.displayNullView();
+		}
+	};
+	
+	$scope.displayNullView= function(){
+		$scope.subview="nullView.html";
+		$rootScope.selectedConformanceProfileId="";
+		$rootScope.integrationProfileId="";
+		$rootScope.selectedTestStep=null;
+	}
+	
+	
 	$scope.cloneTestCaseGroup=function(testCaseGroup){
 		var clone = angular.copy(testCaseGroup);
-		clone.name= testCaseGroup.name+"_copy";
+		clone.name= testCaseGroup.name+" Copy";
 		clone.id= new ObjectId().toString();
+		$scope.changesMap[clone.id]=true;
 		clone.testcases=[];
 		if(testCaseGroup.testcases.length>0){
 			angular.forEach(testCaseGroup.testcases, function(testcase){

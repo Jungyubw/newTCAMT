@@ -22,7 +22,7 @@
         <li ng-repeat="test in testplans" ui-tree-node data-type="childrens">
             <div ui-tree-handle data-type="childrens">
                 <div context-menu="testPlanOptions" data-type="childrens" style="margin-left:5px;">
-                    <span data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-plus" ng-class="{'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed}">
+                    <span ng-if="test.children.length>0" data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-plus" ng-class="{'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed}">
 					</span>
                     <span class="label label-sub-component label-icon">TP</span> </span> <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':test.isChanged}" ng-click="Activate(this); selectTestPlan(test);">
 						{{test.name}}{{test.isChanged}}</span>
@@ -31,21 +31,21 @@
             <div ng-if="test.children.length>0">
                 {{updatePositions(test.children)}}
             </div>
-            <ol ui-tree-nodes="" ng-model="test.children" data-type="childrens" data-empty-placeholder-enabled>
-                <li ng-repeat="child in test.children" ui-tree-node data-type="child" class="testGroup">
+            <ol ui-tree-nodes="" ng-model="test.children" data-type="childrens" data-empty-placeholder-enabled >
+                <li ng-repeat="child in test.children" ui-tree-node data-type="child" class="testGroup" ng-hide="$parentNodeScope.collapsed">
 
                     <div ui-tree-handle style="margin-left:7px;" ng-if="child.hasOwnProperty('testcases') " data-type="group">
                         <div context-menu="testGroupOptions" data-type="group">
-                            <span data-nodrag ng-click="toggle(this); print(this) " class="glyphicon glyphicon-plus " ng-class="{ 'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed} "></span>
-                            <span class="label label-success label-icon ">GP</span> <span data-nodrag ng-class="{selected1 : this.$modelValue===activeModel}" ng-click="Activate(this); selectTestCaseGroup(child); ">[{{child.position}}]{{child.name}}{{child.isChanged}}</span>
+                            <span ng-if="child.testcases.length>0" data-nodrag ng-click="toggle(this); print(this) " class="glyphicon glyphicon-plus " ng-class="{ 'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed} "></span>
+                            <span class="label label-success label-icon ">GP</span> <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':changesMap[child.id]}" ng-click="Activate(this); selectTestCaseGroup(child); ">[{{child.position}}]{{child.name}}</span>
                         </div>
                     </div>
 
                     <div ui-tree-handle style="margin-left:7px;" ng-if="child.hasOwnProperty('teststeps')" data-type="case">
                         <div context-menu="testCaseOptions" data-type="case">
-                            <span data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-plus" ng-class="{'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed}"></span>
+                            <span ng-if="child.teststeps.length>0" data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-plus" ng-class="{'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed}"></span>
                             <span class="label label-component label-icon draggable">TC</span>
-                            <span data-nodrag ng-class="{selected1 : this.$modelValue===activeModel}" ng-click="Activate(this); selectTestCase(child)">[{{child.position}}]{{child.name}}{{child.isChanged}}</span>
+                            <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':changesMap[child.id]}" ng-click="Activate(this); selectTestCase(child)">[{{child.position}}]{{child.name}}</span>
                         </div>
                     </div>
 
@@ -53,11 +53,11 @@
                         <li  ng-hide="$parentNodeScope.collapsed" ng-repeat="case in child.testcases " ui-tree-node data-type="case">
                             <div ui-tree-handle style="margin-left:14px;" ng-click=" Activate(this) ">
                                 <div context-menu="testCaseOptions">
-                                    <span data-nodrag ng-click="toggle(this);print(this) " class="glyphicon glyphicon-plus " ng-class="{ 'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed } ">
+                                    <span ng-if="case.teststeps.length>0" data-nodrag ng-click="toggle(this);print(this) " class="glyphicon glyphicon-plus " ng-class="{ 'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed } ">
 									</span>
                                     <span class="label label-component label-icon draggable ">TC</span>
-                                    <span data-nodrag ng-class="{selected1 : this.$modelValue===activeModel} " ng-click="Activate(this); selectTestCase(case); ">[{{case.position}}]
-										{{case.name}} {{case.isChanged}}</span>
+                                    <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':changesMap[case.id]}" ng-click="Activate(this); selectTestCase(case); ">[{{case.position}}]
+										{{case.name}}</span>
                                 </div>
                             </div>
                             <ol ui-tree-nodes=" " ng-model="case.teststeps " data-type="case" ng-if ="!collapsed">
@@ -65,8 +65,8 @@
                                     <div ui-tree-handle style="margin-left:21px;">
                                         <div context-menu="testStepOptions ">
                                             <span class="label label-segment label-icon draggable ">TS</span>
-                                            <span data-nodrag ng-click="Activate(this); selectTestStep(step); " ng-class="{selected1 : this.$modelValue===activeModel, used : this.$modelValue.conformanceProfileId===message.id||this.$modelValue.integrationProfileId===igdocument.id || this.$modelValue.conformanceProfileId===selectedTemplate.conformanceProfileId,none : !this.$modelValue.conformanceProfileId } ">
-												[{{step.position}}] {{step.name}}{{step.isChanged}}</span>
+                                            <span data-nodrag ng-click="Activate(this); selectTestStep(step); " ng-class="{selected1 : this.$modelValue===activeModel, used : this.$modelValue.conformanceProfileId===message.id||this.$modelValue.integrationProfileId===igdocument.id || this.$modelValue.conformanceProfileId===selectedTemplate.conformanceProfileId,none : !this.$modelValue.conformanceProfileId ,unsaved:changesMap[step.id]} ">
+												[{{step.position}}] {{step.name}}</span>
                                         </div>
                                     </div>
                                 </li>
@@ -81,7 +81,7 @@
                             <div ui-tree-handle style="margin-left:21px;">
                                 <div context-menu="testStepOptions">
                                     <span class="label label-segment label-icon draggable ">S</span>
-                                    <span data-nodrag ng-click="Activate(this); selectTestStep(step); " ng-class="{selected1 : this.$modelValue===activeModel, used : this.$modelValue.conformanceProfileId===message.id||this.$modelValue.integrationProfileId===igdocument.id || this.$modelValue.conformanceProfileId===selectedTemplate.conformanceProfileId } ">
+                                    <span data-nodrag ng-click="Activate(this); selectTestStep(step); " ng-class="{selected1 : this.$modelValue===activeModel, used : this.$modelValue.conformanceProfileId===message.id||this.$modelValue.integrationProfileId===igdocument.id || this.$modelValue.conformanceProfileId===selectedTemplate.conformanceProfileId, unsaved:changesMap[step.id]} } ">
 												[{{step.position}}] {{step.name}} </span>
                                 </div>
                             </div>
@@ -92,3 +92,6 @@
         </li>
     </ol>
 </div>
+<script type="text/ng-template" id="nullView.html">
+<p> No Element Selected</p>
+</script>
