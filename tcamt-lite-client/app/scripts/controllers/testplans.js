@@ -2789,7 +2789,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.updatePositions(event.dest.nodesScope.$modelValue);
 			$scope.updatePositions(event.source.nodesScope.$modelValue);
 			
-			//$scope.recordChanged();
+			$scope.recordChanged();
 
 
 		}
