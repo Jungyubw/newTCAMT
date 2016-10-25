@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestCase.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestCase.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.tmp/styles/main.css" afterPath="$PROJECT_DIR$/.tmp/styles/main.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/index.html" afterPath="$PROJECT_DIR$/app/index.html" />
     </list>
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,14 +27,9 @@
         <entry file="file://$PROJECT_DIR$/app/views/toc.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
-              <caret line="93" column="6" selection-start-line="93" selection-start-column="6" selection-end-line="93" selection-end-column="6" />
+              <caret line="96" column="9" selection-start-line="96" selection-start-column="9" selection-end-line="96" selection-end-column="9" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#div#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#1;n#li#0;n#ol#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#li#0;n#ol#1;n#li#0;n#ol#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -55,8 +48,8 @@
       <file leaf-file-name="editTestStep.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7023">
-              <caret line="205" column="28" selection-start-line="205" selection-start-column="28" selection-end-line="205" selection-end-column="28" />
+            <state relative-caret-position="492">
+              <caret line="710" column="14" selection-start-line="710" selection-start-column="14" selection-end-line="710" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -75,11 +68,9 @@
       <file leaf-file-name="testplans.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="428">
-              <caret line="493" column="20" selection-start-line="493" selection-start-column="20" selection-end-line="493" selection-end-column="20" />
-              <folding>
-                <element signature="e#94071#95084#0" expanded="false" />
-              </folding>
+            <state relative-caret-position="458">
+              <caret line="495" column="20" selection-start-line="495" selection-start-column="20" selection-end-line="495" selection-end-column="20" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -633,18 +624,18 @@
       <workItem from="1477073320689" duration="509000" />
       <workItem from="1477074251640" duration="179000" />
       <workItem from="1477329971842" duration="6215000" />
-      <workItem from="1477339528208" duration="2738000" />
+      <workItem from="1477339528208" duration="2998000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="234458000" />
+    <option name="totallyTimeSpent" value="234718000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18694049" sideWeight="0.79445934" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18694049" sideWeight="0.79445934" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1346987" sideWeight="0.20554066" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1493976" sideWeight="0.5024665" order="7" side_tool="true" content_ui="tabs" />
@@ -680,7 +671,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app/scripts/controllers/testplans.js</url>
-          <line>390</line>
+          <line>392</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
@@ -962,14 +953,9 @@
     <entry file="file://$PROJECT_DIR$/app/views/toc.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="93" column="6" selection-start-line="93" selection-start-column="6" selection-end-line="93" selection-end-column="6" />
+          <caret line="96" column="9" selection-start-line="96" selection-start-column="9" selection-end-line="96" selection-end-column="9" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#li#0;n#ol#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#li#0;n#ol#1;n#li#0;n#ol#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1007,11 +993,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="428">
-          <caret line="493" column="20" selection-start-line="493" selection-start-column="20" selection-end-line="493" selection-end-column="20" />
-          <folding>
-            <element signature="e#94071#95084#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="458">
+          <caret line="495" column="20" selection-start-line="495" selection-start-column="20" selection-end-line="495" selection-end-column="20" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1033,8 +1017,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7023">
-          <caret line="205" column="28" selection-start-line="205" selection-start-column="28" selection-end-line="205" selection-end-column="28" />
+        <state relative-caret-position="492">
+          <caret line="710" column="14" selection-start-line="710" selection-start-column="14" selection-end-line="710" selection-end-column="14" />
           <folding />
         </state>
       </provider>
