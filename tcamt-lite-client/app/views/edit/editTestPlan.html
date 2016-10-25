@@ -22,7 +22,7 @@ body {
 				<div class="col-md-6">
 					<md-input-container style="width: 100%;">
 						<label>Name</label>
-						<input ng-model="selectedTestPlan.name" ng-change="recordChanged(selectedTestPlan)" type="text"/>
+						<input ng-model="selectedTestPlan.name" ng-change="recordChanged(selectedTestPlan);updateCurrentTitle('Test Plan', selectedTestPlan.name);" type="text"/>
 					</md-input-container>
 				</div>
 				<div class="col-md-6">

@@ -32,8 +32,10 @@
                 {{updatePositions(test.children)}}
             </div>
             <ol ui-tree-nodes="" ng-model="test.children" data-type="childrens" data-empty-placeholder-enabled >
-                <li ng-repeat="child in test.children" ui-tree-node data-type="child" class="testGroup" ng-hide="$parentNodeScope.collapsed">
-
+                <li ng-repeat="child in test.children " ui-tree-node data-type="child" class="testGroup" ng-hide="$parentNodeScope.collapsed">
+                    <div ng-if="child.testcases>0">
+                        {{updatePositions(child.testcases)}}
+                    </div>
                     <div ui-tree-handle style="margin-left:7px;" ng-if="child.hasOwnProperty('testcases') " data-type="group">
                         <div context-menu="testGroupOptions" data-type="group">
                             <i data-nodrag ng-click="toggle(this); print(this) " class="fa" ng-class="{ 'fa-caret-right': collapsed, 'fa-caret-down': !collapsed} "></i>
