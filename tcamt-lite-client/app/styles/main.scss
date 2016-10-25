@@ -2310,3 +2310,6 @@ a, a:hover, a:focus {
 	font-style: italic !important;
 	font-family: "Times New Roman", Times, serif;
 }
+.tooltip{
+  z-index:10000;
+}

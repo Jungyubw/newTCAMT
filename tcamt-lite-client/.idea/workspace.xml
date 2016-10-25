@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.tmp/styles/main.css" afterPath="$PROJECT_DIR$/.tmp/styles/main.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/index.html" afterPath="$PROJECT_DIR$/app/index.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/styles/main.scss" afterPath="$PROJECT_DIR$/app/styles/main.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/toc.html" afterPath="$PROJECT_DIR$/app/views/toc.html" />
     </list>
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,7 +34,17 @@
             <state relative-caret-position="0">
               <caret line="96" column="9" selection-start-line="96" selection-start-column="9" selection-end-line="96" selection-end-column="9" />
               <folding>
-                <element signature="n#style#0;n#div#0;n#div#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
+                <marker date="1477403328000" expanded="true" signature="36:77" ph="{...}" />
+                <marker date="1477403328000" expanded="true" signature="98:136" ph="{...}" />
+                <marker date="1477403328000" expanded="true" signature="177:399" ph="..." />
+                <marker date="1477403328000" expanded="true" signature="201:339" ph="{...}" />
+                <marker date="1477403328000" expanded="true" signature="345:390" ph="{...}" />
+                <marker date="1477403328000" expanded="true" signature="427:6942" ph="..." />
+                <marker date="1477403328000" expanded="true" signature="505:766" ph="..." />
+                <marker date="1477403328000" expanded="true" signature="583:766" ph="..." />
+                <marker date="1477403328000" expanded="true" signature="638:766" ph="..." />
+                <marker date="1477403328000" expanded="true" signature="721:737" ph="..." />
+                <marker date="1477403328000" expanded="true" signature="738:766" ph="..." />
               </folding>
             </state>
           </provider>
@@ -45,11 +60,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="editTestStep.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="editTestStep.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="492">
-              <caret line="710" column="14" selection-start-line="710" selection-start-column="14" selection-end-line="710" selection-end-column="14" />
+            <state relative-caret-position="314">
+              <caret line="503" column="39" selection-start-line="503" selection-start-column="32" selection-end-line="503" selection-end-column="39" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.scss" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/styles/main.scss">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="822">
+              <caret line="2312" column="0" selection-start-line="2312" selection-start-column="0" selection-end-line="2314" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -68,8 +93,8 @@
       <file leaf-file-name="testplans.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="458">
-              <caret line="495" column="20" selection-start-line="495" selection-start-column="20" selection-end-line="495" selection-end-column="20" />
+            <state relative-caret-position="313">
+              <caret line="2258" column="4" selection-start-line="2258" selection-start-column="4" selection-end-line="2258" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -125,7 +150,6 @@
         <option value="$PROJECT_DIR$/app/dev/index.html" />
         <option value="$PROJECT_DIR$/app/views/tp2.html" />
         <option value="$PROJECT_DIR$/app/index.html" />
-        <option value="$PROJECT_DIR$/app/styles/main.scss" />
         <option value="$PROJECT_DIR$/app/views/tp.html" />
         <option value="$PROJECT_DIR$/app/views/edit/editTestCaseGroup.html" />
         <option value="$PROJECT_DIR$/bower.json" />
@@ -134,6 +158,7 @@
         <option value="$PROJECT_DIR$/app/views/edit/editTestCase.html" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
         <option value="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
+        <option value="$PROJECT_DIR$/app/styles/main.scss" />
       </list>
     </option>
   </component>
@@ -271,8 +296,9 @@
     <handled-path value="$PROJECT_DIR$/node_modules" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1920" />
-    <option name="height" value="1200" />
+    <option name="x" value="1920" />
+    <option name="width" value="2560" />
+    <option name="height" value="1440" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -474,7 +500,7 @@
       <recent name="$PROJECT_DIR$/app/resources" />
     </key>
   </component>
-  <component name="RunManager" selected="Grunt.js.Build">
+  <component name="RunManager" selected="Grunt.js.SERVE">
     <configuration default="true" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application">
       <method />
     </configuration>
@@ -624,24 +650,25 @@
       <workItem from="1477073320689" duration="509000" />
       <workItem from="1477074251640" duration="179000" />
       <workItem from="1477329971842" duration="6215000" />
-      <workItem from="1477339528208" duration="2998000" />
+      <workItem from="1477339528208" duration="4624000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="234718000" />
+    <option name="totallyTimeSpent" value="236344000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
-    <editor active="false" />
+    <frame x="1920" y="0" width="2560" height="1440" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18694049" sideWeight="0.79445934" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13981883" sideWeight="0.79445934" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Grunt " active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1346987" sideWeight="0.20554066" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1493976" sideWeight="0.5024665" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22098215" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32932693" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29257247" sideWeight="0.49753347" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24032739" sideWeight="0.49753347" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24970461" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26811594" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="3" side_tool="true" content_ui="tabs" />
@@ -651,7 +678,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2210145" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -873,13 +899,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/styles/main.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="516">
-          <caret line="2308" column="0" selection-start-line="2308" selection-start-column="0" selection-end-line="2308" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/dev/index_2.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="258">
@@ -955,7 +974,17 @@
         <state relative-caret-position="0">
           <caret line="96" column="9" selection-start-line="96" selection-start-column="9" selection-end-line="96" selection-end-column="9" />
           <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#li#0;n#ol#0;n#div#0;n#!!top" expanded="true" />
+            <marker date="1477403328000" expanded="true" signature="36:77" ph="{...}" />
+            <marker date="1477403328000" expanded="true" signature="98:136" ph="{...}" />
+            <marker date="1477403328000" expanded="true" signature="177:399" ph="..." />
+            <marker date="1477403328000" expanded="true" signature="201:339" ph="{...}" />
+            <marker date="1477403328000" expanded="true" signature="345:390" ph="{...}" />
+            <marker date="1477403328000" expanded="true" signature="427:6942" ph="..." />
+            <marker date="1477403328000" expanded="true" signature="505:766" ph="..." />
+            <marker date="1477403328000" expanded="true" signature="583:766" ph="..." />
+            <marker date="1477403328000" expanded="true" signature="638:766" ph="..." />
+            <marker date="1477403328000" expanded="true" signature="721:737" ph="..." />
+            <marker date="1477403328000" expanded="true" signature="738:766" ph="..." />
           </folding>
         </state>
       </provider>
@@ -991,14 +1020,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="458">
-          <caret line="495" column="20" selection-start-line="495" selection-start-column="20" selection-end-line="495" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/edit/editTestPlan.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-203">
@@ -1015,10 +1036,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="2258" column="4" selection-start-line="2258" selection-start-column="4" selection-end-line="2258" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="492">
-          <caret line="710" column="14" selection-start-line="710" selection-start-column="14" selection-end-line="710" selection-end-column="14" />
+        <state relative-caret-position="314">
+          <caret line="503" column="39" selection-start-line="503" selection-start-column="32" selection-end-line="503" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/styles/main.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="822">
+          <caret line="2312" column="0" selection-start-line="2312" selection-start-column="0" selection-end-line="2314" selection-end-column="1" />
           <folding />
         </state>
       </provider>

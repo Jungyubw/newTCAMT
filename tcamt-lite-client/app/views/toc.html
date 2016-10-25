@@ -25,7 +25,7 @@
                     <span ng-if="test.children.length>0" data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-plus" ng-class="{'glyphicon glyphicon-plus': collapsed, 'glyphicon glyphicon-minus': !collapsed}">
 					</span>
                     <span class="label label-sub-component label-icon">TP</span> </span> <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':test.isChanged}" ng-click="Activate(this); selectTestPlan(test);">
-						{{test.name}}{{test.isChanged}}</span>
+						{{test.name}}</span>
                 </div>
             </div>
             <div ng-if="test.children.length>0">

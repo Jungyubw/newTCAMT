@@ -491,7 +491,22 @@ body {
 			[{{node.field.minLength}}..{{node.field.maxLength}}]
         </td>
 		<td class="col-md-1" ng-show="isShow(5)">
-			{{findTable(node.field.table).bindingIdentifier}}
+			<div ng-repeat="table in node.field.tables">
+				<div ng-show="findTable(table)" ng-init="tooltip=false">
+				<span ng-mouseover="tooltip=true" ng-mouseleave="tooltip=false">
+					{{::findTable(table).bindingIdentifier}}
+				</span>
+
+					<div ng-show="hasChildren(node)">
+						Location : 1
+					</div>
+
+					<div class="tooltip" ng-show="tooltip">Hi..Welcome to Angular JS World.</div>
+				</div>
+			</div>
+
+
+
         </td>
 		<td class="col-md-1" ng-show="isShow(6)">
 			<span>{{node.predicate.description}}</span>
