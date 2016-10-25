@@ -60,6 +60,9 @@
 										{{case.name}}</span>
                                 </div>
                             </div>
+                                   <div ng-if="case.teststeps.length>0">
+                					{{updatePositions(case.teststeps)}}
+           						 </div>
                             <ol ui-tree-nodes=" " ng-model="case.teststeps " data-type="case" ng-if ="!collapsed">
                                 <li ng-repeat="step in case.teststeps " ui-tree-node data-type="step">
                                     <div ui-tree-handle style="margin-left:21px;">
@@ -75,13 +78,14 @@
                         </li>
                     </ol>
                     <!-- <div ui-tree-handle data-type="group"/> -->
-
-                    <ol ui-tree-nodes=" " ng-model="child.teststeps " data-type="case" ng-if ="child.teststeps && !collapsed"  data-empty-placeholder-enabled>
+     							<div ng-if="case.teststeps.length>0">
+                					{{updatePositions(child.teststeps)}}
+           						 </div>                    <ol ui-tree-nodes=" " ng-model="child.teststeps " data-type="case" ng-if ="child.teststeps && !collapsed"  data-empty-placeholder-enabled>
                         <li ng-repeat="step in child.teststeps " ui-tree-node data-type="step">
                             <div ui-tree-handle style="margin-left:21px;">
                                 <div context-menu="testStepOptions">
-                                    <span class="label label-segment label-icon draggable ">S</span>
-                                    <span data-nodrag ng-click="Activate(this); selectTestStep(step); " ng-class="{selected1 : this.$modelValue===activeModel, used : this.$modelValue.conformanceProfileId===message.id||this.$modelValue.integrationProfileId===igdocument.id || this.$modelValue.conformanceProfileId===selectedTemplate.conformanceProfileId, unsaved:changesMap[step.id]} } ">
+                                    <span class="label label-segment label-icon draggable">S</span>
+                                    <span data-nodrag ng-click="Activate(this); selectTestStep(step);" ng-class="{selected1 : this.$modelValue===activeModel, used : this.$modelValue.conformanceProfileId===message.id||this.$modelValue.integrationProfileId===igdocument.id || this.$modelValue.conformanceProfileId===selectedTemplate.conformanceProfileId, unsaved:changesMap[step.id]} } ">
 												[{{step.position}}] {{step.name}} </span>
                                 </div>
                             </div>
