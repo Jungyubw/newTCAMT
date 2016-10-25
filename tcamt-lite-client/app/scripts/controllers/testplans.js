@@ -5,6 +5,7 @@
 angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce,Notification) {
 	$scope.loading = false;
     $scope.selectedTestStepTab = 1;
+	$scope.selectedTestCaseTab = 1;
 	$rootScope.tps = [];
 	$scope.testPlanOptions=[];
 	$scope.accordi = {metaData: false, definition: true, tpList: true, tpDetails: false};
@@ -502,6 +503,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			waitingDialog.show('Opening Test Case ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
 				$rootScope.selectedTestCase = testCase;
+				$scope.selectedTestCaseTab = 1;
 				$scope.subview = "EditTestCaseMetadata.html";
 			}, 0);
 			$timeout(function () {
@@ -547,9 +549,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if(tabNum != 4) $rootScope.selectedSegmentNode = null;
     };
 
+	$scope.changeTestCaseTab = function (tabNum) {
+		$scope.selectedTestCaseTab = tabNum;
+	};
+
     $scope.isSelectedTestStepTab = function (tabNum) {
       return   tabNum == $scope.selectedTestStepTab;
     };
+
+	$scope.isSelectedTestCaseTab = function (tabNum) {
+		return   tabNum == $scope.selectedTestCaseTab;
+	};
 
 	$scope.selectTPTab = function (value) {
 		if (value === 1) {
@@ -707,6 +717,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.initHL7EncodedMessageForOnlineValidationTab = function (){
+		$scope.result="";
 		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 
 		if($rootScope.selectedTestStep.er7Message == null){
@@ -966,7 +977,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 		}
-		$scope.refreshTree();
+
+		setTimeout(function () {
+			$scope.refreshTree();
+		}, 100);
 	};
 
 	$scope.findTestCaseNameOfTestStep = function(){
@@ -2542,6 +2556,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$scope.refreshTree();
 			}
 		}
+
+		$scope.initHL7EncodedMessageTab();
 		$scope.recordChanged($rootScope.selectedTestStep);
     };
 

@@ -1167,12 +1167,23 @@ public class ExportUtil {
 			if (profile.getMetaData().getTopics() != null && !profile.getMetaData().getTopics().equals(""))
 				elmMetaData.addAttribute(new Attribute("Topics", ExportUtil.str(profile.getMetaData().getTopics())));
 		}
+		
+		
+		nu.xom.Element elmNoValidation = new nu.xom.Element("NoValidation");
 
 		HashMap<String, nu.xom.Element> valueSetDefinitionsMap = new HashMap<String, nu.xom.Element>();
 
 		for (Table t : tableLibrary.getChildren()) {
 
 			if (t != null) {
+				
+				if(t.getCodes() == null || t.getCodes().size() == 0){
+					nu.xom.Element elmBindingIdentifier = new nu.xom.Element("BindingIdentifier");
+					elmBindingIdentifier.appendChild(t.getBindingIdentifier());
+					elmNoValidation.appendChild(elmBindingIdentifier);
+				}
+				
+				
 				nu.xom.Element elmValueSetDefinition = new nu.xom.Element("ValueSetDefinition");
 				elmValueSetDefinition
 						.addAttribute(new Attribute("BindingIdentifier", ExportUtil.str(t.getBindingIdentifier())));
@@ -1238,6 +1249,7 @@ public class ExportUtil {
 		}
 
 		elmTableLibrary.appendChild(elmMetaData);
+		elmTableLibrary.appendChild(elmNoValidation);
 
 		for (nu.xom.Element elmValueSetDefinitions : valueSetDefinitionsMap.values()) {
 			elmTableLibrary.appendChild(elmValueSetDefinitions);

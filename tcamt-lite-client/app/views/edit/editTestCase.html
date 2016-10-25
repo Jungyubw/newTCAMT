@@ -12,98 +12,96 @@ body {
 	}
 </script>
 <script type="text/ng-template" id="EditTestCaseMetadata.html">
-    <div class="page-header">
-        <span class="header5">TestCase Metadata</span>
-    </div>
+	<div ng-show="selectedTestCase">
+		<ul class="nav nav-pills">
+			<li ng-class="{active: isSelectedTestCaseTab(1)}"><a data-toggle="pill" ng-click="changeTestCaseTab(1);"><i class="fa fa-file-text-o fa-fw"></i> MetaData</a></li>
+			<li ng-class="{active: isSelectedTestCaseTab(2)}"><a data-toggle="pill" ng-click="changeTestCaseTab(2);"><i class="fa fa-file-text-o fa-fw"></i> Test Story</a></li>
+		</ul>
 
-	<form name="testcaseMetaDataForm" class="form-horizontal" novalidate>
-		<div class="row">
-			<div class="col-md-12">
-				<div class="col-md-6">
-					<md-input-container style="width: 100%;">
-						<label>Name</label>
-						<input ng-model="selectedTestCase.name" ng-change="recordChanged(selectedTestCase)" type="text"/>
-					</md-input-container>
-				</div>
 
-				<div class="col-md-6">
-					<md-input-container style="width: 100%;">
-						<label>Description</label>
-						<input ng-model="selectedTestCase.description" ng-change="recordChanged(selectedTestCase)" type="text"/>
-					</md-input-container>
+		<div ng-show="isSelectedTestCaseTab(1);">
+			<form name="testcaseMetaDataForm" class="form-horizontal" novalidate>
+				<div class="row" style="margin-top:35px">
+					<div class="col-md-12">
+						<div class="col-md-6">
+							<md-input-container style="width: 100%;">
+								<label>Name</label>
+								<input ng-model="selectedTestCase.name" ng-change="recordChanged(selectedTestCase)" type="text"/>
+							</md-input-container>
+						</div>
+
+						<div class="col-md-6">
+							<md-input-container style="width: 100%;">
+								<label>Description</label>
+								<input ng-model="selectedTestCase.description" ng-change="recordChanged(selectedTestCase)" type="text"/>
+							</md-input-container>
+						</div>
+					</div>
+					<div ng-show="selectedTestPlan.transport" class="col-md-12">
+						<div class="col-md-6">
+							<md-input-container style="width: 100%;">
+								<label>Protocol</label>
+								<md-select ng-model="selectedTestCase.protocol" ng-change="recordChanged(selectedTestCase);">
+									<md-option value="soap">SOAP</md-option>
+								</md-select>
+							</md-input-container>
+						</div>
+					</div>
 				</div>
-			</div>
-			<div ng-show="selectedTestPlan.transport" class="col-md-12">
-				<div class="col-md-6">
-					<md-input-container style="width: 100%;">
-						<label>Protocol</label>
-						<md-select ng-model="selectedTestCase.protocol" ng-change="recordChanged(selectedTestCase);">
-							<md-option value="soap">SOAP</md-option>
-						</md-select>
-					</md-input-container>
-				</div>
-			</div>
+			</form>
 		</div>
-	</form>
-<!--
-	<uib-accordion close-others="false">
-		<uib-accordion-group is-open="false" panel-class="panel-level2">
-			<uib-accordion-heading>
-            	<i class="fa" ng-class="{'fa-caret-down': accordi.igList, 'fa-caret-right': !accordi.igList}"></i>
-                <i class="fa fa-file-text-o fa-fw"></i> Test Case Story
-            </uib-accordion-heading>
-			<div class="row" style="margin:10px">
+
+		<div ng-show="isSelectedTestCaseTab(2);">
+			<div class="row">
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Description</label>
-						<textarea froala type="text" ng-change="recordChanged()" name="teststorydesc" ng-model="selectedTestCase.testCaseStory.teststorydesc" required />
-                    </div>
+						<textarea froala ng-change="recordChanged(selectedTestCase)" name="teststorydesc" ng-model="selectedTestCase.testCaseStory.teststorydesc"/>
+					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Comments</label>
-						<textarea froala type="text" ng-change="recordChanged()" name="comments" ng-model="selectedTestCase.testCaseStory.comments" required />
-                    </div>
+						<textarea froala ng-change="recordChanged(selectedTestCase)" name="comments" ng-model="selectedTestCase.testCaseStory.comments"/>
+					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Pre Condition</label>
-						<textarea froala type="text" ng-change="recordChanged()" name="preCondition" ng-model="selectedTestCase.testCaseStory.preCondition" required />
-                    </div>
+						<textarea froala ng-change="recordChanged(selectedTestCase)" name="preCondition" ng-model="selectedTestCase.testCaseStory.preCondition"/>
+					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Post Condition</label>
-						<textarea froala type="text" ng-change="recordChanged()" name="postCondition" ng-model="selectedTestCase.testCaseStory.postCondition" required />
-                    </div>
+						<textarea froala ng-change="recordChanged(selectedTestCase)" name="postCondition" ng-model="selectedTestCase.testCaseStory.postCondition"/>
+					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Test Objectives</label>
-						<textarea froala type="text" ng-change="recordChanged()" name="testObjectives" ng-model="selectedTestCase.testCaseStory.testObjectives" required />
-                    </div>
+						<textarea froala ng-change="recordChanged(selectedTestCase)" name="testObjectives" ng-model="selectedTestCase.testCaseStory.testObjectives"/>
+					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Evaluation Criteria</label>
-						<textarea froala type="text" ng-change="recordChanged()" name="evaluationCriteria" ng-model="selectedTestCase.testCaseStory.evaluationCriteria" required />
-                    </div>
+						<textarea froala ng-change="recordChanged(selectedTestCase)" name="evaluationCriteria" ng-model="selectedTestCase.testCaseStory.evaluationCriteria"/>
+					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Notes</label>
-						<textarea froala type="text" ng-change="recordChanged()" name="notes" ng-model="selectedTestCase.testCaseStory.notes" required />
-                    </div>
+						<textarea froala ng-change="recordChanged(selectedTestCase)" name="notes" ng-model="selectedTestCase.testCaseStory.notes"/>
+					</div>
 				</div>
-
 			</div>
-		</uib-accordion-group>
-	</uib-accordion>
--->
+		</div>
+	</div>
 </script> 
