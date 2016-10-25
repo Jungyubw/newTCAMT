@@ -562,6 +562,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.recordChanged = function (obj) {
+		$rootScope.selectedTestPlan.isChanged = true;
 		$rootScope.isChanged = true;
 		if(obj){
 			$scope.changesMap[obj.id] = true;
@@ -841,13 +842,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 						if(assertionObj && assertionObj.childNodes.length > 0){
 							var assertionElm = assertionObj.childNodes[0];
 							if(assertionElm.childNodes.length > 0){
-								if(assertionElm.childNodes[0].nodeName === 'PlainText'){
-									fieldNode.testDataCategorization = 'Value-Profile Fixed';
-									console.log("DONE!!");
-									fieldNode.testDataCategorizationListData = null;
-								}else if(assertionElm.childNodes[0].nodeName === 'StringList'){
-									fieldNode.testDataCategorization = 'Value-Profile Fixed List';
-									fieldNode.testDataCategorizationListData = null;
+								for(index2 in assertionElm.childNodes){
+									if(assertionElm.childNodes[index2].nodeName === 'PlainText'){
+										fieldNode.testDataCategorization = 'Value-Profile Fixed';
+										fieldNode.testDataCategorizationListData = null;
+									}else if(assertionElm.childNodes[index2].nodeName === 'StringList'){
+										fieldNode.testDataCategorization = 'Value-Profile Fixed List';
+										fieldNode.testDataCategorizationListData = null;
+									}
 								}
 							}
 						}
@@ -889,12 +891,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 							if(assertionObj && assertionObj.childNodes.length > 0){
 								var assertionElm = assertionObj.childNodes[0];
 								if(assertionElm.childNodes.length > 0){
-									if(assertionElm.childNodes[0].nodeName === 'PlainText'){
-										componentNode.testDataCategorization = 'Value-Profile Fixed';
-										componentNode.testDataCategorizationListData = null;
-									}else if(assertionElm.childNodes[0].nodeName === 'StringList'){
-										componentNode.testDataCategorization = 'Value-Profile Fixed List';
-										componentNode.testDataCategorizationListData = null;
+									for(index2 in assertionElm.childNodes){
+										if(assertionElm.childNodes[index2].nodeName === 'PlainText'){
+											componentNode.testDataCategorization = 'Value-Profile Fixed';
+											componentNode.testDataCategorizationListData = null;
+										}else if(assertionElm.childNodes[index2].nodeName === 'StringList'){
+											componentNode.testDataCategorization = 'Value-Profile Fixed List';
+											componentNode.testDataCategorizationListData = null;
+										}
 									}
 								}
 							}
@@ -935,12 +939,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 								if(assertionObj && assertionObj.childNodes.length > 0){
 									var assertionElm = assertionObj.childNodes[0];
 									if(assertionElm.childNodes.length > 0){
-										if(assertionElm.childNodes[0].nodeName === 'PlainText'){
-											subComponentNode.testDataCategorization = 'Value-Profile Fixed';
-											subComponentNode.testDataCategorizationListData = null;
-										}else if(assertionElm.childNodes[0].nodeName === 'StringList'){
-											subComponentNode.testDataCategorization = 'Value-Profile Fixed List';
-											subComponentNode.testDataCategorizationListData = null;
+										for(index2 in assertionElm.childNodes){
+											if(assertionElm.childNodes[index2].nodeName === 'PlainText'){
+												subComponentNode.testDataCategorization = 'Value-Profile Fixed';
+												subComponentNode.testDataCategorizationListData = null;
+											}else if(assertionElm.childNodes[index2].nodeName === 'StringList'){
+												subComponentNode.testDataCategorization = 'Value-Profile Fixed List';
+												subComponentNode.testDataCategorizationListData = null;
+											}
 										}
 									}
 								}
@@ -999,9 +1005,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			var data = {};
 			data.type = $rootScope.selectedTestStep.tdsXSL;
 			data.xml = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),false));
-
 			$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
-				$rootScope.testDataSpecificationHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
+				$scope.testDataSpecificationHTML=angular.fromJson(response.data).xml;
 			}, function (error) {
 			});
 		}else{
@@ -1014,7 +1019,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			var data = {};
 			data.type = $rootScope.selectedTestStep.jdXSL;
 			data.xml = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),false));
-
 			$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
 				$rootScope.jurorDocumentsHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
 			}, function (error) {
@@ -1028,10 +1032,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var data = {};
 		data.type = 'MessageContents';
 		data.xml = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
-
 		$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
 			$scope.messageContentsHTML=angular.fromJson(response.data).xml;
-			$scope.messageContentsHTML.html=(angular.fromJson(response.data).xml).replace("accordion","uib-accordion");
 		}, function (error) {
 		});
 	};
@@ -2463,13 +2465,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
     $scope.applySegmentTemplate = function (template){
 		if($rootScope.selectedTestStep && $rootScope.selectedSegmentNode){
 			for(var i in template.categorizations){
-				var cate = template.categorizations[i];
+				var cate = angular.copy(template.categorizations[i]);
+				cate.iPath = $rootScope.selectedSegmentNode.segment.iPath  + cate.iPath;
 				if(cate.testDataCategorization && cate.testDataCategorization !== ''){
-					$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash($rootScope.selectedSegmentNode.segment.iPath + cate.iPath)] = cate;
+					$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(cate.iPath)] = cate;
 				}
 			}
-
-			$scope.initTestData();
 
 			if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.segment){
 				$scope.selectSegment($rootScope.selectedSegmentNode.segment);
@@ -2683,7 +2684,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	//validation 
 	$scope.validate = function (mode) {
 		$scope.result="";
-		var message = $rootScope.selectedTestStep.er7Message;
+		var message = $scope.er7MessageOnlineValidation;
 		var igDocumentId = $rootScope.selectedTestStep.integrationProfileId;
         var conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
 		var cbConstraints = $rootScope.selectedTestStep.constraintsXML;
@@ -2788,7 +2789,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.updatePositions(event.dest.nodesScope.$modelValue);
 			$scope.updatePositions(event.source.nodesScope.$modelValue);
 			
-			//$scope.recordChanged();
+			$scope.recordChanged();
 
 
 		}
