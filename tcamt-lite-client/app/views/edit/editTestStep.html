@@ -270,27 +270,6 @@ body {
 								<i class="fa fa-pencil fa-fw"></i> Selected Segment
 							</span>
 						</uib-accordion-heading>
-						<div ng-if="selectedSegmentNode.segment">
-
-						<div class="row" style="margin:12px">
-							<div class="col-md-2">
-								<label class="control-label">Selected Segment:</label>
-							</div>
-							<div class="col-md-10">
-								<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.iPath" />
-							</div>
-						</div>
-
-						<div class="row" style="margin:12px">
-							<div class="col-md-2">
-								<label class="control-label">Line String:</label>
-							</div>
-							<div class="col-md-10">
-								<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.segmentStr" />
-							</div>
-						</div>
-						</div>
-
 						<div class="col-md-12" ng-if="!selectedSegmentNode.segment"><p style ="color:red;"> No Segment Selected</p></div>
 
 						<div class="col-md-12" ng-if="selectedSegmentNode.segment">
@@ -305,29 +284,47 @@ body {
 									<span ng-dropdown-multiselect="" options="colsData" selected-model="selectedCols" extra-settings="smartButtonSettings"></span>
 								</span>
 							</div>
-						</div>
 
-						<div class="col-md-12">
-							<div class="table-responsive">
-								<table tt-table tt-params="segmentParams" class="table table-bordered table-fix-header table-condensed profile-table">
-									<thead>
-									<tr class="tbl-header">
-										<th class="col-md-1">Path</th>
-										<th class="col-md-1">Name</th>
-										<th class="col-md-1" ng-show="isShow(1)">DT</th>
-										<th class="col-md-1" ng-show="isShow(2)">Usage</th>
-										<th class="col-md-1" ng-show="isShow(3)">Cardi.</th>
-										<th class="col-md-1" ng-show="isShow(4)">Length</th>
-										<th class="col-md-1" ng-show="isShow(5)">ValueSet</th>
-										<th class="col-md-1" ng-show="isShow(6)">Predicate</th>
-										<th class="col-md-1" ng-show="isShow(7)">Conf.Statement</th>
-										<th class="col-md-1">Value</th>
-										<th class="col-md-1">Test Data Cate.</th>
-										<th class="col-md-1">Action</th>
-									</tr>
-									</thead>
-									<tbody></tbody>
-								</table>
+							<div class="row" style="margin:12px">
+								<div class="col-md-2">
+									<label class="control-label">Selected Segment:</label>
+								</div>
+								<div class="col-md-10">
+									<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.iPath" />
+								</div>
+							</div>
+
+							<div class="row" style="margin:12px">
+								<div class="col-md-2">
+									<label class="control-label">Line String:</label>
+								</div>
+								<div class="col-md-10">
+									<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.segmentStr" />
+								</div>
+							</div>
+
+							<div class="col-md-12">
+								<div class="table-responsive">
+									<table tt-table tt-params="segmentParams" class="table table-bordered table-fix-header table-condensed profile-table">
+										<thead>
+										<tr class="tbl-header">
+											<th class="col-md-1">Path</th>
+											<th class="col-md-1">Name</th>
+											<th class="col-md-1" ng-show="isShow(1)">DT</th>
+											<th class="col-md-1" ng-show="isShow(2)">Usage</th>
+											<th class="col-md-1" ng-show="isShow(3)">Cardi.</th>
+											<th class="col-md-1" ng-show="isShow(4)">Length</th>
+											<th class="col-md-1" ng-show="isShow(5)">ValueSet</th>
+											<th class="col-md-1" ng-show="isShow(6)">Predicate</th>
+											<th class="col-md-1" ng-show="isShow(7)">Conf.Statement</th>
+											<th class="col-md-1">Value</th>
+											<th class="col-md-1">Test Data Cate.</th>
+											<th class="col-md-1">Action</th>
+										</tr>
+										</thead>
+										<tbody></tbody>
+									</table>
+								</div>
 							</div>
 						</div>
 					</uib-accordion-group>
