@@ -129,49 +129,49 @@ body {
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Description</label>
-						<textarea froala ng-change="recordChanged(selectedTestStep)" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc"></textarea>
+						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc"></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Comments</label>
-						<textarea froala ng-change="recordChanged(selectedTestStep)" name="comments" ng-model="selectedTestStep.testStepStory.comments" required ></textarea>
+						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="comments" ng-model="selectedTestStep.testStepStory.comments" required ></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Pre Condition</label>
-						<textarea froala ng-change="recordChanged(selectedTestStep)" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required ></textarea>
+						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required ></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Post Condition</label>
-						<textarea froala ng-change="recordChanged(selectedTestStep)" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required ></textarea>
+						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required ></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Test Objectives</label>
-						<textarea froala ng-change="recordChanged(selectedTestStep)" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required></textarea>
+						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Evaluation Criteria</label>
-						<textarea froala ng-change="recordChanged(selectedTestStep)" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required ></textarea>
+						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required ></textarea>
 					</div>
 				</div>
 
 				<div class="col-md-12">
 					<div class="form-group">
 						<label class="control-label">Notes</label>
-						<textarea froala ng-change="recordChanged(selectedTestStep)" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
+						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
 					</div>
 				</div>
 			</div>
@@ -408,7 +408,7 @@ body {
 
 					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.testdata">
 						<uib-accordion-heading>
-							<span style="color: white !important;">
+							<span>
 								<i class="fa" ng-class="{'fa-caret-down': DocAccordi.testdata, 'fa-caret-right': !DocAccordi.testdata}"></i>
 								 Test Data Specification
 							</span>
@@ -418,7 +418,7 @@ body {
 
 					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.jurorDocument">
 						<uib-accordion-heading>
-							<span style="color: white !important;">
+							<span>
 								<i class="fa" ng-class="{'fa-caret-down': DocAccordi.jurorDocument, 'fa-caret-right': !DocAccordi.jurorDocument}"></i>
 								 Juror Document
 							</span>
