@@ -67,7 +67,7 @@ body {
                             <md-input-container style="width: 100%;">
                                 <label>Type</label>
                                 <md-select ng-model="selectedTestStep.type" ng-change="recordChanged(selectedTestStep);">
-                                    <md-option value="DATAINSTANCE">DATAINSTANCE</md-option>
+                                    <md-option ng-value="DATAINSTANCE">DATAINSTANCE</md-option>
                                 </md-select>
                             </md-input-container>
                         </div>
@@ -102,8 +102,8 @@ body {
                             <md-input-container style="width: 100%;">
                                 <label>Test Data Specification</label>
                                 <md-select ng-model="selectedTestStep.tdsXSL" ng-change="recordChanged(selectedTestStep);">
-                                    <md-option value="">No Test Data Specification</md-option>
-                                    <md-option value="Basic-TestDataSpecification">Basic TestDataSpecification</md-option>
+                                    <md-option ng-value="">No Test Data Specification</md-option>
+                                    <md-option ng-value="Basic-TestDataSpecification">Basic TestDataSpecification</md-option>
                                 </md-select>
                             </md-input-container>
                         </div>
@@ -112,10 +112,10 @@ body {
                             <md-input-container style="width: 100%;">
                                 <label>Juror Document</label>
                                 <md-select ng-model="selectedTestStep.jdXSL" ng-change="recordChanged(selectedTestStep);">
-                                    <md-option value="">No Juror Document</md-option>
-                                    <md-option value="Superset-JurorDocument">Superset Juror Document</md-option>
-                                    <md-option value="Z23-JurorDocument">Z23 Juror Document</md-option>
-                                    <md-option value="Z32-Z33-Z42-JurorDocument">Z32-Z33-Z42 Juror Document</md-option>
+                                    <md-option ng-value="">No Juror Document</md-option>
+                                    <md-option ng-value="Superset-JurorDocument">Superset Juror Document</md-option>
+                                    <md-option ng-value="Z23-JurorDocument">Z23 Juror Document</md-option>
+                                    <md-option ng-value="Z32-Z33-Z42-JurorDocument">Z32-Z33-Z42 Juror Document</md-option>
                                 </md-select>
                             </md-input-container>
                         </div>
@@ -178,18 +178,6 @@ body {
 		</div>
 
 		<div ng-show="isSelectedTestStepTab(3);">
-			<div class="row">
-				<div class="col-md-12">
-				<span class="pull-left">
-					<button type="button" class="btn btn-info btn-sm" ng-click="openCreateEr7TemplateModal()"><i class="fa fa-plus"></i>
-                        New Er7 Message Template
-                    </button>
-				</span>
-				</div>
-			</div>
-
-
-
 				<div class="col-md-12">
 					<textarea rows="10" type="cb" class="form-control" id="er7-textarea"
 							  ng-change="recordChanged(selectedTestStep)"
@@ -201,14 +189,7 @@ body {
 
 		<div ng-show="isSelectedTestStepTab(4);">
 			<div class="row">
-				<div class="col-md-6">
-				<span class="pull-left">
-					<button type="button" class="btn btn-info btn-sm" ng-click="openCreateMessageTemplateModal()"><i class="fa fa-plus"></i>
-                        New TestData Categorization Template For Message
-                    </button>
-				</span>
-				</div>
-				<div class="col-md-6">
+				<div class="col-md-12">
 				<span class="pull-right">
 					<div class="btn-group btn-group-sm" data-toggle="buttons">
     					<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'All'}">
@@ -225,7 +206,7 @@ body {
 				<uib-accordion close-others="false">
 					<uib-accordion-group is-open="testDataAccordi.segmentList" panel-class="panel-level2">
 						<uib-accordion-heading>
-							<span ng-click="segmentListAccordionClicked()">
+							<span ng-click="segmentListAccordionClicked()" style="color:white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.segmentList, 'fa-caret-right': !testDataAccordi.segmentList}"></i>
 								<i class="fa fa-file-text-o fa-fw"></i> Segments List
 							</span>
@@ -267,77 +248,67 @@ body {
 
 					<uib-accordion-group is-open="testDataAccordi.selectedSegment" panel-class="panel-level2">
 						<uib-accordion-heading>
-							<span ng-click="segmentAccordionClicked()">
+							<span ng-click="segmentAccordionClicked()" style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.selectedSegment, 'fa-caret-right': !testDataAccordi.selectedSegment}"></i>
 								<i class="fa fa-pencil fa-fw"></i> Selected Segment
 							</span>
 						</uib-accordion-heading>
+						<div ng-if="selectedSegmentNode.segment">
 
-						<div class="col-md-12" ng-if="!selectedSegmentNode.segment"><p style ="color:red;"> No Segment Selected</p></div>
-
-						<div class="col-md-12" ng-if="selectedSegmentNode.segment">
-							<div class="row">
-								<span class="pull-left">
-									<button type="button" class="btn btn-info btn-sm" ng-click="openCreateSegmentTemplateModal()"><i class="fa fa-plus"></i>
-                        				New TestData Categorization Template For Segment
-                    				</button>
-								</span>
+						<div class="row" style="margin:12px">
+							<div class="col-md-2">
+								<label class="control-label">Selected Segment:</label>
 							</div>
-
-
-							<div class="row" style="margin:12px">
-								<div class="col-md-2">
-									<label class="control-label">Selected Segment:</label>
-								</div>
-								<div class="col-md-10">
-									<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.iPath" />
-								</div>
+							<div class="col-md-10">
+								<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.iPath" />
 							</div>
+						</div>
 
-							<div class="row" style="margin:12px">
-								<div class="col-md-2">
-									<label class="control-label">Line String:</label>
-								</div>
-								<div class="col-md-10">
-									<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.segmentStr" />
-								</div>
+						<div class="row" style="margin:12px">
+							<div class="col-md-2">
+								<label class="control-label">Line String:</label>
 							</div>
+							<div class="col-md-10">
+								<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.segmentStr" />
+							</div>
+						</div>
+						</div>
+						<div class="col-md-10" ng-if="!selectedSegmentNode.segment"><p style ="color:red;"> No Segment Selected</p></div>
 
-							<div class="col-md-12">
+						<div class="col-md-12">
 							<span class="pull-right">
 								<span ng-dropdown-multiselect="" options="colsData" selected-model="selectedCols" extra-settings="smartButtonSettings"></span>
 							</span>
-							</div>
+						</div>
 
-							<div class="col-md-12">
-								<div class="table-responsive">
-									<table tt-table tt-params="segmentParams" class="table table-bordered table-fix-header table-condensed profile-table">
-										<thead>
-										<tr class="tbl-header">
-											<th class="col-md-1">Path</th>
-											<th class="col-md-1">Name</th>
-											<th class="col-md-1" ng-show="isShow(1)">DT</th>
-											<th class="col-md-1" ng-show="isShow(2)">Usage</th>
-											<th class="col-md-1" ng-show="isShow(3)">Cardi.</th>
-											<th class="col-md-1" ng-show="isShow(4)">Length</th>
-											<th class="col-md-1" ng-show="isShow(5)">ValueSet</th>
-											<th class="col-md-1" ng-show="isShow(6)">Predicate</th>
-											<th class="col-md-1" ng-show="isShow(7)">Conf.Statement</th>
-											<th class="col-md-1">Value</th>
-											<th class="col-md-1">Test Data Cate.</th>
-											<th class="col-md-1">Action</th>
-										</tr>
-										</thead>
-										<tbody></tbody>
-									</table>
-								</div>
+						<div class="col-md-12">
+							<div class="table-responsive">
+								<table tt-table tt-params="segmentParams" class="table table-bordered table-fix-header table-condensed profile-table">
+									<thead>
+									<tr class="tbl-header">
+										<th class="col-md-1">Path</th>
+										<th class="col-md-1">Name</th>
+										<th class="col-md-1" ng-show="isShow(1)">DT</th>
+										<th class="col-md-1" ng-show="isShow(2)">Usage</th>
+										<th class="col-md-1" ng-show="isShow(3)">Cardi.</th>
+										<th class="col-md-1" ng-show="isShow(4)">Length</th>
+										<th class="col-md-1" ng-show="isShow(5)">ValueSet</th>
+										<th class="col-md-1" ng-show="isShow(6)">Predicate</th>
+										<th class="col-md-1" ng-show="isShow(7)">Conf.Statement</th>
+										<th class="col-md-1">Value</th>
+										<th class="col-md-1">Test Data Cate.</th>
+										<th class="col-md-1">Action</th>
+									</tr>
+									</thead>
+									<tbody></tbody>
+								</table>
 							</div>
 						</div>
 					</uib-accordion-group>
 
 					<uib-accordion-group is-open="testDataAccordi.constraintList" panel-class="panel-level2">
 						<uib-accordion-heading>
-							<span ng-click="constraintAccordionClicked()">
+							<span ng-click="constraintAccordionClicked()" style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.constraintList, 'fa-caret-right': !testDataAccordi.constraintList}"></i>
 								<i class="fa fa-file-text-o fa-fw"></i> TestData Categorization List
 							</span>
@@ -384,6 +355,7 @@ body {
 			</div>
 			<div class="col-md-12">
 					<textarea rows="10" type="cb" class="form-control" id="er7-textarea-validation"
+							  ng-change="recordChanged(selectedTestStep)"
 							  ng-model="er7MessageOnlineValidation"
 							  wrap="off" style="overflow:auto;"></textarea>
 			</div>
@@ -401,7 +373,7 @@ body {
 				<uib-accordion close-others="true">
 					<uib-accordion-group  panel-class="panel-level2" is-open="nistStd.nist">
 						<uib-accordion-heading>
-							<span>
+							<span style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': nistStd.nist, 'fa-caret-right': !nistStd.nist}"></i>
 								 NIST XML  
 							</span>
@@ -411,7 +383,7 @@ body {
 
 					<uib-accordion-group  panel-class="panel-level2" is-open="nistStd.std">
 						<uib-accordion-heading>
-							<span>
+							<span style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': nistStd.std, 'fa-caret-right': !nistStd.std}"></i>
 								 STD XML 
 							</span>
@@ -426,9 +398,9 @@ body {
 				<uib-accordion close-others="true">
 					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.messageContents">
 						<uib-accordion-heading>
-							<span >
+							<span style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': DocAccordi.messageContents, 'fa-caret-right': !DocAccordi.messageContents}"></i>
-								 Message messageContents
+								 Message Content
 							</span>
 						</uib-accordion-heading>
 						<div dynamic="messageContentsHTML"></div>
@@ -436,17 +408,17 @@ body {
 
 					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.testdata">
 						<uib-accordion-heading>
-							<span>
+							<span style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': DocAccordi.testdata, 'fa-caret-right': !DocAccordi.testdata}"></i>
 								 Test Data Specification
 							</span>
 						</uib-accordion-heading>
-						<div dynamic="testDataSpecificationHTML"></div>
+						<ng-bind-html ng-bind-html="testDataSpecificationHTML"/>
 					</uib-accordion-group>
 
 					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.jurorDocument">
 						<uib-accordion-heading>
-							<span>
+							<span style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': DocAccordi.jurorDocument, 'fa-caret-right': !DocAccordi.jurorDocument}"></i>
 								 Juror Document
 							</span>
@@ -491,22 +463,7 @@ body {
 			[{{node.field.minLength}}..{{node.field.maxLength}}]
         </td>
 		<td class="col-md-1" ng-show="isShow(5)">
-			<div ng-repeat="table in node.field.tables">
-				<div ng-show="findTable(table)" ng-init="tooltip=false">
-				<span ng-mouseover="tooltip=true" ng-mouseleave="tooltip=false">
-					{{::findTable(table).bindingIdentifier}}
-				</span>
-
-					<div ng-show="hasChildren(node)">
-						Location : 1
-					</div>
-
-					<div class="tooltip" ng-show="tooltip">Hi..Welcome to Angular JS World.</div>
-				</div>
-			</div>
-
-
-
+			{{findTable(node.field.table).bindingIdentifier}}
         </td>
 		<td class="col-md-1" ng-show="isShow(6)">
 			<span>{{node.predicate.description}}</span>
@@ -518,14 +475,24 @@ body {
         </td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.value}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
+				</div>
 			</div>
         </td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
-					<option value="">No test data Cate.</option>
-				</select>
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.testDataCategorization}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
+						<option value="">No test data Cate.</option>
+					</select>
+				</div>
 				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
 					<input ng-model="node.testDataCategorizationListData" class="form-control"  ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);">
 				</div>
@@ -585,14 +552,24 @@ body {
 		</td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.value}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
+				</div>
 			</div>
 		</td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
-					<option value="">No test data Cate.</option>
-				</select>
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.testDataCategorization}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
+						<option value="">No test data Cate.</option>
+					</select>
+				</div>
 				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
 					<input ng-model="node.testDataCategorizationListData" class="form-control"  ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);">
 				</div>
@@ -647,14 +624,24 @@ body {
 		</td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.value}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
+				</div>
 			</div>
 		</td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
-					<option value="">No test data Cate.</option>
-				</select>
+				<div ng-show="node.testDataCategorization === 'Value-Profile Fixed' || node.testDataCategorization === 'Value-Profile Fixed List'">
+					<span>{{node.testDataCategorization}}</span>
+				</div>
+				<div ng-show="node.testDataCategorization !== 'Value-Profile Fixed' && node.testDataCategorization !== 'Value-Profile Fixed List'">
+					<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
+						<option value="">No test data Cate.</option>
+					</select>
+				</div>
 				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
 					<input ng-model="node.testDataCategorizationListData" class="form-control"  ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);">
 				</div>

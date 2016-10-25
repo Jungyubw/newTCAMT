@@ -18,6 +18,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.nistStd.nist = false;
 	$scope.nistStd.std = false;
 	$scope.changesMap={};
+	$rootScope.tocHeigh=300;
 	$(document).keydown(function(e) {
 		var nodeName = e.target.nodeName.toLowerCase();
 
@@ -442,6 +443,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if (testplan != null) {
 			waitingDialog.show('Opening Test Plan...', {dialogSize: 'xs', progressType: 'info'});
 			$scope.selectTPTab(1);
+			$rootScope.CurrentTitle="Test Plan "+":"+ testplan.name;
 
 			$rootScope.testplans = [];
 			$rootScope.testplans.push(testplan);
@@ -463,6 +465,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.OpenIgMetadata= function(ig){
+		$rootScope.CurrentTitle="IG Document "+":"+ ig.metaData.title;
+
+
 		$rootScope.selectedTemplate=null;
 		$rootScope.selectedSegmentNode =null;
 		$rootScope.selectedTestStep=null;
@@ -471,20 +476,24 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	};
 	
-	$scope.OpenMessageMetadata= function(msg){
-		$rootScope.selectedTemplate=null;
-		$rootScope.selectedSegmentNode =null;
-		$rootScope.selectedTestStep=null;
-		$rootScope.message=msg;
-		$scope.subview = "MessageMetadata.html";
-
-	};
+//	$scope.OpenMessageMetadata= function(msg){
+//		console.log("Openning message");
+//
+//		$rootScope.selectedTemplate=null;
+//		$rootScope.selectedSegmentNode =null;
+//		$rootScope.selectedTestStep=null;
+//		$rootScope.message=msg;
+//		$scope.subview = "MessageMetadata.html";
+//
+//	};
 
 	$scope.selectTestCaseGroup = function (testCaseGroup) {
 		if (testCaseGroup != null) {
 			waitingDialog.show('Opening Test Case Group...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
 				$rootScope.selectedTestCaseGroup = testCaseGroup;
+				$rootScope.CurrentTitle= "Test Case Group"+":"+ testCaseGroup.name;
+
 				$scope.subview = "EditTestCaseGroupMetadata.html";
 			}, 0);
 			$timeout(function() {
@@ -501,6 +510,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if (testCase != null) {
 			waitingDialog.show('Opening Test Case ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
+				$rootScope.CurrentTitle="Test Case "+":"+testCase.name;
 				$rootScope.selectedTestCase = testCase;
 				$scope.subview = "EditTestCaseMetadata.html";
 			}, 0);
@@ -518,6 +528,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if (testStep != null) {
 			waitingDialog.show('Opening Test Step ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
+				$rootScope.CurrentTitle="Test Step "+":"+testStep.name;
 				$rootScope.segmentList = [];
 				$rootScope.selectedIntegrationProfile = null;
 				$rootScope.selectedTestStep = testStep;
@@ -1078,6 +1089,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.OpenMessageMetadata = function(msg) {
+		$rootScope.CurrentTitle="Conformance Profile"+":"+ msg.name;
 		$rootScope.selectedTemplate = null;
 		$rootScope.selectedSegmentNode = null;
 		$rootScope.selectedTestStep = null;
@@ -2836,7 +2848,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 	$scope.testPlanOptions = [
-		['add new testgroup', function($itemScope) {
+		['Add New Testgroup', function($itemScope) {
 			if( !$itemScope.$nodeScope.$modelValue.children){
 				$itemScope.$nodeScope.$modelValue.children=[];
 			}
@@ -2858,7 +2870,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		}],
 
-		['Add new testcase', function($itemScope) {
+		['Add New Testcase', function($itemScope) {
 			if( !$itemScope.$nodeScope.$modelValue.children){
 				$itemScope.$nodeScope.$modelValue.children=[];
 			}
@@ -2883,7 +2895,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	];
 
 	$scope.testGroupOptions = [
-		['add new testCase', function($itemScope) {
+		['Add New TestCase', function($itemScope) {
 			var caseId=new ObjectId().toString();
 			$scope.changesMap[caseId]=true;
 			$scope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
@@ -2901,7 +2913,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.recordChanged();
 		}],
 
-		['clone', function($itemScope) {
+		['Clone', function($itemScope) {
 			var clone = $scope.cloneTestCaseGroup($itemScope.$nodeScope.$modelValue);
 
 			var name =  $itemScope.$nodeScope.$modelValue.name;
@@ -2912,7 +2924,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		}],
 
-		['delete', function($itemScope) {
+		['Delete', function($itemScope) {
 			$scope.deleteGroup($itemScope.$modelValue);
 			$itemScope.$nodeScope.remove();
 			Notification.success("Test Group "+$itemScope.$modelValue.name +" Deleted");
@@ -2924,7 +2936,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	
 	$scope.testCaseOptions =[
-		['add new teststep', function($itemScope) {
+		['Add New Teststep', function($itemScope) {
 			
 			if( !$itemScope.$nodeScope.$modelValue.teststeps){
 				$itemScope.$nodeScope.$modelValue.teststeps=[];
@@ -2961,7 +2973,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		}],
 
-		['clone', function($itemScope) {
+		['Clone', function($itemScope) {
 
 			var clone = $scope.cloneTestCase($itemScope.$nodeScope.$modelValue);
 			clone.position=$itemScope.$nodeScope.$parent.$modelValue.length+1;
@@ -2972,7 +2984,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		}],
 
-		['delete', function($itemScope) {
+		['Delete', function($itemScope) {
 			$scope.deleteCase($itemScope.$modelValue)
 			$itemScope.$nodeScope.remove();
 			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue);
@@ -2985,7 +2997,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.testStepOptions = [
 
-		['clone', function($itemScope) {
+		['Clone', function($itemScope) {
 			//var cloneModel= {};
 			//var name =  $itemScope.$nodeScope.$modelValue.name;
 			//name=name+"(copy)";
@@ -3003,7 +3015,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		}],
 
-		['delete', function($itemScope) {
+		['Delete', function($itemScope) {
 			$scope.deleteStep($itemScope.$modelValue);
 			$itemScope.$nodeScope.remove();
 			$scope.updatePositions($itemScope.$nodeScope.$parentNodesScope.$modelValue);
@@ -3079,7 +3091,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		}],
 
-		['Overwrite Template', function($itemScope) {
+		['Apply Message', function($itemScope) {
 			$scope.changesMap[$rootScope.selectedTestStep.id]=true;
 		$scope.overwriteER7Template($itemScope.er7Tmp);
 		Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
@@ -3131,6 +3143,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedSegmentNode =null;
 		
 		$scope.msgTemplate=msgtemp;
+		$rootScope.CurrentTitle= "Message Template : "+msgtemp.name;
+
 
 		$scope.subview = "MessageTemplateMetadata.html";
 	}
@@ -3139,9 +3153,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedSegmentNode=null;
 
 		$scope.rootTemplate=temp;
+		$rootScope.CurrentTitle= "Message Template : "+temp.name;
+
 		$scope.subview = "TemplateMetadata.html";
 	}
 	$scope.OpenSegmentTemplateMetadata=function(segTemp){
+		$rootScope.CurrentTitle= "Segment Template : "+segTemp.name;
+
 		$rootScope.selectedTemplate=segTemp; //never used
 		$rootScope.selectedSegmentNode=null;
 		$scope.segmentTemplateObject=segTemp;
@@ -3149,6 +3167,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	}
 
 	$scope.OpenEr7TemplatesMetadata=function(er7temp){
+		$rootScope.CurrentTitle= "Er7 Message Template : "+er7temp.name;
 		$rootScope.selectedTemplate=er7temp;
 		$rootScope.selectedSegmentNode =null;
 		$scope.er7Template=er7temp;

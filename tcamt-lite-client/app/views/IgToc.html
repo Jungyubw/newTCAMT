@@ -2,10 +2,8 @@
     <ol ui-tree-nodes="" ng-model="igs">
         <li ng-repeat="ig in igs" ui-tree-node data-nodrag>
             <div ui-tree-handle ng-class="{selected : this.$modelValue===activeModel,used:selectedTestStep&&selectedTestStep.integrationProfileId===this.$modelValue.id}">
-                <span data-nodrag ng-click="toggle(this)" class="glyphicon glyphicon-plus" ng-class="{
-                          'glyphicon glyphicon-plus': collapsed,
-                          'glyphicon glyphicon-minus': !collapsed
-                        }">
+     <i data-nodrag ng-click="toggle(this)" class="fa" ng-class="{'fa-caret-right': collapsed, 'fa-caret-down': !collapsed}">
+					</i>
                   </span> <span ng-click="Activate(this);OpenIgMetadata(ig)"> <span class="badge label-info">IP</span> {{ig.metaData.title}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="ig.profile.messages.children" ng-if="!collapsed">
