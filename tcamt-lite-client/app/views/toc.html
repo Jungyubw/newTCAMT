@@ -25,7 +25,7 @@
                     <i data-nodrag ng-click="toggle(this)" class="fa" ng-class="{'fa-caret-right': collapsed, 'fa-caret-down': !collapsed}">
 					</i>
                     <span class="label label-sub-component label-icon">TP</span> </span> <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':test.isChanged}" ng-click="Activate(this); selectTestPlan(test);">
-						{{test.name}}{{test.isChanged}}</span>
+						{{test.name}}</span>
                 </div>
             </div>
             <div ng-if="test.children.length>0">
@@ -48,10 +48,9 @@
                             <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':changesMap[child.id]}" ng-click="Activate(this); selectTestCase(child)">[{{child.position}}]{{child.name}}</span>
                         </div>
                     </div>
-     						 <div ng-if="child.testcases>0">
-                					{{updatePositions(child.testcases)}}
-           						 </div>
+  
                     <ol ui-tree-nodes="" ng-model="child.testcases" ng-if="child.hasOwnProperty('testcases')" data-type="group" data-empty-placeholder-enabled>
+                					{{updatePositions(child.testcases)}}
                         <li  ng-hide="$parentNodeScope.collapsed" ng-repeat="case in child.testcases " ui-tree-node data-type="case">
                             <div ui-tree-handle style="margin-left:14px;" ng-click=" Activate(this) ">
                                 <div context-menu="testCaseOptions">

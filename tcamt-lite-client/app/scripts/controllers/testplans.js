@@ -2827,13 +2827,20 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 	$scope.updatePositions= function(arr){
-
+		
+		arr.sort(function(a, b){return a.position-b.position});
 		for (var i = arr.length - 1; i >= 0; i--){
 			arr[i].position=i+1;
 		}
 	};
 
-
+	$scope.getWithPosition=function(arr,index){
+		angular.forEach(arr,function(element){
+			if(element.position&&element.position==index){
+				return element;
+			}
+		});
+	}
 
 
 	$scope.Activate= function(itemScope){
