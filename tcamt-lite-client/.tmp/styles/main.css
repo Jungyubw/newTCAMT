@@ -10001,8 +10001,3 @@ a, a:hover, a:focus {
 .unsaved {
   font-style: italic !important;
 }
-
-/* line 2313, ../../app/styles/main.scss */
-.tooltip {
-  z-index: 10000;
-}
