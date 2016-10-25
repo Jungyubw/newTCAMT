@@ -440,17 +440,21 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         $scope.selectTPTab(0);
     };
 
+    $scope.updateCurrentTitle = function (type, name){
+		$rootScope.CurrentTitle = type + ": " + name;
+	}
+
 	$scope.selectTestPlan = function (testplan) {
 		if (testplan != null) {
 			waitingDialog.show('Opening Test Plan...', {dialogSize: 'xs', progressType: 'info'});
 			$scope.selectTPTab(1);
-			$rootScope.CurrentTitle="Test Plan "+":"+ testplan.name;
 
 			$rootScope.testplans = [];
 			$rootScope.testplans.push(testplan);
 
 			$timeout(function () {
 				$rootScope.selectedTestPlan = testplan;
+				$scope.updateCurrentTitle("Test Plan", $rootScope.selectedTestPlan.name);
 				$scope.subview = "EditTestPlanMetadata.html";
 			}, 0);
 
@@ -493,8 +497,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			waitingDialog.show('Opening Test Case Group...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
 				$rootScope.selectedTestCaseGroup = testCaseGroup;
-				$rootScope.CurrentTitle= "Test Case Group"+":"+ testCaseGroup.name;
-
+				$scope.updateCurrentTitle("Test Case Group", $rootScope.selectedTestCaseGroup.name);
 				$scope.subview = "EditTestCaseGroupMetadata.html";
 			}, 0);
 			$timeout(function() {
@@ -511,8 +514,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if (testCase != null) {
 			waitingDialog.show('Opening Test Case ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
-				$rootScope.CurrentTitle="Test Case "+":"+testCase.name;
 				$rootScope.selectedTestCase = testCase;
+				$scope.updateCurrentTitle("Test Case", $rootScope.selectedTestCase.name);
 				$scope.selectedTestCaseTab = 1;
 				$scope.subview = "EditTestCaseMetadata.html";
 			}, 0);
@@ -530,10 +533,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if (testStep != null) {
 			waitingDialog.show('Opening Test Step ...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
-				$rootScope.CurrentTitle="Test Step "+":"+testStep.name;
 				$rootScope.segmentList = [];
 				$rootScope.selectedIntegrationProfile = null;
 				$rootScope.selectedTestStep = testStep;
+				$scope.updateCurrentTitle("Test Step", $rootScope.selectedTestStep.name);
 				if($rootScope.selectedTestStep.testDataCategorizationMap == undefined || $rootScope.selectedTestStep == null){
 					$rootScope.selectedTestStep.testDataCategorizationMap = {};
 				}
@@ -588,8 +591,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if(obj){
 			$scope.changesMap[obj.id] = true;
 		}
-
-		console.log(obj);
 	};
 
 	$scope.updateTransport = function () {
@@ -1303,9 +1304,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var elmAssertion = xmlDoc.createElement("Assertion");
 		var elmStringList = xmlDoc.createElement("StringList");
 		elmStringList.setAttribute("Path", iPositionPath);
-
 		elmStringList.setAttribute("CSV", values);
-		elmStringList.setAttribute("IgnoreCase", "false");
 		elmAssertion.appendChild(elmStringList);
 		elmConstraint.appendChild(elmDescription);
 		elmConstraint.appendChild(elmAssertion);
