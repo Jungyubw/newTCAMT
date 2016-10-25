@@ -4,12 +4,10 @@
             <div ui-tree-handle ng-click="Activate(this); OpenTemplateMetadata(template)" ng-class="{selected : this.$modelValue===activeModel}">
                 {{template.name}}
             </div>
-            <div ui-tree-handle>
-                <span data-nodrag ng-click="switchermsg(messagetempCollapsed)" class="glyphicon glyphicon-plus" ng-class="{
-                          'glyphicon glyphicon-plus': messagetempCollapsed,
-                          'glyphicon glyphicon-minus': !messagetempCollapsed
-                        }">
-                </span> Messages Template
+            <div ui-tree-handle>                       
+                     <i data-nodrag ng-click="switchermsg(messagetempCollapsed)" class="fa" ng-class="{'fa-caret-right': messagetempCollapsed, 'fa-caret-down': !messagetempCollapsed}">
+					</i>       
+                Messages Template
                 <span ng-show="selectedIntegrationProfile">for {{selectedIntegrationProfile.sectionTitle}}-{{selectedConformanceProfile.name}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.messageTemplates" ng-if="!messagetempCollapsed">
@@ -21,11 +19,9 @@
                 </li>
             </ol>
             <div ui-tree-handle>
-                <span data-nodrag ng-click="switcherseg(segmenttempCollapsed)" class="glyphicon glyphicon-plus" ng-class="{
-                          'glyphicon glyphicon-plus': segmenttempCollapsed,
-                          'glyphicon glyphicon-minus': !segmenttempCollapsed
-                        }">
-                </span> Segment Templates
+                    <i data-nodrag ng-click="switcherseg(segmenttempCollapsed)" class="fa" ng-class="{'fa-caret-right': segmenttempCollapsed, 'fa-caret-down': !segmenttempCollapsed}">
+					</i>   
+				Segment Templates
                 <span ng-show="selectedSegmentNode">for {{selectedSegmentNode.segment.obj.name}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.segmentTemplates" ng-if="!segmenttempCollapsed">
@@ -37,11 +33,8 @@
                 </li>
             </ol>
             <div ui-tree-handle>
-                <span data-nodrag ng-click="switcherEr7(Er7Collapsed)" class="glyphicon glyphicon-plus" ng-class="{
-                          'glyphicon glyphicon-plus': Er7Collapsed,
-                          'glyphicon glyphicon-minus': !Er7Collapsed
-                        }">
-                </span> Er7 Templates
+                     <i data-nodrag ng-click="switcherEr7(Er7Collapsed)" class="fa" ng-class="{'fa-caret-right': Er7Collapsed, 'fa-caret-down': !Er7Collapsed}">
+					</i>   Er7 Templates
                 <span ng-show="selectedIntegrationProfile">for {{selectedIntegrationProfile.sectionTitle}}-{{selectedConformanceProfile.name}}/span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.er7Templates" ng-if="!Er7Collapsed">
