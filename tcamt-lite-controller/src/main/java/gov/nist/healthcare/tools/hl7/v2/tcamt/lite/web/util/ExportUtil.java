@@ -482,50 +482,53 @@ public class ExportUtil {
 
 	private void generateJurorDocument(ZipOutputStream out, TestStep ts, String teststepPath) throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
-		byte[] buf = new byte[1024];
-		out.putNextEntry(new ZipEntry(teststepPath + File.separator + "JurorDocument.html"));
-		String mcXSL = IOUtils
-				.toString(classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl"));
-		InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
-		InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
-		Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-		Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
-		String xsltStr = IOUtils.toString(xsltReader);
-		String sourceStr = IOUtils.toString(sourceReader);
-		String jurorDocumentHTML = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-		InputStream inTP = null;
-		inTP = IOUtils.toInputStream(jurorDocumentHTML);
-		int lenTP;
-		while ((lenTP = inTP.read(buf)) > 0) {
-			out.write(buf, 0, lenTP);
+		InputStream is = classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl");
+		if(is != null){
+			byte[] buf = new byte[1024];
+			out.putNextEntry(new ZipEntry(teststepPath + File.separator + "JurorDocument.html"));
+			String mcXSL = IOUtils.toString(is);
+			InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
+			InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
+			Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
+			Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
+			String xsltStr = IOUtils.toString(xsltReader);
+			String sourceStr = IOUtils.toString(sourceReader);
+			String jurorDocumentHTML = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
+			InputStream inTP = null;
+			inTP = IOUtils.toInputStream(jurorDocumentHTML);
+			int lenTP;
+			while ((lenTP = inTP.read(buf)) > 0) {
+				out.write(buf, 0, lenTP);
+			}
+			out.closeEntry();
+			inTP.close();
 		}
-		out.closeEntry();
-		inTP.close();
 	}
 
 	private void generateTestDataSpecification(ZipOutputStream out, TestStep ts, String teststepPath)
 			throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
-		byte[] buf = new byte[1024];
-		out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestDataSpecification.html"));
-		String mcXSL = IOUtils
-				.toString(classLoader.getResourceAsStream("xsl" + File.separator + ts.getTdsXSL() + ".xsl"));
-		InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
-		InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
-		Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-		Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
-		String xsltStr = IOUtils.toString(xsltReader);
-		String sourceStr = IOUtils.toString(sourceReader);
-		String messageContentHTML = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-		InputStream inTP = null;
-		inTP = IOUtils.toInputStream(messageContentHTML);
-		int lenTP;
-		while ((lenTP = inTP.read(buf)) > 0) {
-			out.write(buf, 0, lenTP);
+		InputStream is = classLoader.getResourceAsStream("xsl" + File.separator + ts.getTdsXSL() + ".xsl");
+		if(is != null){
+			byte[] buf = new byte[1024];
+			out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestDataSpecification.html"));
+			String mcXSL = IOUtils.toString(is);
+			InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
+			InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
+			Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
+			Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
+			String xsltStr = IOUtils.toString(xsltReader);
+			String sourceStr = IOUtils.toString(sourceReader);
+			String messageContentHTML = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
+			InputStream inTP = null;
+			inTP = IOUtils.toInputStream(messageContentHTML);
+			int lenTP;
+			while ((lenTP = inTP.read(buf)) > 0) {
+				out.write(buf, 0, lenTP);
+			}
+			out.closeEntry();
+			inTP.close();
 		}
-		out.closeEntry();
-		inTP.close();
-
 	}
 
 	private void generateConstraintsXML(ZipOutputStream out, String constraintsXMLCode, String teststepPath)

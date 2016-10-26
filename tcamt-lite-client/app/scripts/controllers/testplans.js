@@ -125,20 +125,27 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.exportProfileXMLs = function () {
-
 		var listOfIGID = [];
 		$rootScope.selectedTestPlan.children.forEach(function(child) {
 			if(child.type == "testcasegroup"){
 				child.testcases.forEach(function(testcase){
-					var testCaseName = testcase.name;
 					testcase.teststeps.forEach(function(teststep){
-						listOfIGID.push(teststep.integrationProfileId);
+						var isDuplicatedId = false;
+						for(i in listOfIGID){
+							var id = listOfIGID[i];
+							if(id == teststep.integrationProfileId) isDuplicatedId = true;
+						}
+						if(!isDuplicatedId) listOfIGID.push(teststep.integrationProfileId);
 					});
 				});
 			}else if(child.type == "testcase"){
 				child.teststeps.forEach(function(teststep){
-					var testCaseName = testcase.name;
-					listOfIGID.push(teststep.integrationProfileId);
+					var isDuplicatedId = false;
+					for(i in listOfIGID){
+						var id = listOfIGID[i];
+						if(id == teststep.integrationProfileId) isDuplicatedId = true;
+					}
+					if(!isDuplicatedId) listOfIGID.push(teststep.integrationProfileId);
 				});
 			}
 		});
@@ -3175,11 +3182,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.OpenMsgTemplateMetadata=function(msgtemp){
 		$rootScope.selectedTemplate=msgtemp;
 		$rootScope.selectedSegmentNode =null;
-		
 		$scope.msgTemplate=msgtemp;
-		$rootScope.CurrentTitle= "Message Template : "+msgtemp.name;
-
-
+		$rootScope.CurrentTitle= "Message Template: " + msgtemp.name;
+		$scope.findTitleForProfiles(msgtemp.integrationProfileId, msgtemp.conformanceProfileId);
 		$scope.subview = "MessageTemplateMetadata.html";
 	}
 	$scope.OpenTemplateMetadata=function(temp){
@@ -3187,12 +3192,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedSegmentNode=null;
 
 		$scope.rootTemplate=temp;
-		$rootScope.CurrentTitle= "Message Template : "+temp.name;
+		$rootScope.CurrentTitle= "Message Template: "+ temp.name;
 
 		$scope.subview = "TemplateMetadata.html";
 	}
 	$scope.OpenSegmentTemplateMetadata=function(segTemp){
-		$rootScope.CurrentTitle= "Segment Template : "+segTemp.name;
+		$rootScope.CurrentTitle= "Segment Template: " + segTemp.name;
 
 		$rootScope.selectedTemplate=segTemp; //never used
 		$rootScope.selectedSegmentNode=null;
@@ -3201,11 +3206,30 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	}
 
 	$scope.OpenEr7TemplatesMetadata=function(er7temp){
-		$rootScope.CurrentTitle= "Er7 Message Template : "+er7temp.name;
+		$rootScope.CurrentTitle= "Er7 Message Template: " + er7temp.name;
+		$scope.findTitleForProfiles(er7temp.integrationProfileId, er7temp.conformanceProfileId);
+		console.log($rootScope.igs);
+
 		$rootScope.selectedTemplate=er7temp;
 		$rootScope.selectedSegmentNode =null;
 		$scope.er7Template=er7temp;
 		$scope.subview = "Er7TemplateMetadata.html";
+	}
+
+	$scope.findTitleForProfiles = function (ipid, cpid){
+		for (i in $rootScope.igs) {
+			var ig = $rootScope.igs[i];
+			if(ipid == ig.profile.id){
+				$scope.integrationProfileTitle = ig.metaData.title;
+
+				for (j in ig.profile.messages.children) {
+					var cp = ig.profile.messages.children[j];
+					if(cpid == cp.id){
+						$scope.conformanceProfileTitle = cp.structID + '-' + cp.name + '-' + cp.identifier;
+					}
+				}
+			}
+		}
 	}
 
 	$scope.cloneTestStep=function(testStep){
