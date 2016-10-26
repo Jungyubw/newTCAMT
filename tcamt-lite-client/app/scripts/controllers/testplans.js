@@ -3163,11 +3163,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.OpenMsgTemplateMetadata=function(msgtemp){
 		$rootScope.selectedTemplate=msgtemp;
 		$rootScope.selectedSegmentNode =null;
-		
 		$scope.msgTemplate=msgtemp;
-		$rootScope.CurrentTitle= "Message Template : "+msgtemp.name;
-
-
+		$rootScope.CurrentTitle= "Message Template: " + msgtemp.name;
+		$scope.findTitleForProfiles(msgtemp.integrationProfileId, msgtemp.conformanceProfileId);
 		$scope.subview = "MessageTemplateMetadata.html";
 	}
 	$scope.OpenTemplateMetadata=function(temp){
@@ -3175,12 +3173,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedSegmentNode=null;
 
 		$scope.rootTemplate=temp;
-		$rootScope.CurrentTitle= "Message Template : "+temp.name;
+		$rootScope.CurrentTitle= "Message Template: "+ temp.name;
 
 		$scope.subview = "TemplateMetadata.html";
 	}
 	$scope.OpenSegmentTemplateMetadata=function(segTemp){
-		$rootScope.CurrentTitle= "Segment Template : "+segTemp.name;
+		$rootScope.CurrentTitle= "Segment Template: " + segTemp.name;
 
 		$rootScope.selectedTemplate=segTemp; //never used
 		$rootScope.selectedSegmentNode=null;
@@ -3189,11 +3187,30 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	}
 
 	$scope.OpenEr7TemplatesMetadata=function(er7temp){
-		$rootScope.CurrentTitle= "Er7 Message Template : "+er7temp.name;
+		$rootScope.CurrentTitle= "Er7 Message Template: " + er7temp.name;
+		$scope.findTitleForProfiles(er7temp.integrationProfileId, er7temp.conformanceProfileId);
+		console.log($rootScope.igs);
+
 		$rootScope.selectedTemplate=er7temp;
 		$rootScope.selectedSegmentNode =null;
 		$scope.er7Template=er7temp;
 		$scope.subview = "Er7TemplateMetadata.html";
+	}
+
+	$scope.findTitleForProfiles = function (ipid, cpid){
+		for (i in $rootScope.igs) {
+			var ig = $rootScope.igs[i];
+			if(ipid == ig.profile.id){
+				$scope.integrationProfileTitle = ig.metaData.title;
+
+				for (j in ig.profile.messages.children) {
+					var cp = ig.profile.messages.children[j];
+					if(cpid == cp.id){
+						$scope.conformanceProfileTitle = cp.structID + '-' + cp.name + '-' + cp.identifier;
+					}
+				}
+			}
+		}
 	}
 
 	$scope.cloneTestStep=function(testStep){
