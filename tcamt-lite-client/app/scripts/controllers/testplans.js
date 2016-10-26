@@ -483,6 +483,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.selectedTestStep=null;
 				$rootScope.selectedTestCaseGroup = null;
 				$rootScope.selectedTestCase = null;
+				$scope.editor = null;
+				$scope.editorValidation = null;
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -496,6 +498,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedSegmentNode =null;
 		$rootScope.selectedTestStep=null;
 		$rootScope.igDocument=ig;
+		$scope.editor = null;
+		$scope.editorValidation = null;
 		$scope.subview = "EditDocumentMetadata.html";
 
 	};
@@ -524,6 +528,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.selectedTestCase = null;
 				$rootScope.selectedTemplate=null;
 				$rootScope.selectedSegmentNode =null;
+				$scope.editor = null;
+				$scope.editorValidation = null;
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -543,6 +549,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.selectedTestCaseGroup=null;
 				$rootScope.selectedTemplate=null;
 				$rootScope.selectedSegmentNode =null;
+				$scope.editor = null;
+				$scope.editorValidation = null;
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -570,8 +578,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.selectedTestCase = null;
 				$rootScope.selectedTemplate=null;
 				$rootScope.selectedSegmentNode =null;
-				$scope.initCodemirror();
-				$scope.initCodemirrorOnline();
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -735,32 +741,41 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.initHL7EncodedMessageTab = function () {
-		if($rootScope.selectedTestStep.er7Message == null){
-			$scope.editor.setValue("");
-		}else {
-			$scope.editor.setValue($rootScope.selectedTestStep.er7Message);
-		}
+		$scope.initCodemirror();
 
+		setTimeout(function () {
+			if($rootScope.selectedTestStep.er7Message == null){
+				$scope.editor.setValue("");
+			}else {
+				$scope.editor.setValue($rootScope.selectedTestStep.er7Message);
+			}
+		}, 100);
 
 		setTimeout(function () {
 			$scope.editor.refresh();
-		}, 100);
+		}, 200);
 	};
 
 	$scope.initHL7EncodedMessageForOnlineValidationTab = function (){
-		$scope.result="";
-		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+		$scope.initCodemirrorOnline();
 
-		if($rootScope.selectedTestStep.er7Message == null){
-			$scope.editorValidation.setValue("");
-			$scope.er7MessageOnlineValidation = '';
-		}else {
-			$scope.er7MessageOnlineValidation = $rootScope.selectedTestStep.er7Message;
-			$scope.editorValidation.setValue($scope.er7MessageOnlineValidation);
-		}
+		setTimeout(function () {
+			$scope.result="";
+			$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+
+			if($rootScope.selectedTestStep.er7Message == null){
+				$scope.editorValidation.setValue("");
+				$scope.er7MessageOnlineValidation = '';
+			}else {
+				$scope.er7MessageOnlineValidation = $rootScope.selectedTestStep.er7Message;
+				$scope.editorValidation.setValue($scope.er7MessageOnlineValidation);
+			}
+		}, 100);
+
+
 		setTimeout(function () {
 			$scope.editorValidation.refresh();
-		}, 100);
+		}, 200);
 	};
 
 	$scope.initTestData = function () {
@@ -1123,10 +1138,16 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.OpenMessageMetadata = function(msg) {
-		$rootScope.CurrentTitle="Conformance Profile"+":"+ msg.name;
+		$rootScope.selectedTestCaseGroup=null;
+		$rootScope.selectedTestCase = null;
+		$rootScope.selectedTestStep = null;
+		$rootScope.selectedSegmentNode =null;
 		$rootScope.selectedTemplate = null;
 		$rootScope.selectedSegmentNode = null;
-		$rootScope.selectedTestStep = null;
+		$scope.editor = null;
+		$scope.editorValidation = null;
+
+		$rootScope.CurrentTitle="Conformance Profile"+":"+ msg.name;
 		$scope.subview = "EditMessages.html";
 		if($rootScope.messageTree && $rootScope.messageParams){
 			$rootScope.message=msg;
@@ -3180,16 +3201,30 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	}
 	$scope.OpenMsgTemplateMetadata=function(msgtemp){
-		$rootScope.selectedTemplate=msgtemp;
+		$rootScope.selectedTestCaseGroup=null;
+		$rootScope.selectedTestCase = null;
+		$rootScope.selectedTestStep = null;
 		$rootScope.selectedSegmentNode =null;
+		$rootScope.selectedTemplate = null;
+		$rootScope.selectedSegmentNode = null;
+		$scope.editor = null;
+		$scope.editorValidation = null;
+
+		$rootScope.selectedTemplate=msgtemp;
 		$scope.msgTemplate=msgtemp;
 		$rootScope.CurrentTitle= "Message Template: " + msgtemp.name;
 		$scope.findTitleForProfiles(msgtemp.integrationProfileId, msgtemp.conformanceProfileId);
 		$scope.subview = "MessageTemplateMetadata.html";
 	}
 	$scope.OpenTemplateMetadata=function(temp){
-		$rootScope.selectedTemplate=null;
-		$rootScope.selectedSegmentNode=null;
+		$rootScope.selectedTestCaseGroup=null;
+		$rootScope.selectedTestCase = null;
+		$rootScope.selectedTestStep = null;
+		$rootScope.selectedSegmentNode =null;
+		$rootScope.selectedTemplate = null;
+		$rootScope.selectedSegmentNode = null;
+		$scope.editor = null;
+		$scope.editorValidation = null;
 
 		$scope.rootTemplate=temp;
 		$rootScope.CurrentTitle= "Message Template: "+ temp.name;
@@ -3197,21 +3232,36 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.subview = "TemplateMetadata.html";
 	}
 	$scope.OpenSegmentTemplateMetadata=function(segTemp){
+		$rootScope.selectedTestCaseGroup=null;
+		$rootScope.selectedTestCase = null;
+		$rootScope.selectedTestStep = null;
+		$rootScope.selectedSegmentNode =null;
+		$rootScope.selectedTemplate = null;
+		$rootScope.selectedSegmentNode = null;
+		$scope.editor = null;
+		$scope.editorValidation = null;
+
 		$rootScope.CurrentTitle= "Segment Template: " + segTemp.name;
 
 		$rootScope.selectedTemplate=segTemp; //never used
-		$rootScope.selectedSegmentNode=null;
 		$scope.segmentTemplateObject=segTemp;
 		$scope.subview = "SegmentTemplateMetadata.html";
 	}
 
 	$scope.OpenEr7TemplatesMetadata=function(er7temp){
+		$rootScope.selectedTestCaseGroup=null;
+		$rootScope.selectedTestCase = null;
+		$rootScope.selectedTestStep = null;
+		$rootScope.selectedSegmentNode =null;
+		$rootScope.selectedTemplate = null;
+		$rootScope.selectedSegmentNode = null;
+		$scope.editor = null;
+		$scope.editorValidation = null;
+		
 		$rootScope.CurrentTitle= "Er7 Message Template: " + er7temp.name;
 		$scope.findTitleForProfiles(er7temp.integrationProfileId, er7temp.conformanceProfileId);
-		console.log($rootScope.igs);
 
 		$rootScope.selectedTemplate=er7temp;
-		$rootScope.selectedSegmentNode =null;
 		$scope.er7Template=er7temp;
 		$scope.subview = "Er7TemplateMetadata.html";
 	}
