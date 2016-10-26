@@ -113,20 +113,27 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.exportProfileXMLs = function () {
-
 		var listOfIGID = [];
 		$rootScope.selectedTestPlan.children.forEach(function(child) {
 			if(child.type == "testcasegroup"){
 				child.testcases.forEach(function(testcase){
-					var testCaseName = testcase.name;
 					testcase.teststeps.forEach(function(teststep){
-						listOfIGID.push(teststep.integrationProfileId);
+						var isDuplicatedId = false;
+						for(i in listOfIGID){
+							var id = listOfIGID[i];
+							if(id == teststep.integrationProfileId) isDuplicatedId = true;
+						}
+						if(!isDuplicatedId) listOfIGID.push(teststep.integrationProfileId);
 					});
 				});
 			}else if(child.type == "testcase"){
 				child.teststeps.forEach(function(teststep){
-					var testCaseName = testcase.name;
-					listOfIGID.push(teststep.integrationProfileId);
+					var isDuplicatedId = false;
+					for(i in listOfIGID){
+						var id = listOfIGID[i];
+						if(id == teststep.integrationProfileId) isDuplicatedId = true;
+					}
+					if(!isDuplicatedId) listOfIGID.push(teststep.integrationProfileId);
 				});
 			}
 		});

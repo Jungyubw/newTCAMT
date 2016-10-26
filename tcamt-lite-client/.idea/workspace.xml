@@ -4,9 +4,6 @@
     <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/TemplateToc.html" afterPath="$PROJECT_DIR$/app/views/TemplateToc.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/util/ExportUtil.java" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/util/ExportUtil.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-service/pom.xml" afterPath="$PROJECT_DIR$/../tcamt-lite-service/pom.xml" />
     </list>
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -99,8 +96,8 @@
       <file leaf-file-name="testplans.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="522">
-              <caret line="3208" column="107" selection-start-line="3208" selection-start-column="107" selection-end-line="3208" selection-end-column="107" />
+            <state relative-caret-position="476">
+              <caret line="135" column="87" selection-start-line="135" selection-start-column="87" selection-end-line="135" selection-end-column="87" />
               <folding />
             </state>
           </provider>
@@ -585,16 +582,16 @@
       <workItem from="1477329971842" duration="6215000" />
       <workItem from="1477339528208" duration="5536000" />
       <workItem from="1477419877331" duration="5635000" />
-      <workItem from="1477453802937" duration="5339000" />
+      <workItem from="1477453802937" duration="5979000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="248230000" />
+    <option name="totallyTimeSpent" value="248870000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18675123" sideWeight="0.79445934" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -603,7 +600,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21927711" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32932693" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21566264" sideWeight="0.49753347" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21566264" sideWeight="0.49753347" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24970461" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26746988" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13548641" sideWeight="0.5044346" order="3" side_tool="true" content_ui="tabs" />
@@ -632,7 +629,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app/scripts/controllers/testplans.js</url>
-          <line>393</line>
+          <line>400</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
@@ -988,8 +985,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="522">
-          <caret line="3208" column="107" selection-start-line="3208" selection-start-column="107" selection-end-line="3208" selection-end-column="107" />
+        <state relative-caret-position="476">
+          <caret line="135" column="87" selection-start-line="135" selection-start-column="87" selection-end-line="135" selection-end-column="87" />
           <folding />
         </state>
       </provider>
