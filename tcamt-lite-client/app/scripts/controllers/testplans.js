@@ -33,7 +33,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	});
 
-
+	$scope.incrementToc=function(){
+		console.log($rootScope.tocHeigh);
+		$rootScope.tocHeigh=$rootScope.tocHeigh+50;
+	};
+	$scope.decrementToc=function(){
+		console.log($rootScope.tocHeigh);
+		if($rootScope.tocHeigh>50){
+			$rootScope.tocHeigh=$rootScope.tocHeigh-50;
+		}else{
+			$rootScope.tocHeigh=$rootScope.tocHeigh;
+		}
+	};
+	
 	$scope.exportTestPackageHTML = function () {
 			var changes = angular.toJson([]);
 			var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
