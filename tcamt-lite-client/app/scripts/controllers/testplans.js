@@ -22,9 +22,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$rootScope.tocHeigh=300;
 	$(document).keydown(function(e) {
 		var nodeName = e.target.nodeName.toLowerCase();
+		
+		var NodeType=e.target.type.toLowerCase();
 
 		if (e.which === 8) {
-			if ((nodeName === 'input' && e.target.type === 'text') ||
+			if ((nodeName === 'input') ||
 				nodeName === 'textarea') {
 				// do nothing
 			} else {
@@ -191,10 +193,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.loadIGDocuments = function () {
 		var delay = $q.defer();
-		$scope.error = null;
-		$rootScope.igs = [];
-		$scope.loading = true;
-
+		
+		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+			$scope.error = null;
+			$rootScope.igs = [];
+			$scope.loading = true;
 		$http.get('api/igdocuments').then(function(response) {
 			$rootScope.igs = angular.fromJson(response.data);
 			$scope.loading = false;
@@ -205,15 +208,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			delay.reject(false);
 
 		});
+		}else{
+			delay.reject(false);
+		}
 	};
 
     $scope.loadTemplate = function () {
         var delay = $q.defer();
-        $scope.error = null;
-        $rootScope.templatesToc = [];
-        $rootScope.template = {};
-        $scope.loading = true;
-
+      
+		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+			  $scope.error = null;
+		        $rootScope.templatesToc = [];
+		        $rootScope.template = {};
+		        $scope.loading = true;
         $http.get('api/template').then(function(response) {
             $rootScope.template = angular.fromJson(response.data);
             $rootScope.templatesToc.push($rootScope.template);
@@ -224,7 +231,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $scope.error = error.data;
             delay.reject(false);
 
-        });
+        });}
+		else{
+			delay.reject(false);
+		}
     };
 
 	$scope.applyConformanceProfile = function (igid, mid) {

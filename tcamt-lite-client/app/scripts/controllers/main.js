@@ -1663,4 +1663,3 @@ angular.module('tcl').controller('ConfirmLogoutCtrl', ["$scope", "$modalInstance
     };
 }]);
 
-
