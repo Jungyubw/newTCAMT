@@ -3257,7 +3257,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedSegmentNode = null;
 		$scope.editor = null;
 		$scope.editorValidation = null;
-		
+
 		$rootScope.CurrentTitle= "Er7 Message Template: " + er7temp.name;
 		$scope.findTitleForProfiles(er7temp.integrationProfileId, er7temp.conformanceProfileId);
 
