@@ -51,6 +51,8 @@ public class ValidationController {
 			@RequestBody ConstraintContainer cbConstraints) throws Exception {
 		ExportUtil util = new ExportUtil();
 		IGAMTDBConn con = new IGAMTDBConn();
+		String html="";
+		String error="";
 		IGDocument igDocument = con.findIGDocument(igDocumentId);
 		ProfilePreLib ppl = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(),
 				igDocumentId);
@@ -73,19 +75,24 @@ public class ValidationController {
 				InputStream contextXML = new ByteArrayInputStream(constraintsXML.getBytes(StandardCharsets.UTF_8));
 				List<InputStream> confContexts = Arrays.asList(contextXML);
 				ConformanceContext cc = DefaultConformanceContext.apply(confContexts).get();
-				report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Free);
+				report = (EnhancedReport) vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Free);
 			} else if (context.equals("based")) {
 				InputStream contextXML = new ByteArrayInputStream(testStepConstraintXML.getBytes(StandardCharsets.UTF_8));
 				List<InputStream> confContexts = Arrays.asList(contextXML);
 				ConformanceContext cc = DefaultConformanceContext.apply(confContexts).get();
 				report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Based);
 			}
-			response = report.render("report", null);
+			response  = report.to("json").toString();
+			//response = report.toString();
+			html = report.render("report", null);
 		} catch (Exception e) {
+			error=e.getMessage();
 			e.printStackTrace();
 		}
 		JSONObject obj = new JSONObject();
-		obj.put("html", response);
+		obj.put("json", response);
+		obj.put("html",html);
+		obj.put("error",error);
 		return obj.toString();
 
 	}

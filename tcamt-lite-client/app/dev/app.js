@@ -37,7 +37,8 @@ var app = angular
         'ui.bootstrap.contextMenu',
         'ui.codemirror',
         'angularjs-dropdown-multiselect',
-        'ui-notification'
+        'ui-notification',
+        'hit-validation-result'
     ]);
 
 var
@@ -592,8 +593,6 @@ app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, u
 
         return $rootScope.scrollbarWidth;
     };
-
-
 });
 
 

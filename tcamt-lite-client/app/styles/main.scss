@@ -2310,3 +2310,13 @@ a, a:hover, a:focus {
 .unsaved{
 	font-style: italic !important;
 }
+.my-modal-popup{
+
+    @media (min-width: 1400px){
+
+        .modal-lg {
+            width: 1308px;
+        }
+    }
+
+}

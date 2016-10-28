@@ -10002,3 +10002,10 @@ a, a:hover, a:focus {
 .unsaved {
   font-style: italic !important;
 }
+
+@media (min-width: 1400px) {
+  /* line 2317, ../../app/styles/main.scss */
+  .my-modal-popup .modal-lg {
+    width: 1308px;
+  }
+}
