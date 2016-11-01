@@ -976,10 +976,10 @@ public class UserController {
 		SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
 
 		msg.setTo(acc.getEmail());
-		msg.setSubject("NIST IGAMT Username Notification");
+		msg.setSubject("NIST TCAMT Username Notification");
 		msg.setText("Dear " + acc.getUsername() + " \n\n"
 				+ "Your username is: " + acc.getUsername() + " \n\n"
-				+ "Sincerely,\n\n" + "The NIST IGAMT Team");
+				+ "Sincerely,\n\n" + "The NIST TCAMT Team");
 
 		try {
 			this.mailSender.send(msg);
@@ -1021,6 +1021,6 @@ public class UserController {
 	private String getUrl(HttpServletRequest request) {
 		String scheme = request.getScheme();
 		String host = request.getHeader("Host");
-		return scheme + "://" + host + "/igamt";
+		return scheme + "://" + host + "/tcamt";
 	}
 }

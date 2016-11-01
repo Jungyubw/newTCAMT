@@ -61,13 +61,19 @@ angular.module('tcl')
 //                }
 //            });
 //        };
-
+        $scope.successPass=false;
         $scope.changePassword = function() {
+        	$scope.successPass=false;
             if($scope.agreed) {
                 var resetAcctPass = new AcctResetPassword($scope.user);
                 resetAcctPass.$save(function () {
-                    $scope.user.password = '';
-                    $scope.user.passwordConfirm = '';
+                	if(resetAcctPass.text==='accountPasswordReset'){
+                		console.log(resetAcctPass);
+                        $scope.user.password = '';
+                        $scope.user.passwordConfirm = '';
+                        $scope.successPass=true;
+                	}
+                	
                 });
             }
         };

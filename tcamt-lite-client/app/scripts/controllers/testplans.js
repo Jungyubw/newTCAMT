@@ -2899,21 +2899,38 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 			var sourceNode = event.source.nodeScope;
 			var destNodes = event.dest.nodesScope;
-			$scope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
-			$scope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
-
+	
 			
-			var sortBefore = event.source.index ;
+			
+			var sortBefore = event.source.index;
 			var sortAfter = event.dest.index ;
 
 			var dataType = destNodes.$element.attr('data-type');
 			event.source.nodeScope.$modelValue.position = sortAfter+1;
 			$scope.updatePositions(event.dest.nodesScope.$modelValue);
 			$scope.updatePositions(event.source.nodesScope.$modelValue);
+			if($scope.sourceDrag.position!==sourceNode.$modelValue.position){
+				console.log($scope.sourceDrag.position);
+				console.log(sourceNode.$modelValue.position);
+				
+				$scope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
+				$scope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
+				$scope.recordChanged();
+			}
 			
-			$scope.recordChanged();
 
 
+		},
+		dragStart:function(event){
+			var sourceNode = event.source.nodeScope;
+			var destNodes = event.dest.nodesScope;
+			
+			$scope.sourceDrag=angular.copy(sourceNode.$modelValue);
+			//$scope.destDrag=angular.copy(sourceNode.$parent.$nodeScope.$modelValue);
+			
+			console.log($scope.sourceDrag)
+			
+			
 		}
 	};
 
