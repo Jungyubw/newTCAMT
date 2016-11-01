@@ -3,7 +3,6 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
-import gov.nist.healthcare.tools.hl7.v2.igamt.prelib.domain.ProfilePreLib;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ConstraintContainer;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 import gov.nist.healthcare.unified.enums.Context;
@@ -54,11 +53,11 @@ public class ValidationController {
 		String html="";
 		String error="";
 		IGDocument igDocument = con.findIGDocument(igDocumentId);
-		ProfilePreLib ppl = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(),
+		Profile tcamtProfile = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(),
 				igDocumentId);
-		String profileXML = util.serializeProfileToDoc(ppl, igDocument).toXML();
-		String valueSetXML = util.serializeTableLibraryToElement(ppl, igDocument).toXML();
-		String constraintsXML = util.serializeConstraintsToDoc(ppl, igDocument).toXML();
+		String profileXML = util.serializeProfileToDoc(tcamtProfile, igDocument).toXML();
+		String valueSetXML = util.serializeTableLibraryToElement(tcamtProfile, igDocument).toXML();
+		String constraintsXML = util.serializeConstraintsToDoc(tcamtProfile, igDocument).toXML();
 		String testStepConstraintXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator") + cbConstraints.getConstraint();
 		
 		System.out.println(igDocumentId);

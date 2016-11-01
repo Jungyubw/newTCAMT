@@ -28,18 +28,27 @@ var app = angular
         'angularjs-dropdown-multiselect',
         'dndLists',
         'froala',
-        'ngNotificationsBar'
-        ,
+        'ngNotificationsBar',
         'ngMockE2E',
         'ngDragDrop',
         'ui.tree',
         'ui.bootstrap',
         'ui.bootstrap.contextMenu',
         'ui.codemirror',
-        'angularjs-dropdown-multiselect',
         'ui-notification',
         'hit-validation-result'
     ]);
+app.config(function(NotificationProvider) {
+    NotificationProvider.setOptions({
+        delay: 10000,
+        startTop: 20,
+        startRight: 10,
+        verticalSpacing: 20,
+        horizontalSpacing: 20,
+        positionX: 'right',
+        positionY: 'top'
+    });
+});
 
 var
 //the HTTP headers to be used by all requests
@@ -69,6 +78,9 @@ app.config(function ($routeProvider, RestangularProvider, $httpProvider, Keepali
         })
         .when('/tp', {
             templateUrl: 'views/tp.html'
+        })
+        .when('/profiles', {
+            templateUrl: 'views/profiles.html'
         })
         .when('/doc', {
             templateUrl: 'views/doc.html'

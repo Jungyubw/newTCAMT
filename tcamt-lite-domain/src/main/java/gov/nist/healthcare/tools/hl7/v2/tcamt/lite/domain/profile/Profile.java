@@ -1,12 +1,5 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.ByID;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.ByNameOrByID;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.ConformanceStatement;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.Constraints;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.Context;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.Predicate;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +8,23 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Constant;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Group;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Messages;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ProfileMetaData;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRefOrGroup;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TextbasedSectionModel;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByID;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByNameOrByID;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ConformanceStatement;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Constraints;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Context;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Predicate;
 
 @Document(collection = "integrationProfiles")
 public class Profile extends TextbasedSectionModel implements java.io.Serializable,
@@ -39,22 +49,8 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 	private Messages messages;
 
 	private Tables tables;
-
-	private Long accountId;
-
-	private String baseId = null; // baseId is the original version of the
-									// profile that was cloned
-	private String constraintId;
 	
-	private String sourceId;
-
-	public String getBaseId() {
-		return baseId;
-	}
-
-	public void setBaseId(String baseId) {
-		this.baseId = baseId;
-	}
+	private Long accountId;
 
 	public String getId() {
 		return id;
@@ -95,14 +91,6 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 	public void setMessages(Messages messages) {
 		this.messages = messages;
 	}
-	
-	public String getConstraintId() {
-		return constraintId;
-	}
-
-	public void setConstraintId(String constraintId) {
-		this.constraintId = constraintId;
-	}
 
 	/**
 	 * Do not set the version. Hibernate set the version automatically
@@ -116,22 +104,6 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 
 	public void setTables(Tables tables) {
 		this.tables = tables;
-	}
-
-	public Long getAccountId() {
-		return accountId;
-	}
-
-	public void setAccountId(Long accountId) {
-		this.accountId = accountId;
-	}
-
-	public String getSourceId() {
-		return sourceId;
-	}
-
-	public void setSourceId(String sourceId) {
-		this.sourceId = sourceId;
 	}
 
 	@Override
@@ -376,18 +348,11 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 		HashMap<String, Table> tableRecords = new HashMap<String, Table>();
 
 		clonedProfile.setDatatypes(datatypes.clone(dtRecords, tableRecords));
-		clonedProfile.setSegments(segments.clone(dtRecords, segmentRecords,
-				tableRecords));
+		clonedProfile.setSegments(segments.clone(dtRecords, segmentRecords, tableRecords));
 		clonedProfile.setTables(tables.clone());
-
-		clonedProfile.setMessages(messages.clone(dtRecords, segmentRecords,
-				tableRecords));
+		clonedProfile.setMessages(messages.clone(dtRecords, segmentRecords, tableRecords));
 		clonedProfile.setMetaData(metaData.clone());
 		clonedProfile.setAccountId(accountId);
-		clonedProfile.setBaseId(baseId != null ? baseId : id);
-		clonedProfile.setSourceId(id);
-		clonedProfile.setConstraintId(constraintId);
-
 		return clonedProfile;
 	}
 
@@ -402,5 +367,13 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 		for (Message m : p.getMessages().getChildren()){
 			this.messages.addMessage(m);	
 		}
+	}
+
+	public Long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
 	}
 }

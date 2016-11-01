@@ -1,13 +1,15 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Constant;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TextbasedSectionModel;
 
 public class Tables extends TextbasedSectionModel implements Serializable, Cloneable {
 
@@ -250,13 +252,4 @@ public class Tables extends TextbasedSectionModel implements Serializable, Clone
 			}
 		}
 	}
-	
-	public void setPositionsOrder(){
-		List<Table> sortedList = new ArrayList<Table>(this.getChildren());
-		Collections.sort(sortedList);
-		for (Table elt: sortedList) {
-			elt.setSectionPosition(sortedList.indexOf(elt));
-		}
-	}
-
 }

@@ -78,3 +78,47 @@
         </button>
     </div>
 </script>
+
+<script type="text/ng-template" id="TestPlanCreationModal.html">
+    <md-dialog aria-label="Create New TestPlan">
+        <form ng-cloak>
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2>Create New TestPlan</h2>
+                    <span flex></span>
+                </div>
+            </md-toolbar>
+            <md-dialog-content>
+                <div class="md-dialog-content">
+                    <md-input-container style="width: 100%;">
+                        <label>Name</label>
+                        <input ng-model="newTestPlan.name" type="text"/>
+                    </md-input-container>
+                    <md-input-container style="width: 100%;">
+                        <label>Description</label>
+                        <input ng-model="newTestPlan.description" type="text"/>
+                    </md-input-container>
+                    <md-input-container style="width: 100%">
+                        <label>Type</label>
+                        <md-select ng-model="newTestPlan.type">
+                            <md-option value="DataInstance">Data Instance</md-option>
+                            <md-option value="Isolated">Isolated</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </md-dialog-content>
+            <md-dialog-actions layout="row">
+                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                </md-button>
+                <span flex></span>
+                <md-button class="btn btn-default btn-sm" ng-click="cancel()">
+                    <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
+                </md-button>
+                <md-button class="btn btn-primary btn-sm" ng-disabled="!newTestPlan.name" ng-click="createNewTestPlan()">
+                    <i class="fa fa-plus fa-fw">&nbsp; </i> Create
+                </md-button>
+            </md-dialog-actions>
+        </form>
+    </md-dialog>
+</script>
