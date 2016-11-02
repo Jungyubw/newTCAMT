@@ -23,21 +23,21 @@
                                             <thead>
                                             <tr class="tbl-header">
                                                 <th st-ratio="5">#</th>
-                                                <th st-ratio="15" st-sort="metaData.title">Title</th>
-                                                <th st-ratio="15">Description</th>
-                                                <th st-ratio="15" st-sort="metaData.hl7Version">HL7Version</th>
-                                                <th st-ratio="15" st-sort="metaData.date">Date</th>
-                                                <th st-ratio="20">Conformance Profiles</th>
+                                                <th st-ratio="10" st-sort="metaData.title">Title</th>
+                                                <th st-ratio="10">Description</th>
+                                                <th st-ratio="10" st-sort="metaData.hl7Version">HL7Version</th>
+                                                <th st-ratio="10" st-sort="metaData.date">Date</th>
+                                                <th st-ratio="40">Conformance Profiles</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr ng-repeat="row in tmpIgs | orderBy:'lastUpdateDate'">
                                                 <td st-ratio="5">{{$index + 1}}</td>
-                                                <td st-ratio="15" ng-bind="row.metaData.title"></td>
-                                                <td st-ratio="15" ng-bind="row.metaData.description"></td>
-                                                <td st-ratio="15" ng-bind="row.metaData.hl7Version"></td>
-                                                <td st-ratio="15" ng-bind="row.metaData.date"></td>
-                                                <td st-ratio="20">
+                                                <td st-ratio="10" ng-bind="row.metaData.title"></td>
+                                                <td st-ratio="10" ng-bind="row.metaData.description"></td>
+                                                <td st-ratio="10" ng-bind="row.metaData.hl7Version"></td>
+                                                <td st-ratio="10" ng-bind="row.metaData.date"></td>
+                                                <td st-ratio="40">
                                                     <li ng-repeat="m in row.profile.messages.children">{{m.name}} [{{m.messageType}}^{{m.event}}^{{m.structID}}, {{m.identifier}}]</li>
                                                 </td>
                                             </tr>
