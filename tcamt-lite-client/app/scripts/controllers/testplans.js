@@ -70,7 +70,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.cancel = function() {
 			$mdDialog.hide();
 		};
-	}
+	};
 
 	$scope.incrementToc=function(){
 		console.log($rootScope.tocHeigh);
@@ -865,6 +865,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.testDataAccordi.segmentList = false;
 		$scope.testDataAccordi.selectedSegment = true;
 		$scope.testDataAccordi.constraintList = false;
+
 
 		$rootScope.selectedSegmentNode = {};
 		$rootScope.selectedSegmentNode.segment = segment;

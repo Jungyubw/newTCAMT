@@ -19,6 +19,7 @@ import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentLink;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TableLink;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatypes;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Messages;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segments;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
@@ -106,7 +107,12 @@ public class IGAMTDBConn {
 		tcamtProfile.setSectionTitle(igName);
 		tcamtProfile.setType(p.getType());
 		tcamtProfile.setMetaData(p.getMetaData());
-		tcamtProfile.setMessages(p.getMessages());
+		Messages messages = new Messages();
+		messages.setId(p.getMessages().getId());
+		messages.setType(p.getMessages().getType());
+		messages.setChildren(p.getMessages().getChildren());
+		
+		tcamtProfile.setMessages(messages);
 
 		Datatypes datatypes = new Datatypes();
 		datatypes.setId(p.getDatatypeLibrary().getId());

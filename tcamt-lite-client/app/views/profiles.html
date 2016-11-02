@@ -31,7 +31,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr ng-repeat="row in tmpIgs | orderBy:'lastUpdateDate'">
+                                            <tr ng-repeat="row in tmpIgs | orderBy:'row.metaData.date'">
                                                 <td st-ratio="5">{{$index + 1}}</td>
                                                 <td st-ratio="10" ng-bind="row.metaData.title"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.description"></td>
@@ -48,16 +48,41 @@
                             </md-tab>
                             <md-tab label="Profiles from XML">
                                 <md-content class="md-padding">
-                                    <h1 class="md-display-2">Profiles from XML</h1>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ante augue. Phasellus volutpat neque ac dui mattis vulputate. Etiam consequat aliquam cursus. In sodales pretium ultrices. Maecenas lectus est, sollicitudin consectetur felis nec, feugiat ultricies mi. Aliquam erat volutpat. Nam placerat, tortor in ultrices porttitor, orci enim rutrum enim, vel tempor sapien arcu a tellus. Vivamus convallis sodales ante varius gravida. Curabitur a purus vel augue ultrices ultricies id a nisl. Nullam malesuada consequat diam, a facilisis tortor volutpat et. Sed urna dolor, aliquet vitae posuere vulputate, euismod ac lorem. Sed felis risus, pulvinar at interdum quis, vehicula sed odio. Phasellus in enim venenatis, iaculis tortor eu, bibendum ante. Donec ac tellus dictum neque volutpat blandit. Praesent efficitur faucibus risus, ac auctor purus porttitor vitae. Phasellus ornare dui nec orci posuere, nec luctus mauris semper.</p>
-                                    <p>Morbi viverra, ante vel aliquet tincidunt, leo dolor pharetra quam, at semper massa orci nec magna. Donec posuere nec sapien sed laoreet. Etiam cursus nunc in condimentum facilisis. Etiam in tempor tortor. Vivamus faucibus egestas enim, at convallis diam pulvinar vel. Cras ac orci eget nisi maximus cursus. Nunc urna libero, viverra sit amet nisl at, hendrerit tempor turpis. Maecenas facilisis convallis mi vel tempor. Nullam vitae nunc leo. Cras sed nisl consectetur, rhoncus sapien sit amet, tempus sapien.</p>
-                                    <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-info btn-sm" ng-click="openDialogForImportXMLProfile($event);"><i class="fa fa-plus"></i>
+                                            Import Profile
+                                        </button>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <table st-table="tmpPrivateProfiles" st-safe-src="privateProfiles" class="smart-table table table-striped table-bordered">
+                                            <thead>
+                                            <tr class="tbl-header">
+                                                <th st-ratio="5">#</th>
+                                                <th st-ratio="10" st-sort="metaData.name">Title</th>
+                                                <th st-ratio="10">Description</th>
+                                                <th st-ratio="10" st-sort="metaData.hl7Version">HL7Version</th>
+                                                <th st-ratio="10" st-sort="metaData.date">Date</th>
+                                                <th st-ratio="40">Conformance Profiles</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="row in tmpPrivateProfiles | orderBy:'row.metaData.date'">
+                                                <td st-ratio="5">{{$index + 1}}</td>
+                                                <td st-ratio="10" ng-bind="row.metaData.name"></td>
+                                                <td st-ratio="10" ng-bind="row.metaData.description"></td>
+                                                <td st-ratio="10" ng-bind="row.metaData.hl7Version"></td>
+                                                <td st-ratio="10" ng-bind="row.metaData.date"></td>
+                                                <td st-ratio="40">
+                                                    <li ng-repeat="m in row.messages.children">{{m.name}} [{{m.messageType}}^{{m.event}}^{{m.structID}}, {{m.identifier}}]</li>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </md-content>
                             </md-tab>
                             <md-tab label="Public Profiles">
                                 <md-content class="md-padding">
-                                    <h1 class="md-display-2">Predefined Public Profiles</h1>
-                                    <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
                                 </md-content>
                             </md-tab>
                         </md-tabs>

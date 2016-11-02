@@ -807,6 +807,10 @@ input[type="radio"] {
   margin-right: 5px;
 }
 
+input[type="file"] {
+  display: none;
+}
+
 #inputReturnType {
   margin-top: 10px;
 }

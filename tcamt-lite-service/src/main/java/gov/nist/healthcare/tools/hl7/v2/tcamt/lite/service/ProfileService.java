@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileDataStr;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 
 @Service
@@ -39,4 +40,6 @@ public interface ProfileService {
 	public Profile clone(Profile ig) throws CloneNotSupportedException;
 
 	public Profile apply(Profile ig) throws ProfileSaveException;
+	
+	public Profile readXML2Profile(ProfileDataStr pds) throws ProfileException;
 }
