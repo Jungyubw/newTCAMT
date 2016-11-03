@@ -1242,6 +1242,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			return 'MessageSegmentRefReadTree.html';
 		} else if (node.obj.type === 'group') {
 			return 'MessageGroupReadTree.html';
+		}else if (node.obj.type === 'field') {
+                return 'MessageFieldViewTree.html';
+        } else if (node.obj.type === 'component') {
+                return 'MessageComponentViewTree.html';
 		} else {
 			return 'MessageReadTree.html';
 		}
