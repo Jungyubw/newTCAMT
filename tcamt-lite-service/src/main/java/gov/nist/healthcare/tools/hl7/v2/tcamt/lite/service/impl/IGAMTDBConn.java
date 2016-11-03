@@ -100,7 +100,7 @@ public class IGAMTDBConn {
 	public Profile convertIGAMT2TCAMT(gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile p, String igName, String igId) {
 		Profile tcamtProfile = new Profile();
 		tcamtProfile.setAccountId(p.getAccountId());
-		tcamtProfile.setId(p.getId());
+		tcamtProfile.setId(igId);
 		tcamtProfile.setSectionContents(p.getSectionContents());
 		tcamtProfile.setSectionDescription(p.getSectionDescription());
 		tcamtProfile.setSectionPosition(p.getSectionPosition());

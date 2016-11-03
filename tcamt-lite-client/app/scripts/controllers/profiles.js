@@ -7,7 +7,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 
 
 	$scope.initProfiles= function () {
-		$scope.loadIGDocuments();
+		$scope.loadIGAMTProfiles();
 		$scope.loadXMLProfiles();
 	};
 
@@ -33,28 +33,29 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 		}
 	};
 
-	$scope.loadIGDocuments = function () {
+	$scope.loadIGAMTProfiles = function () {
 		var delay = $q.defer();
 
 		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+			waitingDialog.show('Loading Profiles...', {dialogSize: 'xs', progressType: 'info'});
 			$scope.error = null;
-			$rootScope.igs = [];
+			$rootScope.igamtProfiles  = [];
 			$scope.loading = true;
 			$http.get('api/igdocuments').then(function(response) {
-				$rootScope.igs = angular.fromJson(response.data);
+				$rootScope.igamtProfiles = angular.fromJson(response.data);
 				$scope.loading = false;
 				delay.resolve(true);
+				waitingDialog.hide();
 			}, function(error) {
 				$scope.loading = false;
 				$scope.error = error.data;
 				delay.reject(false);
-
+				waitingDialog.hide();
 			});
 		}else{
 			delay.reject(false);
 		}
 	};
-
 
 	$scope.openDialogForImportXMLProfile = function (ev) {
 		$mdDialog.show({
