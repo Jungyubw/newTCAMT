@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -22,20 +21,18 @@ import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Case;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatypes;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DocumentMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Field;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Group;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Mapping;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ProfileMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRef;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRefOrGroup;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segments;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TableLink;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Tables;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByID;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByName;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByNameOrByID;
@@ -45,14 +42,16 @@ import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Constraint
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Context;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Predicate;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Reference;
-import gov.nist.healthcare.tools.hl7.v2.igamt.prelib.domain.ProfileMetaDataPreLib;
-import gov.nist.healthcare.tools.hl7.v2.igamt.prelib.domain.ProfilePreLib;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStory;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatypes;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segments;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 import nu.xom.Attribute;
 import nu.xom.Builder;
@@ -828,10 +827,10 @@ public class ExportUtil {
 	private void generateProfileXML(ZipOutputStream out, String id) throws IOException {
 		IGAMTDBConn con = new IGAMTDBConn();
 		IGDocument igDocument = con.findIGDocument(id);
-		ProfilePreLib ppl = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), id);
-		String profileXML = this.serializeProfileToDoc(ppl, igDocument).toXML();
-		String valueSetXML = this.serializeTableLibraryToElement(ppl, igDocument).toXML();
-		String constraintsXML = this.serializeConstraintsToDoc(ppl, igDocument).toXML();
+		Profile tcamtProfile = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), id);
+		String profileXML = this.serializeProfileToDoc(tcamtProfile, igDocument).toXML();
+		String valueSetXML = this.serializeTableLibraryToElement(tcamtProfile, igDocument).toXML();
+		String constraintsXML = this.serializeConstraintsToDoc(tcamtProfile, igDocument).toXML();
 
 		byte[] buf = new byte[1024];
 		out.putNextEntry(new ZipEntry(id + "_Profile.xml"));
@@ -865,7 +864,7 @@ public class ExportUtil {
 		inTP.close();
 	}
 
-	public nu.xom.Document serializeProfileToDoc(ProfilePreLib profile, IGDocument igDoc) {
+	public nu.xom.Document serializeProfileToDoc(Profile profile, IGDocument igDoc) {
 		nu.xom.Element e = new nu.xom.Element("ConformanceProfile");
 		this.serializeProfileMetaData(e, profile.getMetaData(), igDoc.getMetaData(), igDoc.getId());
 
@@ -892,8 +891,7 @@ public class ExportUtil {
 		return doc;
 	}
 
-	private void serializeProfileMetaData(nu.xom.Element e, ProfileMetaDataPreLib metaData, DocumentMetaData igMetaData,
-			String id) {
+	private void serializeProfileMetaData(nu.xom.Element e, ProfileMetaData metaData, DocumentMetaData igMetaData, String id) {
 		e.addAttribute(new Attribute("ID", id));
 
 		if (metaData.getType() != null && !metaData.getType().equals(""))
@@ -1139,7 +1137,7 @@ public class ExportUtil {
 		return elmDatatype;
 	}
 
-	public nu.xom.Element serializeTableLibraryToElement(ProfilePreLib profile, IGDocument igdoc) {
+	public nu.xom.Element serializeTableLibraryToElement(Profile profile, IGDocument igdoc) {
 		Tables tableLibrary = profile.getTables();
 		nu.xom.Element elmTableLibrary = new nu.xom.Element("ValueSetLibrary");
 		elmTableLibrary.addAttribute(new Attribute("ValueSetLibraryIdentifier", igdoc.getId()));
@@ -1261,7 +1259,7 @@ public class ExportUtil {
 		return elmTableLibrary;
 	}
 
-	public nu.xom.Document serializeConstraintsToDoc(ProfilePreLib profile, IGDocument igdoc) {
+	public nu.xom.Document serializeConstraintsToDoc(Profile profile, IGDocument igdoc) {
 		Constraints predicates = findAllPredicates(profile);
 		Constraints conformanceStatements = findAllConformanceStatement(profile);
 		nu.xom.Element e = new nu.xom.Element("ConformanceContext");
@@ -1302,7 +1300,7 @@ public class ExportUtil {
 		return new nu.xom.Document(e);
 	}
 
-	private Constraints findAllPredicates(ProfilePreLib profile) {
+	private Constraints findAllPredicates(Profile profile) {
 		Constraints constraints = new Constraints();
 		Context dtContext = new Context();
 		Context sContext = new Context();
@@ -1348,7 +1346,7 @@ public class ExportUtil {
 		return constraints;
 	}
 
-	private Constraints findAllConformanceStatement(ProfilePreLib profile) {
+	private Constraints findAllConformanceStatement(Profile profile) {
 		Constraints constraints = new Constraints();
 		Context dtContext = new Context();
 		Context sContext = new Context();
@@ -1556,7 +1554,7 @@ public class ExportUtil {
 		return null;
 	}
 
-	private void serializeCoConstaint(nu.xom.Element e, ProfilePreLib profile) {
+	private void serializeCoConstaint(nu.xom.Element e, Profile profile) {
 		nu.xom.Element coConstraints_Elm = new nu.xom.Element("CoConstraints");
 
 		nu.xom.Element coConstraints_segment_Elm = new nu.xom.Element("Segment");

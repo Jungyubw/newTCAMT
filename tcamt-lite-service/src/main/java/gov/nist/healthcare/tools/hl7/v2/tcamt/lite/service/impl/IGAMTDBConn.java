@@ -13,17 +13,16 @@ import com.mongodb.MongoClient;
 
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DatatypeLink;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatypes;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentLink;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segments;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TableLink;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Tables;
-import gov.nist.healthcare.tools.hl7.v2.igamt.prelib.domain.ProfileMetaDataPreLib;
-import gov.nist.healthcare.tools.hl7.v2.igamt.prelib.domain.ProfilePreLib;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatypes;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Messages;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segments;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
 
 public class IGAMTDBConn {
 	private MongoOperations mongoOps;
@@ -98,36 +97,22 @@ public class IGAMTDBConn {
 	
 	
 
-	public ProfilePreLib convertIGAMT2TCAMT(Profile p, String igName, String igId) {
-		ProfilePreLib ppl = new ProfilePreLib();
-		ppl.setAccountId(p.getAccountId());
-		ppl.setBaseId(p.getBaseId());
-		ppl.setChanges(p.getChanges());
-		ppl.setComment(p.getComment());
-		ppl.setConstraintId(p.getConstraintId());
-		ppl.setId(p.getId());
-		ppl.setScope(p.getScope());
-		ppl.setSectionContents(p.getSectionContents());
-		ppl.setSectionDescription(p.getSectionDescription());
-		ppl.setSectionPosition(p.getSectionPosition());
-		ppl.setSectionTitle(igName);
-		ppl.setSourceId(p.getSourceId());
-		ppl.setType(p.getType());
-		ppl.setUsageNote(p.getUsageNote());
-
-		ProfileMetaDataPreLib profileMetaDataPreLib = new ProfileMetaDataPreLib();
-		profileMetaDataPreLib.setEncodings(p.getMetaData().getEncodings());
-		profileMetaDataPreLib.setExt(p.getMetaData().getExt());
-		profileMetaDataPreLib.setHl7Version(p.getMetaData().getHl7Version());
-		profileMetaDataPreLib.setSchemaVersion(p.getMetaData().getSchemaVersion());
-		profileMetaDataPreLib.setXmlId(igId);
-		profileMetaDataPreLib.setSpecificationName(p.getMetaData().getSpecificationName());
-		profileMetaDataPreLib.setStatus(p.getMetaData().getStatus());
-		profileMetaDataPreLib.setSubTitle(p.getMetaData().getSubTitle());
-		profileMetaDataPreLib.setTopics(p.getMetaData().getTopics());
-		profileMetaDataPreLib.setType(p.getMetaData().getType());
-		ppl.setMetaData(profileMetaDataPreLib);
-		ppl.setMessages(p.getMessages());
+	public Profile convertIGAMT2TCAMT(gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile p, String igName, String igId) {
+		Profile tcamtProfile = new Profile();
+		tcamtProfile.setAccountId(p.getAccountId());
+		tcamtProfile.setId(igId);
+		tcamtProfile.setSectionContents(p.getSectionContents());
+		tcamtProfile.setSectionDescription(p.getSectionDescription());
+		tcamtProfile.setSectionPosition(p.getSectionPosition());
+		tcamtProfile.setSectionTitle(igName);
+		tcamtProfile.setType(p.getType());
+		tcamtProfile.setMetaData(p.getMetaData());
+		Messages messages = new Messages();
+		messages.setId(p.getMessages().getId());
+		messages.setType(p.getMessages().getType());
+		messages.setChildren(p.getMessages().getChildren());
+		
+		tcamtProfile.setMessages(messages);
 
 		Datatypes datatypes = new Datatypes();
 		datatypes.setId(p.getDatatypeLibrary().getId());
@@ -146,7 +131,7 @@ public class IGAMTDBConn {
 			}
 			datatypes.addDatatype(dt);
 		}
-		ppl.setDatatypes(datatypes);
+		tcamtProfile.setDatatypes(datatypes);
 
 		Segments segments = new Segments();
 		segments.setId(p.getSegmentLibrary().getId());
@@ -164,7 +149,7 @@ public class IGAMTDBConn {
 			}
 			segments.addSegment(seg);
 		}
-		ppl.setSegments(segments);
+		tcamtProfile.setSegments(segments);
 
 		Tables tables = new Tables();
 		tables.setDateCreated(p.getTableLibrary().getMetaData().getDate());
@@ -186,9 +171,9 @@ public class IGAMTDBConn {
 			t.setBindingIdentifier(link.getBindingIdentifier());
 			tables.addTable(t);
 		}
-		ppl.setTables(tables);
+		tcamtProfile.setTables(tables);
 
-		return ppl;
+		return tcamtProfile;
 	}
 	
 	

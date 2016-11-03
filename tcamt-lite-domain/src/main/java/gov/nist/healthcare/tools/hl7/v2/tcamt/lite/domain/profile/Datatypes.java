@@ -1,16 +1,17 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.ConformanceStatement;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.Predicate;
-
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TextbasedSectionModel;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ConformanceStatement;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Predicate;
 
 public class Datatypes extends TextbasedSectionModel implements java.io.Serializable, Cloneable {
 
@@ -116,7 +117,7 @@ public class Datatypes extends TextbasedSectionModel implements java.io.Serializ
 					return c;
 				} else {
 					Component r = findOneComponent(id,
-							this.findOne(c.getDatatype()));
+							this.findOne(c.getDatatype().getId()));
 					if (r != null) {
 						return r;
 					}
@@ -214,14 +215,6 @@ public class Datatypes extends TextbasedSectionModel implements java.io.Serializ
 			}
 		}
 		
-	}
-	
-	public void setPositionsOrder(){
-		List<Datatype> sortedList = new ArrayList<Datatype>(this.getChildren());
-		Collections.sort(sortedList);
-		for (Datatype elt: sortedList) {
-			elt.setSectionPosition(sortedList.indexOf(elt));
-		}
 	}
 
 }

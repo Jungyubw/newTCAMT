@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce,Notification) {
+angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce,Notification) {
 	$scope.loading = false;
     $scope.selectedTestStepTab = 1;
 	$scope.selectedTestCaseTab = 1;
@@ -36,6 +36,43 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}
 		}
 	});
+
+	$scope.openDialogForNewTestPlan = function (ev){
+		$mdDialog.show({
+			controller: $scope.TestPlanCreationModalCtrl,
+			templateUrl: 'TestPlanCreationModal.html',
+			parent: angular.element(document.body),
+			targetEvent: ev,
+			clickOutsideToClose:false,
+			fullscreen: false // Only for -xs, -sm breakpoints.
+		}).then(function(newTestPlan) {
+				$scope.selectTestPlan(newTestPlan);
+		}, function() {
+		});
+	};
+
+	$scope.TestPlanCreationModalCtrl = function($scope, $mdDialog, $http) {
+		$scope.newTestPlan = {};
+		$scope.newTestPlan.accountId = userInfoService.getAccountID();
+
+		$scope.createNewTestPlan = function() {
+			var changes = angular.toJson([]);
+			var data = angular.fromJson({"changes": changes, "tp": $scope.newTestPlan});
+			$http.post('api/testplans/save', data).then(function (response) {
+				var saveResponse = angular.fromJson(response.data);
+				$scope.newTestPlan.lastUpdateDate = saveResponse.date;
+				$rootScope.saved = true;
+			}, function (error) {
+				$rootScope.saved = false;
+			});
+			$rootScope.tps.push($scope.newTestPlan);
+			$mdDialog.hide($scope.newTestPlan);
+		};
+
+		$scope.cancel = function() {
+			$mdDialog.hide();
+		};
+	};
 
 	$scope.incrementToc=function(){
 		console.log($rootScope.tocHeigh);
@@ -213,28 +250,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		return delay.promise;
 	};
 
-	$scope.loadIGDocuments = function () {
-		var delay = $q.defer();
-		
-		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-			$scope.error = null;
-			$rootScope.igs = [];
-			$scope.loading = true;
-		$http.get('api/igdocuments').then(function(response) {
-			$rootScope.igs = angular.fromJson(response.data);
-			$scope.loading = false;
-			delay.resolve(true);
-		}, function(error) {
-			$scope.loading = false;
-			$scope.error = error.data;
-			delay.reject(false);
-
-		});
-		}else{
-			delay.reject(false);
-		}
-	};
-
     $scope.loadTemplate = function () {
         var delay = $q.defer();
       
@@ -267,10 +282,57 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 	$scope.initTestPlans = function () {
-		$scope.loadIGDocuments();
+		$scope.loadIGAMTProfiles();
+		$scope.loadXMLProfiles();
 		$scope.loadTestPlans();
         $scope.loadTemplate();
 		$scope.getScrollbarWidth();
+	};
+
+	$scope.loadXMLProfiles = function () {
+		var delay = $q.defer();
+
+		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+			$scope.error = null;
+			$rootScope.privateProfiles = [];
+			$scope.loading = true;
+			$http.get('api/profiles').then(function(response) {
+				$rootScope.privateProfiles = angular.fromJson(response.data);
+				$scope.loading = false;
+				delay.resolve(true);
+			}, function(error) {
+				$scope.loading = false;
+				$scope.error = error.data;
+				delay.reject(false);
+
+			});
+		}else{
+			delay.reject(false);
+		}
+	};
+
+	$scope.loadIGAMTProfiles = function () {
+		var delay = $q.defer();
+
+		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+			waitingDialog.show('Loading Profiles...', {dialogSize: 'xs', progressType: 'info'});
+			$scope.error = null;
+			$rootScope.igamtProfiles = [];
+			$scope.loading = true;
+			$http.get('api/igdocuments').then(function(response) {
+				$rootScope.igamtProfiles = angular.fromJson(response.data);
+				$scope.loading = false;
+				delay.resolve(true);
+				waitingDialog.hide();
+			}, function(error) {
+				$scope.loading = false;
+				$scope.error = error.data;
+				delay.reject(false);
+				waitingDialog.hide();
+			});
+		}else{
+			delay.reject(false);
+		}
 	};
 
     $scope.deleteProfile = function (){
@@ -344,14 +406,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.loadIntegrationProfile = function () {
 		if($rootScope.selectedTestStep.integrationProfileId != undefined && $rootScope.selectedTestStep.integrationProfileId !== null){
-			$http.get('api/igdocuments/' + $rootScope.selectedTestStep.integrationProfileId + '/tcamtProfile').then(function (response) {
-				$rootScope.selectedIntegrationProfile = angular.fromJson(response.data);
-				$scope.loadConformanceProfile();
-			}, function (error) {
-				$rootScope.selectedIntegrationProfile = null;
-				$rootScope.selectedTestStep.integrationProfileId = null;
-				$rootScope.selectedTestStep.conformanceProfileId = null;
+			$rootScope.selectedIntegrationProfile =_.find($rootScope.integrationProfiles, function(ip) {
+				return ip.id == $rootScope.selectedTestStep.integrationProfileId;
 			});
+			$scope.loadConformanceProfile();
 		}else {
 			$rootScope.selectedIntegrationProfile = null;
 			$rootScope.selectedTestStep.integrationProfileId = null;
@@ -529,6 +587,16 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 			$rootScope.testplans = [];
 			$rootScope.testplans.push(testplan);
+
+			$rootScope.integrationProfiles = [];
+
+			for(var i in $rootScope.igamtProfiles){
+				$rootScope.integrationProfiles.push($rootScope.igamtProfiles[i]);
+			};
+
+			for(var i in $rootScope.privateProfiles){
+				$rootScope.integrationProfiles.push($rootScope.privateProfiles[i]);
+			};
 
 			$timeout(function () {
 				$rootScope.selectedTestPlan = testplan;
@@ -850,6 +918,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.testDataAccordi.segmentList = false;
 		$scope.testDataAccordi.selectedSegment = true;
 		$scope.testDataAccordi.constraintList = false;
+
 
 		$rootScope.selectedSegmentNode = {};
 		$rootScope.selectedSegmentNode.segment = segment;
@@ -3368,13 +3437,27 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	}
 
 	$scope.findTitleForProfiles = function (ipid, cpid){
-		for (i in $rootScope.igs) {
-			var ig = $rootScope.igs[i];
-			if(ipid == ig.profile.id){
-				$scope.integrationProfileTitle = ig.metaData.title;
+		for (i in $rootScope.igamtProfiles) {
+			var ip = $rootScope.igamtProfiles[i];
+			if(ipid == ip.id){
+				$scope.integrationProfileTitle = ip.metaData.name;
 
-				for (j in ig.profile.messages.children) {
-					var cp = ig.profile.messages.children[j];
+				for (j in ip.messages.children) {
+					var cp = ip.messages.children[j];
+					if(cpid == cp.id){
+						$scope.conformanceProfileTitle = cp.structID + '-' + cp.name + '-' + cp.identifier;
+					}
+				}
+			}
+		}
+
+		for (i in $rootScope.privateProfiles) {
+			var ip = $rootScope.privateProfiles[i];
+			if(ipid == ip.id){
+				$scope.integrationProfileTitle = ip.metaData.name;
+
+				for (j in ip.messages.children) {
+					var cp = ip.messages.children[j];
 					if(cpid == cp.id){
 						$scope.conformanceProfileTitle = cp.structID + '-' + cp.name + '-' + cp.identifier;
 					}
@@ -3515,6 +3598,7 @@ angular.module('tcl').controller('reportController', function ($scope, $modalIns
 		$modalInstance.dismiss('cancel');
 	};
 });
+
 angular.module('tcl').controller('MessageTemplateCreationModalCtrl', function($scope, $modalInstance, $rootScope) {
 
 	var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){

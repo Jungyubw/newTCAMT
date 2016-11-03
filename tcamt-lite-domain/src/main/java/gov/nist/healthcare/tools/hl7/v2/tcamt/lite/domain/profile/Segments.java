@@ -1,16 +1,19 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.ConformanceStatement;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.constraints.Predicate;
-
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
+
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Field;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TextbasedSectionModel;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ConformanceStatement;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Predicate;
 
 public class Segments extends TextbasedSectionModel implements java.io.Serializable, Cloneable {
 
@@ -123,7 +126,7 @@ public class Segments extends TextbasedSectionModel implements java.io.Serializa
 		if (this.children != null) {
 			for (Segment m : this.children) {
 				for (Field f : m.getFields()) {
-					Component c = datatypes.findOneComponent(f.getDatatype());
+					Component c = datatypes.findOneComponent(f.getDatatype().getId());
 					if (c != null) {
 						return c;
 					}
@@ -207,14 +210,6 @@ public class Segments extends TextbasedSectionModel implements java.io.Serializa
 			} else {
 				s.setId(this.findOneSegmentByNameAndByHl7Version(s.getName(), s.getHl7Version()).getId()); //FIXME probably useless
 			}
-		}
-	}
-
-	public void setPositionsOrder(){
-		List<Segment> sortedList = new ArrayList<Segment>(this.getChildren());
-		Collections.sort(sortedList);
-		for (Segment elt: sortedList) {
-			elt.setSectionPosition(sortedList.indexOf(elt));
 		}
 	}
 

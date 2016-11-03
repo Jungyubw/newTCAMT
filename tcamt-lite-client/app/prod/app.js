@@ -19,7 +19,9 @@ var app = angular
         'ngRoute',
         'ngSanitize',
         'ngTouch',
+        'angular-bind-html-compile',
         'ngIdle',
+        'ui.bootstrap',
         'smart-table',
         'ngTreetable',
         'restangular',
@@ -28,11 +30,12 @@ var app = angular
         'froala',
         'ngNotificationsBar',
         'ngDragDrop',
-        'ui.tree', 
-        'ui.bootstrap.contextMenu',
+        'ui.tree',
         'ui.bootstrap',
+        'ui.bootstrap.contextMenu',
         'ui.codemirror',
-        'ui-notification'
+        'ui-notification',
+        'hit-validation-result'
     ]);
 app.config(function(NotificationProvider) {
     NotificationProvider.setOptions({
@@ -73,6 +76,9 @@ app.config(function ($routeProvider, RestangularProvider, $httpProvider, Keepali
         })
         .when('/tp', {
             templateUrl: 'views/tp.html'
+        })
+        .when('/profiles', {
+            templateUrl: 'views/profiles.html'
         })
         .when('/doc', {
             templateUrl: 'views/doc.html'

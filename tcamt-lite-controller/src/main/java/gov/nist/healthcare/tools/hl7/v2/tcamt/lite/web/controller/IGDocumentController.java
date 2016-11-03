@@ -1,5 +1,6 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
-import gov.nist.healthcare.tools.hl7.v2.igamt.prelib.domain.ProfilePreLib;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 
 @RestController
@@ -26,9 +27,21 @@ public class IGDocumentController extends CommonController {
 	AccountRepository accountRepository;
 
 	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
-	public List<IGDocument> getIGDocumentList() throws Exception {
+	public List<Profile> getIGDocumentList() throws Exception {
+		IGAMTDBConn con = new IGAMTDBConn();
+		
 		try {
-			return userIGDocuments();
+			List<Profile> result = new ArrayList<Profile>();
+			for(IGDocument igd: this.userIGDocuments()){
+				Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId());
+				p.getMetaData().setName(igd.getMetaData().getTitle());
+				p.getMetaData().setDescription(igd.getMetaData().getDescription());
+				p.getMetaData().setDate(igd.getMetaData().getDate());
+				
+				result.add(con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId()));
+			}
+			
+			return result;
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
@@ -44,7 +57,7 @@ public class IGDocumentController extends CommonController {
 	}
 
 	@RequestMapping(value = "/{id}/tcamtProfile", method = RequestMethod.GET, produces = "application/json")
-	public ProfilePreLib getProfilePreLib(@PathVariable("id") String id)
+	public Profile getTCAMTProfile(@PathVariable("id") String id)
 			throws Exception {
 
 		IGAMTDBConn con = new IGAMTDBConn();

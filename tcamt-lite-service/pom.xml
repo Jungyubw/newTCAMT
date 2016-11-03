@@ -48,12 +48,6 @@
 			<artifactId>tcamt-lite-repo</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
-		<dependency>
-			<groupId>gov.nist.healthcare.tools.hl7.v2.igamt.lite</groupId>
-			<artifactId>igamt-lite-domain</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>

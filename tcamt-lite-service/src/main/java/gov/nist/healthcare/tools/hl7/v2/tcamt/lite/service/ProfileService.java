@@ -8,25 +8,38 @@
  * modified freely provided that any derivative works bear some notice that they are derived from it, and any
  * modified versions bear some notice that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
-
 
 /**
- * @author Harold Affo (harold.affo@nist.gov) Feb 13, 2015
+ * 
+ * @author Jungyub Woo
+ * 
  */
-public abstract class DataModel {
 
-	public DataModel() {
-		super();
-	}
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service;
 
-	protected String type;
+import java.util.List;
 
-	public String getType() {
-		return type;
-	}
+import org.springframework.stereotype.Service;
 
-	public void setType(String type) {
-		this.type = type;
-	}
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileDataStr;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
+
+@Service
+public interface ProfileService {
+	
+	public Profile save(Profile p) throws ProfileException;
+
+	public void delete(String id);
+
+	public Profile findOne(String id);
+
+	public List<Profile> findAll();
+
+	public List<Profile> findByAccountId(Long accountId);
+
+	public Profile clone(Profile ig) throws CloneNotSupportedException;
+
+	public Profile apply(Profile ig) throws ProfileSaveException;
+	
+	public Profile readXML2Profile(ProfileDataStr pds) throws ProfileException;
 }

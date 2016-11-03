@@ -78,3 +78,100 @@
         </button>
     </div>
 </script>
+
+<script type="text/ng-template" id="TestPlanCreationModal.html">
+    <md-dialog aria-label="Create New TestPlan">
+        <form ng-cloak>
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2>Create New TestPlan</h2>
+                    <span flex></span>
+                </div>
+            </md-toolbar>
+            <md-dialog-content>
+                <div class="md-dialog-content">
+                    <md-input-container style="width: 100%;">
+                        <label>Name</label>
+                        <input ng-model="newTestPlan.name" type="text"/>
+                    </md-input-container>
+                    <md-input-container style="width: 100%;">
+                        <label>Description</label>
+                        <input ng-model="newTestPlan.description" type="text"/>
+                    </md-input-container>
+                    <md-input-container style="width: 100%">
+                        <label>Type</label>
+                        <md-select ng-model="newTestPlan.type">
+                            <md-option value="DataInstance">Data Instance</md-option>
+                            <md-option value="Isolated">Isolated</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </md-dialog-content>
+            <md-dialog-actions layout="row">
+                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                </md-button>
+                <span flex></span>
+                <md-button class="btn btn-default btn-sm" ng-click="cancel()">
+                    <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
+                </md-button>
+                <md-button class="btn btn-primary btn-sm" ng-disabled="!newTestPlan.name" ng-click="createNewTestPlan()">
+                    <i class="fa fa-plus fa-fw">&nbsp; </i> Create
+                </md-button>
+            </md-dialog-actions>
+        </form>
+    </md-dialog>
+</script>
+
+<script type="text/ng-template" id="ImportXMLProfileModal.html">
+    <md-dialog aria-label="Import XML Profile">
+        <form ng-cloak>
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2>Import XML Profile</h2>
+                    <span flex></span>
+                </div>
+            </md-toolbar>
+            <md-dialog-content>
+                <div class="md-dialog-content">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <label for="profileXMLFile" class="custom-file-upload">
+                                <i class="fa fa-cloud-upload"></i> Choose Profile XML File
+                                <div id="errorMessageForXMLProfile"></div>
+                            </label>
+                            <input id="profileXMLFile" accept=".xml" onchange="angular.element(this).scope().validateForProfileXMLFile(this.files)" type="file" name="profileXMLFile" />
+                        </div>
+                        <div class="col-sm-12">
+                            <label for="valueSetXMLFile" class="custom-file-upload">
+                                <i class="fa fa-cloud-upload"></i> Choose ValueSet XML File
+                                <div id="errorMessageForValueSetXML"></div>
+                            </label>
+                            <input id="valueSetXMLFile" accept=".xml" onchange="angular.element(this).scope().validateForValueSetXMLFile(this.files)" type="file" name="valueSetXMLFile" />
+                        </div>
+                        <div class="col-sm-12">
+                            <label for="constraintsXMLFile" class="custom-file-upload">
+                                <i class="fa fa-cloud-upload"></i> Choose Constraints XML File
+                                <div id="errorMessageForConstraintsXML"></div>
+                            </label>
+                            <input id="constraintsXMLFile" accept=".xml" onchange="angular.element(this).scope().validateForConstraintsXMLFile(this.files)" type="file" name="constraintsXMLFile" />
+                        </div>
+                    </div>
+                </div>
+            </md-dialog-content>
+            <md-dialog-actions layout="row">
+                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                </md-button>
+                <span flex></span>
+                <md-button class="btn btn-default btn-sm" ng-click="cancel()">
+                    <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
+                </md-button>
+                <md-button id="importProfileButton" class="btn btn-primary btn-sm" disabled ng-click="importProfileXML();">
+                    <i class="fa fa-plus fa-fw">&nbsp; </i> Import
+                </md-button>
+            </md-dialog-actions>
+        </form>
+    </md-dialog>
+
+</script>
