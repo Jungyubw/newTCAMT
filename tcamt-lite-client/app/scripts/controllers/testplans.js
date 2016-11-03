@@ -3335,7 +3335,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.ApplyProfile = [
 
 	                  		['Apply Profile', function($itemScope) {
-	                  			$scope.applyConformanceProfile($itemScope.ig.id, $itemScope.msg.id);
+	                  			$scope.applyConformanceProfile($itemScope.ip.id, $itemScope.msg.id);
 	                  			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
 	                  		}]
 	                  		
@@ -3437,6 +3437,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	}
 
 	$scope.findTitleForProfiles = function (ipid, cpid){
+		$scope.conformanceProfileTitle = null;
+		$scope.integrationProfileTitle = null;
 		for (i in $rootScope.igamtProfiles) {
 			var ip = $rootScope.igamtProfiles[i];
 			if(ipid == ip.id){

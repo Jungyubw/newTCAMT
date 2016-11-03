@@ -1,7 +1,9 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Id;
@@ -37,6 +39,9 @@ public class TestPlan implements Serializable, Cloneable {
 	private Integer position;
 	private String domain;
 	private boolean skip;
+	
+//	private List<?> listOfIntegrationProfiles = new ArrayList<?>();
+	
 	
 	
 	public TestPlan() {
