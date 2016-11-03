@@ -64,9 +64,10 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 			targetEvent: ev,
 			clickOutsideToClose:false,
 			fullscreen: false // Only for -xs, -sm breakpoints.
-		}).then(function(error) {
-			console.log(error);
+		}).then(function() {
+			$scope.loadXMLProfiles();
 		}, function() {
+
 		});
 	};
 
@@ -126,10 +127,9 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 		};
 
 		$scope.importProfileXML = function() {
-			console.log($scope.xmlFilesData);
 			$http.post('api/profiles/importXMLFiles', $scope.xmlFilesData).then(function (response) {
 				$mdDialog.hide();
-			}, function (error) {
+			}, function () {
 			});
 		};
 	};
