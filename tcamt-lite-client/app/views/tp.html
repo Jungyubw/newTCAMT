@@ -10,7 +10,7 @@
     };
     $(window).scroll(function () {
         if ( $(this).scrollTop() > 100) {
-            $('#testplanHeader').attr('style', 'position:fixed; width:100%;z-index: 100000;background: white; top:0; left:0');
+            $('#testplanHeader').attr('style', 'position:fixed; width:100%;z-index: 100000;background: #d8e0f1; top:0; left:0');
         } else if ( $(this).scrollTop() <= 100 ) {
             $('#testplanHeader').removeAttr( "style" )
         }
@@ -28,14 +28,14 @@
                 </div>
 
                 <div class="pull-right">
-                    <button ng-show="accordi.tpList" type="button" class="btn btn-info btn-sm" ng-click="createNewTestPlan()"><i class="fa fa-plus"></i>
+                    <button ng-show="accordi.tpList" type="button" class="btn btn-info btn-sm" ng-click="createNewTestPlan()" style="margin-bottom:10px !important;"><i class="fa fa-plus"></i>
                         New
                     </button>
-                    <button ng-show="accordi.tpDetails" title="View TestPlan List" type="button" class="btn btn-sm btn-info" ng-click="closeTestPlanEdit()">
+                    <button ng-show="accordi.tpDetails" title="View TestPlan List" type="button" class="btn btn-sm btn-info" ng-click="closeTestPlanEdit()" style="margin-bottom:10px !important;">
                         <span><i class="fa fa-list fa-fw"></i>List</span>
                     </button>
 
-                    <div ng-show="accordi.tpDetails" class="btn-group">
+                    <div ng-show="accordi.tpDetails" class="btn-group" >
                         <button type="button" class="btn btn-info btn-sm">
                             <span><i class="fa fa-download fa-fw"></i> Export</span>
                         </button>
@@ -66,7 +66,7 @@
                             <li><a class="point" ng-click="openCreateMessageTemplateModal()">Make Message TestData Cate. Template</a></li>
                         </ul>
                     </div>
-                    <button title="Save Changes" type="button" class="btn btn-sm btn-success" ng-click="saveAllChangedTestPlans()" ng-disabled="!isChanged">
+                    <button  title="Save Changes" type="button" class="btn btn-sm btn-success" ng-click="saveAllChangedTestPlans()" ng-disabled="!isChanged" style="margin-bottom:10px !important;">
                         <span><i class="fa fa-floppy-o fa-fw"></i> Save</span>
                     </button>
                 </div>

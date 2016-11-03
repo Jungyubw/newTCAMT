@@ -33,7 +33,7 @@
                     	<i class="fa fa-caret-left"></i>
                 	</button>
             	</div>
-            	<div class="panel-body" style="height:{{tocHeigh}}px;overflow:scroll;">
+            	<div class="panel-body" style="height:{{tocHeigh}}px;overflow:auto;">
                 	<div class="toc-container">
                     	<div ng-include="'views/toc.html'"></div>
                 	</div>
@@ -43,8 +43,9 @@
 				<span>
               	<label class="badge" ng-click="incrementToc()"><i class="fa fa-caret-down" aria-hidden="true"></i></label>
                 <label class="badge" ng-click="decrementToc()"><i class="fa fa-caret-up" aria-hidden="true"></i></label>
-                </div>
                 </span>
+                </div>
+                
                 <span>
                   <label style="margin-left:4px;">Hide IG List:
     				<input type="checkbox" ng-model="ighidden">
@@ -54,38 +55,48 @@
    				</label>
          		</span>
 	
-				<div class="panel panel-warning" ng-if="!ighidden">
+				<div class="panel panel-primary" ng-if="!ighidden">
 				<div class="panel-heading panel-heading-collapsable" style="background-color:#395286;">
 					<i class="glyphicon glyphicon-list"></i> <span><strong >IG Documents Tree</strong>
 				</div>
-				<div class="panel-body">
+				<div class="panel-body" style="height:{{igHeigh}}px;overflow:auto;">
 					<div class="toc-container">
 						<div ng-include="'views/IgToc.html'"></div>
 					</div>
 				</div>
                 </div>
-
-                <div class="panel panel-warning" ng-if="!templateHidden">
+                <div style="text-align: center;" ng-if="!ighidden">
+				<span>
+              	<label class="badge" ng-click="incrementIg()"><i class="fa fa-caret-down" aria-hidden="true"></i></label>
+                <label class="badge" ng-click="decrementIg()"><i class="fa fa-caret-up" aria-hidden="true"></i></label>
+                </span>
+                </div>
+                <div class="panel panel-primary" ng-if="!templateHidden">
                 <div class="panel-heading panel-heading-collapsable" style="background-color:#4c70bb;">
                     <i class="glyphicon glyphicon-list"></i> <strong>Templates</strong>
                 </div>
-                <div class="panel-body" style="height:200px;overflow:scroll;">
+                <div class="panel-body" style="height:{{templateHeigh}}px;overflow:auto;">
                     <div class="toc-container">
                         <div ng-include="'views/TemplateToc.html'"></div>
                     </div>
                 </div>
                 </div>
-
-
+                
+				 <div style="text-align: center;" ng-if="!templateHidden">
+				<span>
+              	<label class="badge" ng-click="incrementTemplate()"><i class="fa fa-caret-down" aria-hidden="true"></i></label>
+                <label class="badge" ng-click="decrementTemplate()"><i class="fa fa-caret-up" aria-hidden="true"></i></label>
+                </span>
+                </div>
         	</div>
         	
         	
     	
     
     	<div ng-class="{'col-md-9': !hideToc, 'col-md-11 col-98-5-percent':hideToc}">
-        	<div class="panel panel-primary" >
+        	<div class="panel panel-primary" style="margin-bottom:5px;">
             	<div class="panel-heading" style="background-color:#293856"><strong>{{CurrentTitle}}</strong></div>
-            	<div class="panel-body" style="padding-bottom:100px height:200px;overflow:scroll;">
+            	<div class="panel-body" style="padding-bottom:100px;height:{{igHeigh+templateHeigh+tocHeigh+158}}px;overflow:auto;">
             		<div class="col-md-12" ng-show="subview === null||subview===undefined|| !subview">
             			<p> No Element Selected </p>
             		</div>
@@ -97,5 +108,4 @@
         	</div>
     	</div>
         </div>
-	</div>
 </div>

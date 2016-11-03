@@ -46,17 +46,21 @@
 </head>
 <body ng-controller="MainCtrl" ng-app="tcl" ng-init="init()">
 <notifications-bar class="notifications" closeIcon="fa fa-times-circle"></notifications-bar>
+    <div id="wrapper"> 
+    <div ng-include="'views/header.html'" style="height:15% !important;"></div>
+    
     <!--[if lt IE 7]>
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div class="container-fluid" style="height:100px;">
-        <div ng-include="'views/header.html'"></div>
+    <div id="appcontainer" style="border-style:none;
+    border-width: 0px; !important;">
+
+   <div style="height:70% !important;     border-style: none;
+    border-width: 0px;" ng-view ></div>
+
     </div>
-
-
-    <div ng-view></div>
-
+ <div ng-include="'views/footer.html'"></div>
     <div ng-include="'views/templates.html'"></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
@@ -88,6 +92,6 @@
     <script>
         $.material.init();
     </script>
-
+</div>
 </body>
 </html>

@@ -18,8 +18,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.nistStd = {};
 	$scope.nistStd.nist = false;
 	$scope.nistStd.std = false;
-	$scope.changesMap={};
+	$rootScope.changesMap={};
 	$rootScope.tocHeigh=300;
+	$rootScope.igHeigh=300;
+	$rootScope.templateHeigh=300;
 	$(document).keydown(function(e) {
 		var nodeName = e.target.nodeName.toLowerCase();
 		
@@ -45,6 +47,26 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.tocHeigh=$rootScope.tocHeigh-50;
 		}else{
 			$rootScope.tocHeigh=$rootScope.tocHeigh;
+		}
+	};
+	$scope.incrementIg=function(){
+		$rootScope.igHeigh=$rootScope.igHeigh+50;
+	};
+	$scope.decrementIg=function(){
+		if($rootScope.igHeigh>50){
+			$rootScope.igHeigh=$rootScope.igHeigh-50;
+		}else{
+			$rootScope.igHeigh=$rootScope.igHeigh;
+		}
+	};
+	$scope.incrementTemplate=function(){
+		$rootScope.templateHeigh=$rootScope.templateHeigh+50;
+	};
+	$scope.decrementTemplate=function(){
+		if($rootScope.templateHeigh>50){
+			$rootScope.templateHeigh=$rootScope.templateHeigh-50;
+		}else{
+			$rootScope.templateHeigh=$rootScope.templateHeigh;
 		}
 	};
 	
@@ -651,7 +673,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedTestPlan.isChanged = true;
 		$rootScope.isChanged = true;
 		if(obj){
-			$scope.changesMap[obj.id] = true;
+			$rootScope.changesMap[obj.id] = true;
 		}
 	};
 
@@ -675,7 +697,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 					testplan.lastUpdateDate = saveResponse.date;
 					$rootScope.saved = true;
 					testplan.isChanged = false;
-					$scope.changesMap={};
+					$rootScope.changesMap={};
 					Notification.success({message:"Test Plan Saved", delay: 1000});
 
 
@@ -2909,13 +2931,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			event.source.nodeScope.$modelValue.position = sortAfter+1;
 			$scope.updatePositions(event.dest.nodesScope.$modelValue);
 			$scope.updatePositions(event.source.nodesScope.$modelValue);
+			
 			if($scope.sourceDrag.position!==sourceNode.$modelValue.position){
-				console.log($scope.sourceDrag.position);
-				console.log(sourceNode.$modelValue.position);
-				
-				$scope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
-				$scope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
+				$rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
+				$rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
 				$scope.recordChanged();
+			}else{
+				if($scope.parentDrag.id!==destNodes.$parent.$modelValue.id){
+					
+					
+					$rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
+					$rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
+					$scope.recordChanged();
+				}
 			}
 			
 
@@ -2927,8 +2955,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			
 			$scope.sourceDrag=angular.copy(sourceNode.$modelValue);
 			//$scope.destDrag=angular.copy(sourceNode.$parent.$nodeScope.$modelValue);
-			
-			console.log($scope.sourceDrag)
+			$scope.parentDrag=sourceNode.$parentNodeScope.$modelValue;
+			console.log($scope.parentDrag);
+			//console.log($scope.sourceDrag)
 			
 			
 		}
@@ -2987,8 +3016,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$itemScope.$nodeScope.$modelValue.children=[];
 			}
 			var genId=new ObjectId().toString();
-			$scope.changesMap[genId]=true;
-			$scope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
+			$rootScope.changesMap[genId]=true;
+			$rootScope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
 			$itemScope.$nodeScope.$modelValue.children.push({
 				id: genId,
 				type : "testcasegroup",
@@ -3009,8 +3038,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$itemScope.$nodeScope.$modelValue.children=[];
 			}
 			var testCaseId=new ObjectId().toString();
-			$scope.changesMap[testCaseId]=true;
-			$scope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
+			$rootScope.changesMap[testCaseId]=true;
+			$rootScope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
 			$itemScope.$nodeScope.$modelValue.children.push(
 				{
 					id: testCaseId,
@@ -3031,8 +3060,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.testGroupOptions = [
 		['Add New TestCase', function($itemScope) {
 			var caseId=new ObjectId().toString();
-			$scope.changesMap[caseId]=true;
-			$scope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
+			$rootScope.changesMap[caseId]=true;
+			$rootScope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
 			$itemScope.$nodeScope.$modelValue.testcases.push({
 				id: caseId,
 				type : "testcase",
@@ -3076,8 +3105,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$itemScope.$nodeScope.$modelValue.teststeps=[];
 			}
 			var stepId = new ObjectId().toString();
-			$scope.changesMap[stepId]=true;
-			$scope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
+			$rootScope.changesMap[stepId]=true;
+			$rootScope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
             var newTestStep = {
                 id: stepId,
                 type : "teststep",
@@ -3174,7 +3203,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}],
 
 		['Apply', function($itemScope) {
-			$scope.changesMap[$rootScope.selectedTestStep.id]=true;
+			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
 			$scope.applyMessageTemplate($itemScope.msgTmp);
 			Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
 
@@ -3208,7 +3237,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}],
 
 		['Overwrite Template', function($itemScope) {
-			$scope.changesMap[$rootScope.selectedTestStep.id]=true;
+			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
 			$scope.overwriteSegmentTemplate($itemScope.segTmp);
 			Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
 
@@ -3226,7 +3255,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}],
 
 		['Apply Message', function($itemScope) {
-			$scope.changesMap[$rootScope.selectedTestStep.id]=true;
+			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
 		$scope.overwriteER7Template($itemScope.er7Tmp);
 		Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
 
@@ -3238,7 +3267,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	                  		['Apply Profile', function($itemScope) {
 	                  			$scope.applyConformanceProfile($itemScope.ig.id, $itemScope.msg.id);
-	                  			$scope.changesMap[$rootScope.selectedTestStep.id]=true;
+	                  			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
 	                  		}]
 	                  		
 
@@ -3358,7 +3387,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var clone= angular.copy(testStep);
 		clone.name= testStep.name+" Copy";
 		clone.id= new ObjectId().toString();
-		$scope.changesMap[clone.id]=true;
+		$rootScope.changesMap[clone.id]=true;
 		$scope.recordChanged(clone);
 		return clone;
 	}
@@ -3366,7 +3395,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var clone= angular.copy(testCase);
 		clone.name= testCase.name+" Copy";
 		clone.id= new ObjectId().toString();
-		$scope.changesMap[clone.id]=true;
+		$rootScope.changesMap[clone.id]=true;
 		clone.teststeps=[];
 		if(testCase.teststeps.length>0){
 			angular.forEach(testCase.teststeps, function(teststep){
@@ -3432,7 +3461,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var clone = angular.copy(testCaseGroup);
 		clone.name= testCaseGroup.name+" Copy";
 		clone.id= new ObjectId().toString();
-		$scope.changesMap[clone.id]=true;
+		$rootScope.changesMap[clone.id]=true;
 		clone.testcases=[];
 		if(testCaseGroup.testcases.length>0){
 			angular.forEach(testCaseGroup.testcases, function(testcase){
@@ -3493,6 +3522,7 @@ angular.module('tcl').controller('MessageTemplateCreationModalCtrl', function($s
 	});
 	$scope.newMessageTemplate = {};
 	$scope.newMessageTemplate.id = new ObjectId().toString();
+	$rootScope.changesMap[$scope.newMessageTemplate.id]=true;
 	$scope.newMessageTemplate.name = 'new Template for ' + $rootScope.selectedConformanceProfile.name;
 	$scope.newMessageTemplate.descrption = 'No Desc';
 	$scope.newMessageTemplate.date = new Date();
@@ -3534,6 +3564,7 @@ angular.module('tcl').controller('SegmentTemplateCreationModalCtrl', function($s
 	});
 	$scope.newSegmentTemplate = {};
 	$scope.newSegmentTemplate.id = new ObjectId().toString();
+	$rootScope.changesMap[$scope.newSegmentTemplate.id]=true;
 	$scope.newSegmentTemplate.name = 'new Template for ' + $rootScope.selectedSegmentNode.segment.obj.name;
 	$scope.newSegmentTemplate.descrption = 'No Desc';
 	$scope.newSegmentTemplate.segmentName = $rootScope.selectedSegmentNode.segment.obj.name;
@@ -3566,6 +3597,7 @@ angular.module('tcl').controller('SegmentTemplateCreationModalCtrl', function($s
 angular.module('tcl').controller('Er7TemplateCreationModalCtrl', function($scope, $modalInstance, $rootScope) {
 	$scope.newEr7Template = {};
 	$scope.newEr7Template.id = new ObjectId().toString();
+	$rootScope.changesMap[$scope.newEr7Template.id]=true;
 	$scope.newEr7Template.name = 'new Er7 Template for ' + $rootScope.selectedConformanceProfile.name;
 	$scope.newEr7Template.descrption = 'No Desc';
 	$scope.newEr7Template.date = new Date();

@@ -152,16 +152,17 @@
                         {{categorization.testDataCategorization}}
                     </td>
                     <td class="col-md-5">
-                    <div ng-if="cantegorization.listData.length>0">
-                        {{categorization.listData}}
-                    </div>
+						<ul>
+							<li ng-repeat="data in categorization.listData">
+                        {{data}}
+							</li>
+						</ul>
                
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
-<pre>{{msgTemplate}}</pre>
 </script>
 <script type="text/ng-template" id="Er7TemplateMetadata.html">
     <div class="page-header">

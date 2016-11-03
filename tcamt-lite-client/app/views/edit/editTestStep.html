@@ -221,7 +221,7 @@ body {
 			</div>
 			<div class="row" style="margin:10px;">
 				<uib-accordion close-others="false">
-					<uib-accordion-group is-open="testDataAccordi.segmentList" panel-class="panel-level2">
+					<uib-accordion-group is-open="testDataAccordi.segmentList">
 						<uib-accordion-heading>
 							<span ng-click="segmentListAccordionClicked()" style="color:white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.segmentList, 'fa-caret-right': !testDataAccordi.segmentList}"></i>
@@ -263,7 +263,7 @@ body {
 						</div>
 					</uib-accordion-group>
 
-					<uib-accordion-group is-open="testDataAccordi.selectedSegment" panel-class="panel-level2">
+					<uib-accordion-group is-open="testDataAccordi.selectedSegment">
 						<uib-accordion-heading>
 							<span ng-click="segmentAccordionClicked()" style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.selectedSegment, 'fa-caret-right': !testDataAccordi.selectedSegment}"></i>
@@ -328,7 +328,7 @@ body {
 						</div>
 					</uib-accordion-group>
 
-					<uib-accordion-group is-open="testDataAccordi.constraintList" panel-class="panel-level2">
+					<uib-accordion-group is-open="testDataAccordi.constraintList">
 						<uib-accordion-heading>
 							<span ng-click="constraintAccordionClicked()" style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.constraintList, 'fa-caret-right': !testDataAccordi.constraintList}"></i>
@@ -369,12 +369,22 @@ body {
 		</div>
 
 		<div ng-show="isSelectedTestStepTab(5);">
-			<div class="row">
-				<div class="pull-right">
-					<button class="btn btn-xs btn-info" ng-click="validate('free')">Context Free Validation</button>
-					<button class="btn btn-xs btn-primary " ng-click="validate('based')">Context Based Validation</button>
-				</div>
+			<div class="container">
+			<div class="row container">
+
+				<span class="pull-right">
+						<div class="btn-group" data-toggle="buttons">
+    						<label class="btn btn-primary " ng-click="validate('free')" ng-class="{'active':context === 'free'}">
+        						<input type="radio">Context Free</input>
+							</label>
+							<label class="btn btn-primary " ng-click="validate('based')" ng-class="{'active':context === 'based'}">
+        						<input type="radio">Context Based</input>
+							</label>
+   						</div>
+					</span>
 			</div>
+
+
 <!-- 			<div class="col-md-12">
 					<textarea rows="10" type="cb" class="form-control" id="er7-textarea-validation"
 							  ng-change="recordChanged(selectedTestStep)"
@@ -386,9 +396,9 @@ body {
 			<div class="panel panel-warning">
 				<div class="panel-heading panel-heading-collapsable" style="background-color:#395286;">
 					<i class="glyphicon glyphicon-list"></i> <span><strong >Message Content</strong>
-					<a style="color:white !important"><span class="pull-right" title="View Result Categories" ng-click="resetValidation();">
-                                       <strong><i class="fa fa-refresh" aria-hidden="true"></i>Reload
-                                    </span></strong></a> 
+					<a style="color:white !important"><span class="pull-right" title="Load Initial Message" ng-click="resetValidation();">
+                                       <strong><i class="fa fa-refresh" aria-hidden="true"></i><span style="margin-left:3px;">Reload
+                                    </span> </span></strong></a> 
 				</div>
 				<div class="panel-body">
 					<div class="toc-container">
@@ -405,7 +415,7 @@ body {
 				<div class="panel-heading panel-heading-collapsable" style="background-color:#395286;">
 					<span><strong>Validation Result <span ng-if="context=='free'||context=='based'" style="font-style:italic;">: Context-{{context}}</span></strong>
 					<a style="color:white !important"><span class="pull-right" title="View Result Categories" ng-click="showValidationInfo()">
-                                       <strong><i class="fa fa-info-circle"></i>Help
+                                       <strong><i class="fa fa-info-circle" style="margin-right:3px;"></i>Help
                                     </span></strong></a>     
                                     
 				</div>
@@ -433,12 +443,12 @@ body {
 
 		</div>
 
-
+</div>
 
 		<div ng-show="selectedTestStepTab == 6">
 			<div class="row" style="margin:10px; margin-top:30px;">
 				<uib-accordion close-others="true">
-					<uib-accordion-group  panel-class="panel-level2" is-open="nistStd.nist">
+					<uib-accordion-group  is-open="nistStd.nist">
 						<uib-accordion-heading>
 							<span style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': nistStd.nist, 'fa-caret-right': !nistStd.nist}"></i>
@@ -448,7 +458,7 @@ body {
 						<textarea style="width:100%" ng-model="selectedTestStep.nistXMLCode" readonly rows="30"/>
 					</uib-accordion-group>
 
-					<uib-accordion-group  panel-class="panel-level2" is-open="nistStd.std">
+					<uib-accordion-group is-open="nistStd.std">
 						<uib-accordion-heading>
 							<span style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': nistStd.std, 'fa-caret-right': !nistStd.std}"></i>
@@ -463,7 +473,7 @@ body {
 		<div ng-show="selectedTestStepTab == 7">
 			<div class="row" style="margin:10px; margin-top:30px;">
 				<uib-accordion close-others="true">
-					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.messageContents">
+					<uib-accordion-group  is-open="DocAccordi.messageContents">
 						<uib-accordion-heading>
 							<span style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': DocAccordi.messageContents, 'fa-caret-right': !DocAccordi.messageContents}"></i>
@@ -473,7 +483,7 @@ body {
 						<div dynamic="messageContentsHTML"></div>
 					</uib-accordion-group>
 
-					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.testdata">
+					<uib-accordion-group  is-open="DocAccordi.testdata">
 						<uib-accordion-heading>
 							<span style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': DocAccordi.testdata, 'fa-caret-right': !DocAccordi.testdata}"></i>
@@ -483,7 +493,7 @@ body {
 						<ng-bind-html ng-bind-html="testDataSpecificationHTML"/>
 					</uib-accordion-group>
 
-					<uib-accordion-group  panel-class="panel-level2" is-open="DocAccordi.jurorDocument">
+					<uib-accordion-group  is-open="DocAccordi.jurorDocument">
 						<uib-accordion-heading>
 							<span style="color: white !important;">
 								<i class="fa" ng-class="{'fa-caret-down': DocAccordi.jurorDocument, 'fa-caret-right': !DocAccordi.jurorDocument}"></i>
