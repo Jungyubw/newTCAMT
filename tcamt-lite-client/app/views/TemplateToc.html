@@ -14,7 +14,7 @@
                 <li ng-repeat="msgTmp in template.messageTemplates" ui-tree-node ng-if="selectedTestStep.conformanceProfileId===msgTmp.conformanceProfileId|| selectedTestStep===null">
                     <div ui-tree-handle ng-click="Activate(this);OpenMsgTemplateMetadata(msgTmp)" ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[msgTmp.id]}">
                         <span ng-if="selectedTestStep" context-menu="MessageOptions"><span class="label-success badge">MT</span>{{msgTmp.name}}</span>
-                        <span ng-if="!selectedTestStep"><span class="label-success badge">MT</span>{{msgTmp.name}}</span>
+                        <span ng-if="!selectedTestStep"><span class="label-success">MT</span>{{msgTmp.name}}</span>
                     </div>
                 </li>
             </ol>
@@ -27,8 +27,8 @@
             <ol ui-tree-nodes="" ng-model="template.segmentTemplates" ng-if="!segmenttempCollapsed">
                 <li ng-repeat="segTmp in template.segmentTemplates" ui-tree-node ng-if="selectedSegmentNode===null ||selectedSegmentNode.segment.obj.name===segTmp.segmentName">
                     <div ui-tree-handle ng-click="Activate(this);OpenSegmentTemplateMetadata(segTmp)" ng-class="{selected : this.$modelValue===activeModel,'unsaved':changesMap[segTmp.id]}">
-                        <span ng-if="selectedTestStep" context-menu="SegmentOptions"><span class=" label-success badge">ST</span>{{segTmp.name}}</span>
-                        <span ng-if="!selectedTestStep"><span class=" label-success badge">ST</span>{{segTmp.name}}</span>
+                        <span ng-if="selectedTestStep" context-menu="SegmentOptions"><span class=" label-success">ST</span>{{segTmp.name}}</span>
+                        <span ng-if="!selectedTestStep"><span class=" label-success">ST</span>{{segTmp.name}}</span>
                     </div>
                 </li>
             </ol>
@@ -40,7 +40,7 @@
             <ol ui-tree-nodes="" ng-model="template.er7Templates" ng-if="!Er7Collapsed">
                 <li ng-repeat="er7Tmp in template.er7Templates" ui-tree-node ng-if="selectedTestStep.integrationProfileId===er7Tmp.integrationProfileId || selectedTestStep.conformanceProfileId===er7Tmp.conformanceProfileId|| selectedTestStep===null">
                     <div ui-tree-handle ng-click="Activate(this);OpenEr7TemplatesMetadata(er7Tmp)" ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[er7Tmp.id]}">
-                        <span context-menu="Er7Options" ng-if="selectedTestStep"><span class=" label-success badge">ET</span>{{er7Tmp.name}}</span>
+                        <span context-menu="Er7Options" ng-if="selectedTestStep"><span class=" label-success">ET</span>{{er7Tmp.name}}</span>
                         <span ng-if="!selectedTestStep"><span class=" label-success badge">ET</span>{{er7Tmp.name}}</span>
                     </div>
                 </li>
