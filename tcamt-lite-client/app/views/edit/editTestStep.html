@@ -347,18 +347,15 @@ body {
 									</tr>
 									</thead>
 									<tbody>
-									<tr ng-repeat="cate in displayedCollection">
-										<td>{{cate.iPath}}</td>
-										<td>{{cate.name}}</td>
-								<ul>
-								<li ng-repeat="data in cate.listData">
-                        			{{data}}
-									</li>
-								</ul>
-										<td>
-											<input ng-show="cate.testDataCategorization == 'Value-Test Case Fixed List'" class="form-control" ng-model="cate.listData" ng-list disabled>
-										</td>
-									</tr>
+										<tr ng-repeat="cate in displayedCollection">
+											<td>{{cate.iPath}}</td>
+											<td>{{cate.name}}</td>
+											<td>{{cate.testDataCategorization}}</td>
+											<td>
+												<input ng-show="cate.testDataCategorization == 'Value-Test Case Fixed List'" class="form-control" ng-model="cate.listData" ng-list disabled>
+												<input ng-show="cate.testDataCategorization != 'Value-Test Case Fixed List'" class="form-control" ng-model="cate.data" disabled>
+											</td>
+										</tr>
 									</tbody>
 								</table>
 							</div>

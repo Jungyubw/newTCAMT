@@ -36,7 +36,7 @@ public interface TestPlanService {
 
 	public List<TestPlan> findByAccountId(Long accountId);
 
-	public TestPlan clone(TestPlan ig) throws CloneNotSupportedException;
+	public TestPlan clone(TestPlan tp) throws CloneNotSupportedException;
 
-	public TestPlan apply(TestPlan ig) throws TestPlanSaveException;
+	public TestPlan apply(TestPlan tp) throws TestPlanSaveException;
 }

@@ -18,6 +18,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import gov.nist.healthcare.nht.acmgt.dto.ResponseMessage;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanListException;
@@ -115,6 +119,27 @@ public class TestPlanController extends CommonController {
 			if (tp.getAccountId() == account.getId()) {
 				testPlanService.delete(id);
 				return new ResponseMessage(ResponseMessage.Type.success, "testPlanDeletedSuccess", null);
+			} else {
+				throw new OperationNotAllowException("delete");
+			}
+		} catch (RuntimeException e) {
+			throw new TestPlanDeleteException(e);
+		} catch (Exception e) {
+			throw new TestPlanDeleteException(e);
+		}
+	}
+	
+	@RequestMapping(value = "/{id}/copy", method = RequestMethod.POST)
+	public ResponseMessage copy(@PathVariable("id") String id) throws TestPlanDeleteException {
+		try {
+			User u = userService.getCurrentUser();
+			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+			if (account == null)
+				throw new UserAccountNotFoundException();
+			TestPlan tp = findTestPlan(id);
+			if (tp.getAccountId() == account.getId()) {
+				testPlanService.save(testPlanService.clone(tp));
+				return new ResponseMessage(ResponseMessage.Type.success, "testPlanCSuccess", null);
 			} else {
 				throw new OperationNotAllowException("delete");
 			}
@@ -254,6 +279,34 @@ public class TestPlanController extends CommonController {
 				+ new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_CoverPage.html");
 		FileCopyUtils.copy(content, response.getOutputStream());
 
+	}
+	
+	@RequestMapping(value = "/{id}/exportJson", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	public void exportTestPlanJson(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		TestPlan tp = findTestPlan(id);
+		InputStream content = null;
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonInString = mapper.writeValueAsString(tp);
+		content = IOUtils.toInputStream(jsonInString, "UTF-8");
+		response.setContentType("text/html");
+		response.setHeader("Content-disposition", "attachment;filename=" + escapeSpace(tp.getName()) + "-"
+				+ new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_TestPlan.json");
+		FileCopyUtils.copy(content, response.getOutputStream());
+	}
+	
+	@RequestMapping(value = "/importJSON", method = RequestMethod.POST)
+	public void importXMLFiles(@RequestBody TestPlanDataStr tpds) throws Exception {
+		User u = userService.getCurrentUser();
+		Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+		if (account == null) {
+			throw new Exception();
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		TestPlan tp = mapper.readValue(tpds.getJsonTestPlanFileStr(), TestPlan.class);
+		tp.setId(ObjectId.get().toString());
+		testPlanService.save(tp);
 	}
 
 	private String escapeSpace(String str) {

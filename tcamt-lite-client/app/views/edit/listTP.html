@@ -37,6 +37,16 @@
                                     ng-click="selectTestPlan(row)">
                                         <span><i class="fa fa-pencil fa-fw"></i></span>
                                 </button>
+                                <button title="Copy"
+                                        type="button" class="btn btn-xs btn-info no-margin"
+                                        ng-click="copyTestPlan(row)">
+                                    <span><i class="fa fa-files-o fa-fw"></i></span>
+                                </button>
+                                <button title="Export JSON"
+                                        type="button" class="btn btn-xs btn-info no-margin"
+                                        ng-click="exportTestPlanJson(row)">
+                                    <span><i class="fa fa-download fa-fw"></i></span>
+                                </button>
                                 <button title="Delete" type="button" class="btn btn-xs btn-danger no-margin"
                                     ng-click="confirmDeleteTestPlan(row)">
                                     <span><i class="fa fa-trash-o fa-fw"></i></span>

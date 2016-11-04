@@ -1,8 +1,5 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection = "template")
 public class ProfileDataStr {
 	private String profileXMLFileStr;
 	private String valueSetXMLFileStr;

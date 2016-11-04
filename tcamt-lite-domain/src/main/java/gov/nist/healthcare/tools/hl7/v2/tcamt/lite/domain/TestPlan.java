@@ -40,7 +40,7 @@ public class TestPlan implements Serializable, Cloneable {
 	private String domain;
 	private boolean skip;
 	
-//	private List<?> listOfIntegrationProfiles = new ArrayList<?>();
+	private List<String> listOfIntegrationProfileIds = new ArrayList<String>();
 	
 	
 	
@@ -99,6 +99,7 @@ public class TestPlan implements Serializable, Cloneable {
 		TestPlan cloned = (TestPlan) super.clone();
 		cloned.setId(ObjectId.get().toString());
 		cloned.setVersion("init");
+		cloned.setName(this.name + " copy");
 
 		Set<TestCaseOrGroup> cChildren = new HashSet<TestCaseOrGroup>();
 		for (TestCaseOrGroup o : this.children) {
@@ -207,6 +208,14 @@ public class TestPlan implements Serializable, Cloneable {
 
 	public void setSkip(boolean skip) {
 		this.skip = skip;
+	}
+
+	public List<String> getListOfIntegrationProfileIds() {
+		return listOfIntegrationProfileIds;
+	}
+
+	public void setListOfIntegrationProfileIds(List<String> listOfIntegrationProfileIds) {
+		this.listOfIntegrationProfileIds = listOfIntegrationProfileIds;
 	}
 	
 	

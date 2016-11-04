@@ -46,14 +46,35 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			clickOutsideToClose:false,
 			fullscreen: false // Only for -xs, -sm breakpoints.
 		}).then(function(newTestPlan) {
+			if(newTestPlan != null){
+				$rootScope.tps.push(newTestPlan);
 				$scope.selectTestPlan(newTestPlan);
+			}
 		}, function() {
 		});
 	};
 
-	$scope.TestPlanCreationModalCtrl = function($scope, $mdDialog, $http) {
+
+	$scope.openDialogForImportTestPlan = function (ev){
+		$mdDialog.show({
+			controller: $scope.TestPlanImportModalCtrl,
+			templateUrl: 'TestPlanImportModal.html',
+			parent: angular.element(document.body),
+			targetEvent: ev,
+			clickOutsideToClose:false,
+			fullscreen: false // Only for -xs, -sm breakpoints.
+		}).then(function() {
+			$scope.loadTestPlans();
+		}, function() {
+		});
+	};
+
+	$scope.TestPlanCreationModalCtrl = function($scope,$mdDialog,$http) {
 		$scope.newTestPlan = {};
 		$scope.newTestPlan.accountId = userInfoService.getAccountID();
+		$scope.igamtProfiles = $rootScope.igamtProfiles;
+		$scope.privateProfiles = $rootScope.privateProfiles;
+		$scope.publicProfiles = $rootScope.publicProfiles;
 
 		$scope.createNewTestPlan = function() {
 			var changes = angular.toJson([]);
@@ -61,17 +82,56 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$http.post('api/testplans/save', data).then(function (response) {
 				var saveResponse = angular.fromJson(response.data);
 				$scope.newTestPlan.lastUpdateDate = saveResponse.date;
-				$rootScope.saved = true;
 			}, function (error) {
-				$rootScope.saved = false;
 			});
-			$rootScope.tps.push($scope.newTestPlan);
+
 			$mdDialog.hide($scope.newTestPlan);
 		};
 
 		$scope.cancel = function() {
 			$mdDialog.hide();
 		};
+	};
+
+
+	$scope.TestPlanImportModalCtrl = function($scope,$mdDialog,$http) {
+		$scope.jsonFilesData = {};
+		$scope.cancel = function() {
+			$mdDialog.hide();
+		};
+
+		$scope.checkLoadAll = function (){
+			var importTestPlanButton = $("#importTestPlanButton");
+			if($scope.jsonFilesData.jsonTestPlanFileStr != null){
+				importTestPlanButton.prop('disabled', false);
+			}
+
+		};
+
+		$scope.validateForTestPlanJSONFile = function(files) {
+			var f = document.getElementById('testplanJSONFile').files[0];
+			var reader = new FileReader();
+			reader.onloadend = function(e) {
+				$scope.jsonFilesData.jsonTestPlanFileStr = reader.result;
+				var errorElm = $("#errorMessageForJSONTestPlan");
+				errorElm.empty();
+				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
+				$scope.checkLoadAll();
+			};
+			reader.readAsText(f);
+		};
+
+		$scope.importTestPlanJson = function() {
+			var importTestPlanButton = $("#importTestPlanButton");
+			importTestPlanButton.prop('disabled', true);
+
+			$http.post('api/testplans/importJSON', $scope.jsonFilesData).then(function (response) {
+			}, function () {
+			});
+
+			$mdDialog.hide();
+		};
+
 	};
 
 	$scope.incrementToc=function(){
@@ -159,6 +219,35 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		});
 	};
 
+	$scope.copyTestPlan = function(tp) {
+		$http.post($rootScope.api('api/testplans/' + tp.id + '/copy')).then(function (response) {
+			$rootScope.msg().text = "testplanCopySuccess";
+			$rootScope.msg().type = "success";
+			$rootScope.msg().show = true;
+			$rootScope.manualHandle = true;
+			$scope.loadTestPlans();
+		}, function (error) {
+			$scope.error = error;
+			$rootScope.msg().text = "testplanCopyFailed";
+			$rootScope.msg().type = "danger";
+			$rootScope.msg().show = true;
+		});
+	};
+
+	$scope.exportTestPlanJson = function (tp) {
+		var form = document.createElement("form");
+		form.action = $rootScope.api('api/testplans/' + tp.id + '/exportJson/');
+		form.method = "POST";
+		form.target = "_target";
+		var csrfInput = document.createElement("input");
+		csrfInput.name = "X-XSRF-TOKEN";
+		csrfInput.value = $cookies['XSRF-TOKEN'];
+		form.appendChild(csrfInput);
+		form.style.display = 'none';
+		document.body.appendChild(form);
+		form.submit();
+	};
+
 	$scope.exportCoverHTML = function () {
 		var changes = angular.toJson([]);
 		var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
@@ -231,17 +320,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.tps = [];
 
 		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-			waitingDialog.show('Loading TestPlans...', {dialogSize: 'xs', progressType: 'info'});
-			$scope.loading = true;
 			$http.get('api/testplans').then(function (response) {
-				waitingDialog.hide();
 				$rootScope.tps = angular.fromJson(response.data);
-				$scope.loading = false;
 				delay.resolve(true);
 			}, function (error) {
-				$scope.loading = false;
 				$scope.error = error.data;
-				waitingDialog.hide();
 				delay.reject(false);
 			});
 		} else {
@@ -254,21 +337,18 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         var delay = $q.defer();
       
 		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-			  $scope.error = null;
-		        $rootScope.templatesToc = [];
-		        $rootScope.template = {};
-		        $scope.loading = true;
-        $http.get('api/template').then(function(response) {
-            $rootScope.template = angular.fromJson(response.data);
-            $rootScope.templatesToc.push($rootScope.template);
-            $scope.loading = false;
-            delay.resolve(true);
-        }, function(error) {
-            $scope.loading = false;
-            $scope.error = error.data;
-            delay.reject(false);
+			$scope.error = null;
+			$rootScope.templatesToc = [];
+			$rootScope.template = {};
+			$http.get('api/template').then(function(response) {
+				$rootScope.template = angular.fromJson(response.data);
+				$rootScope.templatesToc.push($rootScope.template);
+				delay.resolve(true);
+			}, function(error) {
+				$scope.error = error.data;
+				delay.reject(false);
 
-        });}
+			});}
 		else{
 			delay.reject(false);
 		}
@@ -283,25 +363,41 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.initTestPlans = function () {
 		$scope.loadIGAMTProfiles();
-		$scope.loadXMLProfiles();
+		$scope.loadPrivateProfiles();
+		$scope.loadPublicProfiles();
 		$scope.loadTestPlans();
         $scope.loadTemplate();
 		$scope.getScrollbarWidth();
 	};
 
-	$scope.loadXMLProfiles = function () {
+	$scope.loadPublicProfiles = function () {
 		var delay = $q.defer();
 
 		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
 			$scope.error = null;
-			$rootScope.privateProfiles = [];
-			$scope.loading = true;
-			$http.get('api/profiles').then(function(response) {
-				$rootScope.privateProfiles = angular.fromJson(response.data);
-				$scope.loading = false;
+			$rootScope.publicProfiles = [];
+			$http.get('api/profiles/public').then(function(response) {
+				$rootScope.publicProfiles = angular.fromJson(response.data);
 				delay.resolve(true);
 			}, function(error) {
-				$scope.loading = false;
+				$scope.error = error.data;
+				delay.reject(false);
+
+			});
+		}else{
+			delay.reject(false);
+		}
+	};
+
+	$scope.loadPrivateProfiles = function () {
+		var delay = $q.defer();
+		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+			$scope.error = null;
+			$rootScope.privateProfiles = [];
+			$http.get('api/profiles').then(function(response) {
+				$rootScope.privateProfiles = angular.fromJson(response.data);
+				delay.resolve(true);
+			}, function(error) {
 				$scope.error = error.data;
 				delay.reject(false);
 
@@ -313,22 +409,22 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.loadIGAMTProfiles = function () {
 		var delay = $q.defer();
-
 		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-			waitingDialog.show('Loading Profiles...', {dialogSize: 'xs', progressType: 'info'});
+			$scope.loading = true;
+			waitingDialog.show('Loading TestPlans...', {dialogSize: 'xs', progressType: 'info'});
 			$scope.error = null;
 			$rootScope.igamtProfiles = [];
-			$scope.loading = true;
 			$http.get('api/igdocuments').then(function(response) {
 				$rootScope.igamtProfiles = angular.fromJson(response.data);
 				$scope.loading = false;
 				delay.resolve(true);
 				waitingDialog.hide();
-			}, function(error) {
 				$scope.loading = false;
+			}, function(error) {
 				$scope.error = error.data;
 				delay.reject(false);
 				waitingDialog.hide();
+				$scope.loading = false;
 			});
 		}else{
 			delay.reject(false);
@@ -544,7 +640,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				readOnly: false,
 				showCursorWhenSelecting: true
 			});
-			$scope.editor.setSize("100%", 345);
+			$scope.editor.setSize("100%", $rootScope.igHeigh+$rootScope.templateHeigh+$rootScope.tocHeigh);
 			$scope.editor.refresh();
 
 			$scope.editor.on("change", function () {
@@ -563,7 +659,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				readOnly: false,
 				showCursorWhenSelecting: true
 			});
-			$scope.editorValidation.setSize("100%", 345);
+			$scope.editorValidation.setSize("100%", $rootScope.igHeigh+$rootScope.templateHeigh+$rootScope.tocHeigh);
 			$scope.editorValidation.refresh();
 
 			$scope.editorValidation.on("change", function () {
@@ -578,7 +674,35 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
     $scope.updateCurrentTitle = function (type, name){
 		$rootScope.CurrentTitle = type + ": " + name;
-	}
+	};
+
+	$scope.updateListOfIntegrationProfiles = function (){
+		$rootScope.integrationProfiles = [];
+
+		if($rootScope.selectedTestPlan.listOfIntegrationProfileIds == null || $rootScope.selectedTestPlan.listOfIntegrationProfileIds.length == 0){
+			for(var i in $rootScope.igamtProfiles){
+				$rootScope.integrationProfiles.push($rootScope.igamtProfiles[i]);
+			};
+
+			for(var i in $rootScope.privateProfiles){
+				$rootScope.integrationProfiles.push($rootScope.privateProfiles[i]);
+			};
+		}else {
+			for(var j in $rootScope.selectedTestPlan.listOfIntegrationProfileIds){
+				for(var i in $rootScope.igamtProfiles){
+					if($rootScope.igamtProfiles[i].id == $rootScope.selectedTestPlan.listOfIntegrationProfileIds[j]){
+						$rootScope.integrationProfiles.push($rootScope.igamtProfiles[i]);
+					}
+				};
+
+				for(var i in $rootScope.privateProfiles){
+					if($rootScope.privateProfiles[i].id == $rootScope.selectedTestPlan.listOfIntegrationProfileIds[j]){
+						$rootScope.integrationProfiles.push($rootScope.privateProfiles[i]);
+					}
+				};
+			}
+		}
+	};
 
 	$scope.selectTestPlan = function (testplan) {
 		if (testplan != null) {
@@ -587,19 +711,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 			$rootScope.testplans = [];
 			$rootScope.testplans.push(testplan);
-
-			$rootScope.integrationProfiles = [];
-
-			for(var i in $rootScope.igamtProfiles){
-				$rootScope.integrationProfiles.push($rootScope.igamtProfiles[i]);
-			};
-
-			for(var i in $rootScope.privateProfiles){
-				$rootScope.integrationProfiles.push($rootScope.privateProfiles[i]);
-			};
+			$rootScope.selectedTestPlan = testplan;
+			$scope.updateListOfIntegrationProfiles();
 
 			$timeout(function () {
-				$rootScope.selectedTestPlan = testplan;
 				$scope.updateCurrentTitle("Test Plan", $rootScope.selectedTestPlan.name);
 				$scope.subview = "EditTestPlanMetadata.html";
 			}, 0);
@@ -1172,7 +1287,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}else if(child.type == "testcase"){
 				child.teststeps.forEach(function(teststep){
 					if(teststep.id == $rootScope.selectedTestStep.id){
-						result = testcase.name;
+						result = child.name;
 					}
 				});
 			}
@@ -1298,6 +1413,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 	$scope.generateConstraintsXML = function (segmentList, testStep, selectedConformanceProfile, selectedIntegrationProfile){
+		$rootScope.categorizationsDataMap = {};
 		var rootName = "ConformanceContext";
 		var xmlString = '<' + rootName + '>' + '</' + rootName + '>';
 		var parser = new DOMParser();
@@ -1394,6 +1510,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 					if (fieldDT == null || fieldDT.components == null || fieldDT.components.length == 0) {
 						var cateOfField = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath)];
 						$scope.createConstraint(segmentiPositionPath + fieldiPath, cateOfField, fieldUsagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, fieldStr);
+						$rootScope.categorizationsDataMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath)] = fieldStr;
 					} else {
 						for (var k = 0 ; k < fieldDT.components.length; k++ ){
 							var c = fieldDT.components[k];
@@ -1404,6 +1521,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 							if ($scope.findDatatype(c.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(c.datatype, selectedIntegrationProfile).components.length == 0) {
 								var cateOfComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath)];
 								$scope.createConstraint(segmentiPositionPath + fieldiPath + componentiPath, cateOfComponent, componentUsagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, componentStr);
+								$rootScope.categorizationsDataMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath)] = componentStr;
 							} else {
 								for (var l = 0; l < $scope.findDatatype(c.datatype, selectedIntegrationProfile).components.length; l++){
 									var sc = $scope.findDatatype(c.datatype, selectedIntegrationProfile).components[l];
@@ -1412,6 +1530,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 									var subcomponentStr = $scope.getSubComponentStrFromField(componentStr, sc.position);
 									var cateOfSubComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath + subcomponentiPath)];
 									$scope.createConstraint(segmentiPositionPath + fieldiPath + componentiPath + subcomponentiPath, cateOfSubComponent, subComponentUsagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, subcomponentStr);
+									$rootScope.categorizationsDataMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath + subcomponentiPath)] = subcomponentStr;
 								}
 							}
 						}
@@ -2298,6 +2417,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 							cate.name = testDataCategorizationObj.name;
 							cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
 							cate.listData = testDataCategorizationObj.listData;
+							cate.data = $rootScope.categorizationsDataMap[key];
 							$scope.listOfTDC.push(cate);
 						}
 					}
