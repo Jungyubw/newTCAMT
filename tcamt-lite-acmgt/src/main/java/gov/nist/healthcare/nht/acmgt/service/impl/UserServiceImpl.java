@@ -108,10 +108,10 @@ public class UserServiceImpl implements UserService {
 				username);
 		// logger.debug("[PASS] - old: " + oldEncodedPassword + " - new: " +
 		// newEncodedPassword);
-		if (oldEncodedPassword.equals(newEncodedPassword)) {
-			throw new BadCredentialsException(
-					"New password must be different from previous password");
-		}
+//		if (oldEncodedPassword.equals(newEncodedPassword)) {
+//			throw new BadCredentialsException(
+//					"New password must be different from previous password");
+//		}
 		jdbcUserDetailsManager.changePassword(oldPassword, newEncodedPassword);
 	}
 
@@ -129,10 +129,10 @@ public class UserServiceImpl implements UserService {
 				username);
 		// logger.debug("[PASS] - old: " + oldPassword + " - new: " +
 		// newEncodedPassword);
-		if (oldPassword.equals(newEncodedPassword)) {
-			throw new BadCredentialsException(
-					"New password must be different from previous password");
-		}
+//		if (oldPassword.equals(newEncodedPassword)) {
+//			throw new BadCredentialsException(
+//					"New password must be different from previous password");
+//		}
 		jdbcUserDetailsManager.getJdbcTemplate().update(
 				jdbcUserDetailsManager.DEF_CHANGE_PASSWORD_SQL,
 				newEncodedPassword, username);

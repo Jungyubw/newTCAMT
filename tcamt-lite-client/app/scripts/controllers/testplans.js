@@ -2994,6 +2994,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 
 	};
+//	$scope.resetValidation=function(){
+//		console.log("called");
+//		$scope.contextValidation=false;
+//	}
 	$scope.report=false;
 	$scope.validationError=false;
 	$scope.validate = function (mode) {
@@ -3006,6 +3010,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         var conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
 		var cbConstraints = $rootScope.selectedTestStep.constraintsXML;
 		$scope.context=mode;
+		$scope.contextValidation=mode;
 		var context=mode;
 			$scope.loadingv = true;
 			var req = {
@@ -3022,9 +3027,16 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			var result = angular.fromJson(response.data);
 			$scope.report=$sce.trustAsHtml(result.html);
 	      
-	        
-	        $scope.validationError=result.error;
+	        if(result.json!==""){
 	        $scope.validationResult=JSON.parse(result.json);
+	        $scope.loadingv = false;
+	        }
+	        else{
+	        	$scope.validationError=result.error;
+	        	console.log($scope.validationError);
+	        	  $scope.loadingv = false;
+	        }
+	        
 	        //$scope.loadingv = false;
 	        //$scope.validationView='validation.html';
 	        
@@ -3045,6 +3057,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 	$scope.refreshingMessage=false;
 	$scope.resetValidation=function(){
+		$scope.contextValidation=false;
 		$scope.initHL7EncodedMessageForOnlineValidationTab();
 	}
     

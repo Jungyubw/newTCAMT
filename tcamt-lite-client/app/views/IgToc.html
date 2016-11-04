@@ -4,13 +4,13 @@
             <div ui-tree-handle ng-class="{selected : this.$modelValue===activeModel,used:selectedTestStep&&selectedTestStep.integrationProfileId===this.$modelValue.id}">
      <i data-nodrag ng-click="toggle(this)" class="fa" ng-class="{'fa-caret-right': collapsed, 'fa-caret-down': !collapsed}">
 					</i>
-                  </span> <span ng-click="Activate(this);OpenIgMetadata(ip)"> <span class="label-info">IP</span> {{ip.metaData.name}}</span>
+                  </span> <span ng-click="Activate(this);OpenIgMetadata(ip);"> <span class="label label-info label-icon">IP</span> {{ip.metaData.name}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="ip.messages.children" ng-if="!collapsed">
                 <li ng-repeat="msg in ip.messages.children" ui-tree-node>
                     <div ui-tree-handle ng-click="Activate(this);OpenMessageMetadata(msg)" ng-class="{selected : this.$modelValue===activeModel ,used:selectedTestStep&& selectedTestStep.conformanceProfileId===this.$modelValue.id || selectedTemplate.conformanceProfileId===this.$modelValue.id}">
-                        <span ng-hide="selectedTestStep"><span class="label-success">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>
-                        <span context-menu="ApplyProfile" ng-hide="!selectedTestStep"><span class="label-success badge">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>
+                        <span ng-hide="selectedTestStep"><span class="label label-success label-icon">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>
+                        <span context-menu="ApplyProfile" ng-hide="!selectedTestStep"><span class="label label-success label-icon">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>
                     </div>
                 </li>
             </ol>
@@ -19,64 +19,48 @@
 </div>
 <script type="text/ng-template" id="EditDocumentMetadata.html">
     <div ng-controller="TestPlanCtrl" ng-init="init()">
-        <div class="row" style="margin-left:0px; margin-right: 20px">
+<div class="container">
+        <div class="container">
             <div ng-show="igDocument.metaData !== null">
                 <div class="page-header" style="margin-bottom: 20px">
                     <span class="header4">Document metaData</span>
                 </div>
-                <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.title.$invalid}">
+                <div class="form-group control-group container" ng-class="{'igl-has-error has-feedback' : editForm.title.$invalid}">
                     <label class="col-md-2 control-label">Title</label>
                     <div class="controls col-md-10">
-                        <input class="form-control" type="text" ng-disabled="true" ng-change="setDirty()" name="title" ng-model="igDocument.metaData.title" required>
+                        <input class="form-control" type="text" ng-disabled="true" ng-change="setDirty()" name="title" ng-model="igDocument.metaData.name" required/>
                     </div>
                 </div>
-                <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.subTitle.$invalid}">
-                    <label class="col-md-2 control-label">Sub-Title</label>
-                    <div class="controls col-md-10">
-                        <input class="form-control" type="text" name="subTitle" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.subTitle">
-                    </div>
-                </div>
-                <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.identifier.$invalid}">
-                    <label class="col-md-2 control-label">Project Identifier</label>
-                    <div class="controls col-md-10">
-                        <input type="text" name="identifier" disabled ng-change="setDirty()" class="form-control" ng-model="igDocument.metaData.identifier">
-                    </div>
-                </div>
-                <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.orgName.$invalid}">
+
+                <div class="form-group control-group container" ng-class="{'igl-has-error has-feedback' : editForm.orgName.$invalid}">
                     <label class="col-md-2 control-label">Organization</label>
                     <div class="controls col-md-10">
-                        <input class="form-control" type="text" name="orgName" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.orgName">
+                        <input class="form-control" type="text" name="orgName" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.orgName"/>
                     </div>
                 </div>
-                <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.ext.$invalid}">
+                <div class="form-group control-group container" ng-class="{'igl-has-error has-feedback' : editForm.ext.$invalid}">
                     <label class="col-md-2 control-label">Extension</label>
                     <div class="controls col-md-10">
-                        <input class="form-control" type="text" name="ext" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.ext">
+                        <input class="form-control" type="text" name="ext" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.ext"/>
                     </div>
                 </div>
             </div>
-            <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.specificationName.$invalid}">
-                <label class="col-md-2 control-label">Specification</label>
+            <div class="form-group control-group container" ng-class="{'igl-has-error has-feedback' : editForm.specificationName.$invalid}">
+                <label class="col-md-2 control-label">Description</label>
                 <div class="controls col-md-10">
-                    <input class="form-control" type="text" name="specificationName" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.specificationName">
+                    <input class="form-control" type="text" name="specificationName" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.description"/>
                 </div>
             </div>
-            <div class="form-group control-group" ng-disabled="true" ng-class="{'igl-has-error has-feedback' : editForm.status.$invalid}">
-                <label class="col-md-2 control-label">Status</label>
+            <div class="form-group control-group container" ng-disabled="true" ng-class="{'igl-has-error has-feedback' : editForm.status.$invalid}">
+                <label class="col-md-2 control-label">HL7 Version</label>
                 <div class="controls col-md-10">
-                    <input class="form-control" type="text" name="status" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.status">
+                    <input class="form-control" type="text" name="status" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.hl7Version"/>
                 </div>
             </div>
-            <div class="form-group control-group" ng-disabled="true" ng-class="{'igl-has-error' : editForm.topics.$invalid}">
-                <label class="col-md-2 control-label">Topics</label>
-                <div class="controls col-md-10">
-                    <input class="form-control" type="text" name="topics" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.topics">
-                </div>
-            </div>
-            <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.date.$invalid}">
+            <div class="form-group control-group container" ng-class="{'igl-has-error has-feedback' : editForm.date.$invalid}">
                 <label class="col-md-2 control-label">Date Created</label>
                 <div class="controls col-md-10">
-                    <input type="text" name="date" disabled ng-change="setDirty()" class="form-control" ng-model="igDocument.metaData.date" required>
+                    <input type="text" name="date" disabled ng-change="setDirty()" class="form-control" ng-model="igDocument.metaData.date" required/>
                 </div>
             </div>
         </div>
@@ -154,7 +138,7 @@
                                     <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : datatypeForm.text.$invalid}">
                                         <label class="col-md-2 control-label">Definition Text</label>
                                         <div class="controls col-md-10">
-                                            <div ng-if="viewSettings.tableReadonly">
+                                            <div>
                                                 <div class="fr-view">
                                                     <div froala-view="message.usageNote"></div>
                                                 </div>
@@ -287,8 +271,8 @@
                         </td>
                         <td class="col-md-1 " align="center ">
                             <button class="btn btn-danger btn-xxs "
-                                    ng-click="message.predicates.splice(message.predicates.indexOf(p), 1); "
-                                    ng-disabled="viewSettings.tableReadonly "><span><i class="fa fa-trash fa-fw ">
+                                    ng-click="message.predicates.splice(message.predicates.indexOf(p), 1);"><span>
+<i class="fa fa-trash fa-fw ">
                                 &nbsp; </i>Del</span>
                             </button>
                         </td>
@@ -371,7 +355,7 @@
                                     <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : datatypeForm.text.$invalid}">
                                         <label class="col-md-2 control-label">Definition Text</label>
                                         <div class="controls col-md-10">
-                                            <div ng-if="viewSettings.tableReadonly">
+                                            <div>
                                                 <div class="fr-view">
                                                     <div froala-view="message.usageNote"></div>
                                                 </div>
@@ -474,16 +458,16 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <tr ng-repeat="p in message.predicates | orderBy:'constraintTarget'" ">
-                        <td class="col-md-2 ">
+                        <td class="col-md-2">
                             {{p.constraintTarget}}
                         </td>
-                        <td class="col-md-7 ">
+                        <td class="col-md-7">
                             {{p.description}}
                         </td>
-                        <td class="col-md-1 ">
+                        <td class="col-md-1">
                             {{p.trueUsage}}
                         </td>
-                        <td class="col-md-1 ">
+                        <td class="col-md-1">
                             {{p.falseUsage}}
                         </td>
                         <td class="col-md-1 " align="center ">
@@ -651,6 +635,226 @@
         <td class="col-xs-1 " >
             <p class="form-control " style="width:100%;height:100% " ng-bind="node.obj.comment">
             </p>
+        </td>
+    </tr>
+</script>
+<script type="text/ng-template" id="MessageFieldViewTree.html">
+    <tr tt-node is-branch="hasChildren(node.obj)" ng-show="isVisibleInner(node.obj, parentsMap[node.obj.id])">
+        <td class="col-md-2 col-fixed-250">
+            <span class="label label-field label-icon" ng-show="node.obj.type==='field'">F</span>
+            <span class="label label-sub-component label-icon" ng-show="node.obj.type==='subcomponent'">S</span>
+            <span class="label label-component label-icon" ng-show="node.obj.type==='component'">C</span>
+
+            <span tooltip-html="getFieldNodeName(node.obj)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getFieldNodeName(node.obj)" tooltip-trigger tooltip-animation="false" tooltip-placement="left"></span>
+        </td>
+        <td class="col-md-1 col-fixed-80">
+                 <span>{{::node.obj.usage}}</span>
+                <span ng-repeat="p in parentsMap[node.obj.id].predicates  | filter:{constraintTarget:node.obj.position + '[1]'}:true">
+                    ({{::p.trueUsage}}/{{::p.falseUsage}})
+                </span>
+                <span ng-repeat="p in filteredConstraints=( message.predicates | filter:{constraintTarget:node.path}:true) ">
+                    ({{::p.trueUsage}}/{{::p.falseUsage}})
+                </span>
+         </td>
+        <td class="col-md-1 col-fixed-100">
+                 <span>[{{::node.obj.min}},{{::node.obj.max}}]</span>
+         </td>
+        <td class="col-md-1 col-fixed-100" ng-class="{'emptyCol':datatypesMap[node.obj.datatype.id].components.length >0}">
+                 <span ng-show="datatypesMap[node.obj.datatype.id].components.length  == 0">[{{::node.obj.minLength}},{{::node.obj.maxLength}}]</span>
+         </td>
+        <td class="col-md-1 col-fixed-80" ng-class="{'emptyCol':datatypesMap[node.obj.datatype.id].components.length >0}">
+            <span ng-show="datatypesMap[node.obj.datatype.id].components.length  == 0">{{::node.obj.confLength}}</span>
+        </td>
+        <td class="col-md-1 col-fixed-100" ng-show="viewSettings.isVisibleColumn('datatype')">
+            <span class="point" ng-click="redirectDT(node.obj.datatype)">{{getDatatypeLabel(node.obj.datatype)}}</span>
+        </td>
+        <td class="col-md-1 col-fixed-130" ng-show="viewSettings.isVisibleColumn('valueSet')">
+            <div>
+                <span ng-show="node.obj.tables !=undefined && node.obj.tables !=null">
+                    <a class="point" ng-repeat="table in node.obj.tables track by table.id" ng-click="redirectVS(table)">{{getTableLabel(tablesMap[table.id])}}
+</a>
+
+                </span>
+            </div>
+        </td>
+        <td class="col-md-1" ng-style="predWidthx" ng-show="viewSettings.isVisibleColumn('predicate')">
+                 <div>
+                    <p ng-repeat="constraint in filteredConstraints=( message.predicates | filter:{constraintTarget:node.path}:true) " tooltip-html="getPredicateAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getPredicateAsString(constraint)"
+                        tooltip-trigger tooltip-animation="false" tooltip-placement="left">
+                    </p>
+                </div>
+                <div>
+                    <div ng-repeat="constraint in filteredConstraints=( message.predicates | filter:{constraintTarget:node.path}:true) ">
+                        <a ng-click="managePredicate(node, message)" tooltip-html="getPredicateAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getPredicateAsString(constraint)" tooltip-trigger tooltip-animation="false" tooltip-placement="left"></a>
+                    </div>
+                    <div ng-hide="filteredConstraints.length || filteredSubConstraints.length || viewSettings.tableReadonly || node.obj.usage !=='C'">
+                        <a ng-click="managePredicate(node, message)" class="point">
+                            <span><i class="fa fa-plus fa-fw"></i></span>
+
+                            <p class="warning">Need predicate</p>
+                        </a>
+                    </div>
+                </div>
+
+                <p ng-repeat="constraint in filteredSubConstraints=( parentsMap[node.obj.id].predicates | filter:{constraintTarget:node.obj.position + '[1]'}:true)" tooltip-html="getPredicateAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip"
+                    ng-bind-html="getPredicateAsString(constraint)" tooltip-trigger tooltip-animation="false" tooltip-placement="left">
+                </p>
+         </td>
+        <td class="col-md-1" ng-style="csWidthx" ng-show="viewSettings.isVisibleColumn('confStatement')">
+            <div>
+                <div>
+                    <p ng-repeat="constraint in filteredConstraints=( message.conformanceStatements | filter:{constraintTarget:node.path}:true) " tooltip-html="getConformanceStatementAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getConstraintAsId(constraint)"
+                        tooltip-trigger tooltip-animation="false" tooltip-placement="left">
+                    </p>
+                </div>
+
+                <div>
+                    <div ng-repeat="constraint in filteredConstraints=( message.conformanceStatements | filter:{constraintTarget:node.path}:true) ">
+                        <a ng-click="manageConformanceStatement(node, message)" tooltip-html="getConformanceStatementAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getConstraintAsId(constraint)" tooltip-trigger tooltip-animation="false"
+                            tooltip-placement="left"></a>
+                    </div>
+                    <div>
+                        <a ng-click="manageConformanceStatement(node, message)" class="point">
+                            <span><i class="fa fa-plus fa-fw"></i></span>
+                        </a>
+                    </div>
+                </div>
+
+                <p ng-repeat="constraint in parentsMap[node.obj.id].conformanceStatements  | filter:{constraintTarget:node.obj.position + '[1]'}:true" tooltip-html="getConformanceStatementAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip"
+                    ng-bind-html="getConstraintAsId(constraint)" tooltip-trigger tooltip-animation="false" tooltip-placement="left">
+                </p>
+            </div>
+        </td>
+        <td class="col-md-1 col-fixed-80 emptyCol" ng-show="viewSettings.isVisibleColumn('defText')">
+            <a ng-show="node.obj.text !=='' && node.obj.text !==null" ng-click="openRichTextDlg(node.obj, 'text', 'Definition Text', true)" class="point">
+                <i class="fa fa-eye fa-fw" ></i>
+            </a>
+        </td>
+        <td class="col-md-1" ng-style="commentWidth" ng-show="viewSettings.isVisibleColumn('comment')">
+            <!--<p class="form-control" style="width:100%;height:100%" ng-bind="node.obj.comment"-->
+            <!--ng-show="node.obj.comment !=null && node.obj.comment !=''">-->
+
+            <!--</p>-->
+
+            <a ng-click="openInputTextDlg(node.obj, 'comment','Comment', true)" class="point" ng-show="node.obj.comment !== '' && node.obj.comment !== null" tooltip-html="node.obj.comment" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" tooltip-trigger
+                tooltip-animation="false" tooltip-placement="left">
+                <i class="fa fa-eye fa-fw" ng-show="node.obj.comment !== '' && node.obj.comment !== null"></i>
+            </a>
+
+        </td>
+    </tr>
+</script>
+
+<script type="text/ng-template" id="MessageComponentViewTree.html">
+    <tr tt-node is-branch="hasChildren(node.obj)" ng-show="isVisibleInner(node.obj, parentsMap[node.obj.id])">
+        <td class="col-md-2 col-fixed-250">
+            <span>
+                <span class="label label-field label-icon" ng-show="node.obj.type==='field'">F</span>
+            <span class="label label-sub-component label-icon" ng-show="node.obj.type==='subcomponent'">S</span>
+            <span class="label label-component label-icon" ng-show="node.obj.type==='component'">C</span>
+            <span ng-bind="getComponentNodeName(node.obj)">
+                </span>
+            </span>
+        </td>
+        <td class="col-md-1 col-fixed-80">
+                 <span>{{::node.obj.usage}}</span>
+                <span ng-repeat="p in parentsMap[node.obj.id].predicates  | filter:{constraintTarget:node.obj.position + '[1]'}:true">
+                    ({{::p.trueUsage}}/{{::p.falseUsage}})
+                </span>
+                <span ng-repeat="p in filteredConstraints=( message.predicates | filter:{constraintTarget:node.path}:true) ">
+                    ({{::p.trueUsage}}/{{::p.falseUsage}})
+                </span>
+         </td>
+        <td class="col-md-1 col-fixed-100 emptyCol">
+        </td>
+        <td class="col-md-1 col-fixed-100" ng-class="{'emptyCol':datatypesMap[node.obj.datatype.id].components.length >0}">
+            <div ng-show="datatypesMap[node.obj.datatype.id].components.length  == 0">
+                [{{::node.obj.minLength}},{{::node.obj.maxLength}}]
+            </div>
+        </td>
+        <td class="col-md-1 col-fixed-80" ng-class="{'emptyCol':datatypesMap[node.obj.datatype.id].components.length >0}">
+            <div ng-show="datatypesMap[node.obj.datatype.id].components.length  == 0" ng-bind="::node.obj.confLength">
+            </div>
+        </td>
+
+        <td class="col-md-1 col-fixed-100" ng-show="viewSettings.isVisibleColumn('datatype')">
+            <span class="point" ng-click="redirectDT(node.obj.datatype)">{{getDatatypeLabel(node.obj.datatype)}}</span>
+        </td>
+        <td class="col-md-1 col-fixed-130" ng-show="viewSettings.isVisibleColumn('valueSet')">
+            <div>
+                <span ng-show="node.obj.tables !=undefined && node.obj.tables !=null">
+
+                    <a class="point" ng-repeat="table in node.obj.tables track by table.id" ng-click="redirectVS(table)">{{getTableLabel(tablesMap[table.id])}}
+</a>
+                </span>
+            </div>
+        </td>
+
+        <td class="col-md-1" ng-style="predWidthx" ng-show="viewSettings.isVisibleColumn('predicate')">
+            <div>
+                <div>
+                    <p ng-repeat="constraint in filteredConstraints=( message.predicates | filter:{constraintTarget:node.path}:true) " tooltip-html="getPredicateAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getPredicateAsString(constraint)"
+                        tooltip-trigger tooltip-animation="false" tooltip-placement="left">
+                    </p>
+                </div>
+                <div>
+                    <div ng-repeat="constraint in filteredConstraints=( message.predicates | filter:{constraintTarget:node.path}:true) ">
+                        <a ng-click="managePredicate(node, message)" tooltip-html="getPredicateAsString(constraint) " tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getPredicateAsString(constraint)" tooltip-trigger tooltip-animation="false" tooltip-placement="left"></a>
+                    </div>
+                    <div ng-hide="filteredConstraints.length || filteredSubConstraints.length || node.obj.usage !=='C'">
+                        <a ng-click="managePredicate(node, message)" class="point">
+                            <span><i class="fa fa-plus fa-fw"></i></span>
+
+                            <p class="warning">Need predicate</p>
+                        </a>
+                    </div>
+                </div>
+
+                <p ng-repeat="constraint in filteredSubConstraints=( parentsMap[node.obj.id].predicates | filter:{constraintTarget:node.obj.position + '[1]'}:true) " tooltip-html="getPredicateAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip"
+                    ng-bind-html="getPredicateAsString(constraint)" tooltip-trigger tooltip-animation="false" tooltip-placement="left">
+                </p>
+            </div>
+        </td>
+        <td class="col-md-1" ng-style="csWidthx" ng-show="viewSettings.isVisibleColumn('confStatement')">
+            <div>
+                <div>
+                    <p ng-repeat="constraint in filteredConstraints=( message.conformanceStatements | filter:{constraintTarget:node.path}:true)" tooltip-html="getConformanceStatementAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getConstraintAsId(constraint)"
+                        tooltip-trigger tooltip-animation="false" tooltip-placement="left">
+                    </p>
+                </div>
+
+                <div>
+                    <div ng-repeat="constraint in filteredConstraints=( message.conformanceStatements | filter:{constraintTarget:node.path}:true)">
+                        <a ng-click="manageConformanceStatement(node, message)" tooltip-html="getConformanceStatementAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getConstraintAsId(constraint)" tooltip-trigger tooltip-animation="false"
+                            tooltip-placement="left"></a>
+                    </div>
+                    <div>
+                        <a ng-click="manageConformanceStatement(node, message)" class="point">
+                            <span><i class="fa fa-plus fa-fw"></i></span>
+                        </a>
+                    </div>
+                </div>
+
+                <p ng-repeat="constraint in parentsMap[node.obj.id].conformanceStatements | filter:{constraintTarget:node.obj.position + '[1]'}:true" tooltip-html="getConformanceStatementAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip"
+                    ng-bind-html="getConstraintAsId(constraint)" tooltip-trigger tooltip-animation="false" tooltip-placement="left">
+                </p>
+            </div>
+        </td>
+
+        <td class="col-md-1 col-fixed-80" ng-show="viewSettings.isVisibleColumn('defText')">
+                 <a ng-show="node.obj.text !=='' && node.obj.text !==null" ng-click="openRichTextDlg(node.obj, 'text', 'Definition Text', true)" class="point">
+                    <i class="fa fa-eye fa-fw" ></i>
+                 </a>
+        </td>
+        <td class="col-md-1" ng-style="commentWidth" ng-show="viewSettings.isVisibleColumn('comment')">
+            <!--<p class="form-control" style="width:100%;height:100%" ng-bind="node.obj.comment"-->
+            <!--ng-show="node.obj.comment !=null && node.obj.comment !=''">-->
+
+            <!--</p>-->
+            <a ng-click="openInputTextDlg(node.obj, 'comment','Comment', true)" class="point" ng-show="node.obj.comment !== '' && node.obj.comment !== null" tooltip-html="node.obj.comment" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" tooltip-trigger
+                tooltip-animation="false" tooltip-placement="left">
+                <i class="fa fa-eye fa-fw" ng-show="node.obj.comment !== '' && node.obj.comment !== null"></i>
+            </a>
         </td>
     </tr>
 </script>
