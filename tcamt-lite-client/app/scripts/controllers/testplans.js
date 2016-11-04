@@ -45,11 +45,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			targetEvent: ev,
 			clickOutsideToClose:false,
 			fullscreen: false // Only for -xs, -sm breakpoints.
-		}).then(function(newTestPlan) {
-			if(newTestPlan != null){
-				$rootScope.tps.push(newTestPlan);
-				$scope.selectTestPlan(newTestPlan);
-			}
+		}).then(function() {
+			$scope.loadTestPlans();
 		}, function() {
 		});
 	};
@@ -81,11 +78,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			var data = angular.fromJson({"changes": changes, "tp": $scope.newTestPlan});
 			$http.post('api/testplans/save', data).then(function (response) {
 				var saveResponse = angular.fromJson(response.data);
-				$scope.newTestPlan.lastUpdateDate = saveResponse.date;
 			}, function (error) {
 			});
-
-			$mdDialog.hide($scope.newTestPlan);
+			$mdDialog.hide();
 		};
 
 		$scope.cancel = function() {
@@ -687,6 +682,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			for(var i in $rootScope.privateProfiles){
 				$rootScope.integrationProfiles.push($rootScope.privateProfiles[i]);
 			};
+
+			for(var i in $rootScope.publicProfiles){
+				$rootScope.integrationProfiles.push($rootScope.publicProfiles[i]);
+			};
 		}else {
 			for(var j in $rootScope.selectedTestPlan.listOfIntegrationProfileIds){
 				for(var i in $rootScope.igamtProfiles){
@@ -698,6 +697,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				for(var i in $rootScope.privateProfiles){
 					if($rootScope.privateProfiles[i].id == $rootScope.selectedTestPlan.listOfIntegrationProfileIds[j]){
 						$rootScope.integrationProfiles.push($rootScope.privateProfiles[i]);
+					}
+				};
+
+				for(var i in $rootScope.publicProfiles){
+					if($rootScope.publicProfiles[i].id == $rootScope.selectedTestPlan.listOfIntegrationProfileIds[j]){
+						$rootScope.integrationProfiles.push($rootScope.publicProfiles[i]);
 					}
 				};
 			}

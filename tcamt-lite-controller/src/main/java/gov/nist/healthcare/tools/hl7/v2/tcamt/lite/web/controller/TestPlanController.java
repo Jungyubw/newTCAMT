@@ -161,7 +161,6 @@ public class TestPlanController extends CommonController {
 				throw new UserAccountNotFoundException();
 			
 			TestPlan saved = testPlanService.apply(command.getTp());
-			System.out.println("WOOOO" + saved.getName());
 			return new TestPlanSaveResponse(saved.getLastUpdateDate(), saved.getVersion());
 		} catch (RuntimeException e) {
 			throw new TestPlanSaveException(e);
