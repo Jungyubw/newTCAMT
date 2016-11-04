@@ -4,13 +4,13 @@
             <div ui-tree-handle ng-class="{selected : this.$modelValue===activeModel,used:selectedTestStep&&selectedTestStep.integrationProfileId===this.$modelValue.id}">
      <i data-nodrag ng-click="toggle(this)" class="fa" ng-class="{'fa-caret-right': collapsed, 'fa-caret-down': !collapsed}">
 					</i>
-                  </span> <span ng-click="Activate(this);OpenIgMetadata(ip)"> <span class="label-info">IP</span> {{ip.metaData.name}}</span>
+                  </span> <span ng-click="Activate(this);OpenIgMetadata(ip);"> <span class="label label-info label-icon">IP</span> {{ip.metaData.name}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="ip.messages.children" ng-if="!collapsed">
                 <li ng-repeat="msg in ip.messages.children" ui-tree-node>
                     <div ui-tree-handle ng-click="Activate(this);OpenMessageMetadata(msg)" ng-class="{selected : this.$modelValue===activeModel ,used:selectedTestStep&& selectedTestStep.conformanceProfileId===this.$modelValue.id || selectedTemplate.conformanceProfileId===this.$modelValue.id}">
-                        <span ng-hide="selectedTestStep"><span class="label-success">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>
-                        <span context-menu="ApplyProfile" ng-hide="!selectedTestStep"><span class="label-success badge">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>
+                        <span ng-hide="selectedTestStep"><span class="label label-success label-icon">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>
+                        <span context-menu="ApplyProfile" ng-hide="!selectedTestStep"><span class="label label-success label-icon">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>
                     </div>
                 </li>
             </ol>
@@ -19,64 +19,48 @@
 </div>
 <script type="text/ng-template" id="EditDocumentMetadata.html">
     <div ng-controller="TestPlanCtrl" ng-init="init()">
-        <div class="row" style="margin-left:0px; margin-right: 20px">
+<div class="container">
+        <div class="container">
             <div ng-show="igDocument.metaData !== null">
                 <div class="page-header" style="margin-bottom: 20px">
                     <span class="header4">Document metaData</span>
                 </div>
-                <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.title.$invalid}">
+                <div class="form-group control-group container" ng-class="{'igl-has-error has-feedback' : editForm.title.$invalid}">
                     <label class="col-md-2 control-label">Title</label>
                     <div class="controls col-md-10">
-                        <input class="form-control" type="text" ng-disabled="true" ng-change="setDirty()" name="title" ng-model="igDocument.metaData.title" required>
+                        <input class="form-control" type="text" ng-disabled="true" ng-change="setDirty()" name="title" ng-model="igDocument.metaData.name" required/>
                     </div>
                 </div>
-                <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.subTitle.$invalid}">
-                    <label class="col-md-2 control-label">Sub-Title</label>
-                    <div class="controls col-md-10">
-                        <input class="form-control" type="text" name="subTitle" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.subTitle">
-                    </div>
-                </div>
-                <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.identifier.$invalid}">
-                    <label class="col-md-2 control-label">Project Identifier</label>
-                    <div class="controls col-md-10">
-                        <input type="text" name="identifier" disabled ng-change="setDirty()" class="form-control" ng-model="igDocument.metaData.identifier">
-                    </div>
-                </div>
-                <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.orgName.$invalid}">
+
+                <div class="form-group control-group container" ng-class="{'igl-has-error has-feedback' : editForm.orgName.$invalid}">
                     <label class="col-md-2 control-label">Organization</label>
                     <div class="controls col-md-10">
-                        <input class="form-control" type="text" name="orgName" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.orgName">
+                        <input class="form-control" type="text" name="orgName" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.orgName"/>
                     </div>
                 </div>
-                <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.ext.$invalid}">
+                <div class="form-group control-group container" ng-class="{'igl-has-error has-feedback' : editForm.ext.$invalid}">
                     <label class="col-md-2 control-label">Extension</label>
                     <div class="controls col-md-10">
-                        <input class="form-control" type="text" name="ext" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.ext">
+                        <input class="form-control" type="text" name="ext" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.ext"/>
                     </div>
                 </div>
             </div>
-            <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.specificationName.$invalid}">
-                <label class="col-md-2 control-label">Specification</label>
+            <div class="form-group control-group container" ng-class="{'igl-has-error has-feedback' : editForm.specificationName.$invalid}">
+                <label class="col-md-2 control-label">Description</label>
                 <div class="controls col-md-10">
-                    <input class="form-control" type="text" name="specificationName" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.specificationName">
+                    <input class="form-control" type="text" name="specificationName" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.description"/>
                 </div>
             </div>
-            <div class="form-group control-group" ng-disabled="true" ng-class="{'igl-has-error has-feedback' : editForm.status.$invalid}">
-                <label class="col-md-2 control-label">Status</label>
+            <div class="form-group control-group container" ng-disabled="true" ng-class="{'igl-has-error has-feedback' : editForm.status.$invalid}">
+                <label class="col-md-2 control-label">HL7 Version</label>
                 <div class="controls col-md-10">
-                    <input class="form-control" type="text" name="status" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.status">
+                    <input class="form-control" type="text" name="status" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.hl7Version"/>
                 </div>
             </div>
-            <div class="form-group control-group" ng-disabled="true" ng-class="{'igl-has-error' : editForm.topics.$invalid}">
-                <label class="col-md-2 control-label">Topics</label>
-                <div class="controls col-md-10">
-                    <input class="form-control" type="text" name="topics" ng-disabled="true" ng-change="setDirty()" ng-model="igDocument.metaData.topics">
-                </div>
-            </div>
-            <div class="form-group control-group" ng-class="{'igl-has-error has-feedback' : editForm.date.$invalid}">
+            <div class="form-group control-group container" ng-class="{'igl-has-error has-feedback' : editForm.date.$invalid}">
                 <label class="col-md-2 control-label">Date Created</label>
                 <div class="controls col-md-10">
-                    <input type="text" name="date" disabled ng-change="setDirty()" class="form-control" ng-model="igDocument.metaData.date" required>
+                    <input type="text" name="date" disabled ng-change="setDirty()" class="form-control" ng-model="igDocument.metaData.date" required/>
                 </div>
             </div>
         </div>
