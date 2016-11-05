@@ -12,11 +12,20 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$rootScope.usageViewFilter = 'All';
 	$rootScope.selectedTemplate=null;
 	$scope.DocAccordi = {};
+	$scope.TestStoryAccordi = {};
+	$scope.TestStoryAccordi.description = true;
+	$scope.TestStoryAccordi.comments = false;
+	$scope.TestStoryAccordi.preCondition = false;
+	$scope.TestStoryAccordi.postCondition = false;
+	$scope.TestStoryAccordi.testObjectives = false;
+	$scope.TestStoryAccordi.evaluationCriteria = false;
+	$scope.TestStoryAccordi.notes = false;
+
 	$scope.DocAccordi.testdata = false;
-	$scope.DocAccordi.messageContents = false;
+	$scope.DocAccordi.messageContents = true;
 	$scope.DocAccordi.jurorDocument = false;
 	$scope.nistStd = {};
-	$scope.nistStd.nist = false;
+	$scope.nistStd.nist = true;
 	$scope.nistStd.std = false;
 	$rootScope.changesMap={};
 	$rootScope.tocHeigh=300;
@@ -1419,6 +1428,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.generateConstraintsXML = function (segmentList, testStep, selectedConformanceProfile, selectedIntegrationProfile){
 		$rootScope.categorizationsDataMap = {};
+		$rootScope.categorizationsUsageMap = {};
 		var rootName = "ConformanceContext";
 		var xmlString = '<' + rootName + '>' + '</' + rootName + '>';
 		var parser = new DOMParser();
@@ -1516,6 +1526,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 						var cateOfField = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath)];
 						$scope.createConstraint(segmentiPositionPath + fieldiPath, cateOfField, fieldUsagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, fieldStr);
 						$rootScope.categorizationsDataMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath)] = fieldStr;
+						$rootScope.categorizationsUsageMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath)] = fieldUsagePath;
 					} else {
 						for (var k = 0 ; k < fieldDT.components.length; k++ ){
 							var c = fieldDT.components[k];
@@ -1527,6 +1538,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 								var cateOfComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath)];
 								$scope.createConstraint(segmentiPositionPath + fieldiPath + componentiPath, cateOfComponent, componentUsagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, componentStr);
 								$rootScope.categorizationsDataMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath)] = componentStr;
+								$rootScope.categorizationsUsageMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath)] = componentUsagePath;
 							} else {
 								for (var l = 0; l < $scope.findDatatype(c.datatype, selectedIntegrationProfile).components.length; l++){
 									var sc = $scope.findDatatype(c.datatype, selectedIntegrationProfile).components[l];
@@ -1536,6 +1548,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 									var cateOfSubComponent = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath + subcomponentiPath)];
 									$scope.createConstraint(segmentiPositionPath + fieldiPath + componentiPath + subcomponentiPath, cateOfSubComponent, subComponentUsagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, subcomponentStr);
 									$rootScope.categorizationsDataMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath + subcomponentiPath)] = subcomponentStr;
+									$rootScope.categorizationsUsageMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath)] = subComponentUsagePath;
 								}
 							}
 						}
@@ -2423,6 +2436,36 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 							cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
 							cate.listData = testDataCategorizationObj.listData;
 							cate.data = $rootScope.categorizationsDataMap[key];
+							cate.usagePath = $rootScope.categorizationsUsageMap[key];
+							cate.constraints = [];
+							var usageCheck = true;
+							var usages = cate.usagePath.split("-");
+							for(var i=0; i < usages.length; i++){
+								var u = usages[i];
+								if(u !== "R") {
+									usageCheck = false;
+								}
+							}
+							if(cate.testDataCategorization == 'NonPresence'){
+								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD NOT be presented.');
+							}else if(cate.testDataCategorization == 'Presence-Content Indifferent' ||
+								cate.testDataCategorization == 'Presence-Configuration' ||
+								cate.testDataCategorization == 'Presence-System Generated' ||
+								cate.testDataCategorization == 'Presence-Test Case Proper'){
+								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be presented.');
+							}else if(cate.testDataCategorization == 'Presence Length-Content Indifferent' ||
+								cate.testDataCategorization == 'Presence Length-Configuration' ||
+								cate.testDataCategorization == 'Presence Length-System Generated' ||
+								cate.testDataCategorization == 'Presence Length-Test Case Proper'){
+								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be presented.');
+								cate.constraints.push('Length of ' + cate.iPath + ' (' + cate.name + ') SHOULD be more than '+ cate.data.length);
+							}else if(cate.testDataCategorization == 'Value-Test Case Fixed'){
+								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be presented.');
+								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be '+ cate.data);
+							}else if(cate.testDataCategorization == 'Value-Test Case Fixed List'){
+								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be presented.');
+								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be one of '+ cate.listData);
+							}
 							$scope.listOfTDC.push(cate);
 						}
 					}

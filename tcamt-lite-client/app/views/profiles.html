@@ -62,8 +62,8 @@
                                                 <th st-ratio="10">Description</th>
                                                 <th st-ratio="10" st-sort="metaData.hl7Version">HL7Version</th>
                                                 <th st-ratio="10" st-sort="metaData.date">Date</th>
-                                                <th st-ratio="50">Conformance Profiles</th>
-                                                <th st-ratio="5">Actions</th>
+                                                <th st-ratio="45">Conformance Profiles</th>
+                                                <th st-ratio="10">Actions</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -73,18 +73,18 @@
                                                 <td st-ratio="10" ng-bind="row.metaData.description"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.hl7Version"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.date"></td>
-                                                <td st-ratio="50">
+                                                <td st-ratio="45">
                                                     <li ng-repeat="m in row.messages.children">{{m.name}} [{{m.messageType}}^{{m.event}}^{{m.structID}}, {{m.identifier}}]</li>
                                                 </td>
-                                                <td st-ratio="5">
+                                                <td st-ratio="10">
                                                     <button title="Replace Profile"
                                                             type="button" class="btn btn-xs btn-info no-margin"
                                                             ng-click="openDialogForReplacePrivateProfile($event, row);">
-                                                        <span><i class="fa fa-repeat fa-fw"></i></span>
+                                                        <span><i class="fa fa-repeat fa-fw"></i> Update</span>
                                                     </button>
                                                     <button title="Delete" type="button" class="btn btn-xs btn-danger no-margin"
                                                             ng-click="confirmDeletePrivateProfile($event, row)">
-                                                        <span><i class="fa fa-trash-o fa-fw"></i></span>
+                                                        <span><i class="fa fa-trash-o fa-fw"></i> Delete</span>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -109,8 +109,8 @@
                                                 <th st-ratio="10">Description</th>
                                                 <th st-ratio="10" st-sort="metaData.hl7Version">HL7Version</th>
                                                 <th st-ratio="10" st-sort="metaData.date">Date</th>
-                                                <th st-ratio="40">Conformance Profiles</th>
-                                                <th st-ratio="5">Actions</th>
+                                                <th st-ratio="45">Conformance Profiles</th>
+                                                <th st-ratio="10">Actions</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -120,18 +120,18 @@
                                                 <td st-ratio="10" ng-bind="row.metaData.description"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.hl7Version"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.date"></td>
-                                                <td st-ratio="40">
+                                                <td st-ratio="45">
                                                     <li ng-repeat="m in row.messages.children">{{m.name}} [{{m.messageType}}^{{m.event}}^{{m.structID}}, {{m.identifier}}]</li>
                                                 </td>
-                                                <td st-ratio="5">
+                                                <td st-ratio="10">
                                                     <button title="Replace Profile"
                                                             type="button" class="btn btn-xs btn-info no-margin"
                                                             ng-click="openDialogForReplacePublicProfile($event, row);">
-                                                        <span><i class="fa fa-repeat fa-fw"></i></span>
+                                                        <span><i class="fa fa-repeat fa-fw"></i> Update</span>
                                                     </button>
                                                     <button title="Delete" type="button" class="btn btn-xs btn-danger no-margin"
                                                             ng-click="confirmDeletePublicProfile($event, row)">
-                                                        <span><i class="fa fa-trash-o fa-fw"></i></span>
+                                                        <span><i class="fa fa-trash-o fa-fw"></i> Delete</span>
                                                     </button>
                                                 </td>
                                             </tr>

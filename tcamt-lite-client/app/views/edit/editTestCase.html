@@ -13,95 +13,126 @@ body {
 </script>
 <script type="text/ng-template" id="EditTestCaseMetadata.html">
 	<div ng-show="selectedTestCase">
-		<ul class="nav nav-pills">
-			<li ng-class="{active: isSelectedTestCaseTab(1)}"><a data-toggle="pill" ng-click="changeTestCaseTab(1);"><i class="fa fa-file-text-o fa-fw"></i> MetaData</a></li>
-			<li ng-class="{active: isSelectedTestCaseTab(2)}"><a data-toggle="pill" ng-click="changeTestCaseTab(2);"><i class="fa fa-file-text-o fa-fw"></i> Test Story</a></li>
-		</ul>
+		<div ng-cloak>
+			<md-content>
+				<md-tabs md-dynamic-height md-border-bottom>
+					<md-tab label="MetaData">
+						<md-content class="md-padding">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="col-md-6">
+										<md-input-container style="width: 100%;">
+											<label>Name</label>
+											<input ng-model="selectedTestCase.name" ng-change="recordChanged(selectedTestCase);updateCurrentTitle('Test Case', selectedTestCase.name);" type="text"/>
+										</md-input-container>
+									</div>
 
-
-		<div ng-show="isSelectedTestCaseTab(1);">
-			<form name="testcaseMetaDataForm" class="form-horizontal" novalidate>
-				<div class="row" style="margin-top:35px">
-					<div class="col-md-12">
-						<div class="col-md-6">
-							<md-input-container style="width: 100%;">
-								<label>Name</label>
-								<input ng-model="selectedTestCase.name" ng-change="recordChanged(selectedTestCase);updateCurrentTitle('Test Case', selectedTestCase.name);" type="text"/>
-							</md-input-container>
-						</div>
-
-						<div class="col-md-6">
-							<md-input-container style="width: 100%;">
-								<label>Description</label>
-								<input ng-model="selectedTestCase.description" ng-change="recordChanged(selectedTestCase)" type="text"/>
-							</md-input-container>
-						</div>
-					</div>
-					<div ng-show="selectedTestPlan.transport" class="col-md-12">
-						<div class="col-md-6">
-							<md-input-container style="width: 100%;">
-								<label>Protocol</label>
-								<md-select ng-model="selectedTestCase.protocol" ng-change="recordChanged(selectedTestCase);">
-									<md-option value="soap">SOAP</md-option>
-								</md-select>
-							</md-input-container>
-						</div>
-					</div>
-				</div>
-			</form>
-		</div>
-
-		<div ng-show="isSelectedTestCaseTab(2);">
-			<div class="row">
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Description</label>
-						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="teststorydesc" ng-model="selectedTestCase.testCaseStory.teststorydesc"/>
-					</div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Comments</label>
-						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="comments" ng-model="selectedTestCase.testCaseStory.comments"/>
-					</div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Pre Condition</label>
-						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="preCondition" ng-model="selectedTestCase.testCaseStory.preCondition"/>
-					</div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Post Condition</label>
-						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="postCondition" ng-model="selectedTestCase.testCaseStory.postCondition"/>
-					</div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Test Objectives</label>
-						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="testObjectives" ng-model="selectedTestCase.testCaseStory.testObjectives"/>
-					</div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Evaluation Criteria</label>
-						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="evaluationCriteria" ng-model="selectedTestCase.testCaseStory.evaluationCriteria"/>
-					</div>
-				</div>
-
-				<div class="col-md-12">
-					<div class="form-group">
-						<label class="control-label">Notes</label>
-						<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="notes" ng-model="selectedTestCase.testCaseStory.notes"/>
-					</div>
-				</div>
-			</div>
+									<div class="col-md-6">
+										<md-input-container style="width: 100%;">
+											<label>Description</label>
+											<input ng-model="selectedTestCase.description" ng-change="recordChanged(selectedTestCase)" type="text"/>
+										</md-input-container>
+									</div>
+								</div>
+								<div ng-show="selectedTestPlan.transport" class="col-md-12">
+									<div class="col-md-6">
+										<md-input-container style="width: 100%;">
+											<label>Protocol</label>
+											<md-select ng-model="selectedTestCase.protocol" ng-change="recordChanged(selectedTestCase);">
+												<md-option value="soap">SOAP</md-option>
+											</md-select>
+										</md-input-container>
+									</div>
+								</div>
+							</div>
+						</md-content>
+					</md-tab>
+					<md-tab label="Test Story">
+						<md-content class="md-padding">
+							<div class="row">
+								<uib-accordion close-others="true">
+									<uib-accordion-group  is-open="TestStoryAccordi.description">
+										<uib-accordion-heading>
+											<span style="color: white !important;">
+												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.description, 'fa-caret-right': !TestStoryAccordi.description}"></i>
+												Description
+											</span>
+										</uib-accordion-heading>
+										<div class="col-md-12">
+											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="teststorydesc" ng-model="selectedTestCase.testStepStory.teststorydesc"></textarea>
+										</div>
+									</uib-accordion-group>
+									<uib-accordion-group  is-open="TestStoryAccordi.comments">
+										<uib-accordion-heading>
+											<span style="color: white !important;">
+												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.comments, 'fa-caret-right': !TestStoryAccordi.comments}"></i>
+												Comments
+											</span>
+										</uib-accordion-heading>
+										<div class="col-md-12">
+											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="comments" ng-model="selectedTestCase.testStepStory.comments" required ></textarea>
+										</div>
+									</uib-accordion-group>
+									<uib-accordion-group  is-open="TestStoryAccordi.preCondition">
+										<uib-accordion-heading>
+											<span style="color: white !important;">
+												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.preCondition, 'fa-caret-right': !TestStoryAccordi.preCondition}"></i>
+								 				Pre Condition
+											</span>
+										</uib-accordion-heading>
+										<div class="col-md-12">
+											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="preCondition" ng-model="selectedTestCase.testStepStory.preCondition" required ></textarea>
+										</div>
+									</uib-accordion-group>
+									<uib-accordion-group  is-open="TestStoryAccordi.postCondition">
+										<uib-accordion-heading>
+											<span style="color: white !important;">
+												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.postCondition, 'fa-caret-right': !TestStoryAccordi.postCondition}"></i>
+								 				Post Condition
+											</span>
+										</uib-accordion-heading>
+										<div class="col-md-12">
+											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="postCondition" ng-model="selectedTestCase.testStepStory.postCondition" required ></textarea>
+										</div>
+									</uib-accordion-group>
+									<uib-accordion-group  is-open="TestStoryAccordi.testObjectives">
+										<uib-accordion-heading>
+											<span style="color: white !important;">
+												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.testObjectives, 'fa-caret-right': !TestStoryAccordi.testObjectives}"></i>
+								 				Test Objectives
+											</span>
+										</uib-accordion-heading>
+										<div class="col-md-12">
+											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="testObjectives" ng-model="selectedTestCase.testStepStory.testObjectives" required></textarea>
+										</div>
+									</uib-accordion-group>
+									<uib-accordion-group  is-open="TestStoryAccordi.evaluationCriteria">
+										<uib-accordion-heading>
+											<span style="color: white !important;">
+												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.evaluationCriteria, 'fa-caret-right': !TestStoryAccordi.evaluationCriteria}"></i>
+								 				Evaluation Criteria
+											</span>
+										</uib-accordion-heading>
+										<div class="col-md-12">
+											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="evaluationCriteria" ng-model="selectedTestCase.testStepStory.evaluationCriteria" required ></textarea>
+										</div>
+									</uib-accordion-group>
+									<uib-accordion-group  is-open="TestStoryAccordi.notes">
+										<uib-accordion-heading>
+											<span style="color: white !important;">
+												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.notes, 'fa-caret-right': !TestStoryAccordi.notes}"></i>
+								 				Notes
+											</span>
+										</uib-accordion-heading>
+										<div class="col-md-12">
+											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="notes" ng-model="selectedTestCase.testStepStory.notes" required />
+										</div>
+									</uib-accordion-group>
+								</uib-accordion>
+							</div>
+						</md-content>
+					</md-tab>
+			</md-content>
 		</div>
 	</div>
 </script> 
