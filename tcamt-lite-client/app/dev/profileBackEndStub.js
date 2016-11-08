@@ -95,13 +95,29 @@ angular.module('tcl').run(function ($httpBackend, $q, $http) {
         return [request.status, profile, {}];
     });
 
-    $httpBackend.whenGET('api/igdocuments/57450d2ad4c6f57e697ab7e3/tcamtProfile').respond(function (method, url, data, headers) {
+    $httpBackend.whenGET('api/profiles').respond(function (method, url, data, headers) {
         var request = new XMLHttpRequest();
-        request.open('GET', '../../resources/57450d2ad4c6f57e697ab7e3.json', false);
+        request.open('GET', '../../resources/profiles.json', false);
         request.send(null);
         var profile = angular.fromJson(request.response);
         return [request.status, profile, {}];
     });
+
+    $httpBackend.whenGET('api/profiles/public').respond(function (method, url, data, headers) {
+        var request = new XMLHttpRequest();
+        request.open('GET', '../../resources/public.json', false);
+        request.send(null);
+        var profile = angular.fromJson(request.response);
+        return [request.status, profile, {}];
+    });
+
+    // $httpBackend.whenGET('api/igdocuments/57450d2ad4c6f57e697ab7e3/tcamtProfile').respond(function (method, url, data, headers) {
+    //     var request = new XMLHttpRequest();
+    //     request.open('GET', '../../resources/57450d2ad4c6f57e697ab7e3.json', false);
+    //     request.send(null);
+    //     var profile = angular.fromJson(request.response);
+    //     return [request.status, profile, {}];
+    // });
 
     $httpBackend.whenGET('api/template').respond(function (method, url, data, headers) {
         var request = new XMLHttpRequest();

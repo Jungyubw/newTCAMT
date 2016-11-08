@@ -124,11 +124,6 @@ public class IGAMTDBConn {
 		datatypes.setType(p.getDatatypeLibrary().getType());
 		for (DatatypeLink link : p.getDatatypeLibrary().getChildren()) {
 			Datatype dt = this.findDatatypeById(link.getId());
-			if(link.getExt() != null && !link.getExt().equals("")){
-				dt.setLabel(link.getName() + "_" + link.getExt());
-			}else {
-				dt.setLabel(link.getName());
-			}
 			datatypes.addDatatype(dt);
 		}
 		tcamtProfile.setDatatypes(datatypes);
@@ -142,11 +137,6 @@ public class IGAMTDBConn {
 		segments.setType(p.getSegmentLibrary().getType());
 		for (SegmentLink link : p.getSegmentLibrary().getChildren()) {
 			Segment seg = this.findSegmentById(link.getId());
-			if(link.getExt() != null && !link.getExt().equals("")){
-				seg.setLabel(link.getName()  + "_" + link.getExt()); 
-			}else {
-				seg.setLabel(link.getName());
-			}
 			segments.addSegment(seg);
 		}
 		tcamtProfile.setSegments(segments);
@@ -168,7 +158,6 @@ public class IGAMTDBConn {
 		tables.setValueSetLibraryVersion(p.getTableLibrary().getValueSetLibraryVersion());
 		for (TableLink link : p.getTableLibrary().getChildren()) {
 			Table t = this.findTableById(link.getId());
-			t.setBindingIdentifier(link.getBindingIdentifier());
 			tables.addTable(t);
 		}
 		tcamtProfile.setTables(tables);

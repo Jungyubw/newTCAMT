@@ -4,8 +4,9 @@
 
 angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce,Notification) {
 	$scope.loading = false;
-    $scope.selectedTestStepTab = 1;
-	$scope.selectedTestCaseTab = 1;
+	$scope.selectedTestCaseTab = 0;
+    $scope.selectedTestStepTab = {};
+	$scope.selectedTestStepTab.tabNum = 0;
 	$rootScope.tps = [];
 	$scope.testPlanOptions=[];
 	$scope.accordi = {metaData: false, definition: true, tpList: true, tpDetails: false};
@@ -509,7 +510,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.selectedIntegrationProfile =_.find($rootScope.integrationProfiles, function(ip) {
 				return ip.id == $rootScope.selectedTestStep.integrationProfileId;
 			});
-			$scope.loadConformanceProfile();
+			if($rootScope.selectedIntegrationProfile && $rootScope.selectedIntegrationProfile != null) $scope.loadConformanceProfile();
 		}else {
 			$rootScope.selectedIntegrationProfile = null;
 			$rootScope.selectedTestStep.integrationProfileId = null;
@@ -797,7 +798,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$timeout(function () {
 				$rootScope.selectedTestCase = testCase;
 				$scope.updateCurrentTitle("Test Case", $rootScope.selectedTestCase.name);
-				$scope.selectedTestCaseTab = 1;
 				$scope.subview = "EditTestCaseMetadata.html";
 			}, 0);
 			$timeout(function () {
@@ -807,8 +807,26 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.selectedSegmentNode =null;
 				$scope.editor = null;
 				$scope.editorValidation = null;
+				$scope.selectedTestCaseTab = 0;
 				waitingDialog.hide();
 			}, 100);
+		}
+	};
+
+	$scope.initTestStepTab = function (tabnum){
+		$scope.selectedTestStepTab.tabNum = tabnum;
+
+		if(tabnum == 2) {
+			$scope.initHL7EncodedMessageTab();
+		}else if (tabnum == 3) {
+			$scope.initTestData();
+		}else if (tabnum == 4) {
+			$scope.initHL7EncodedMessageForOnlineValidationTab();
+			$scope.resetValidation()
+		}else if (tabnum == 5) {
+			$scope.genSTDNISTXML($scope.findTestCaseNameOfTestStep());
+		}else if (tabnum == 6) {
+			$scope.generateSupplementDocuments();
 		}
 	};
 
@@ -823,10 +841,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				if($rootScope.selectedTestStep.testDataCategorizationMap == undefined || $rootScope.selectedTestStep == null){
 					$rootScope.selectedTestStep.testDataCategorizationMap = {};
 				}
-				$scope.selectedTestStepTab = 1;
 				$scope.loadIntegrationProfile();
-				$scope.MessageForMirror=$rootScope.selectedTestStep.er7Message;
-				$scope.subview = "EditTestStepMetadata.html";
 			}, 0);
 
 			$timeout(function () {
@@ -834,26 +849,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.selectedTestCase = null;
 				$rootScope.selectedTemplate=null;
 				$rootScope.selectedSegmentNode =null;
+				$scope.subview = "EditTestStepMetadata.html";
+				$scope.initTestStepTab($scope.selectedTestStepTab.tabNum);
+				$scope.selectedTestStepTab.tabNum = 0;
 				waitingDialog.hide();
 			}, 100);
 		}
-	};
-
-    $scope.changeTestStepTab = function (tabNum) {
-        $scope.selectedTestStepTab = tabNum;
-		if(tabNum != 4) $rootScope.selectedSegmentNode = null;
-    };
-
-	$scope.changeTestCaseTab = function (tabNum) {
-		$scope.selectedTestCaseTab = tabNum;
-	};
-
-    $scope.isSelectedTestStepTab = function (tabNum) {
-      return   tabNum == $scope.selectedTestStepTab;
-    };
-
-	$scope.isSelectedTestCaseTab = function (tabNum) {
-		return   tabNum == $scope.selectedTestCaseTab;
 	};
 
 	$scope.selectTPTab = function (value) {

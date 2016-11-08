@@ -16,8 +16,8 @@ body {
 	<div ng-show="selectedTestStep">
 		<div ng-cloak>
 			<md-content>
-				<md-tabs md-dynamic-height md-border-bottom>
-					<md-tab label="MetaData">
+				<md-tabs md-dynamic-height md-border-bottom md-selected="selectedTestStepTab.tabNum">
+					<md-tab label="MetaData" md-on-select="initTestStepTab(0);" md-active="true">
 						<md-content class="md-padding">
 							<div class="row">
 								<div class="col-md-12">
@@ -116,10 +116,8 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Test Story">
+					<md-tab label="Test Story" md-on-select="initTestStepTab(1);">
 						<md-content class="md-padding">
-
-
 							<div class="row">
 								<uib-accordion close-others="true">
 									<uib-accordion-group  is-open="TestStoryAccordi.description">
@@ -203,7 +201,7 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initHL7EncodedMessageTab();" label="HL7 Encoded Message">
+					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestStepTab(2);" label="HL7 Encoded Message">
 						<md-content class="md-padding">
 							<div class="col-md-12">
 								<span class="pull-left">
@@ -220,7 +218,7 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestData();" label="Test Data">
+					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestStepTab(3);" label="Test Data">
 						<md-content class="md-padding">
 							<div class="row">
 								<div class="col-md-6">
@@ -399,7 +397,7 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initHL7EncodedMessageForOnlineValidationTab();resetValidation();" label="Validation">
+					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestStepTab(4);" label="Validation">
 						<md-content class="md-padding">
 							<div class="row">
 								<span class="pull-right">
@@ -471,7 +469,7 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="genSTDNISTXML(findTestCaseNameOfTestStep());" label="STD/NIST XML">
+					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestStepTab(5);" label="STD/NIST XML">
 						<md-content class="md-padding">
 							<div class="row">
 								<uib-accordion close-others="true">
@@ -497,7 +495,7 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="generateSupplementDocuments();" label="Supplement Documents">
+					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestStepTab(6);" label="Supplement Documents">
 						<md-content class="md-padding">
 							<div class="row">
 								<uib-accordion close-others="true">
@@ -571,7 +569,9 @@ body {
 			[{{node.field.minLength}}..{{node.field.maxLength}}]
         </td>
 		<td class="col-md-1" ng-show="isShow(5)">
-			{{findTable(node.field.table).bindingIdentifier}}
+			<div ng-repeat="t in node.field.tables">
+				<li>{{findTable(t).bindingIdentifier}}</li>
+			</div>
         </td>
 		<td class="col-md-1" ng-show="isShow(6)">
 			<span>{{node.predicate.description}}</span>
@@ -638,7 +638,9 @@ body {
 			[{{node.component.minLength}}..{{node.component.maxLength}}]
         </td>
 		<td class="col-md-1" ng-show="isShow(5)">
-			{{findTable(node.component.table).bindingIdentifier}}
+			<div ng-repeat="t in node.component.tables">
+				<li>{{findTable(t).bindingIdentifier}}</li>
+			</div>
         </td>
 		<td class="col-md-1" ng-show="isShow(6)">
 			<span>{{node.predicate.description}}</span>
@@ -700,7 +702,9 @@ body {
 			[{{node.component.minLength}}..{{node.component.maxLength}}]
         </td>
 		<td class="col-md-1" ng-show="isShow(5)">
-			{{findTable(node.component.table).bindingIdentifier}}
+			<div ng-repeat="t in node.component.tables">
+				<li>{{findTable(t).bindingIdentifier}}</li>
+			</div>
         </td>
 		<td class="col-md-1" ng-show="isShow(6)">
 			<span>{{node.predicate.description}}</span>
