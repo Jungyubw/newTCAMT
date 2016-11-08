@@ -2942,7 +2942,7 @@ li.active > a{
 .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
     cursor: not-allowed;
     background-color: #efeaea;
-    margin-bottom: 52px;
+    margin-bottom: 0px;
 }
 
 .ui-notification>.message {

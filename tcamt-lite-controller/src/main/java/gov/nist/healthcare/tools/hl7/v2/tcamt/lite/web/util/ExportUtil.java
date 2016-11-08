@@ -617,8 +617,9 @@ public class ExportUtil {
 		byte[] buf = new byte[1024];
 		out.putNextEntry(new ZipEntry(path + File.separator + "TestStory.html"));
 
-		String testCaseStoryStr = this.generateTestStory(testStory, "ng-tab-html");
-		InputStream inTestStory = IOUtils.toInputStream(testCaseStoryStr, "UTF-8");
+		//TODO need to check
+		String testStoryStr = this.generateTestStory(testStory, "plain");
+		InputStream inTestStory = IOUtils.toInputStream(testStoryStr, "UTF-8");
 		int lenTestStory;
 		while ((lenTestStory = inTestStory.read(buf)) > 0) {
 			out.write(buf, 0, lenTestStory);
