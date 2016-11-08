@@ -1051,7 +1051,7 @@ public class ExportUtil {
 				for (int k = 0; k < f.getTables().size(); k++) {
 					TableLink tl = f.getTables().get(k);
 
-					if (k == 0) {
+					if (bindingIdentifier.equals("")) {
 						bindingIdentifier = tl.getBindingIdentifier();
 					} else {
 						bindingIdentifier = bindingIdentifier + ":" + tl.getBindingIdentifier();
@@ -1060,7 +1060,8 @@ public class ExportUtil {
 					bindingLocation = tl.getBindingLocation();
 
 				}
-				elmField.addAttribute(new Attribute("Binding", bindingIdentifier));
+				if (bindingIdentifier != null && !bindingIdentifier.equals("")) 
+					elmField.addAttribute(new Attribute("Binding", bindingIdentifier));
 				if (bindingStrength != null && !bindingStrength.equals(""))
 					elmField.addAttribute(new Attribute("BindingStrength", ExportUtil.str(bindingStrength)));
 				if (bindingLocation != null && !bindingLocation.equals(""))
@@ -1114,7 +1115,7 @@ public class ExportUtil {
 					for (int k = 0; k < c.getTables().size(); k++) {
 						TableLink tl = c.getTables().get(k);
 
-						if (k == 0) {
+						if (bindingIdentifier.equals("")) {
 							bindingIdentifier = tl.getBindingIdentifier();
 						} else {
 							bindingIdentifier = bindingIdentifier + ":" + tl.getBindingIdentifier();
@@ -1123,7 +1124,8 @@ public class ExportUtil {
 						bindingLocation = tl.getBindingLocation();
 
 					}
-					elmComponent.addAttribute(new Attribute("Binding", bindingIdentifier));
+					if (bindingIdentifier != null && !bindingIdentifier.equals("")) 
+						elmComponent.addAttribute(new Attribute("Binding", bindingIdentifier));
 					if (bindingStrength != null && !bindingStrength.equals(""))
 						elmComponent.addAttribute(new Attribute("BindingStrength", ExportUtil.str(bindingStrength)));
 					if (bindingLocation != null && !bindingLocation.equals(""))

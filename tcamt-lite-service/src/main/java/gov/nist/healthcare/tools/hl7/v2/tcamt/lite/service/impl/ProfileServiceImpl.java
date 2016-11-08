@@ -299,7 +299,7 @@ public class ProfileServiceImpl implements ProfileService {
 		segmentRefObj.setUsage(Usage.fromValue(segmentElm.getAttribute("Usage")));
 		Segment s = this.segmentsMap.get(segmentElm.getAttribute("Ref"));
 		SegmentLink sl = new SegmentLink();
-		sl.setExt(s.getName());
+		sl.setExt(s.getExt());
 		sl.setId(s.getId());
 		sl.setName(s.getName());
 		
@@ -326,7 +326,7 @@ public class ProfileServiceImpl implements ProfileService {
 		segmentObj.setDescription(segmentElm.getAttribute("Description"));
 		if(segmentElm.getAttribute("Label") != null && !segmentElm.getAttribute("Label").equals("")){
 			segmentObj.setLabel(segmentElm.getAttribute("Label"));
-			segmentObj.setExt(segmentElm.getAttribute("Label").replace(segmentElm.getAttribute("Name"), ""));
+			segmentObj.setExt(segmentElm.getAttribute("Label").replace(segmentElm.getAttribute("Name") + "_", ""));
 		}else{
 			segmentObj.setLabel(segmentElm.getAttribute("Name"));
 		}
@@ -448,7 +448,7 @@ public class ProfileServiceImpl implements ProfileService {
 			datatypeObj.setDescription(elmDatatype.getAttribute("Description"));
 			if(elmDatatype.getAttribute("Label") != null &&  !elmDatatype.getAttribute("Label").equals("")){
 				datatypeObj.setLabel(elmDatatype.getAttribute("Label"));
-				datatypeObj.setExt(elmDatatype.getAttribute("Label").replace(elmDatatype.getAttribute("Name"), ""));
+				datatypeObj.setExt(elmDatatype.getAttribute("Label").replace(elmDatatype.getAttribute("Name")+ "_", ""));
 			}else{
 				datatypeObj.setLabel(elmDatatype.getAttribute("Name"));
 			}
@@ -832,11 +832,15 @@ public class ProfileServiceImpl implements ProfileService {
 			}
 			NodeList descriptionNodes = elmConstraint.getElementsByTagName("Description");
 			if (descriptionNodes != null && descriptionNodes.getLength() == 1) {
-				constraintObj.setDescription(descriptionNodes.item(0).getNodeValue());
+				constraintObj.setDescription(descriptionNodes.item(0).getFirstChild().getNodeValue());
+			}else {
+				constraintObj.setDescription("NO DESC");
 			}
+			System.out.println(constraintObj.toString());
 			this.deserializeXMLToReference(elmConstraint, constraintObj);
 			constraintObj
 					.setAssertion(this.convertElementToString(elmConstraint.getElementsByTagName("Assertion").item(0)));
+			System.out.println(constraintObj.toString());
 			byNameOrByIDObj.getConformanceStatements().add(constraintObj);
 		}
 
@@ -853,7 +857,9 @@ public class ProfileServiceImpl implements ProfileService {
 			predicateObj.setFalseUsage(Usage.fromValue(elmPredicate.getAttribute("FalseUsage")));
 			NodeList descriptionNodes = elmPredicate.getElementsByTagName("Description");
 			if (descriptionNodes != null && descriptionNodes.getLength() == 1) {
-				predicateObj.setDescription(descriptionNodes.item(0).getNodeValue());
+				predicateObj.setDescription(descriptionNodes.item(0).getFirstChild().getNodeValue());
+			}else {
+				predicateObj.setDescription("NO DESC");
 			}
 			this.deserializeXMLToReference(elmPredicate, predicateObj);
 			predicateObj
