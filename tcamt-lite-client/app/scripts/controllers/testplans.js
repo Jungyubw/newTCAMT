@@ -9,7 +9,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.selectedTestStepTab.tabNum = 0;
 	$rootScope.tps = [];
 	$rootScope.sr={
-			name:""
+			name:"",
+			
 	};
 	
 	$scope.testPlanOptions=[];
@@ -3949,7 +3950,7 @@ angular.module('tcl').controller('TestStoryConfig', function($scope, $rootScope,
 	}
 	
 	$scope.addField=function(){
-		$scope.items.push({title:"new title", content:""});
+		$scope.items.push({id:new ObjectId().toString(),title:"new title", scope:"user", present:true});
 	}
 
 	

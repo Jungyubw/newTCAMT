@@ -3060,3 +3060,12 @@ li.active > a{
     margin-left: 5px;
     margin-top: 10 !important;
 }
+.panel-info>.panel-heading {
+    background-color: #0a7bbf;
+    color: #fff !important;
+}
+.message-content .uib-accordion-heading {
+    font-weight: bold; 
+    color: white; 
+    font-size: 90%;
+}

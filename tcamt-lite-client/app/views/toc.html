@@ -81,7 +81,7 @@
                         </li>
                     </ol>
                     <!-- <div ui-tree-handle data-type="group"/> -->
-     							<div ng-if="case.teststeps.length>0">
+     							<div ng-if="child.teststeps.length>0">
                 					{{updatePositions(child.teststeps)}}
            						 </div>                    <ol ui-tree-nodes=" " ng-model="child.teststeps " data-type="case" ng-if ="child.teststeps && !collapsed"  data-empty-placeholder-enabled>
                         <li ng-repeat="step in child.teststeps " ui-tree-node data-type="step">
