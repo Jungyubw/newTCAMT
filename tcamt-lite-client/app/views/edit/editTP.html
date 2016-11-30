@@ -57,7 +57,12 @@
 	
 				<div class="panel panel-primary" ng-if="!ighidden">
 				<div class="panel-heading panel-heading-collapsable" style="background-color:#395286;">
-					<i class="glyphicon glyphicon-list"></i> <span><strong >IG Documents Tree</strong>
+				<span>
+				<i class="glyphicon glyphicon-list"></i>
+				
+				<span class=""><strong >IG Documents Tree</strong></span>
+				<span class=""> <input type="text" class="input input-sm form-control" placeholder="Filter by profile" ng-model="sr.name"></input></span>
+				 </span>
 				</div>
 				<div class="panel-body" style="height:{{igHeigh}}px;overflow:auto;">
 					<div class="toc-container">

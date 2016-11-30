@@ -28,6 +28,27 @@
                 </div>
 
                 <div class="pull-right">
+                
+                      <div ng-show="accordi.tpDetails" class="btn-group" >
+                        <button type="button" class="btn btn-default btn-sm">
+                            <span><i class="fa fa-cog" aria-hidden="true"></i> Configuration</span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu igl-menu" role="menu">
+                            <li><a class="point" ng-click="configurateTS()">Test Story Configuartion</a></li>
+                        </ul>
+                    </div>
+                
+                
+                
+                
+                
+                
+    
+                
                     <button ng-show="accordi.tpList" type="button" class="btn btn-info btn-sm" ng-click="openDialogForNewTestPlan($event)" style="margin-bottom:10px !important;"><i class="fa fa-plus"></i> New
                     </button>
                     <button ng-show="accordi.tpList" type="button" class="btn btn-info btn-sm" ng-click="openDialogForImportTestPlan($event)" style="margin-bottom:10px !important;"><i class="fa fa-plus"></i> Import JSON
@@ -173,3 +194,62 @@
     </script>
 
 </div>
+
+    <script type="text/ng-template" id="TSconfiguration.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Test Story Configuration
+        </h3>
+    </div>
+	<div class="container" style="margin-top:10px;">
+	<label>Configure</label>
+	<form id ="config">
+
+
+	<div dnd-list="items" >
+	
+    <div ng-repeat="item in items"
+        dnd-draggable="item"
+        dnd-moved="items.splice($index, 1)"
+        dnd-effect-allowed="move"
+		dnd-dragend="setPosition(item,$index);">
+        <dnd-nodrag>
+          <div dnd-handle style="cursor: move;
+  position: absolute;
+  top: 14px;"></div>
+          <div class="row name" >
+          	<input type="checkbox" ng-model="item.present" class="col-md-1" style="width:3.3333% !important; float:right; border:0px;"> <input type="text" required ng-model="item.title" class="col-md-10 input_dnd" ng-disabled="item.scope=='default'">
+			<i ng-if="item.scope!=='default'"" class="fa fa-times col-md-1" ng-click="items.splice($index, 1)"></i>
+          	</div>
+		
+    </div>
+   <li class="dndPlaceholder">
+       <strong style="color:green;"> Drop Here</strong>
+<br/>
+    </li>
+
+	</div>
+
+
+
+
+
+
+
+
+	<button class="btn btn-sm btn-info" ng-click="addField()"><i class="fa fa-plus"></i> Add Field</button>
+
+    </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-raised btn-default btn-sm" ng-disabled="loading" ng-click="cancel()"><span><i
+                class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
+        </button>
+        <button class="btn btn-raised btn-success btn-sm" ng-click="confirm()"><span><i
+                class="fa fa-trash-o fa-fw">&nbsp; </i>Confirm</span>
+        </button>
+
+    </div>
+</form>
+    </div>
+
+</script>

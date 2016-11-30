@@ -2,6 +2,7 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +16,8 @@ public class TestCaseGroup extends TestCaseOrGroup implements Serializable, Clon
 	private static final long serialVersionUID = -8254402250986054606L;
 	
 	
-	
+	private HashMap<String,String> testStoryContent=new HashMap<String, String>();
+
 	
 	public TestCaseGroup() {
 		super();
@@ -62,6 +64,14 @@ public class TestCaseGroup extends TestCaseOrGroup implements Serializable, Clon
 	public static void setTestCaseGroupPositionComparator(
 			Comparator<TestCaseGroup> testCaseGroupPositionComparator) {
 		TestCaseGroup.testCaseGroupPositionComparator = testCaseGroupPositionComparator;
+	}
+
+	public HashMap<String,String> getTestStoryContent() {
+		return testStoryContent;
+	}
+
+	public void setTestStoryContent(HashMap<String,String> testStoryContent) {
+		this.testStoryContent = testStoryContent;
 	}
 
 	public static Comparator<TestCaseGroup> testCaseGroupPositionComparator = new Comparator<TestCaseGroup>() {

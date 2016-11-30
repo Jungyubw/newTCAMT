@@ -7,7 +7,7 @@
                   </span> <span ng-click="Activate(this);OpenIgMetadata(ip);"> <span class="label label-info label-icon">IP</span> {{ip.metaData.name}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="ip.messages.children" ng-if="!collapsed">
-                <li ng-repeat="msg in ip.messages.children" ui-tree-node>
+                <li ng-repeat="msg in ip.messages.children |filter:sr" ui-tree-node>
                     <div ui-tree-handle ng-click="Activate(this);OpenMessageMetadata(msg)" ng-class="{selected : this.$modelValue===activeModel ,used:selectedTestStep&& selectedTestStep.conformanceProfileId===this.$modelValue.id || selectedTemplate.conformanceProfileId===this.$modelValue.id}">
                         <span ng-hide="selectedTestStep"><span class="label label-success label-icon">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>
                         <span context-menu="ApplyProfile" ng-hide="!selectedTestStep"><span class="label label-success label-icon">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>

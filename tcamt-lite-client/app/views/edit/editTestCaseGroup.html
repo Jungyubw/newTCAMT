@@ -12,6 +12,10 @@ body {
 	}
 </script>
 <script type="text/ng-template" id="EditTestCaseGroupMetadata.html">
+
+	<md-tabs md-dynamic-height md-border-bottom md-selected="selectedTestPlanTab.tabNum">
+		<md-tab label="MetaData" md-active="true">
+			<md-content class="md-padding">
     <div class="page-header">
         <span class="header5">TestCase Group Metadata</span>
     </div>
@@ -35,4 +39,34 @@ body {
 			</div>
 		</div>
 	</form>
+
+
+
+		</md-content>
+			</md-tab>
+
+		<md-tab label="Test Story">
+						<md-content class="md-padding">
+							<div class="row">
+								<uib-accordion close-others="true">
+									<uib-accordion-group  ng-repeat ="entry in selectedTestPlan.testStoryConfig" ng-init="status = {isOpen: false}" is-open="status.isOpen" ng-if="entry.present">
+										<uib-accordion-heading>
+											<span style="color: white !important;">
+												<i class="fa" ng-class="{'fa-caret-down': status.isOpen, 'fa-caret-right': !status.isOpen}"></i>
+											{{entry.title}}
+											</span>
+										</uib-accordion-heading>
+										<div class="col-md-12">
+											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestPlan)" name="teststorydesc" ng-model="selectedTestCaseGroup.testStoryContent[entry.id]"></textarea>
+										</div>
+									</uib-accordion-group>
+								</uib-accordion>
+							</div>
+						</md-content>
+					</md-tab>
+
+
+
+		</md-tabs>
+
 </script>

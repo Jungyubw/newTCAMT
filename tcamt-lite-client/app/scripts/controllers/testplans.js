@@ -8,6 +8,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
     $scope.selectedTestStepTab = {};
 	$scope.selectedTestStepTab.tabNum = 0;
 	$rootScope.tps = [];
+	$rootScope.sr={
+			name:""
+	};
+	
 	$scope.testPlanOptions=[];
 	$scope.accordi = {metaData: false, definition: true, tpList: true, tpDetails: false};
 	$rootScope.usageViewFilter = 'All';
@@ -34,8 +38,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$rootScope.templateHeigh=300;
 	$(document).keydown(function(e) {
 		var nodeName = e.target.nodeName.toLowerCase();
+
 		
-		var NodeType=e.target.type.toLowerCase();
 
 		if (e.which === 8) {
 			if ((nodeName === 'input') ||
@@ -557,6 +561,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			windowClass: 'my-modal-popup'
 		});
 		modalInstance.result.then(function () {
+			
+		});
+	};
+	
+	$rootScope.configurateTS = function () {
+		var modalInstance = $modal.open({
+			templateUrl: 'TSconfiguration.html',
+			controller: 'TestStoryConfig',
+			size: 'lg',
+			windowClass: 'my-modal-popup'
+		});
+		modalInstance.result.then(function () {
+
 			
 		});
 	};
@@ -3776,6 +3793,8 @@ angular.module('tcl').controller('validationInfoController', function ($scope, $
 		$modalInstance.dismiss('cancel');
 	};
 });
+
+
 angular.module('tcl').controller('reportController', function ($scope, $modalInstance,$rootScope, $http,report) {
 	$scope.report=report;
 	$scope.close = function () {
@@ -3918,3 +3937,28 @@ angular.module('tcl').controller('MessageViewCtrl', function($scope, $rootScope)
 		};
 
 	});
+angular.module('tcl').controller('TestStoryConfig', function($scope, $rootScope, $http, $modalInstance) {
+	
+	console.log($rootScope.selectedTestPlan);
+	 //$rootScope.selectedTestPlan.testStoryConfig.entries=[];
+	 $scope.items=$rootScope.selectedTestPlan.testStoryConfig;
+	$scope.setPosition=function(item, index){
+		for(i=0; i<$scope.items.length; i++){
+			$rootScope.selectedTestPlan.testStoryConfig[i].position=i+1;
+		}
+	}
+	
+	$scope.addField=function(){
+		$scope.items.push({title:"new title", content:""});
+	}
+
+	
+   $scope.confirm = function() {
+   	
+   	  $modalInstance.close();
+   };
+
+   $scope.cancel = function() {
+       $modalInstance.dismiss('cancel');
+   };
+});

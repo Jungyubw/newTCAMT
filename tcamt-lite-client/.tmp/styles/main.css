@@ -9372,6 +9372,7 @@ ul.dropdown-menu, ul.dropdown-menu > li {
 
 /* line 1775, ../../app/styles/main.scss */
 .navbar-collapse {
+  -webkit-filter: none;
   filter: none;
   border: 0px;
   border-radius: 0px;
@@ -10736,4 +10737,127 @@ li.active > a {
   margin: 10px;
   font-size: 18px !important;
   font-weight: bold !important;
+}
+
+/**
+ * For the correct positioning of the placeholder element, the dnd-list and
+ * it's children must have position: relative
+ */
+/* line 2957, ../../app/styles/main.scss */
+.typesDemo ul[dnd-list],
+.typesDemo ul[dnd-list] > li {
+  position: relative;
+}
+
+/**
+ * The dnd-list should always have a min-height,
+ * otherwise you can't drop to it once it's empty
+ */
+/* line 2966, ../../app/styles/main.scss */
+.typesDemo ul[dnd-list] {
+  min-height: 42px;
+  padding-left: 0px;
+}
+
+/**
+ * The dndDraggingSource class will be applied to
+ * the source element of a drag operation. It makes
+ * sense to hide it to give the user the feeling
+ * that he's actually moving it.
+ */
+/* line 2977, ../../app/styles/main.scss */
+.typesDemo ul[dnd-list] .dndDraggingSource {
+  display: none;
+}
+
+/**
+ * An element with .dndPlaceholder class will be
+ * added to the dnd-list while the user is dragging
+ * over it.
+ */
+/* line 2986, ../../app/styles/main.scss */
+.typesDemo div[dnd-list] .dndPlaceholder {
+  display: block;
+  background-color: #ddd;
+  padding: 10px 15px;
+  min-height: 60px;
+}
+
+/**
+ * The dnd-lists's child elements currently MUST have
+ * position: relative. Otherwise we can not determine
+ * whether the mouse pointer is in the upper or lower
+ * half of the element we are dragging over. In other
+ * browsers we can use event.offsetY for this.
+ */
+/* line 3000, ../../app/styles/main.scss */
+.typesDemo div[dnd-list] span {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  display: block;
+  margin-bottom: -1px;
+  /* Disable text selection if item is not draggable */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* line 3017, ../../app/styles/main.scss */
+.typesDemo div[dnd-list] li dnd-nodrag {
+  display: block;
+  padding: 10px 15px;
+}
+
+/**
+ * Gender-specifc background
+ */
+/* line 3025, ../../app/styles/main.scss */
+.typesDemo ul[dnd-list] li.background-man {
+  background-color: #CAE0FC;
+}
+
+/* line 3029, ../../app/styles/main.scss */
+.typesDemo ul[dnd-list] li.background-woman {
+  background-color: #FFE2F5;
+}
+
+/* line 3033, ../../app/styles/main.scss */
+.typesDemo ul[dnd-list] input.background-man {
+  background-color: #D8E9FF;
+  color: #2F4D99;
+}
+
+/* line 3038, ../../app/styles/main.scss */
+.typesDemo ul[dnd-list] input.background-woman {
+  background-color: #FFF0FA;
+  color: #D84FA7;
+}
+
+/**
+ * Handle positioning
+ */
+/* line 3046, ../../app/styles/main.scss */
+.typesDemo .handle {
+  cursor: move;
+  position: absolute;
+  top: 14px;
+}
+
+/* line 3052, ../../app/styles/main.scss */
+.typesDemo .name {
+  margin-left: 20px;
+}
+
+/* line 3056, ../../app/styles/main.scss */
+.input_dnd {
+  border: 3px solid;
+  border-color: #90a8bd;
+  cursor: move !important;
+  margin-left: 5px;
+  margin-top: 10 !important;
 }

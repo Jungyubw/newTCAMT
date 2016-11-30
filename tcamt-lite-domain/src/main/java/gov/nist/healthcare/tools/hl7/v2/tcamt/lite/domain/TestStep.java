@@ -21,6 +21,8 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	private String name;
 
 	private String description;
+	private HashMap<String,String> testStoryContent=new HashMap<String, String>();
+
 
 	private String integrationProfileId;
 	
@@ -222,6 +224,14 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	public void setStdXMLCode(String stdXMLCode) {
 		this.stdXMLCode = stdXMLCode;
+	}
+
+	public HashMap<String,String> getTestStoryContent() {
+		return testStoryContent;
+	}
+
+	public void setTestStoryContent(HashMap<String,String> testStoryContent) {
+		this.testStoryContent = testStoryContent;
 	}
 
 	public static Comparator<TestStep> testCasePositionComparator = new Comparator<TestStep>() {

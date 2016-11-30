@@ -116,85 +116,19 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab label="Test Story" md-on-select="initTestStepTab(1);">
+					<md-tab label="Test Story">
 						<md-content class="md-padding">
 							<div class="row">
 								<uib-accordion close-others="true">
-									<uib-accordion-group  is-open="TestStoryAccordi.description">
+									<uib-accordion-group  ng-repeat ="entry in selectedTestPlan.testStoryConfig" ng-init="status = {isOpen: false}" is-open="status.isOpen" ng-if="entry.present" >
 										<uib-accordion-heading>
 											<span style="color: white !important;">
-												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.description, 'fa-caret-right': !TestStoryAccordi.description}"></i>
-												Description
+												<i class="fa" ng-class="{'fa-caret-down': status.isOpen, 'fa-caret-right': !status.isOpen}"></i>
+											{{entry.title}}
 											</span>
 										</uib-accordion-heading>
 										<div class="col-md-12">
-											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="teststorydesc" ng-model="selectedTestStep.testStepStory.teststorydesc"></textarea>
-										</div>
-									</uib-accordion-group>
-									<uib-accordion-group  is-open="TestStoryAccordi.comments">
-										<uib-accordion-heading>
-											<span style="color: white !important;">
-												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.comments, 'fa-caret-right': !TestStoryAccordi.comments}"></i>
-												Comments
-											</span>
-										</uib-accordion-heading>
-										<div class="col-md-12">
-											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="comments" ng-model="selectedTestStep.testStepStory.comments" required ></textarea>
-										</div>
-									</uib-accordion-group>
-									<uib-accordion-group  is-open="TestStoryAccordi.preCondition">
-										<uib-accordion-heading>
-											<span style="color: white !important;">
-												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.preCondition, 'fa-caret-right': !TestStoryAccordi.preCondition}"></i>
-								 				Pre Condition
-											</span>
-										</uib-accordion-heading>
-										<div class="col-md-12">
-											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="preCondition" ng-model="selectedTestStep.testStepStory.preCondition" required ></textarea>
-										</div>
-									</uib-accordion-group>
-									<uib-accordion-group  is-open="TestStoryAccordi.postCondition">
-										<uib-accordion-heading>
-											<span style="color: white !important;">
-												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.postCondition, 'fa-caret-right': !TestStoryAccordi.postCondition}"></i>
-								 				Post Condition
-											</span>
-										</uib-accordion-heading>
-										<div class="col-md-12">
-											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="postCondition" ng-model="selectedTestStep.testStepStory.postCondition" required ></textarea>
-										</div>
-									</uib-accordion-group>
-									<uib-accordion-group  is-open="TestStoryAccordi.testObjectives">
-										<uib-accordion-heading>
-											<span style="color: white !important;">
-												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.testObjectives, 'fa-caret-right': !TestStoryAccordi.testObjectives}"></i>
-								 				Test Objectives
-											</span>
-										</uib-accordion-heading>
-										<div class="col-md-12">
-											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="testObjectives" ng-model="selectedTestStep.testStepStory.testObjectives" required></textarea>
-										</div>
-									</uib-accordion-group>
-									<uib-accordion-group  is-open="TestStoryAccordi.evaluationCriteria">
-										<uib-accordion-heading>
-											<span style="color: white !important;">
-												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.evaluationCriteria, 'fa-caret-right': !TestStoryAccordi.evaluationCriteria}"></i>
-								 				Evaluation Criteria
-											</span>
-										</uib-accordion-heading>
-										<div class="col-md-12">
-											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="evaluationCriteria" ng-model="selectedTestStep.testStepStory.evaluationCriteria" required ></textarea>
-										</div>
-									</uib-accordion-group>
-									<uib-accordion-group  is-open="TestStoryAccordi.notes">
-										<uib-accordion-heading>
-											<span style="color: white !important;">
-												<i class="fa" ng-class="{'fa-caret-down': TestStoryAccordi.notes, 'fa-caret-right': !TestStoryAccordi.notes}"></i>
-								 				Notes
-											</span>
-										</uib-accordion-heading>
-										<div class="col-md-12">
-											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="notes" ng-model="selectedTestStep.testStepStory.notes" required />
+											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestPlan)" name="teststorydesc" ng-model="selectedTestStep.testStoryContent[entry.id]"></textarea>
 										</div>
 									</uib-accordion-group>
 								</uib-accordion>
