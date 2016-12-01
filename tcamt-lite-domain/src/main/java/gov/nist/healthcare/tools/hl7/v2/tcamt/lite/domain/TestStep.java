@@ -51,6 +51,8 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	private String messageContentsXMLCode;
 	
 	private HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>();
+	
+	private String testStoryConfigId;
 
 	public TestStep(String id, String name, String description, Integer version) {
 		super();
@@ -232,6 +234,14 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	public void setTestStoryContent(HashMap<String,String> testStoryContent) {
 		this.testStoryContent = testStoryContent;
+	}
+
+	public String getTestStoryConfigId() {
+		return testStoryConfigId;
+	}
+
+	public void setTestStoryConfigId(String testStoryConfigId) {
+		this.testStoryConfigId = testStoryConfigId;
 	}
 
 	public static Comparator<TestStep> testCasePositionComparator = new Comparator<TestStep>() {

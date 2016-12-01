@@ -17,6 +17,8 @@ public abstract class TestCaseOrGroup {
 	
 	protected String name;
 	
+	protected String testStoryConfigId;
+	
 	protected String description;
 	
 	protected Integer version;
@@ -71,6 +73,14 @@ public abstract class TestCaseOrGroup {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getTestStoryConfigId() {
+		return testStoryConfigId;
+	}
+
+	public void setTestStoryConfigId(String testStoryConfigId) {
+		this.testStoryConfigId = testStoryConfigId;
 	}
 	
 	

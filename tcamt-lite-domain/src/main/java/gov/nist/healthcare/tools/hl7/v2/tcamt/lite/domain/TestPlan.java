@@ -42,36 +42,19 @@ public class TestPlan implements Serializable, Cloneable {
 	private boolean skip;
 	
 	private List<String> listOfIntegrationProfileIds = new ArrayList<String>();
-	private List<TestStroyEntry> testStoryConfig=new ArrayList<TestStroyEntry>();
 	
 	private HashMap<String,String> testStoryContent=new HashMap<String, String>();
 	
+	private String testStoryConfigId;
+	
+	private String globalTestGroupConfigId;
+	private String globalTestCaseConfigId;
+	private String globalAutoTestStepConfigId;
+	private String globalManualTestStepConfigId;
+	
 	public TestPlan() {
 		super();
-		this.setTestStoryConfig(this.createDefaultConfig());
 		this.id = ObjectId.get().toString();
-	}
-
-	private List<TestStroyEntry> createDefaultConfig(){
-		
-		List<TestStroyEntry> temp=new ArrayList<TestStroyEntry>();
-		temp.add(new TestStroyEntry(1,"default","Description", true));
-		temp.add(new TestStroyEntry(3,"default","Pre-condition", true));
-
-		temp.add(new TestStroyEntry(4,"default","Post-Condition", true));
-
-		temp.add(new TestStroyEntry(5,"default","Test Objectives", true));
-
-		temp.add(new TestStroyEntry(6,"default","Evaluation Criteria", true));
-
-		temp.add(new TestStroyEntry(7,"default","Notes", true));
-
-
-
-		
-		
-		
-		return temp;
 	}
 
 	public String getId() {
@@ -242,20 +225,52 @@ public class TestPlan implements Serializable, Cloneable {
 		this.listOfIntegrationProfileIds = listOfIntegrationProfileIds;
 	}
 
-	public List<TestStroyEntry> getTestStoryConfig() {
-		return testStoryConfig;
-	}
-
-	public void setTestStoryConfig(List<TestStroyEntry> testStoryConfig) {
-		this.testStoryConfig = testStoryConfig;
-	}
-
 	public HashMap<String,String> getTestStoryContent() {
 		return testStoryContent;
 	}
 
 	public void setTestStoryContent(HashMap<String,String> testStoryContent) {
 		this.testStoryContent = testStoryContent;
+	}
+
+	public String getTestStoryConfigId() {
+		return testStoryConfigId;
+	}
+
+	public void setTestStoryConfigId(String testStoryConfigId) {
+		this.testStoryConfigId = testStoryConfigId;
+	}
+
+	public String getGlobalTestGroupConfigId() {
+		return globalTestGroupConfigId;
+	}
+
+	public void setGlobalTestGroupConfigId(String globalTestGroupConfigId) {
+		this.globalTestGroupConfigId = globalTestGroupConfigId;
+	}
+
+	public String getGlobalTestCaseConfigId() {
+		return globalTestCaseConfigId;
+	}
+
+	public void setGlobalTestCaseConfigId(String globalTestCaseConfigId) {
+		this.globalTestCaseConfigId = globalTestCaseConfigId;
+	}
+
+	public String getGlobalAutoTestStepConfigId() {
+		return globalAutoTestStepConfigId;
+	}
+
+	public void setGlobalAutoTestStepConfigId(String globalAutoTestStepConfigId) {
+		this.globalAutoTestStepConfigId = globalAutoTestStepConfigId;
+	}
+
+	public String getGlobalManualTestStepConfigId() {
+		return globalManualTestStepConfigId;
+	}
+
+	public void setGlobalManualTestStepConfigId(String globalManualTestStepConfigId) {
+		this.globalManualTestStepConfigId = globalManualTestStepConfigId;
 	}
 	
 	
