@@ -43,7 +43,7 @@ public class TestPlan implements Serializable, Cloneable {
 	
 	private List<String> listOfIntegrationProfileIds = new ArrayList<String>();
 	
-	private HashMap<String,String> testStoryContent=new HashMap<String, String>();
+	private HashMap<String,String> testStoryContent = new HashMap<String, String>();
 	
 	private String testStoryConfigId;
 	

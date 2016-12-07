@@ -1346,21 +1346,23 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}, function (error) {
 			});
 		}else{
-			$rootScope.testDataSpecificationHTML = "No TestData Specification";
+            $scope.testDataSpecificationHTML = "No TestData Specification";
 		}
 	};
 
 	$scope.generateJurorDocumentHTML = function () {
+        $scope.jurorDocumentsHTML = "No Juror Document";
+
 		if($rootScope.selectedTestStep.jdXSL && $rootScope.selectedTestStep.jdXSL !== ""){
 			var data = {};
 			data.type = $rootScope.selectedTestStep.jdXSL;
 			data.xml = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),false));
 			$http.post('api/testplans/supplementsGeneration', data).then(function (response) {
-				$rootScope.jurorDocumentsHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
+                $scope.jurorDocumentsHTML = $sce.trustAsHtml(angular.fromJson(response.data).xml);
 			}, function (error) {
 			});
 		}else{
-			$rootScope.jurorDocumentsHTML = "No Juror Document";
+            $scope.jurorDocumentsHTML = "No Juror Document";
 		}
 	};
 

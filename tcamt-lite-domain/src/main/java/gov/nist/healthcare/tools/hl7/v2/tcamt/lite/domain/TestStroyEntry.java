@@ -1,8 +1,5 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
-
-import org.bson.types.ObjectId;
-
 public class TestStroyEntry {
 	private String id;
 	private int position;
@@ -34,12 +31,11 @@ public class TestStroyEntry {
 	public void setPresent(boolean present) {
 		this.present = present;
 	}
-	public TestStroyEntry(int position,String scope, String title, boolean present) {
+	public TestStroyEntry(String id, int position,String scope, String title, boolean present) {
 		this.position = position;
-		
 		this.scope=scope;
 		this.title = title;
-		this.setId(ObjectId.get().toString());
+		this.id = id;
 		this.present = present;
 	}
 	public String getScope() {

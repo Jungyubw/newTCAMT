@@ -8,7 +8,7 @@ import javax.persistence.Id;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "teststroryconfig")
+@Document(collection = "teststoryconfig")
 public class TestStoryConfiguration implements Serializable {
 
 	/**
@@ -22,23 +22,6 @@ public class TestStoryConfiguration implements Serializable {
 	private Long accountId;
 
 	private List<TestStroyEntry> testStoryConfig = new ArrayList<TestStroyEntry>();
-
-	private List<TestStroyEntry> createDefaultConfig() {
-
-		List<TestStroyEntry> temp = new ArrayList<TestStroyEntry>();
-		temp.add(new TestStroyEntry(1, "default", "Description", true));
-		temp.add(new TestStroyEntry(3, "default", "Pre-condition", true));
-
-		temp.add(new TestStroyEntry(4, "default", "Post-Condition", true));
-
-		temp.add(new TestStroyEntry(5, "default", "Test Objectives", true));
-
-		temp.add(new TestStroyEntry(6, "default", "Evaluation Criteria", true));
-
-		temp.add(new TestStroyEntry(7, "default", "Notes", true));
-
-		return temp;
-	}
 
 	public TestStoryConfiguration() {
 		super();

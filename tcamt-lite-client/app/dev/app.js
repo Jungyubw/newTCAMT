@@ -91,6 +91,9 @@ app.config(function ($routeProvider, RestangularProvider, $httpProvider, Keepali
         .when('/about', {
             templateUrl: 'views/about.html'
         })
+        .when('/config', {
+            templateUrl: 'views/config.html'
+        })
         .when('/contact', {
             templateUrl: 'views/contact.html'
         })
