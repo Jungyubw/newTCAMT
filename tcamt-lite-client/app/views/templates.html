@@ -403,3 +403,57 @@
     </md-dialog>
 
 </script>
+
+<script type="text/ng-template" id="EditTestStoryModal.html">
+    <md-dialog aria-label="Edit Test Story Configuration">
+        <form ng-cloak>
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2>Edit Test Story Configuration</h2>
+                    <span flex></span>
+                </div>
+            </md-toolbar>
+            <md-dialog-content>
+                <div class="md-dialog-content">
+                    <md-input-container style="width: 100%;">
+                        <label>Name</label>
+                        <input ng-model="selectedTestStoryConfig.name" type="text"/>
+                    </md-input-container>
+                    <div dnd-list="selectedTestStoryConfig.testStoryConfig" >
+                        <div ng-repeat="item in selectedTestStoryConfig.testStoryConfig"
+                             dnd-draggable="item"
+                             dnd-moved="selectedTestStoryConfig.testStoryConfig.splice($index, 1)"
+                             dnd-effect-allowed="move"
+                             dnd-dragend="setPosition(item,$index);">
+
+                                <div dnd-handle style="cursor: move;position: absolute;top: 14px;"></div>
+                                <div class="row name" >
+                                    <input type="checkbox" ng-model="item.present" class="col-md-1" style="width:3.3333% !important; float:right; border:0px;" />
+                                    <input type="text" required ng-model="item.title" class="col-md-10 input_dnd" ng-disabled="item.scope=='default'" />
+                                    <i ng-if="item.scope!=='default'" class="fa fa-times col-md-1" ng-click="items.splice($index, 1)"></i>
+                                </div>
+
+                        </div>
+                        <li class="dndPlaceholder">
+                            <strong style="color:green;"> Drop Here</strong>
+                            <br/>
+                        </li>
+                    </div>
+                    <button class="btn btn-sm btn-info" ng-click="addField()"><i class="fa fa-plus"></i> Add Field</button>
+                </div>
+            </md-dialog-content>
+            <md-dialog-actions layout="row">
+                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                </md-button>
+                <span flex></span>
+                <md-button class="btn btn-default btn-sm" ng-click="cancel()">
+                    <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
+                </md-button>
+                <md-button class="btn btn-primary btn-sm" ng-click="saveTestStoryConfig();">
+                    <i class="fa fa-repeat fa-fw">&nbsp; </i> Save
+                </md-button>
+            </md-dialog-actions>
+        </form>
+    </md-dialog>
+</script>

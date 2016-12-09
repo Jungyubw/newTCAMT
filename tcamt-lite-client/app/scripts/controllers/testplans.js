@@ -52,6 +52,94 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	});
 
+
+	$scope.findConfig = function (configId) {
+        return _.find($rootScope.testStoryConfigs, function(config){ return config.id == configId; });
+	};
+
+	$scope.updateGlobalTestStoryConfigForTestPlan = function () {
+        $rootScope.selectedTestPlan.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.testStoryConfigId; });
+    };
+
+	$scope.updateGlobalTestStoryConfigForTestGroup = function () {
+        for(i in $rootScope.selectedTestPlan.children){
+        	if($rootScope.selectedTestPlan.children[i].type == 'testcasegroup'){
+                $rootScope.selectedTestPlan.children[i].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalTestGroupConfigId;  });
+                $rootScope.selectedTestPlan.children[i].testStoryConfigId = $rootScope.selectedTestPlan.globalTestGroupConfigId;
+			}
+        }
+	};
+
+    $scope.updateGlobalTestStoryConfigForTestCase = function () {
+        for(i in $rootScope.selectedTestPlan.children){
+            if($rootScope.selectedTestPlan.children[i].type == 'testcasegroup'){
+                for(j in $rootScope.selectedTestPlan.children[i].testcases){
+                    $rootScope.selectedTestPlan.children[i].testcases[j].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalTestCaseConfigId;  });
+                    $rootScope.selectedTestPlan.children[i].testcases[j].testStoryConfigId = $rootScope.selectedTestPlan.globalTestCaseConfigId;
+                }
+            }else if($rootScope.selectedTestPlan.children[i].type == 'testcase'){
+                $rootScope.selectedTestPlan.children[i].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalTestCaseConfigId;  });
+                $rootScope.selectedTestPlan.children[i].testStoryConfigId = $rootScope.selectedTestPlan.globalTestCaseConfigId;
+            }
+        }
+    };
+
+    $scope.updateGlobalManualTestStoryConfigForTestStep = function () {
+        for(i in $rootScope.selectedTestPlan.children){
+            if($rootScope.selectedTestPlan.children[i].type == 'testcasegroup'){
+                for(j in $rootScope.selectedTestPlan.children[i].testcases){
+                    for(k in $rootScope.selectedTestPlan.children[i].testcases[j].teststeps){
+                       	if($rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].integrationProfileId == null){
+                            $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalManualTestStepConfigId;  });
+                            $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.globalManualTestStepConfigId;
+						}
+                    }
+                }
+            }else if($rootScope.selectedTestPlan.children[i].type == 'testcase'){
+                for(k in $rootScope.selectedTestPlan.children[i].testcases[j].teststeps){
+                    if($rootScope.selectedTestPlan.children[i].teststeps[k].integrationProfileId == null){
+                        $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalManualTestStepConfigId;  });
+                        $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.globalManualTestStepConfigId;
+                    }
+                }
+            }
+        }
+    };
+
+    $scope.updateGlobalAutoTestStoryConfigForTestStep = function () {
+        for(i in $rootScope.selectedTestPlan.children){
+            if($rootScope.selectedTestPlan.children[i].type == 'testcasegroup'){
+                for(j in $rootScope.selectedTestPlan.children[i].testcases){
+                    for(k in $rootScope.selectedTestPlan.children[i].testcases[j].teststeps){
+                        if($rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].integrationProfileId != null){
+                            $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalAutoTestStepConfigId;  });
+                            $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.globalAutoTestStepConfigId;
+                        }
+                    }
+                }
+            }else if($rootScope.selectedTestPlan.children[i].type == 'testcase'){
+                for(k in $rootScope.selectedTestPlan.children[i].testcases[j].teststeps){
+                    if($rootScope.selectedTestPlan.children[i].teststeps[k].integrationProfileId != null){
+                        $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalAutoTestStepConfigId;  });
+                        $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.globalAutoTestStepConfigId;
+                    }
+                }
+            }
+        }
+    };
+
+    $scope.updateTestStoryConfigForTestGroup = function () {
+        $rootScope.selectedTestCaseGroup.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestCaseGroup.testStoryConfigId;  });
+    };
+
+    $scope.updateTestStoryConfigForTestCase = function () {
+        $rootScope.selectedTestCase.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestCase.testStoryConfigId;  });
+	};
+
+    $scope.updateTestStoryConfigForTestStep = function () {
+        $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestStep.testStoryConfigId;  });
+    };
+
 	$scope.openDialogForNewTestPlan = function (ev){
 		$mdDialog.show({
 			controller: $scope.TestPlanCreationModalCtrl,
@@ -378,7 +466,29 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.loadTestPlans();
         $scope.loadTemplate();
 		$scope.getScrollbarWidth();
+        $scope.loadTestStoryConfigs();
 	};
+
+    $scope.loadTestStoryConfigs = function () {
+        var delay = $q.defer();
+
+        if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+            $scope.error = null;
+            $rootScope.testStoryConfigs = [];
+            $scope.loading = true;
+            $http.get('api/config/').then(function(response) {
+                $rootScope.testStoryConfigs = angular.fromJson(response.data);
+                $scope.loading = false;
+                delay.resolve(true);
+            }, function(error) {
+                $scope.loading = false;
+                $scope.error = error.data;
+                delay.reject(false);
+            });
+        }else{
+            delay.reject(false);
+        }
+    };
 
 	$scope.loadPublicProfiles = function () {
 		var delay = $q.defer();
@@ -565,19 +675,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			
 		});
 	};
-	
-	$rootScope.configurateTS = function () {
-		var modalInstance = $modal.open({
-			templateUrl: 'TSconfiguration.html',
-			controller: 'TestStoryConfig',
-			size: 'lg',
-			windowClass: 'my-modal-popup'
-		});
-		modalInstance.result.then(function () {
 
-			
-		});
-	};
 	$scope.showReport = function () {
 		var modalInstance = $modal.open({
 			templateUrl: 'reportResult.html',
@@ -763,6 +861,96 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				waitingDialog.hide();
 			}, 100);
 		}
+
+        if($rootScope.selectedTestPlan.testStoryConfigId){
+            $rootScope.selectedTestPlan.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.testStoryConfigId; });
+        }else {
+            $rootScope.selectedTestPlan.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+        }
+
+        for(i in $rootScope.selectedTestPlan.children){
+            if($rootScope.selectedTestPlan.children[i].type == 'testcasegroup'){
+                if($rootScope.selectedTestPlan.children[i].testStoryConfigId){
+                    $rootScope.selectedTestPlan.children[i].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.children[i].testStoryConfigId; });
+                }else if($rootScope.selectedTestPlan.globalTestGroupConfigId){
+                    $rootScope.selectedTestPlan.children[i].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalTestGroupConfigId;  });
+                    $rootScope.selectedTestPlan.children[i].testStoryConfigId = $rootScope.selectedTestPlan.globalTestGroupConfigId;
+                }else {
+                    $rootScope.selectedTestPlan.children[i].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                    $rootScope.selectedTestPlan.children[i].testStoryConfigId = $rootScope.selectedTestPlan.children[i].testStoryConfig.id;
+                }
+
+                for(j in $rootScope.selectedTestPlan.children[i].testcases){
+                    if($rootScope.selectedTestPlan.children[i].testcases[j].testStoryConfigId){
+                        $rootScope.selectedTestPlan.children[i].testcases[j].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.children[i].testcases[j].testStoryConfigId; });
+                    }else if($rootScope.selectedTestPlan.globalTestCaseConfigId){
+                        $rootScope.selectedTestPlan.children[i].testcases[j].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalTestCaseConfigId;  });
+                        $rootScope.selectedTestPlan.children[i].testcases[j].testStoryConfigId = $rootScope.selectedTestPlan.globalTestCaseConfigId;
+                    }else {
+                        $rootScope.selectedTestPlan.children[i].testcases[j].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                        $rootScope.selectedTestPlan.children[i].testcases[j].testStoryConfigId = $rootScope.selectedTestPlan.children[i].testcases[j].testStoryConfig.id;
+                    }
+
+                    for(k in $rootScope.selectedTestPlan.children[i].testcases[j].teststeps){
+                        if($rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfigId){
+                            $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfigId; });
+                        }else {
+                        	if($rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].integrationProfileId == null){
+								if($rootScope.selectedTestPlan.globalManualTestStepConfigId){
+                                    $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalManualTestStepConfigId;  });
+                                    $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.globalManualTestStepConfigId;
+                                }else {
+                                    $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                                    $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfig.id;
+                                }
+							}else {
+                                if($rootScope.selectedTestPlan.globalAutoTestStepConfigId){
+                                    $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalAutoTestStepConfigId;  });
+                                    $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.globalAutoTestStepConfigId;
+                                }else {
+                                    $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                                    $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.children[i].testcases[j].teststeps[k].testStoryConfig.id;
+                                }
+							}
+						}
+                    }
+                }
+            }else if ($rootScope.selectedTestPlan.children[i].type == 'testcase'){
+                if($rootScope.selectedTestPlan.children[i].testStoryConfigId){
+                    $rootScope.selectedTestPlan.children[i].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.children[i].testStoryConfigId; });
+                }else if($rootScope.selectedTestPlan.globalTestCaseConfigId){
+                    $rootScope.selectedTestPlan.children[i].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalTestCaseConfigId;  });
+                    $rootScope.selectedTestPlan.children[i].testStoryConfigId = $rootScope.selectedTestPlan.globalTestCaseConfigId;
+                }else {
+                    $rootScope.selectedTestPlan.children[i].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                    $rootScope.selectedTestPlan.children[i].testStoryConfigId = $rootScope.selectedTestPlan.children[i].testStoryConfig.id;
+                }
+
+                for(k in $rootScope.selectedTestPlan.children[i].teststeps){
+                    if($rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfigId){
+                        $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfigId; });
+                    }else {
+                        if($rootScope.selectedTestPlan.children[i].teststeps[k].integrationProfileId == null){
+                            if($rootScope.selectedTestPlan.globalManualTestStepConfigId){
+                                $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalManualTestStepConfigId;  });
+                                $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.globalManualTestStepConfigId;
+                            }else {
+                                $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                                $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfig.id;
+                            }
+                        }else {
+                            if($rootScope.selectedTestPlan.globalAutoTestStepConfigId){
+                                $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalAutoTestStepConfigId;  });
+                                $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.globalAutoTestStepConfigId;
+                            }else {
+                                $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                                $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.children[i].teststeps[k].testStoryConfig.id;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 	};
 
 	$scope.OpenIgMetadata= function(ig){
@@ -805,6 +993,16 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.selectedSegmentNode =null;
 				$scope.editor = null;
 				$scope.editorValidation = null;
+
+                if($rootScope.selectedTestCaseGroup.testStoryConfigId){
+                    $rootScope.selectedTestCaseGroup.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestCaseGroup.testStoryConfigId; });
+                }else if($rootScope.selectedTestPlan.globalTestGroupConfigId){
+                    $rootScope.selectedTestCaseGroup.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalTestGroupConfigId;  });
+                    $rootScope.selectedTestCaseGroup.testStoryConfigId = $rootScope.selectedTestPlan.globalTestGroupConfigId;
+                }else {
+                    $rootScope.selectedTestCaseGroup.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                    $rootScope.selectedTestCaseGroup.testStoryConfigId = $rootScope.selectedTestCaseGroup.testStoryConfig.id;
+                }
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -826,6 +1024,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$scope.editor = null;
 				$scope.editorValidation = null;
 				$scope.selectedTestCaseTab = 0;
+
+                if($rootScope.selectedTestCase.testStoryConfigId){
+                    $rootScope.selectedTestCase.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestCase.testStoryConfigId; });
+                }else if($rootScope.selectedTestPlan.globalTestGroupConfigId){
+                    $rootScope.selectedTestCase.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalTestGroupConfigId;  });
+                    $rootScope.selectedTestCase.testStoryConfigId = $rootScope.selectedTestPlan.globalTestGroupConfigId;
+                }else {
+                    $rootScope.selectedTestCase.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                    $rootScope.selectedTestCase.testStoryConfigId = $rootScope.selectedTestCase.testStoryConfig.id;
+                }
+
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -870,6 +1079,30 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$scope.subview = "EditTestStepMetadata.html";
 				$scope.initTestStepTab($scope.selectedTestStepTab.tabNum);
 				$scope.selectedTestStepTab.tabNum = 0;
+
+                if($rootScope.selectedTestStep.testStoryConfigId){
+                    $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestStep.testStoryConfigId; });
+                }else {
+                    if($rootScope.selectedTestStep.integrationProfileId == null){
+                        if($rootScope.selectedTestPlan.globalManualTestStepConfigId){
+                            $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalManualTestStepConfigId;  });
+                            $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestPlan.globalManualTestStepConfigId;
+                        }else {
+                            $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                            $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestStep.testStoryConfig.id;
+                        }
+                    }else {
+                        if($rootScope.selectedTestPlan.globalAutoTestStepConfigId){
+                            $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalAutoTestStepConfigId;  });
+                            $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestPlan.globalAutoTestStepConfigId;
+                        }else {
+                            $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                            $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestStep.testStoryConfig.id;
+                        }
+                    }
+                }
+
+
 				waitingDialog.hide();
 			}, 100);
 		}
@@ -1362,7 +1595,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}, function (error) {
 			});
 		}else{
-            $scope.jurorDocumentsHTML = "No Juror Document";
+			$rootScope.jurorDocumentsHTML = "No Juror Document";
 		}
 	};
 
@@ -3907,61 +4140,35 @@ angular.module('tcl').controller('Er7TemplateCreationModalCtrl', function($scope
 });
 
 angular.module('tcl').controller('MessageViewCtrl', function($scope, $rootScope) {
-		$scope.loading = false;
-		$scope.msg = null;
-		$scope.messageData = [];
-		$scope.setData = function(node) {
-			if (node) {
-				if (node.type === 'message') {
-					angular.forEach(node.children, function(segmentRefOrGroup) {
-						$scope.setData(segmentRefOrGroup);
-					});
-				} else if (node.type === 'group') {
-					$scope.messageData.push({ name: "-- " + node.name + " begin" });
-					if (node.children) {
-						angular.forEach(node.children, function(segmentRefOrGroup) {
-							$scope.setData(segmentRefOrGroup);
-						});
-					}
-					$scope.messageData.push({ name: "-- " + node.name + " end" });
-				} else if (node.type === 'segment') {
-					$scope.messageData.push + (node);
-				}
-			}
-		};
+    $scope.loading = false;
+    $scope.msg = null;
+    $scope.messageData = [];
+    $scope.setData = function(node) {
+        if (node) {
+            if (node.type === 'message') {
+                angular.forEach(node.children, function(segmentRefOrGroup) {
+                    $scope.setData(segmentRefOrGroup);
+                });
+            } else if (node.type === 'group') {
+                $scope.messageData.push({ name: "-- " + node.name + " begin" });
+                if (node.children) {
+                    angular.forEach(node.children, function(segmentRefOrGroup) {
+                        $scope.setData(segmentRefOrGroup);
+                    });
+                }
+                $scope.messageData.push({ name: "-- " + node.name + " end" });
+            } else if (node.type === 'segment') {
+                $scope.messageData.push + (node);
+            }
+        }
+    };
 
 
-		$scope.init = function(message) {
-			$scope.loading = true;
-			$scope.msg = message;
-			console.log(message.id);
-			$scope.setData($scope.msg);
-			$scope.loading = false;
-		};
-
-	});
-angular.module('tcl').controller('TestStoryConfig', function($scope, $rootScope, $http, $modalInstance) {
-	
-	console.log($rootScope.selectedTestPlan);
-	 //$rootScope.selectedTestPlan.testStoryConfig.entries=[];
-	 $scope.items=$rootScope.selectedTestPlan.testStoryConfig;
-	$scope.setPosition=function(item, index){
-		for(i=0; i<$scope.items.length; i++){
-			$rootScope.selectedTestPlan.testStoryConfig[i].position=i+1;
-		}
-	}
-	
-	$scope.addField=function(){
-		$scope.items.push({id:new ObjectId().toString(),title:"new title", scope:"user", present:true});
-	}
-
-	
-   $scope.confirm = function() {
-   	
-   	  $modalInstance.close();
-   };
-
-   $scope.cancel = function() {
-       $modalInstance.dismiss('cancel');
-   };
+    $scope.init = function(message) {
+        $scope.loading = true;
+        $scope.msg = message;
+        console.log(message.id);
+        $scope.setData($scope.msg);
+        $scope.loading = false;
+    };
 });

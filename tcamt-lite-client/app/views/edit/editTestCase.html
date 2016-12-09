@@ -50,8 +50,14 @@ body {
 					<md-tab label="Test Story">
 						<md-content class="md-padding">
 							<div class="row">
+								<md-input-container style="width: 100%;">
+									<label>TestCase Test Story Configuration</label>
+									<md-select ng-model="selectedTestCase.testStoryConfigId" ng-change="recordChanged(selectedTestCase);updateTestStoryConfigForTestCase();">
+										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>
+									</md-select>
+								</md-input-container>
 								<uib-accordion close-others="true">
-									<uib-accordion-group  ng-repeat ="entry in selectedTestPlan.testStoryConfig" ng-init="status = {isOpen: false}" is-open="status.isOpen" ng-if="entry.present">
+									<uib-accordion-group  ng-repeat ="entry in selectedTestCase.testStoryConfig.testStoryConfig" ng-init="status = {isOpen: false}" is-open="status.isOpen" ng-if="entry.present">
 										<uib-accordion-heading>
 											<span style="color: white !important;">
 												<i class="fa" ng-class="{'fa-caret-down': status.isOpen, 'fa-caret-right': !status.isOpen}"></i>
@@ -59,7 +65,7 @@ body {
 											</span>
 										</uib-accordion-heading>
 										<div class="col-md-12">
-											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestPlan)" name="teststorydesc" ng-model="selectedTestCase.testStoryContent[entry.id]"></textarea>
+											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCase)" name="teststorydesc" ng-model="selectedTestCase.testStoryContent[entry.id]"></textarea>
 										</div>
 									</uib-accordion-group>
 								</uib-accordion>

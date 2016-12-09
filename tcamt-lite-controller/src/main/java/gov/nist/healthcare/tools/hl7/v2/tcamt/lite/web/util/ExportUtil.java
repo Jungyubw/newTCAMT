@@ -16,6 +16,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Case;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
@@ -52,6 +53,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatypes;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segments;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 import nu.xom.Attribute;
 import nu.xom.Builder;
@@ -60,6 +62,9 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
 public class ExportUtil {
+	
+	@Autowired
+	ProfileService profileService;
 
 	public static String str(String value) {
 		return value != null ? value : "";
@@ -829,6 +834,8 @@ public class ExportUtil {
 		IGAMTDBConn con = new IGAMTDBConn();
 		IGDocument igDocument = con.findIGDocument(id);
 		Profile tcamtProfile = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), id);
+		//NEED to check for uploaded Profile
+		
 		String profileXML = this.serializeProfileToDoc(tcamtProfile, igDocument).toXML();
 		String valueSetXML = this.serializeTableLibraryToElement(tcamtProfile, igDocument).toXML();
 		String constraintsXML = this.serializeConstraintsToDoc(tcamtProfile, igDocument).toXML();

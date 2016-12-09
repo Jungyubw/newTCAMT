@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,4 +41,16 @@ public class ConfigController extends CommonController {
 			throw new Exception(e);
 		}
 	}	
+	
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	public void save(@RequestBody TestStoryConfiguration tsc) throws Exception {
+		try {
+			User u = userService.getCurrentUser();
+			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+			if (account == null) throw new UserAccountNotFoundException();
+			testStoryConfigurationService.save(tsc);
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+	}
 }
