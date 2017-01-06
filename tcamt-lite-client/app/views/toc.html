@@ -52,7 +52,7 @@
                      <div context-menu="testGroupOptions" data-type="group">
                             <i data-nodrag ng-click="toggle(this); print(this) " class="fa" ng-class="{ 'fa-caret-right': collapsed, 'fa-caret-down': !collapsed} "></i>
                             <span class="label label-success label-icon ">GP</span> 
-                            <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':changesMap[child.id]}" ng-click="Activate(this); selectTestCaseGroup(child);">[{{child.position}}]{{child.name}}g</span>
+                            <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':changesMap[child.id]}" ng-click="Activate(this); selectTestCaseGroup(child);">[{{child.position}}]{{child.name}}</span>
                     </div>
                     </div>
 
@@ -61,7 +61,7 @@
                           <div context-menu="testCaseOptions" data-type="case">
                              <i data-nodrag ng-click="toggle(this)" class="fa" ng-class="{'fa-caret-right': collapsed, 'fa-caret-down': !collapsed}"></i>
                              <span class="label label-component label-icon draggable">TC</span>
-                             <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':changesMap[child.id]}" ng-click="Activate(this); selectTestCase(child)">[{{child.position}}]{{child.name}}c</span>
+                             <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':changesMap[child.id]}" ng-click="Activate(this); selectTestCase(child)">[{{child.position}}]{{child.name}}</span>
                         </div>
                     </div>
 
