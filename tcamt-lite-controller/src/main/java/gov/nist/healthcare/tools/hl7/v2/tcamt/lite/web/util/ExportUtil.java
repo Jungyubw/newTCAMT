@@ -77,6 +77,113 @@ public class ExportUtil {
 	public InputStream exportCoverAsHtml(TestPlan tp) throws Exception {
 		return IOUtils.toInputStream(this.genCoverPage(tp), "UTF-8");
 	}
+	
+	private String genPackagePagesInsideGroup(TestPlan tp, TestCaseGroup group, String packageBodyHTML, String index) throws Exception {
+		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + group.getName() + "</h2>" + System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<span>" + group.getDescription() + "</span>" + System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
+		
+		HashMap<Integer, TestCaseOrGroup> TestCaseOrGroupMap = new HashMap<Integer, TestCaseOrGroup>();
+		for (TestCaseOrGroup tcog : group.getChildren()) {
+			TestCaseOrGroupMap.put(tcog.getPosition(), tcog);
+		}
+		
+		for (int i = 0; i < TestCaseOrGroupMap.keySet().size(); i++) {
+			TestCaseOrGroup child = TestCaseOrGroupMap.get(i + 1);
+			if (child instanceof TestCaseGroup) {
+				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup)child, packageBodyHTML, index + "." + (i + 1));
+			}else if (child instanceof TestCase) {
+				packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase)child, packageBodyHTML, index + "." + (i + 1));
+				
+			}
+		}
+		
+		
+		
+		return packageBodyHTML;
+	}
+	
+	private String genPackagePagesForTestCase(TestPlan tp, TestCase tc, String packageBodyHTML, String index) throws Exception {
+		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + tc.getName() + "</h2>" + System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<span>" + tc.getDescription() + "</span>" + System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>" + System.getProperty("line.separator");
+//		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(tc.getTestCaseStory(), "plain"));
+		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
+		
+		HashMap<Integer, TestStep> testStepMap = new HashMap<Integer, TestStep>();
+		for (TestStep ts : tc.getTeststeps()) {
+			testStepMap.put(ts.getPosition(), ts);
+		}
+		
+		for (int i = 0; i < testStepMap.keySet().size(); i++) {
+			TestStep child = testStepMap.get(i + 1);
+			packageBodyHTML = genPackagePagesForTestStep(tp, child, packageBodyHTML, index + "." + (i + 1));
+		}
+		
+		return packageBodyHTML;
+	}
+
+	private String genPackagePagesForTestStep(TestPlan tp, TestStep ts, String packageBodyHTML, String index) throws Exception {
+		ClassLoader classLoader = getClass().getClassLoader();
+		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + ts.getName() + "</h2>" + System.getProperty("line.separator");
+		if (tp.getType() != null && tp.getType().equals("Isolated")) {
+			packageBodyHTML = packageBodyHTML + "<span>Test Step Type: " + ts.getType() + "</span><br/>"
+					+ System.getProperty("line.separator");
+		}
+		packageBodyHTML = packageBodyHTML + "<span>" + ts.getDescription() + "</span>"+ System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>"+ System.getProperty("line.separator");
+//		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(ts.getTestStepStory(), "plain"));
+
+		if (ts != null && ts.getEr7Message() != null && ts.getIntegrationProfileId() != null) {
+			if (ts.getMessageContentsXMLCode() != null && !ts.getMessageContentsXMLCode().equals("")) {
+				String mcXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl")).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>", "<xsl:param name=\"output\" select=\"'plain-html'\"/>");
+				InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
+				InputStream sourceInputStream = new ByteArrayInputStream(ts.getMessageContentsXMLCode().getBytes());
+				Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
+				Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
+				String xsltStr = IOUtils.toString(xsltReader);
+				String sourceStr = IOUtils.toString(sourceReader);
+
+				String messageContentHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
+				packageBodyHTML = packageBodyHTML + "<h3>" + "Message Contents" + "</h3>" + System.getProperty("line.separator");
+				packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(messageContentHTMLStr);
+			}
+
+			if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
+				if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
+					String tdXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + ts.getTdsXSL() + ".xsl")).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>", "<xsl:param name=\"output\" select=\"'plain-html'\"/>");
+					InputStream xsltInputStream = new ByteArrayInputStream(tdXSL.getBytes());
+					InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
+					Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
+					Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
+					String xsltStr = IOUtils.toString(xsltReader);
+					String sourceStr = IOUtils.toString(sourceReader);
+
+					String testDataSpecificationHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
+					packageBodyHTML = packageBodyHTML + "<h3>" + "Test Data Specification" + "</h3>"+ System.getProperty("line.separator");
+					packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(testDataSpecificationHTMLStr);
+				}
+
+				if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
+					String jdXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl"));
+					InputStream xsltInputStream = new ByteArrayInputStream(jdXSL.getBytes());
+					InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
+					Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
+					Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
+					String xsltStr = IOUtils.toString(xsltReader);
+					String sourceStr = IOUtils.toString(sourceReader);
+
+					String jurorDocumentHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
+					packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>"+ System.getProperty("line.separator");
+					packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jurorDocumentHTMLStr);
+				}
+			}
+
+		}
+
+		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
+		return packageBodyHTML;
+	}
 
 	private String genPackagePages(TestPlan tp) throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -93,222 +200,10 @@ public class ExportUtil {
 
 		for (int i = 0; i < testPlanMap.keySet().size(); i++) {
 			TestCaseOrGroup child = testPlanMap.get(i + 1);
-
 			if (child instanceof TestCaseGroup) {
-				TestCaseGroup group = (TestCaseGroup) child;
-				packageBodyHTML = packageBodyHTML + "<A NAME=\"" + (i + 1) + "\">" + "<h2>" + (i + 1) + ". "
-						+ group.getName() + "</h2>" + System.getProperty("line.separator");
-				packageBodyHTML = packageBodyHTML + "<span>" + group.getDescription() + "</span>"
-						+ System.getProperty("line.separator");
-				packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
-
-				HashMap<Integer, TestCase> testCaseMap = new HashMap<Integer, TestCase>();
-				for (TestCase tc : group.getTestcases()) {
-					testCaseMap.put(tc.getPosition(), tc);
-				}
-
-				for (int j = 0; j < testCaseMap.keySet().size(); j++) {
-					TestCase tc = testCaseMap.get(j + 1);
-
-					packageBodyHTML = packageBodyHTML + "<A NAME=\"" + (i + 1) + "." + (j + 1) + "\">" + "<h2>"
-							+ (i + 1) + "." + (j + 1) + ". " + tc.getName() + "</h2>"
-							+ System.getProperty("line.separator");
-					packageBodyHTML = packageBodyHTML + "<span>" + tc.getDescription() + "</span>"
-							+ System.getProperty("line.separator");
-					packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>"
-							+ System.getProperty("line.separator");
-					packageBodyHTML = packageBodyHTML
-							+ this.retrieveBodyContent(this.generateTestStory(tc.getTestCaseStory(), "plain"));
-					packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
-
-					HashMap<Integer, TestStep> testStepMap = new HashMap<Integer, TestStep>();
-					for (TestStep ts : tc.getTeststeps()) {
-						testStepMap.put(ts.getPosition(), ts);
-					}
-
-					for (int k = 0; k < testStepMap.keySet().size(); k++) {
-						TestStep ts = testStepMap.get(k + 1);
-						packageBodyHTML = packageBodyHTML + "<A NAME=\"" + (i + 1) + "." + (j + 1) + "." + (k + 1)
-								+ "\">" + "<h2>" + (i + 1) + "." + (j + 1) + "." + (k + 1) + ". " + ts.getName()
-								+ "</h2>" + System.getProperty("line.separator");
-						if (tp.getType() != null && tp.getType().equals("Isolated")) {
-							packageBodyHTML = packageBodyHTML + "<span>Test Step Type: " + ts.getType() + "</span><br/>"
-									+ System.getProperty("line.separator");
-						}
-						packageBodyHTML = packageBodyHTML + "<span>" + ts.getDescription() + "</span>"
-								+ System.getProperty("line.separator");
-						packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>"
-								+ System.getProperty("line.separator");
-						packageBodyHTML = packageBodyHTML
-								+ this.retrieveBodyContent(this.generateTestStory(ts.getTestStepStory(), "plain"));
-
-						if (ts != null && ts.getEr7Message() != null && ts.getIntegrationProfileId() != null) {
-							if (ts.getMessageContentsXMLCode() != null && !ts.getMessageContentsXMLCode().equals("")) {
-								String mcXSL = IOUtils
-										.toString(classLoader
-												.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"))
-										.replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
-												"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
-								;
-								InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
-								InputStream sourceInputStream = new ByteArrayInputStream(
-										ts.getMessageContentsXMLCode().getBytes());
-								Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-								Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
-								String xsltStr = IOUtils.toString(xsltReader);
-								String sourceStr = IOUtils.toString(sourceReader);
-
-								String messageContentHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-								packageBodyHTML = packageBodyHTML + "<h3>" + "Message Contents" + "</h3>"
-										+ System.getProperty("line.separator");
-								packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(messageContentHTMLStr);
-							}
-
-							if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
-								if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
-									String tdXSL = IOUtils
-											.toString(classLoader.getResourceAsStream(
-													"xsl" + File.separator + ts.getTdsXSL() + ".xsl"))
-											.replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
-													"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
-									InputStream xsltInputStream = new ByteArrayInputStream(tdXSL.getBytes());
-									InputStream sourceInputStream = new ByteArrayInputStream(
-											ts.getNistXMLCode().getBytes());
-									Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-									Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
-									String xsltStr = IOUtils.toString(xsltReader);
-									String sourceStr = IOUtils.toString(sourceReader);
-
-									String testDataSpecificationHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-									packageBodyHTML = packageBodyHTML + "<h3>" + "Test Data Specification" + "</h3>"
-											+ System.getProperty("line.separator");
-									packageBodyHTML = packageBodyHTML
-											+ this.retrieveBodyContent(testDataSpecificationHTMLStr);
-								}
-
-								if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
-									String jdXSL = IOUtils.toString(classLoader
-											.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl"));
-									InputStream xsltInputStream = new ByteArrayInputStream(jdXSL.getBytes());
-									InputStream sourceInputStream = new ByteArrayInputStream(
-											ts.getNistXMLCode().getBytes());
-									Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-									Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
-									String xsltStr = IOUtils.toString(xsltReader);
-									String sourceStr = IOUtils.toString(sourceReader);
-
-									String jurorDocumentHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-									packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>"
-											+ System.getProperty("line.separator");
-									packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jurorDocumentHTMLStr);
-								}
-							}
-
-						}
-
-						packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
-					}
-				}
-
+				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup)child, packageBodyHTML, "" + (i + 1));
 			} else if (child instanceof TestCase) {
-				TestCase tc = (TestCase) child;
-				packageBodyHTML = packageBodyHTML + "<A NAME=\"" + (i + 1) + "\">" + "<h2>" + (i + 1) + ". "
-						+ tc.getName() + "</h2>" + System.getProperty("line.separator");
-				packageBodyHTML = packageBodyHTML + "<span>" + tc.getDescription() + "</span>"
-						+ System.getProperty("line.separator");
-				packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>"
-						+ System.getProperty("line.separator");
-				packageBodyHTML = packageBodyHTML
-						+ this.retrieveBodyContent(this.generateTestStory(tc.getTestCaseStory(), "plain"));
-				packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
-
-				HashMap<Integer, TestStep> testStepMap = new HashMap<Integer, TestStep>();
-				for (TestStep ts : tc.getTeststeps()) {
-					testStepMap.put(ts.getPosition(), ts);
-				}
-
-				for (int j = 0; j < testStepMap.keySet().size(); j++) {
-					TestStep ts = testStepMap.get(j + 1);
-					packageBodyHTML = packageBodyHTML + "<A NAME=\"" + (i + 1) + "." + (j + 1) + "\">" + "<h2>"
-							+ (i + 1) + "." + (j + 1) + ". " + ts.getName() + "</h2>"
-							+ System.getProperty("line.separator");
-					if (tp.getType() != null && tp.getType().equals("Isolated")) {
-						packageBodyHTML = packageBodyHTML + "<span>Test Step Type: " + ts.getType() + "</span><br/>"
-								+ System.getProperty("line.separator");
-					}
-					packageBodyHTML = packageBodyHTML + "<span>" + ts.getDescription() + "</span>"
-							+ System.getProperty("line.separator");
-					packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>"
-							+ System.getProperty("line.separator");
-					packageBodyHTML = packageBodyHTML
-							+ this.retrieveBodyContent(this.generateTestStory(ts.getTestStepStory(), "plain"));
-
-					if (ts != null && ts.getEr7Message() != null && ts.getIntegrationProfileId() != null) {
-						if (ts.getMessageContentsXMLCode() != null && !ts.getMessageContentsXMLCode().equals("")) {
-							String mcXSL = IOUtils
-									.toString(classLoader
-											.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"))
-									.replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
-											"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
-							;
-							InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
-							InputStream sourceInputStream = new ByteArrayInputStream(
-									ts.getMessageContentsXMLCode().getBytes());
-							Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-							Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
-							String xsltStr = IOUtils.toString(xsltReader);
-							String sourceStr = IOUtils.toString(sourceReader);
-
-							String messageContentHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-							packageBodyHTML = packageBodyHTML + "<h3>" + "Message Contents" + "</h3>"
-									+ System.getProperty("line.separator");
-							packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(messageContentHTMLStr);
-						}
-
-						if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
-							if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
-								String tdXSL = IOUtils
-										.toString(classLoader
-												.getResourceAsStream("xsl" + File.separator + ts.getTdsXSL() + ".xsl"))
-										.replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
-												"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
-								InputStream xsltInputStream = new ByteArrayInputStream(tdXSL.getBytes());
-								InputStream sourceInputStream = new ByteArrayInputStream(
-										ts.getNistXMLCode().getBytes());
-								Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-								Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
-								String xsltStr = IOUtils.toString(xsltReader);
-								String sourceStr = IOUtils.toString(sourceReader);
-
-								String testDataSpecificationHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-								packageBodyHTML = packageBodyHTML + "<h3>" + "Test Data Specification" + "</h3>"
-										+ System.getProperty("line.separator");
-								packageBodyHTML = packageBodyHTML
-										+ this.retrieveBodyContent(testDataSpecificationHTMLStr);
-							}
-
-							if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
-								String jdXSL = IOUtils.toString(classLoader
-										.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl"));
-								InputStream xsltInputStream = new ByteArrayInputStream(jdXSL.getBytes());
-								InputStream sourceInputStream = new ByteArrayInputStream(
-										ts.getNistXMLCode().getBytes());
-								Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-								Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
-								String xsltStr = IOUtils.toString(xsltReader);
-								String sourceStr = IOUtils.toString(sourceReader);
-
-								String jurorDocumentHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-								packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>"
-										+ System.getProperty("line.separator");
-								packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jurorDocumentHTMLStr);
-							}
-						}
-
-					}
-
-					packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
-				}
+				packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase) child, packageBodyHTML, "" + (i + 1));
 			}
 		}
 
@@ -410,6 +305,62 @@ public class ExportUtil {
 		bytes = outputStream.toByteArray();
 		return new ByteArrayInputStream(bytes);
 	}
+	
+	private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path) throws Exception{
+		String groupPath = "";
+		if(path == null){
+			groupPath = "TestGroup_" + group.getPosition();
+		}else {
+			groupPath = path + File.separator + "TestGroup_" + group.getPosition();
+		}
+		this.generateTestGroupJsonRB(out, group, groupPath);
+		
+		for(TestCaseOrGroup child : group.getChildren()){
+			if(child instanceof TestCaseGroup){
+				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, groupPath);
+			}else if(child instanceof TestCase){
+				generateTestPlanRBTestCase(out, (TestCase) child, groupPath);
+			}
+		}
+	}
+
+	private void generateTestPlanRBTestCase(ZipOutputStream out, TestCase tc, String path) throws Exception {
+		String tcPath = "";
+		if(path == null){
+			tcPath = "TestCase_" + tc.getPosition();
+		}else {
+			tcPath = path + File.separator + "TestCase_" + tc.getPosition();
+		}
+		this.generateTestCaseJsonRB(out, tc, tcPath);
+//		this.generateTestStoryRB(out, tc.getTestCaseStory(), tcPath);
+		
+		for(TestStep child : tc.getTeststeps()){
+			generateTestPlanRBTestStep(out, child, tcPath);
+		}
+	}
+
+	private void generateTestPlanRBTestStep(ZipOutputStream out, TestStep ts, String path) throws Exception {
+		String stepPath = path + File.separator + "TestStep_" + ts.getPosition();
+//		this.generateTestStoryRB(out, ts.getTestStepStory(), stepPath);
+		this.generateTestStepJsonRB(out, ts, stepPath);
+
+		if (ts.getConformanceProfileId() != null && !ts.getConformanceProfileId().equals("")) {
+			this.generateEr7Message(out, ts.getEr7Message(), stepPath);
+			this.generateMessageContent(out, ts.getMessageContentsXMLCode(), stepPath);
+			this.generateConstraintsXML(out, ts.getConstraintsXML(), stepPath);
+
+			if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
+				if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
+					this.generateTestDataSpecification(out, ts, stepPath);
+				}
+
+				if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
+					this.generateJurorDocument(out, ts, stepPath);
+				}
+			}
+		}
+		
+	}
 
 	private void generateTestPlanRB(ZipOutputStream out, TestPlan tp) throws Exception {
 		this.generateTestPlanJsonRB(out, tp);
@@ -421,65 +372,9 @@ public class ExportUtil {
 		for (int i = 0; i < testPlanMap.keySet().size(); i++) {
 			Object child = testPlanMap.get(i + 1);
 			if (child instanceof TestCaseGroup) {
-				TestCaseGroup tg = (TestCaseGroup) child;
-				String groupPath = "TestGroup_" + tg.getPosition();
-				this.generateTestGroupJsonRB(out, tg, groupPath);
-
-				for (TestCase tc : tg.getTestcases()) {
-					String testcasePath = groupPath + File.separator + "TestCase_" + tc.getPosition();
-					this.generateTestCaseJsonRB(out, tc, testcasePath);
-					this.generateTestStoryRB(out, tc.getTestCaseStory(), testcasePath);
-
-					for (TestStep ts : tc.getTeststeps()) {
-						String teststepPath = testcasePath + File.separator + "TestStep_" + ts.getPosition();
-						this.generateTestStoryRB(out, ts.getTestStepStory(), teststepPath);
-						this.generateTestStepJsonRB(out, ts, teststepPath);
-
-						if (ts.getConformanceProfileId() != null && !ts.getConformanceProfileId().equals("")) {
-							this.generateEr7Message(out, ts.getEr7Message(), teststepPath);
-							this.generateMessageContent(out, ts.getMessageContentsXMLCode(), teststepPath);
-							this.generateConstraintsXML(out, ts.getConstraintsXML(), teststepPath);
-
-							if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
-								if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
-									this.generateTestDataSpecification(out, ts, teststepPath);
-								}
-
-								if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
-									this.generateJurorDocument(out, ts, teststepPath);
-								}
-							}
-						}
-					}
-				}
+				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, null);
 			} else if (child instanceof TestCase) {
-				TestCase tc = (TestCase) child;
-
-				String testcasePath = "TestCase_" + tc.getPosition();
-				this.generateTestCaseJsonRB(out, tc, testcasePath);
-				this.generateTestStoryRB(out, tc.getTestCaseStory(), testcasePath);
-
-				for (TestStep ts : tc.getTeststeps()) {
-					String teststepPath = testcasePath + File.separator + "TestStep_" + ts.getPosition();
-					this.generateTestStoryRB(out, ts.getTestStepStory(), teststepPath);
-					this.generateTestStepJsonRB(out, ts, teststepPath);
-
-					if (ts.getConformanceProfileId() != null && !ts.getConformanceProfileId().equals("")) {
-						this.generateEr7Message(out, ts.getEr7Message(), teststepPath);
-						this.generateMessageContent(out, ts.getMessageContentsXMLCode(), teststepPath);
-						this.generateConstraintsXML(out, ts.getConstraintsXML(), teststepPath);
-
-						if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
-							if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
-								this.generateTestDataSpecification(out, ts, teststepPath);
-							}
-
-							if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
-								this.generateJurorDocument(out, ts, teststepPath);
-							}
-						}
-					}
-				}
+				generateTestPlanRBTestCase(out, (TestCase) child, null);
 			}
 		}
 	}
@@ -690,6 +585,74 @@ public class ExportUtil {
 		out.closeEntry();
 		inTP.close();
 	}
+	
+	private String generateTestPlanSummaryForTestGroup(String contentsHTML, TestCaseGroup group){
+		contentsHTML = contentsHTML + "<h2>Test Case Group: " + group.getName() + "</h2>" + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + group.getDescription() + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "<br/>" + System.getProperty("line.separator");
+		
+		HashMap<Integer, TestCaseOrGroup> testCaseOrGroupMap = new HashMap<Integer, TestCaseOrGroup>();
+		for (TestCaseOrGroup tcg : group.getChildren()) {
+			testCaseOrGroupMap.put(tcg.getPosition(), tcg);
+		}
+		
+		for (int i = 0; i < testCaseOrGroupMap.keySet().size(); i++) {
+			Object child = testCaseOrGroupMap.get(i + 1);
+			
+			if (child instanceof TestCaseGroup) {
+				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, (TestCaseGroup)child);
+			}else if (child instanceof TestCase) {
+				contentsHTML = generateTestPlanSummaryForTestCase(contentsHTML, (TestCase)child);
+			}
+		}
+		
+		return contentsHTML;
+	}
+
+	private String generateTestPlanSummaryForTestCase(String contentsHTML, TestCase tc) {
+		contentsHTML = contentsHTML + "<table>" + System.getProperty("line.separator");
+
+		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "<th>Test Case</th>" + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "<th>" + tc.getName() + "</th>" + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
+
+		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "<td colspan='2'><p>Description:</p>" + tc.getTestCaseStory().getTeststorydesc() + "</td>" + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
+
+		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "<th colspan='2'>Test Steps</th>" + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
+		
+		HashMap<Integer, TestStep> testStepMap = new HashMap<Integer, TestStep>();
+		for (TestStep ts : tc.getTeststeps()) {
+			testStepMap.put(ts.getPosition(), ts);
+		}
+		for (int i = 0; i < testStepMap.keySet().size(); i++) {
+			TestStep ts = testStepMap.get(i + 1);
+			contentsHTML = generateTestPlanSummaryForTestStep(contentsHTML, ts);
+			
+		}
+		
+		contentsHTML = contentsHTML + "</table>" + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "<br/>" + System.getProperty("line.separator");
+		
+		return contentsHTML;
+	}
+
+	private String generateTestPlanSummaryForTestStep(String contentsHTML, TestStep ts) {
+		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "<th>" + ts.getName() + "</th>"
+				+ System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "<td><p>Description:</p>"
+				+ ts.getTestStepStory().getTeststorydesc() + "<br/>" + "<p>Test Objectives:</p>"
+				+ ts.getTestStepStory().getTestObjectives() + "</td>"
+				+ System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
+		
+		return contentsHTML;
+	}
 
 	private void generateTestPlanSummary(ZipOutputStream out, TestPlan tp) throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -708,98 +671,10 @@ public class ExportUtil {
 			Object child = testPlanMap.get(i + 1);
 			if (child instanceof TestCaseGroup) {
 				TestCaseGroup group = (TestCaseGroup) child;
-				contentsHTML = contentsHTML + "<h2>Test Case Group: " + group.getName() + "</h2>"
-						+ System.getProperty("line.separator");
-				contentsHTML = contentsHTML + group.getDescription() + System.getProperty("line.separator");
-				contentsHTML = contentsHTML + "<br/>" + System.getProperty("line.separator");
-
-				HashMap<Integer, TestCase> testCaseMap = new HashMap<Integer, TestCase>();
-				for (TestCase tc : group.getTestcases()) {
-					testCaseMap.put(tc.getPosition(), tc);
-				}
-
-				for (int j = 0; j < testCaseMap.keySet().size(); j++) {
-					TestCase tc = testCaseMap.get(j + 1);
-					contentsHTML = contentsHTML + "<table>" + System.getProperty("line.separator");
-
-					contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "<th>Test Case</th>" + System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "<th>" + tc.getName() + "</th>"
-							+ System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-
-					contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "<td colspan='2'><p>Description:</p>"
-							+ tc.getTestCaseStory().getTeststorydesc() + "</td>" + System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-
-					contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "<th colspan='2'>Test Steps</th>"
-							+ System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-
-					HashMap<Integer, TestStep> testStepMap = new HashMap<Integer, TestStep>();
-					for (TestStep ts : tc.getTeststeps()) {
-						testStepMap.put(ts.getPosition(), ts);
-					}
-					for (int k = 0; k < testStepMap.keySet().size(); k++) {
-						TestStep ts = testStepMap.get(k + 1);
-
-						contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-						contentsHTML = contentsHTML + "<th>" + ts.getName() + "</th>"
-								+ System.getProperty("line.separator");
-						contentsHTML = contentsHTML + "<td><p>Description:</p>"
-								+ ts.getTestStepStory().getTeststorydesc() + "<br/>" + "<p>Test Objectives:</p>"
-								+ ts.getTestStepStory().getTestObjectives() + "</td>"
-								+ System.getProperty("line.separator");
-						contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-
-					}
-					contentsHTML = contentsHTML + "</table>" + System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "<br/>" + System.getProperty("line.separator");
-				}
-
+				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, group);
 			} else if (child instanceof TestCase) {
 				TestCase tc = (TestCase) child;
-
-				contentsHTML = contentsHTML + "<h2>Test Case non-associated of Test Group</h2>"
-						+ System.getProperty("line.separator");
-				contentsHTML = contentsHTML + "<br/>" + System.getProperty("line.separator");
-
-				contentsHTML = contentsHTML + "<table>" + System.getProperty("line.separator");
-
-				contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-				contentsHTML = contentsHTML + "<th>Test Case</th>" + System.getProperty("line.separator");
-				contentsHTML = contentsHTML + "<th>" + tc.getName() + "</th>" + System.getProperty("line.separator");
-				contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-
-				contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-				contentsHTML = contentsHTML + "<td colspan='2'><p>Description:</p>"
-						+ tc.getTestCaseStory().getTeststorydesc() + "</td>" + System.getProperty("line.separator");
-				contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-
-				contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-				contentsHTML = contentsHTML + "<th colspan='2'>Test Steps</th>" + System.getProperty("line.separator");
-				contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-
-				HashMap<Integer, TestStep> testStepMap = new HashMap<Integer, TestStep>();
-				for (TestStep ts : tc.getTeststeps()) {
-					testStepMap.put(ts.getPosition(), ts);
-				}
-				for (int k = 0; k < testStepMap.keySet().size(); k++) {
-					TestStep ts = testStepMap.get(k + 1);
-
-					contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "<th>" + ts.getName() + "</th>"
-							+ System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "<td><p>Description:</p>" + ts.getTestStepStory().getTeststorydesc()
-							+ "<br/>" + "<p>Test Objectives:</p>" + ts.getTestStepStory().getTestObjectives() + "</td>"
-							+ System.getProperty("line.separator");
-					contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-
-				}
-				contentsHTML = contentsHTML + "</table>" + System.getProperty("line.separator");
-				contentsHTML = contentsHTML + "<br/>" + System.getProperty("line.separator");
+				contentsHTML = generateTestPlanSummaryForTestCase(contentsHTML,  tc);
 			}
 		}
 		testPlanSummaryStr = testPlanSummaryStr.replace("?contentsHTML?", contentsHTML);

@@ -141,6 +141,7 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	}
 
 	public String getDescription() {
+		if(this.description == null) return "";
 		return description;
 	}
 

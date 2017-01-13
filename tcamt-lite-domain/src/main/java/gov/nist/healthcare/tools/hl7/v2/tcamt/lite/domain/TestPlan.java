@@ -170,6 +170,7 @@ public class TestPlan implements Serializable, Cloneable {
 	}
 
 	public String getDescription() {
+		if(this.description == null) return "";
 		return description;
 	}
 
