@@ -798,38 +798,53 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.initCodemirror = function () {
 		if($scope.editor == null){
-			$scope.editor = CodeMirror.fromTextArea(document.getElementById("er7-textarea"), {
-				lineNumbers: true,
-				fixedGutter: true,
-				theme: "elegant",
-				readOnly: false,
-				showCursorWhenSelecting: true
-			});
-			$scope.editor.setSize("100%", $rootScope.igHeigh+$rootScope.templateHeigh+$rootScope.tocHeigh);
-			$scope.editor.refresh();
+			console.log(CodeMirror);
+			console.log(document);
 
-			$scope.editor.on("change", function () {
-				$rootScope.selectedTestStep.er7Message = $scope.editor.getValue();
-				$scope.recordChanged($rootScope.selectedTestStep);
-			});
+            var elm = document.getElementById("er7-textarea");
+
+            if(elm){
+                $scope.editor = CodeMirror.fromTextArea(document.getElementById("er7-textarea"), {
+                    lineNumbers: true,
+                    fixedGutter: true,
+                    theme: "elegant",
+                    readOnly: false,
+                    showCursorWhenSelecting: true
+                });
+                $scope.editor.setSize("100%", $rootScope.igHeigh+$rootScope.templateHeigh+$rootScope.tocHeigh);
+                $scope.editor.refresh();
+
+                $scope.editor.on("change", function () {
+                    $rootScope.selectedTestStep.er7Message = $scope.editor.getValue();
+                    $scope.recordChanged($rootScope.selectedTestStep);
+                });
+			}
+
 		}
 	};
 
 	$scope.initCodemirrorOnline = function () {
 		if($scope.editorValidation == null){
-			$scope.editorValidation = CodeMirror.fromTextArea(document.getElementById("er7-textarea-validation"), {
-				lineNumbers: true,
-				fixedGutter: true,
-				theme: "elegant",
-				readOnly: false,
-				showCursorWhenSelecting: true
-			});
-			$scope.editorValidation.setSize("100%", $rootScope.igHeigh+$rootScope.templateHeigh+$rootScope.tocHeigh);
-			$scope.editorValidation.refresh();
+            console.log(CodeMirror);
+            console.log(document);
 
-			$scope.editorValidation.on("change", function () {
-				$scope.er7MessageOnlineValidation = $scope.editorValidation.getValue();
-			});
+            var elm = document.getElementById("er7-textarea-validation");
+
+            if(elm){
+                $scope.editorValidation = CodeMirror.fromTextArea(document.getElementById("er7-textarea-validation"), {
+                    lineNumbers: true,
+                    fixedGutter: true,
+                    theme: "elegant",
+                    readOnly: false,
+                    showCursorWhenSelecting: true
+                });
+                $scope.editorValidation.setSize("100%", $rootScope.igHeigh+$rootScope.templateHeigh+$rootScope.tocHeigh);
+                $scope.editorValidation.refresh();
+
+                $scope.editorValidation.on("change", function () {
+                    $scope.er7MessageOnlineValidation = $scope.editorValidation.getValue();
+                });
+            }
 		}
 	};
 
@@ -1274,40 +1289,43 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.initHL7EncodedMessageTab = function () {
 		$scope.initCodemirror();
+        if($scope.editor){
+            setTimeout(function () {
+                if($rootScope.selectedTestStep.er7Message == null){
+                    $scope.editor.setValue("");
+                }else {
+                    $scope.editor.setValue($rootScope.selectedTestStep.er7Message);
+                }
+            }, 100);
 
-		setTimeout(function () {
-			if($rootScope.selectedTestStep.er7Message == null){
-				$scope.editor.setValue("");
-			}else {
-				$scope.editor.setValue($rootScope.selectedTestStep.er7Message);
-			}
-		}, 100);
-
-		setTimeout(function () {
-			$scope.editor.refresh();
-		}, 200);
+            setTimeout(function () {
+                $scope.editor.refresh();
+            }, 200);
+        }
 	};
 
 	$scope.initHL7EncodedMessageForOnlineValidationTab = function (){
 		$scope.initCodemirrorOnline();
 
-		setTimeout(function () {
-			$scope.result="";
-			$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
+		if($scope.editorValidation){
+            setTimeout(function () {
+                $scope.result="";
+                $rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 
-			if($rootScope.selectedTestStep.er7Message == null){
-				$scope.editorValidation.setValue("");
-				$scope.er7MessageOnlineValidation = '';
-			}else {
-				$scope.er7MessageOnlineValidation = $rootScope.selectedTestStep.er7Message;
-				$scope.editorValidation.setValue($scope.er7MessageOnlineValidation);
-			}
-		}, 100);
+                if($rootScope.selectedTestStep.er7Message == null){
+                    $scope.editorValidation.setValue("");
+                    $scope.er7MessageOnlineValidation = '';
+                }else {
+                    $scope.er7MessageOnlineValidation = $rootScope.selectedTestStep.er7Message;
+                    $scope.editorValidation.setValue($scope.er7MessageOnlineValidation);
+                }
+            }, 100);
 
 
-		setTimeout(function () {
-			$scope.editorValidation.refresh();
-		}, 200);
+            setTimeout(function () {
+                $scope.editorValidation.refresh();
+            }, 200);
+		}
 	};
 
 	$scope.initTestData = function () {
@@ -1692,22 +1710,25 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.CurrentTitle="Conformance Profile"+":"+ msg.name;
 		$scope.subview = "EditMessages.html";
 		if($rootScope.messageTree && $rootScope.messageParams){
-			$rootScope.message=msg;
-			$rootScope.processMessageTree($rootScope.message);
-			$rootScope.messageParams.refresh();
+            $timeout(function () {
+                $rootScope.message=msg;
+                $rootScope.processMessageTree($rootScope.message);
+            }, 0);
 
+            $timeout(function () {
+                $rootScope.messageParams.refresh();
+            }, 100);
 		}
 		else{
+            $timeout(function () {
+                $rootScope.message=msg;
+                $rootScope.processMessageTree($rootScope.message);
+            }, 0);
 
-			$rootScope.message=msg;
-			$rootScope.processMessageTree($rootScope.message);
-			//$rootScope.messageParams.refresh();
-			$rootScope.messageParams = $rootScope.getMessageParams();
-
+            $timeout(function () {
+                $rootScope.messageParams = $rootScope.getMessageParams();
+            }, 100);
 		}
-
-		
-
 	};
 
 
@@ -4223,7 +4244,6 @@ angular.module('tcl').controller('MessageViewCtrl', function($scope, $rootScope)
     $scope.init = function(message) {
         $scope.loading = true;
         $scope.msg = message;
-        console.log(message.id);
         $scope.setData($scope.msg);
         $scope.loading = false;
     };

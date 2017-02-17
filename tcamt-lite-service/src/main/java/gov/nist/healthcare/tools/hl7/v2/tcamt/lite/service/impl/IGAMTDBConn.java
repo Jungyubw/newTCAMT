@@ -124,6 +124,7 @@ public class IGAMTDBConn {
 		datatypes.setType(p.getDatatypeLibrary().getType());
 		for (DatatypeLink link : p.getDatatypeLibrary().getChildren()) {
 			Datatype dt = this.findDatatypeById(link.getId());
+			System.out.println(dt);
 			datatypes.addDatatype(dt);
 		}
 		tcamtProfile.setDatatypes(datatypes);

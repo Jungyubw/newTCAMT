@@ -332,7 +332,7 @@ public class ExportUtil {
 			tcPath = path + File.separator + "TestCase_" + tc.getPosition();
 		}
 		this.generateTestCaseJsonRB(out, tc, tcPath);
-//		this.generateTestStoryRB(out, tc.getTestCaseStory(), tcPath);
+//		this.generateTestStoryRB(out, tc, tcPath);
 		
 		for(TestStep child : tc.getTeststeps()){
 			generateTestPlanRBTestStep(out, child, tcPath);
@@ -1476,11 +1476,13 @@ public class ExportUtil {
 
 							if (value != null && !value.equals("")) {
 								if (type.equals("vs")) {
-									nu.xom.Element elmValueSetCheck = new nu.xom.Element("ValueSet");
-									elmValueSetCheck.addAttribute(new Attribute("Path", path));
-									elmValueSetCheck.addAttribute(new Attribute("ValueSetID",
-											profile.getTables().findOneTableById(value).getBindingIdentifier()));
-									elmPlainCoConstraint.appendChild(elmValueSetCheck);
+									Table t = profile.getTables().findOneTableById(value);
+									if(t != null){
+										nu.xom.Element elmValueSetCheck = new nu.xom.Element("ValueSet");
+										elmValueSetCheck.addAttribute(new Attribute("Path", path));
+										elmValueSetCheck.addAttribute(new Attribute("ValueSetID", profile.getTables().findOneTableById(value).getBindingIdentifier()));
+										elmPlainCoConstraint.appendChild(elmValueSetCheck);	
+									}
 								} else {
 									nu.xom.Element elmValueCheck = new nu.xom.Element("PlainText");
 									elmValueCheck.addAttribute(new Attribute("Path", path));
