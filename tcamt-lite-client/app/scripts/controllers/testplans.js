@@ -971,7 +971,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             if(testcase.teststeps[k].testStoryConfigId){
                 testcase.teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == testcase.teststeps[k].testStoryConfigId; });
             }else {
-                if($rootScope.selectedTestPlan.children[i].teststeps[k].integrationProfileId == null){
+                if(testcase.teststeps[k].integrationProfileId == null){
                     if($rootScope.selectedTestPlan.globalManualTestStepConfigId){
                         testcase.teststeps[k].testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalManualTestStepConfigId;  });
                         testcase.teststeps[k].testStoryConfigId = $rootScope.selectedTestPlan.globalManualTestStepConfigId;
