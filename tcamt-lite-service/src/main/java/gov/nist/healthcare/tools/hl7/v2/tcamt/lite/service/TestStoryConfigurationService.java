@@ -29,4 +29,6 @@ public interface TestStoryConfigurationService {
 	public TestStoryConfiguration save(TestStoryConfiguration config);
 
 	public List<TestStoryConfiguration> findByAccountId(Long accountId);
+	
+	public TestStoryConfiguration findById(String id);
 }

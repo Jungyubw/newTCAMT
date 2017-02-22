@@ -66,19 +66,24 @@ public class TestStoryConfigurationServiceImpl implements TestStoryConfiguration
 
 		return configs;
 	}
+	
+	@Override
+	public TestStoryConfiguration findById(String id) {
+		return testStoryConfigurationRepository.findOne(id);
+	}
 
 	private TestStoryConfiguration createDefaultConfig() {
 		TestStoryConfiguration defaultConfig = new TestStoryConfiguration();
 		defaultConfig.setName("Default");
 		defaultConfig.setAccountId((long) 0);
 		List<TestStroyEntry> listOfEntry = new ArrayList<TestStroyEntry>();
-		listOfEntry.add(new TestStroyEntry("Description",1, "default", "Description", true));
-		listOfEntry.add(new TestStroyEntry("Comments",2, "default", "Comments", true));
-		listOfEntry.add(new TestStroyEntry("Pre-condition", 3, "default", "Pre-condition", true));
-		listOfEntry.add(new TestStroyEntry("Post-Condition", 4, "default", "Post-Condition", true));
-		listOfEntry.add(new TestStroyEntry("Test Objectives", 5, "default", "Test Objectives", true));
-		listOfEntry.add(new TestStroyEntry("Evaluation Criteria", 6, "default", "Evaluation Criteria", true));
-		listOfEntry.add(new TestStroyEntry("Notes", 7, "default", "Notes", true));
+		listOfEntry.add(new TestStroyEntry("Description",1, "default", "Description", true, true));
+		listOfEntry.add(new TestStroyEntry("Comments",2, "default", "Comments", true, false));
+		listOfEntry.add(new TestStroyEntry("Pre-condition", 3, "default", "Pre-condition", true, false));
+		listOfEntry.add(new TestStroyEntry("Post-Condition", 4, "default", "Post-Condition", true, false));
+		listOfEntry.add(new TestStroyEntry("Test Objectives", 5, "default", "Test Objectives", true, true));
+		listOfEntry.add(new TestStroyEntry("Evaluation Criteria", 6, "default", "Evaluation Criteria", true, false));
+		listOfEntry.add(new TestStroyEntry("Notes", 7, "default", "Notes", true, false));
 		defaultConfig.setTestStoryConfig(listOfEntry);
 
 		return defaultConfig;

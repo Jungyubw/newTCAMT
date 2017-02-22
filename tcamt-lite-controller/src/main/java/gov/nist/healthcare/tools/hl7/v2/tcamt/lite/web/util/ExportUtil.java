@@ -49,11 +49,13 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStory;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStoryConfiguration;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStroyEntry;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatypes;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segments;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 import nu.xom.Attribute;
 import nu.xom.Builder;
@@ -62,9 +64,7 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
 public class ExportUtil {
-	
-	@Autowired
-	ProfileService profileService;
+
 
 	public static String str(String value) {
 		return value != null ? value : "";
@@ -292,13 +292,13 @@ public class ExportUtil {
 		return coverpageStr;
 	}
 
-	public InputStream exportResourceBundleAsZip(TestPlan tp) throws Exception {
+	public InputStream exportResourceBundleAsZip(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		ByteArrayOutputStream outputStream = null;
 		byte[] bytes;
 		outputStream = new ByteArrayOutputStream();
 		ZipOutputStream out = new ZipOutputStream(outputStream);
 
-		this.generateTestPlanSummary(out, tp);
+		this.generateTestPlanSummary(out, tp, testStoryConfigurationService);
 		this.generateTestPlanRB(out, tp);
 
 		out.close();
@@ -586,8 +586,46 @@ public class ExportUtil {
 		inTP.close();
 	}
 	
-	private String generateTestPlanSummaryForTestGroup(String contentsHTML, TestCaseGroup group){
+	private String generateTestPlanSummaryForTestGroup(String contentsHTML, TestCaseGroup group, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService){
 		contentsHTML = contentsHTML + "<h2>Test Case Group: " + group.getName() + "</h2>" + System.getProperty("line.separator");
+		
+		String testStoryConfigId = null;
+		if(group.getTestStoryConfigId() != null) {
+			testStoryConfigId = group.getTestStoryConfigId();
+		}else{
+			testStoryConfigId = tp.getGlobalTestGroupConfigId();
+		}
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
+		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+			testStroyEntryMap.put(tse.getPosition(), tse);
+		}
+		
+		String summaryContent = "";
+		
+		for(int i=0;i<testStroyEntryMap.size();i++){
+			TestStroyEntry tse = testStroyEntryMap.get(i+1);
+			
+			if(tse.isSummaryEntry()){
+				String title = tse.getTitle();
+				String content = group.getTestStoryContent().get(tse.getId());
+				
+				summaryContent = summaryContent + "<br/>" + "<p>" + title + ": </p>" + content;
+			}
+		}
+		
+		if(!summaryContent.equals("")){
+			contentsHTML = contentsHTML + summaryContent + System.getProperty("line.separator");
+		}
+		
+		
 		contentsHTML = contentsHTML + group.getDescription() + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "<br/>" + System.getProperty("line.separator");
 		
@@ -600,16 +638,16 @@ public class ExportUtil {
 			Object child = testCaseOrGroupMap.get(i + 1);
 			
 			if (child instanceof TestCaseGroup) {
-				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, (TestCaseGroup)child);
+				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, (TestCaseGroup)child, tp, testStoryConfigurationService);
 			}else if (child instanceof TestCase) {
-				contentsHTML = generateTestPlanSummaryForTestCase(contentsHTML, (TestCase)child);
+				contentsHTML = generateTestPlanSummaryForTestCase(contentsHTML, (TestCase)child, tp, testStoryConfigurationService);
 			}
 		}
 		
 		return contentsHTML;
 	}
 
-	private String generateTestPlanSummaryForTestCase(String contentsHTML, TestCase tc) {
+	private String generateTestPlanSummaryForTestCase(String contentsHTML, TestCase tc, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) {
 		contentsHTML = contentsHTML + "<table>" + System.getProperty("line.separator");
 
 		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
@@ -618,9 +656,43 @@ public class ExportUtil {
 		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
 
 		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-		contentsHTML = contentsHTML + "<td colspan='2'><p>Description:</p>" + tc.getTestCaseStory().getTeststorydesc() + "</td>" + System.getProperty("line.separator");
+		String testStoryConfigId = null;
+		if(tc.getTestStoryConfigId() != null) {
+			testStoryConfigId = tc.getTestStoryConfigId();
+		}else{
+			testStoryConfigId = tp.getGlobalTestCaseConfigId();
+		}
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
+		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+			testStroyEntryMap.put(tse.getPosition(), tse);
+		}
+		
+		String summaryContent = "";
+		
+		for(int i=0;i<testStroyEntryMap.size();i++){
+			TestStroyEntry tse = testStroyEntryMap.get(i+1);
+			
+			if(tse.isSummaryEntry()){
+				String title = tse.getTitle();
+				String content = tc.getTestStoryContent().get(tse.getId());
+				
+				summaryContent = summaryContent + "<br/>" + "<p>" + title + ": </p>" + content;
+			}
+		}
+		
+		if(!summaryContent.equals("")){
+			contentsHTML = contentsHTML + "<td colspan='2'>" + summaryContent + "</td>" + System.getProperty("line.separator");
+		}
 		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-
+		
 		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "<th colspan='2'>Test Steps</th>" + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
@@ -631,7 +703,7 @@ public class ExportUtil {
 		}
 		for (int i = 0; i < testStepMap.keySet().size(); i++) {
 			TestStep ts = testStepMap.get(i + 1);
-			contentsHTML = generateTestPlanSummaryForTestStep(contentsHTML, ts);
+			contentsHTML = generateTestPlanSummaryForTestStep(contentsHTML, ts, tp, testStoryConfigurationService);
 			
 		}
 		
@@ -641,20 +713,56 @@ public class ExportUtil {
 		return contentsHTML;
 	}
 
-	private String generateTestPlanSummaryForTestStep(String contentsHTML, TestStep ts) {
+	private String generateTestPlanSummaryForTestStep(String contentsHTML, TestStep ts, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) {
 		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-		contentsHTML = contentsHTML + "<th>" + ts.getName() + "</th>"
-				+ System.getProperty("line.separator");
-		contentsHTML = contentsHTML + "<td><p>Description:</p>"
-				+ ts.getTestStepStory().getTeststorydesc() + "<br/>" + "<p>Test Objectives:</p>"
-				+ ts.getTestStepStory().getTestObjectives() + "</td>"
-				+ System.getProperty("line.separator");
+		contentsHTML = contentsHTML + "<th>" + ts.getName() + "</th>" + System.getProperty("line.separator");
+		
+		String testStoryConfigId = null;
+		if(ts.getTestStoryConfigId() != null) {
+			testStoryConfigId = ts.getTestStoryConfigId();
+		}else{
+			if(ts.isManualTS()){
+				testStoryConfigId = tp.getGlobalManualTestStepConfigId();
+			}else{
+				testStoryConfigId = tp.getGlobalAutoTestStepConfigId();
+			}
+		}
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
+		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+			testStroyEntryMap.put(tse.getPosition(), tse);
+		}
+		
+		String summaryContent = "";
+		
+		for(int i=0;i<testStroyEntryMap.size();i++){
+			TestStroyEntry tse = testStroyEntryMap.get(i+1);
+			
+			if(tse.isSummaryEntry()){
+				String title = tse.getTitle();
+				String content = ts.getTestStoryContent().get(tse.getId());
+				
+				summaryContent = summaryContent + "<br/>" + "<p>" + title + ": </p>" + content;
+			}
+		}
+		
+		if(!summaryContent.equals("")){
+			contentsHTML = contentsHTML + "<td>" + summaryContent + "</td>" + System.getProperty("line.separator");
+		}
+		
 		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
 		
 		return contentsHTML;
 	}
 
-	private void generateTestPlanSummary(ZipOutputStream out, TestPlan tp) throws IOException {
+	private void generateTestPlanSummary(ZipOutputStream out, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		String testPlanSummaryStr = IOUtils
 				.toString(classLoader.getResourceAsStream("rb" + File.separator + "TestPlanSummary.html"));
@@ -666,15 +774,51 @@ public class ExportUtil {
 		}
 
 		String contentsHTML = "";
+		
+		String testStoryConfigId = null;
+		if(tp.getTestStoryConfigId() != null) {
+			testStoryConfigId = tp.getTestStoryConfigId();
+		}
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
+		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+			testStroyEntryMap.put(tse.getPosition(), tse);
+		}
+		
+		String summaryContent = "";
+		
+		for(int i=0;i<testStroyEntryMap.size();i++){
+			TestStroyEntry tse = testStroyEntryMap.get(i+1);
+			
+			if(tse.isSummaryEntry()){
+				String title = tse.getTitle();
+				String content = tp.getTestStoryContent().get(tse.getId());
+				
+				summaryContent = summaryContent + "<br/>" + "<p>" + title + ": </p>" + content;
+			}
+		}
+		
+		if(!summaryContent.equals("")){
+			contentsHTML = contentsHTML + summaryContent + System.getProperty("line.separator");
+		}
+		
+		
 
 		for (int i = 0; i < testPlanMap.keySet().size(); i++) {
 			Object child = testPlanMap.get(i + 1);
 			if (child instanceof TestCaseGroup) {
 				TestCaseGroup group = (TestCaseGroup) child;
-				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, group);
+				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, group, tp, testStoryConfigurationService);
 			} else if (child instanceof TestCase) {
 				TestCase tc = (TestCase) child;
-				contentsHTML = generateTestPlanSummaryForTestCase(contentsHTML,  tc);
+				contentsHTML = generateTestPlanSummaryForTestCase(contentsHTML,  tc, tp, testStoryConfigurationService);
 			}
 		}
 		testPlanSummaryStr = testPlanSummaryStr.replace("?contentsHTML?", contentsHTML);

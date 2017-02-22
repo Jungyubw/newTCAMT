@@ -47,7 +47,7 @@ public class Bootstrap implements InitializingBean {
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.updateTestStory();
+//		this.updateTestStory();
 	}
 
 	public Logger getLogger() {

@@ -250,4 +250,9 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 			return ts1.compareTo(ts2);
 		}
 	};
+
+	public boolean isManualTS() {
+		if(this.conformanceProfileId == null || this.conformanceProfileId.equals("")) return true;
+		return false;
+	}
 }

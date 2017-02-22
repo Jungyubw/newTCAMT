@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="" />
+    <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/config.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/config.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/templates.html" afterPath="$PROJECT_DIR$/app/views/templates.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/config/Bootstrap.java" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/config/Bootstrap.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/controller/TestPlanController.java" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/controller/TestPlanController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/util/ExportUtil.java" afterPath="$PROJECT_DIR$/../tcamt-lite-controller/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/web/util/ExportUtil.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/TestCaseGroup.java" afterPath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/TestCaseGroup.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/TestStep.java" afterPath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/TestStep.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/TestStroyEntry.java" afterPath="$PROJECT_DIR$/../tcamt-lite-domain/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/domain/TestStroyEntry.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/TestStoryConfigurationService.java" afterPath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/TestStoryConfigurationService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/impl/TestStoryConfigurationServiceImpl.java" afterPath="$PROJECT_DIR$/../tcamt-lite-service/src/main/java/gov/nist/healthcare/tools/hl7/v2/tcamt/lite/service/impl/TestStoryConfigurationServiceImpl.java" />
+    </list>
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,21 +32,51 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="editTestStep.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
+      <file leaf-file-name="testplans.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2580">
-              <caret line="172" column="85" lean-forward="false" selection-start-line="172" selection-start-column="84" selection-end-line="172" selection-end-column="85" />
+            <state relative-caret-position="588">
+              <caret line="194" column="31" lean-forward="false" selection-start-line="194" selection-start-column="31" selection-end-line="194" selection-end-column="31" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="testplans.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
+      <file leaf-file-name="config.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/config.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="714">
-              <caret line="981" column="23" lean-forward="true" selection-start-line="981" selection-start-column="23" selection-end-line="981" selection-end-column="23" />
+            <state relative-caret-position="165">
+              <caret line="11" column="66" lean-forward="false" selection-start-line="11" selection-start-column="66" selection-end-line="11" selection-end-column="66" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="config.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/config.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="540">
+              <caret line="36" column="24" lean-forward="true" selection-start-line="36" selection-start-column="24" selection-end-line="36" selection-end-column="24" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="profiles.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/profiles.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="342">
+              <caret line="141" column="8" lean-forward="false" selection-start-line="141" selection-start-column="8" selection-end-line="141" selection-end-column="8" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="templates.html" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/templates.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="902">
+              <caret line="444" column="33" lean-forward="true" selection-start-line="444" selection-start-column="33" selection-end-line="444" selection-end-column="33" />
               <folding />
             </state>
           </provider>
@@ -44,7 +86,7 @@
         <entry file="file://$PROJECT_DIR$/app/views/tp.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="342">
-              <caret line="47" column="70" lean-forward="true" selection-start-line="47" selection-start-column="70" selection-end-line="47" selection-end-column="70" />
+              <caret line="47" column="70" lean-forward="false" selection-start-line="47" selection-start-column="70" selection-end-line="47" selection-end-column="70" />
               <folding />
             </state>
           </provider>
@@ -84,8 +126,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>open</find>
-      <find>account</find>
       <find>fa-pencle</find>
       <find>init</find>
       <find>selectedTes</find>
@@ -112,8 +152,10 @@
       <find>$scope.init = function(message)</find>
       <find>Codemirror</find>
       <find>Export Resource</find>
-      <find>$scope.initHL7EncodedMessageForOnlineValidationTab</find>
       <find>$scope.updateTestCaseTestStoryConfig</find>
+      <find>$mdDialog.show</find>
+      <find>md-dialog-content</find>
+      <find>$scope.initHL7EncodedMessageForOnlineValidationTab</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$</dir>
@@ -156,8 +198,6 @@
         <option value="$PROJECT_DIR$/app/index.html" />
         <option value="$PROJECT_DIR$/app/dev/app.js" />
         <option value="$PROJECT_DIR$/app/prod/app.js" />
-        <option value="$PROJECT_DIR$/app/views/templates.html" />
-        <option value="$PROJECT_DIR$/app/scripts/controllers/config.js" />
         <option value="$PROJECT_DIR$/app/views/config.html" />
         <option value="$PROJECT_DIR$/app/views/tp.html" />
         <option value="$PROJECT_DIR$/app/views/edit/editTestCase.html" />
@@ -165,6 +205,8 @@
         <option value="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
         <option value="$PROJECT_DIR$/app/views/edit/editTestPlan.html" />
         <option value="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
+        <option value="$PROJECT_DIR$/app/scripts/controllers/config.js" />
+        <option value="$PROJECT_DIR$/app/views/templates.html" />
       </list>
     </option>
   </component>
@@ -671,12 +713,12 @@
       <workItem from="1486757560454" duration="150000" />
       <workItem from="1486757719568" duration="25000" />
       <workItem from="1487282670420" duration="1019000" />
-      <workItem from="1487343478328" duration="2131000" />
+      <workItem from="1487343478328" duration="9286000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="353948000" />
+    <option name="totallyTimeSpent" value="361103000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1920" y="0" width="2560" height="1440" extended-state="0" />
@@ -725,13 +767,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/issue.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/index_2.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-2517">
@@ -984,39 +1019,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/profiles.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="261" column="8" lean-forward="false" selection-start-line="261" selection-start-column="8" selection-end-line="268" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/profiles.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1050">
           <caret line="70" column="65" lean-forward="false" selection-start-line="70" selection-start-column="65" selection-end-line="70" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/config.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="40" column="137" lean-forward="false" selection-start-line="40" selection-start-column="137" selection-end-line="40" selection-end-column="137" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="780">
-          <caret line="52" column="145" lean-forward="false" selection-start-line="52" selection-start-column="59" selection-end-line="52" selection-end-column="145" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/templates.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6450">
-          <caret line="430" column="81" lean-forward="false" selection-start-line="430" selection-start-column="74" selection-end-line="430" selection-end-column="81" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1043,7 +1049,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2580">
+        <state relative-caret-position="0">
           <caret line="172" column="85" lean-forward="false" selection-start-line="172" selection-start-column="84" selection-end-line="172" selection-end-column="85" />
           <folding />
         </state>
@@ -1076,15 +1082,55 @@
     <entry file="file://$PROJECT_DIR$/app/views/tp.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
-          <caret line="47" column="70" lean-forward="true" selection-start-line="47" selection-start-column="70" selection-end-line="47" selection-end-column="70" />
+          <caret line="47" column="70" lean-forward="false" selection-start-line="47" selection-start-column="70" selection-end-line="47" selection-end-column="70" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/profiles.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="141" column="8" lean-forward="false" selection-start-line="141" selection-start-column="8" selection-end-line="141" selection-end-column="8" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="714">
-          <caret line="981" column="23" lean-forward="true" selection-start-line="981" selection-start-column="23" selection-end-line="981" selection-end-column="23" />
+        <state relative-caret-position="588">
+          <caret line="194" column="31" lean-forward="false" selection-start-line="194" selection-start-column="31" selection-end-line="194" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bower_components/angular-material/modules/scss/angular-material.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="334">
+          <caret line="2998" column="2" lean-forward="false" selection-start-line="2998" selection-start-column="2" selection-end-line="2998" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/config.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="66" lean-forward="false" selection-start-line="11" selection-start-column="66" selection-end-line="11" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="36" column="24" lean-forward="true" selection-start-line="36" selection-start-column="24" selection-end-line="36" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/templates.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="902">
+          <caret line="444" column="33" lean-forward="true" selection-start-line="444" selection-start-column="33" selection-end-line="444" selection-end-column="33" />
           <folding />
         </state>
       </provider>

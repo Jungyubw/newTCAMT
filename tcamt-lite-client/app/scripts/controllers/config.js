@@ -63,7 +63,12 @@ angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $roo
         };
 
         $scope.addField=function(){
-            $scope.selectedTestStoryConfig.testStoryConfig.push({id:new ObjectId().toString(),title:"new title", scope:"user", present:true, position:$scope.selectedTestStoryConfig.testStoryConfig.length + 1});
+            $scope.selectedTestStoryConfig.testStoryConfig.push({id:new ObjectId().toString(),title:"new title", scope:"user", present:true, isSummaryEntry:false, position:$scope.selectedTestStoryConfig.testStoryConfig.length + 1});
+        };
+
+        $scope.deleteItem = function (index){
+            $scope.selectedTestStoryConfig.testStoryConfig.splice($index, 1);
+            $scope.setPosition();
         };
 
         $scope.cancel = function() {

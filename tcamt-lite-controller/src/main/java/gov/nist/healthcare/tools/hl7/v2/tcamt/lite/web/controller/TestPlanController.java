@@ -39,13 +39,13 @@ import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanListException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanNotFoundException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanSaveException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.TestPlanSaveResponse;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config.TestPlanChangeCommand;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAllowException;
@@ -66,6 +66,9 @@ public class TestPlanController extends CommonController {
 
 	@Autowired
 	AccountRepository accountRepository;
+	
+	@Autowired
+	TestStoryConfigurationService testStoryConfigurationService;
 
 	/**
 	 * 
@@ -245,7 +248,7 @@ public class TestPlanController extends CommonController {
 		log.info("Exporting as zip file RB with id=" + id);
 		TestPlan tp = findTestPlan(id);
 	    InputStream content = null;
-	    content = new ExportUtil().exportResourceBundleAsZip(tp);
+	    content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
 	    response.setContentType("application/zip");
 	    response.setHeader("Content-disposition",
 	        "attachment;filename=" + escapeSpace(tp.getName()) + "-"
