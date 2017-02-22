@@ -41,6 +41,7 @@ public class TestStory implements Serializable, Cloneable {
 	}
 
 	public String getComments() {
+		if(this.comments.equals("No Comments")) return "";
 		return comments;
 	}
 
@@ -49,6 +50,7 @@ public class TestStory implements Serializable, Cloneable {
 	}
 
 	public String getPreCondition() {
+		if(this.preCondition.equals("No PreCondition")) return "";
 		return preCondition;
 	}
 
@@ -57,6 +59,7 @@ public class TestStory implements Serializable, Cloneable {
 	}
 
 	public String getPostCondition() {
+		if(this.postCondition.equals("No PostCondition")) return "";
 		return postCondition;
 	}
 
@@ -65,6 +68,7 @@ public class TestStory implements Serializable, Cloneable {
 	}
 
 	public String getTestObjectives() {
+		if(this.testObjectives.equals("No Test Objectives")) return "";
 		return testObjectives;
 	}
 
@@ -73,6 +77,7 @@ public class TestStory implements Serializable, Cloneable {
 	}
 
 	public String getNotes() {
+		if(this.notes.equals("No Note")) return "";
 		return notes;
 	}
 
@@ -80,13 +85,8 @@ public class TestStory implements Serializable, Cloneable {
 		this.notes = notes;
 	}
 
-	@Override
-	public TestStory clone() throws CloneNotSupportedException {
-		TestStory cloned = (TestStory) super.clone();
-		return cloned;
-	}
-
 	public String getTeststorydesc() {
+		if(this.teststorydesc.equals(" No Description")) return "";
 		return teststorydesc;
 	}
 
@@ -95,11 +95,18 @@ public class TestStory implements Serializable, Cloneable {
 	}
 
 	public String getEvaluationCriteria() {
+		if(this.evaluationCriteria.equals("No evaluation criteria")) return "";
 		return evaluationCriteria;
 	}
 
 	public void setEvaluationCriteria(String evaluationCriteria) {
 		this.evaluationCriteria = evaluationCriteria;
+	}
+	
+	@Override
+	public TestStory clone() throws CloneNotSupportedException {
+		TestStory cloned = (TestStory) super.clone();
+		return cloned;
 	}
 
 	public TestStory normalize() {

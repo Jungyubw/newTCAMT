@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
-    </list>
+    <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="" />
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -674,12 +671,12 @@
       <workItem from="1486757560454" duration="150000" />
       <workItem from="1486757719568" duration="25000" />
       <workItem from="1487282670420" duration="1019000" />
-      <workItem from="1487343478328" duration="2015000" />
+      <workItem from="1487343478328" duration="2131000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="353832000" />
+    <option name="totallyTimeSpent" value="353948000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1920" y="0" width="2560" height="1440" extended-state="0" />

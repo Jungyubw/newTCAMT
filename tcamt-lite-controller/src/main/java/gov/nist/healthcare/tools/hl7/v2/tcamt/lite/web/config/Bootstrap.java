@@ -11,13 +11,22 @@
 
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStory;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanService;
 
 @Service
@@ -38,16 +47,72 @@ public class Bootstrap implements InitializingBean {
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-	}
-	
-	private void createTestPlan() throws Exception {
-		TestPlan tp = new TestPlan();
-		tp.setName("TEST TEST");
-		testplanService.save(tp);
+		this.updateTestStory();
 	}
 
 	public Logger getLogger() {
 		return logger;
+	}
+	
+	private void updateTestStory() throws TestPlanException{
+		List<TestPlan> allTestPlans = testplanService.findAll();
+		
+		for(TestPlan tp : allTestPlans){
+			for(TestCaseOrGroup tcog : tp.getChildren()){
+				if(tcog instanceof TestCaseGroup){
+					this.updateTestStoryForTestCaseGroup((TestCaseGroup)tcog);
+				}else if(tcog instanceof TestCase){
+					this.updateTestStoryForTestCase((TestCase)tcog);
+				}
+			}
+			testplanService.save(tp);
+			
+		}
+	}
+	
+	private void updateTestStoryForTestCaseGroup(TestCaseGroup tcg){
+		for(TestCaseOrGroup tcog : tcg.getChildren()){
+			if(tcog instanceof TestCaseGroup){
+				this.updateTestStoryForTestCaseGroup((TestCaseGroup)tcog);
+			}else if(tcog instanceof TestCase){
+				this.updateTestStoryForTestCase((TestCase)tcog);
+			}
+		}
+	}
+
+	private void updateTestStoryForTestCase(TestCase tc) {
+		TestStory story = tc.getTestCaseStory();
+		if(story != null){
+			HashMap<String,String> testStoryContent=new HashMap<String, String>();
+			testStoryContent.put("Description", story.getTeststorydesc());
+			testStoryContent.put("Comments", story.getComments());
+			testStoryContent.put("Pre-condition", story.getPreCondition());
+			testStoryContent.put("Post-Condition", story.getPostCondition());
+			testStoryContent.put("Test Objectives", story.getTestObjectives());
+			testStoryContent.put("Evaluation Criteria", story.getEvaluationCriteria());
+			testStoryContent.put("Notes", story.getNotes());
+			tc.setTestStoryContent(testStoryContent);
+			tc.setTestCaseStory(null);	
+		}
+		for(TestStep ts:tc.getTeststeps()){
+			this.updateTestStoryForTestStep(ts);
+		}
+	}
+
+	private void updateTestStoryForTestStep(TestStep ts) {
+		TestStory story = ts.getTestStepStory();
+		if(story != null){
+			HashMap<String,String> testStoryContent=new HashMap<String, String>();
+			testStoryContent.put("Description", story.getTeststorydesc());
+			testStoryContent.put("Comments", story.getComments());
+			testStoryContent.put("Pre-condition", story.getPreCondition());
+			testStoryContent.put("Post-Condition", story.getPostCondition());
+			testStoryContent.put("Test Objectives", story.getTestObjectives());
+			testStoryContent.put("Evaluation Criteria", story.getEvaluationCriteria());
+			testStoryContent.put("Notes", story.getNotes());
+			ts.setTestStoryContent(testStoryContent);
+			ts.setTestStepStory(null);	
+		}
 	}
 
 }
