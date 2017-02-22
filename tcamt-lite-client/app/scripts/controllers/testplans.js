@@ -12,6 +12,36 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			name:"",
 			
 	};
+
+	$scope.expanded = false;
+    $scope.expandAll = function() {
+        $scope.expanded = !$scope.expanded;
+
+        $('#segmentTable').treetable('expandAll');
+    };
+    $scope.collapseAll = function() {
+        $scope.expanded = !$scope.expanded;
+        $('#segmentTable').treetable('collapseAll');
+    }
+	$scope.hasError= function(cat, value){
+		if(!cat || cat==""){
+			return false;
+		}
+		if(!value||value===""){
+			if(cat=="Indifferent"||cat=="NonPresence"||cat==""){
+				return false;
+			}else{
+				return true;
+			}
+		}else{
+			if(value&&value!==""){
+				if(cat=="NonPresence"){
+					return true;
+				}else return false;
+			}
+		}
+	}
+
 	
 	$scope.testPlanOptions=[];
 	$scope.accordi = {metaData: false, definition: true, tpList: true, tpDetails: false};
@@ -755,6 +785,18 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var modalInstance = $modal.open({
 			templateUrl: 'SegmentTemplateCreationModal.html',
 			controller: 'SegmentTemplateCreationModalCtrl',
+			size: 'md',
+			resolve: {
+			}
+		});
+		modalInstance.result.then(function() {
+			$scope.recordChanged();
+		});
+	};
+		$scope.openCreateEr7SegmentTemplateModal = function() {
+		var modalInstance = $modal.open({
+			templateUrl: 'Er7SegmentTemplateCreationModal.html',
+			controller: 'Er7SegmentTemplateCreationModalCtrl',
 			size: 'md',
 			resolve: {
 			}
@@ -2962,8 +3004,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.refreshTree = function () {
-		if ($scope.segmentParams)
-			$scope.segmentParams.refresh();
+		if ($scope.segmentParams){
+		$scope.segmentParams.refresh();
+
+		}
+			
 	};
 
 	$scope.minimizePath = function (iPath) {
@@ -3213,7 +3258,55 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.initHL7EncodedMessageTab();
 		$scope.recordChanged($rootScope.selectedTestStep);
     };
+	   $scope.overwriteER7SegmentTemplate = function (template){
+		var sameSegments=[];
+		if($rootScope.selectedTestStep){
 
+			var listLineOfMessage = $rootScope.selectedTestStep.er7Message.split("\n");
+			console.log(listLineOfMessage);
+			angular.forEach(listLineOfMessage, function(segment){
+				
+				if($scope.getNameFromSegment(segment) == template.path){
+					sameSegments.push(segment);
+				}
+
+			});
+
+			if(sameSegments.length>0){
+				var segmentToModify=sameSegments[template.position-1];
+
+			}else{
+				Notification.error(template.iPath+"Not Found");
+			}
+
+			var index = listLineOfMessage.indexOf(segmentToModify);
+			 if (index > -1) {
+			listLineOfMessage[index]=template.content;
+			
+			 }
+			 $rootScope.selectedTestStep.er7Message=listLineOfMessage.join('\n');
+
+
+			$scope.updateEr7Message();
+
+				angular.forEach($rootScope.segmentList, function(segment){
+					if(segment.iPath==template.iPath){
+						$scope.selectSegment(segment);
+					}
+				});
+				$scope.refreshTree();
+			
+		}
+
+		$scope.initHL7EncodedMessageTab();
+		$scope.recordChanged($rootScope.selectedTestStep);
+    };
+	$scope.getNameFromSegment=function(segment){
+
+	var listOfFields = segment.split("|");
+		return listOfFields[0];
+	
+	};
 	$scope.deleteRepeatedField = function(node){
 		var index = $rootScope.selectedSegmentNode.children.indexOf(node);
 		if (index > -1) {
@@ -3836,6 +3929,22 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		}]
 	];
+	  $scope.Er7SegmentOptions=[
+		['Delete Template', function($itemScope) {
+			$scope.subview=null;
+		$scope.deleteER7SegmentTemplate($itemScope.er7Tmp);
+		Notification.success("Template "+$itemScope.$modelValue.name+"Deleted");
+
+
+		}],
+
+		['Apply Template', function($itemScope) {
+		$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
+		$scope.overwriteER7SegmentTemplate($itemScope.er7Tmp);
+		Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
+
+		}]
+	];
 
 
 	$scope.ApplyProfile = [
@@ -3940,6 +4049,25 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedTemplate=er7temp;
 		$scope.er7Template=er7temp;
 		$scope.subview = "Er7TemplateMetadata.html";
+	}
+		$scope.OpenEr7SegmentTemplatesMetadata=function(er7temp){
+		console.log("Opening")
+		$rootScope.selectedTestCaseGroup=null;
+		$rootScope.selectedTestCase = null;
+		$rootScope.selectedTestStep = null;
+		$rootScope.selectedSegmentNode =null;
+		$rootScope.selectedTemplate = null;
+		$rootScope.selectedSegmentNode = null;
+		$scope.editor = null;
+		$scope.editorValidation = null;
+
+		$rootScope.CurrentTitle= "Er7 Segment Line Template: " + er7temp.name;
+		//$scope.findTitleForProfiles(er7temp.integrationProfileId, er7temp.conformanceProfileId);
+
+		$rootScope.er7SegmentTemplate=er7temp;
+		$scope.er7SegmentTemplate=er7temp;
+		console.log($scope.er7SegmentTemplate);
+		$scope.subview = "Er7SegmentTemplateMetadata.html";
 	}
 
 	$scope.findTitleForProfiles = function (ipid, cpid){
@@ -4168,6 +4296,7 @@ angular.module('tcl').controller('SegmentTemplateCreationModalCtrl', function($s
 	$scope.newSegmentTemplate.name = 'new Template for ' + $rootScope.selectedSegmentNode.segment.obj.name;
 	$scope.newSegmentTemplate.descrption = 'No Desc';
 	$scope.newSegmentTemplate.segmentName = $rootScope.selectedSegmentNode.segment.obj.name;
+
 	$scope.newSegmentTemplate.date = new Date();
 	$scope.newSegmentTemplate.categorizations = [];
 	keys.forEach(function(key){
@@ -4205,8 +4334,38 @@ angular.module('tcl').controller('Er7TemplateCreationModalCtrl', function($scope
 	$scope.newEr7Template.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
 	$scope.newEr7Template.er7Message = $rootScope.selectedTestStep.er7Message;
 
-	$scope.createEr7Template = function() {
+	$scope.createSegmentTemplate = function() {
 		$rootScope.template.er7Templates.push($scope.newEr7Template);
+		$modalInstance.close();
+
+	};
+
+	$scope.cancel = function() {
+		$modalInstance.dismiss('cancel');
+	};
+});
+
+angular.module('tcl').controller('Er7SegmentTemplateCreationModalCtrl', function($scope, $modalInstance, $rootScope) {
+	$scope.newEr7SegmentTemplate = {};
+	$scope.newEr7SegmentTemplate.id = new ObjectId().toString();
+	$rootScope.changesMap[$scope.newEr7SegmentTemplate.id]=true;
+	
+	$scope.newEr7SegmentTemplate.descrption = 'No Desc';
+	$scope.newEr7SegmentTemplate.date = new Date();
+	$scope.newEr7SegmentTemplate.content=$rootScope.selectedSegmentNode.segment.segmentStr;
+	$scope.newEr7SegmentTemplate.iPath=$rootScope.selectedSegmentNode.segment.iPath;
+	$scope.newEr7SegmentTemplate.path=$rootScope.selectedSegmentNode.segment.path;
+	$scope.newEr7SegmentTemplate.position=$rootScope.selectedSegmentNode.segment.positionPath;
+
+
+	$scope.newEr7SegmentTemplate.name = 'new Er7 Template for '+$scope.newEr7SegmentTemplate.iPath;
+
+
+	$scope.createEr7SegmentTemplate = function() {
+		if(!$rootScope.template.Er7segmentTemplates){
+		$rootScope.template.Er7segmentTemplates=[];
+		}
+		$rootScope.template.Er7segmentTemplates.push($scope.newEr7SegmentTemplate);
 		$modalInstance.close();
 
 	};

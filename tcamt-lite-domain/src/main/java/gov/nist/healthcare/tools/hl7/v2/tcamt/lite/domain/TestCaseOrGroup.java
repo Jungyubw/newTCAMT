@@ -19,13 +19,19 @@ public abstract class TestCaseOrGroup {
 	
 	protected String testStoryConfigId;
 	
-	protected String description;
+	protected String description ="";
 	
 	protected Integer version;
 	
 	protected int position;
 	
 	protected String type;
+	
+	
+
+	public TestCaseOrGroup() {
+		super();
+	}
 
 	public String getId() {
 		return id;
@@ -44,7 +50,7 @@ public abstract class TestCaseOrGroup {
 	}
 
 	public String getDescription() {
-		if(this.description == null) return "";
+
 		return description;
 	}
 

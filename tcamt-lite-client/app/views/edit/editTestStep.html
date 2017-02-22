@@ -240,6 +240,9 @@ body {
 													<button type="button" class="btn btn-info btn-sm" ng-click="openCreateSegmentTemplateModal()"><i class="fa fa-plus"></i>
                         								New TestData Categorization Template For Segment
                     								</button>
+													<button type="button" class="btn btn-info btn-sm" ng-click="openCreateEr7SegmentTemplateModal()"><i class="fa fa-plus"></i>
+                        								New Segment Line Template
+                    								</button>
 												</span>
 
 												<span class="pull-right">
@@ -265,8 +268,19 @@ body {
 											</div>
 
 											<div class="col-md-12">
+										<div layout="row" layout-align="center center">
+										<div class="btn-group btn-group-sm" data-toggle="buttons">
+    										<label class="btn btn-primary btn-xs" ng-click="expandAll()" ng-class="{'active':expanded}">
+												Expand All
+											</label>
+											<label class="btn btn-primary btn-xs" ng-click="collapseAll()" ng-class="{'active':!expanded}">
+        										Collapse All
+											</label>
+   										</div>
+										   </div>
+
 												<div class="table-responsive">
-													<table tt-table tt-params="segmentParams" class="table table-bordered table-fix-header table-condensed profile-table">
+													<table  tt-table tt-params="segmentParams" class="table table-bordered table-fix-header table-condensed profile-table" id="segmentTable">
 														<thead>
 														<tr class="tbl-header">
 															<th class="col-md-1">Path</th>
@@ -455,6 +469,17 @@ body {
 												Test Data Specification
 											</span>
 										</uib-accordion-heading>
+										<div layout="row" layout-align="end center">
+										<div>
+										<md-input-container style="width: 100%;">
+											<label>Test Data Specification</label>
+											<md-select ng-model="selectedTestStep.tdsXSL" ng-change="recordChanged(selectedTestStep); initTestStepTab(6);">
+												<md-option value="">No Test Data Specification</md-option>
+												<md-option value="Basic-TestDataSpecification">Basic TestDataSpecification</md-option>
+											</md-select>
+										</md-input-container>
+										</div>
+										</div>
 										<div dynamic="testDataSpecificationHTML"></div>
 									</uib-accordion-group>
 
@@ -465,6 +490,19 @@ body {
 								 				Juror Document
 											</span>
 										</uib-accordion-heading>
+										<div layout="row" layout-align="end center">
+												<div>
+											<md-input-container style="width: 100%;">
+											<label>Juror Document</label>
+											<md-select ng-model="selectedTestStep.jdXSL" ng-change="recordChanged(selectedTestStep); initTestStepTab(6)">
+												<md-option value="">No Juror Document</md-option>
+												<md-option value="Superset-JurorDocument">Superset Juror Document</md-option>
+												<md-option value="Z23-JurorDocument">Z23 Juror Document</md-option>
+												<md-option value="Z32-Z33-Z42-JurorDocument">Z32-Z33-Z42 Juror Document</md-option>
+											</md-select>
+										</md-input-container>
+										</div>
+										</div>
 										<ng-bind-html ng-bind-html="jurorDocumentsHTML"/>
 									</uib-accordion-group>
 								</uib-accordion>
@@ -523,7 +561,7 @@ body {
         </td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
+				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value"  ng-class="{'invalidValue':hasError(node.testDataCategorization,node.value)}"/>
 			</div>
         </td>
 		<td class="col-md-1">
@@ -592,7 +630,7 @@ body {
 		</td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
+				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value"  ng-class="{'invalidValue':hasError(node.testDataCategorization,node.value)}" />
 			</div>
 		</td>
 		<td class="col-md-1">
@@ -656,7 +694,7 @@ body {
 		</td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value" required />
+				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value"  ng-class="{'invalidValue':hasError(node.testDataCategorization,node.value)}"/>
 			</div>
 		</td>
 		<td class="col-md-1">
@@ -718,7 +756,27 @@ body {
 		</button>
 	</div>
 </script>
-
+<script type="text/ng-template" id="Er7SegmentTemplateCreationModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">Set Name of Segment Template</h3>
+	</div>
+	<div class="modal-body">
+		<div class="row" style="margin:12px">
+			<div class="col-md-2">
+				<label class="control-label">Name:</label>
+			</div>
+			<div class="col-md-10">
+				<input class="form-control" type="text" ng-change="recordChanged(selectedTestStep)" name="name" ng-model="newEr7SegmentTemplate.name" required />
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default btn-sm" ng-click="cancel()"><span><i class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
+		</button>
+		<button class="btn btn-info btn-sm" ng-click="createEr7SegmentTemplate()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Create</span>
+		</button>
+	</div>
+</script>
 <script type="text/ng-template" id="Er7TemplateCreationModal.html">
 	<div class="modal-header">
 		<h3 class="modal-title">Set Name of Er7 Template</h3>

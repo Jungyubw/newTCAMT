@@ -9372,6 +9372,7 @@ ul.dropdown-menu, ul.dropdown-menu > li {
 
 /* line 1775, ../../app/styles/main.scss */
 .navbar-collapse {
+  -webkit-filter: none;
   filter: none;
   border: 0px;
   border-radius: 0px;
@@ -10872,4 +10873,9 @@ li.active > a {
   font-weight: bold;
   color: white;
   font-size: 90%;
+}
+
+/* line 3072, ../../app/styles/main.scss */
+.invalidValue {
+  background-color: #f1c3c3 !important;
 }
