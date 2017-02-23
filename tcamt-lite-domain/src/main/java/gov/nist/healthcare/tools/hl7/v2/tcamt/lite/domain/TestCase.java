@@ -1,9 +1,11 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.bson.types.ObjectId;
@@ -23,18 +25,18 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 	}
 
 
-	private Set<TestStep> teststeps = new HashSet<TestStep>();
+	private List<TestStep> teststeps = new ArrayList<TestStep>();
 
 	private TestStory testCaseStory = new TestStory();
 	
 	private String protocol;
 
 	
-	public Set<TestStep> getTeststeps() {
+	public List<TestStep> getTeststeps() {
 		return teststeps;
 	}
 
-	public void setTeststeps(Set<TestStep> teststeps) {
+	public void setTeststeps(List<TestStep> teststeps) {
 		this.teststeps = teststeps;
 	}
 
@@ -56,7 +58,7 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 		TestCase cloned = (TestCase) super.clone();
 		cloned.setId(ObjectId.get().toString());
 
-		Set<TestStep> cTeststeps = new HashSet<TestStep>();
+		List<TestStep> cTeststeps = new ArrayList<TestStep>();
 		for (TestStep teststep : this.teststeps) {
 			cTeststeps.add(teststep.clone());
 		}

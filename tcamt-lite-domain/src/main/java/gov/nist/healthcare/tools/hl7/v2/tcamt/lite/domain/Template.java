@@ -26,7 +26,7 @@ public class Template implements Serializable, Cloneable {
 	private Set<ER7Template> er7Templates = new HashSet<ER7Template>(); 
 	private Set<MessageTemplate> messageTemplates = new HashSet<MessageTemplate>();
 	private Set<SegmentTemplate> segmentTemplates = new HashSet<SegmentTemplate>();
-	private Set<Er7SegmentTemplate> Er7segmentTemplates = new HashSet<Er7SegmentTemplate>();
+	private Set<Er7SegmentTemplate> er7segmentTemplates= new HashSet<Er7SegmentTemplate>();
 	private Long accountId;
 
 	
@@ -107,13 +107,14 @@ public class Template implements Serializable, Cloneable {
 
 
 	public Set<Er7SegmentTemplate> getEr7segmentTemplates() {
-		return Er7segmentTemplates;
+		return er7segmentTemplates;
 	}
 
 
 	public void setEr7segmentTemplates(Set<Er7SegmentTemplate> er7segmentTemplates) {
-		Er7segmentTemplates = er7segmentTemplates;
+		this.er7segmentTemplates = er7segmentTemplates;
 	}
+
 	
 	
 

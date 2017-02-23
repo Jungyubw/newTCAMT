@@ -27,7 +27,7 @@ public class TestPlan implements Serializable, Cloneable {
 	private String description;
 	private String version;
 	private String lastUpdateDate;
-	private Set<TestCaseOrGroup> children = new HashSet<TestCaseOrGroup>();
+	private List<TestCaseOrGroup> children = new ArrayList<TestCaseOrGroup>();
 
 	private Long accountId;
 	private String coverPageTitle;
@@ -108,7 +108,7 @@ public class TestPlan implements Serializable, Cloneable {
 		cloned.setVersion("init");
 		cloned.setName(this.name + " copy");
 
-		Set<TestCaseOrGroup> cChildren = new HashSet<TestCaseOrGroup>();
+		List<TestCaseOrGroup> cChildren = new ArrayList<TestCaseOrGroup>();
 		for (TestCaseOrGroup o : this.children) {
 			if(o instanceof TestCase){
 				cChildren.add(((TestCase)o).clone());
@@ -178,11 +178,11 @@ public class TestPlan implements Serializable, Cloneable {
 		this.description = description;
 	}
 
-	public Set<TestCaseOrGroup> getChildren() {
+	public List<TestCaseOrGroup> getChildren() {
 		return children;
 	}
 
-	public void setChildren(Set<TestCaseOrGroup> children) {
+	public void setChildren(List<TestCaseOrGroup> children) {
 		this.children = children;
 	}
 	

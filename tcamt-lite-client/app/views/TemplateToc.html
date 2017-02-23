@@ -51,10 +51,10 @@
                      <i data-nodrag ng-click="switcherEr7(Er7Collapsed)" class="fa" ng-class="{'fa-caret-right': Er7Collapsed, 'fa-caret-down': !Er7Collapsed}">
 					</i>   Segment Line Templates
             </div>
-            <ol ui-tree-nodes="" ng-model="template.Er7segmentTemplates" data-nodrag>
-                <li ng-repeat="er7Tmp in template.Er7segmentTemplates" ui-tree-node data-nodrag>
+            <ol ui-tree-nodes="" ng-model="template.er7segmentTemplates" data-nodrag>
+                <li ng-repeat="er7Tmp in template.er7segmentTemplates" ui-tree-node data-nodrag>
                     <div ui-tree-handle ng-click="Activate(this);OpenEr7SegmentTemplatesMetadata(er7Tmp)" ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[er7Tmp.id]}">
-                        <span context-menu="Er7SegmentOptions" ng-if="selectedTestStep"><span class="label label-success label-icon">ET</span>{{er7Tmp.name}}</span>
+                        <span context-menu="Er7SegmentOptions" ng-if="selectedTestStep"><span class="label label-success label-icon">SL</span>{{er7Tmp.name}}</span>
                         <span ng-if="!selectedTestStep"><span class=" label label-success label-icon">SL</span>{{er7Tmp.name}}</span>
                     </div>
                 </li>

@@ -23,6 +23,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         $scope.expanded = !$scope.expanded;
         $('#segmentTable').treetable('collapseAll');
     }
+	$scope.expandNode=function(node){
+		//treetable('collapseAll');
+		$('#segmentTable').treetable("expandNode", node)
+	}
 	$scope.hasError= function(cat, value){
 		if(!cat || cat==""){
 			return false;
@@ -550,15 +554,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $scope.error = null;
             $rootScope.testStoryConfigs = [];
             $scope.loading = true;
-            $http.get('api/config/').then(function(response) {
-                $rootScope.testStoryConfigs = angular.fromJson(response.data);
-                $scope.loading = false;
-                delay.resolve(true);
-            }, function(error) {
-                $scope.loading = false;
-                $scope.error = error.data;
-                delay.reject(false);
-            });
+            // $http.get('api/config/').then(function(response) {
+            //     $rootScope.testStoryConfigs = angular.fromJson(response.data);
+            //     $scope.loading = false;
+            //     delay.resolve(true);
+            // }, function(error) {
+            //     $scope.loading = false;
+            //     $scope.error = error.data;
+            //     delay.reject(false);
+            // });
         }else{
             delay.reject(false);
         }
@@ -3158,6 +3162,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.recordChanged();
     };
 
+    $scope.deleteEr7SegmentTemplate = function (template){
+        var index = $rootScope.template.er7segmentTemplates.indexOf(template);
+        if (index > -1) {
+            $rootScope.template.er7segmentTemplates.splice(index, 1);
+        }
+		$scope.recordChanged();
+    };
     $scope.deleteMessageTemplate = function (template){
         var index = $rootScope.template.messageTemplates.indexOf(template);
         if (index > -1) {
@@ -3518,34 +3529,26 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			//destNodesScope.expand();
 			var dataTypeSource = sourceNodeScope.$element.attr('data-type');
 			var dataTypeDest = destNodesScope.$element.attr('data-type');
-							console.log("source"+ dataTypeSource );
+							console.log("source         "+ dataTypeSource );
 				console.log("destination "+ dataTypeDest);
-			if(dataTypeSource==="childrens"){
+
+
+				
+			if(dataTypeSource==="children"){
 				return false;
 			}
 			if(dataTypeSource==="child"){
-				if(dataTypeDest==="childrens"){
+				if(dataTypeDest==="children"){
 					return true;
-				}else if(dataTypeDest==='group'){
-
-					return true;
-				}
-				else{
+		
+				}else{
 				 return false;
 				}
 			}
-			else if(dataTypeSource==="group"){
-				if(dataTypeDest==="childrens"||dataTypeDest==='group'){
-
-					return true;
-				}else{
-
-					return false;
-				}
-			}
+		
 
 			else if(dataTypeSource==="case"){
-				if(dataTypeDest==="group"||dataTypeDest==="childrens"){
+				if(dataTypeDest==="children"){
 					return true;
 				}else{
 					return false;
@@ -3554,7 +3557,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 			else if(dataTypeSource==="step"){
-				if(dataTypeDest==="case"){
+				if(dataTypeDest==="steps"){
 					return true;
 				}else{ 
 					return false;
@@ -3580,33 +3583,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			event.source.nodeScope.$modelValue.position = sortAfter+1;
 			$scope.updatePositions(event.dest.nodesScope.$modelValue);
 			$scope.updatePositions(event.source.nodesScope.$modelValue);
-			
-			if($scope.sourceDrag.position!==sourceNode.$modelValue.position){
-				$rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
-				$rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
-				$scope.recordChanged();
-			}else{
-				if($scope.parentDrag.id!==destNodes.$parent.$modelValue.id){
-					
-					
-					$rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
-					$rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
-					$scope.recordChanged();
-				}
-			}
+
 			
 
 
 		},
 		dragStart:function(event){
-			var sourceNode = event.source.nodeScope;
-			var destNodes = event.dest.nodesScope;
-			
-			$scope.sourceDrag=angular.copy(sourceNode.$modelValue);
-			//$scope.destDrag=angular.copy(sourceNode.$parent.$nodeScope.$modelValue);
-			$scope.parentDrag=sourceNode.$parentNodeScope.$modelValue;
-			console.log($scope.parentDrag);
-			//console.log($scope.sourceDrag)
 			
 			
 		}
@@ -3616,11 +3598,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 	$scope.updatePositions= function(arr){
-		
-		arr.sort(function(a, b){return a.position-b.position});
 		for (var i = arr.length - 1; i >= 0; i--){
 			arr[i].position=i+1;
 		}
+		// arr.sort(function(a, b){return a.position-b.position});
+		
 	};
 
 	$scope.getWithPosition=function(arr,index){
@@ -3932,7 +3914,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	  $scope.Er7SegmentOptions=[
 		['Delete Template', function($itemScope) {
 			$scope.subview=null;
-		$scope.deleteER7SegmentTemplate($itemScope.er7Tmp);
+		$scope.deleteEr7SegmentTemplate($itemScope.er7Tmp);
 		Notification.success("Template "+$itemScope.$modelValue.name+"Deleted");
 
 
@@ -4353,19 +4335,26 @@ angular.module('tcl').controller('Er7SegmentTemplateCreationModalCtrl', function
 	$scope.newEr7SegmentTemplate.descrption = 'No Desc';
 	$scope.newEr7SegmentTemplate.date = new Date();
 	$scope.newEr7SegmentTemplate.content=$rootScope.selectedSegmentNode.segment.segmentStr;
+	
 	$scope.newEr7SegmentTemplate.iPath=$rootScope.selectedSegmentNode.segment.iPath;
 	$scope.newEr7SegmentTemplate.path=$rootScope.selectedSegmentNode.segment.path;
-	$scope.newEr7SegmentTemplate.position=$rootScope.selectedSegmentNode.segment.positionPath;
+	//$scope.newEr7SegmentTemplate.position=$rootScope.selectedSegmentNode.segment.positionPath;
 
+	var positionString=$scope.newEr7SegmentTemplate.iPath;
+	var n = positionString.indexOf("[");
+    var x= positionString.indexOf("]");
+   	var m= positionString.substring(n+1,x);
+	$scope.newEr7SegmentTemplate.position=parseInt(m);
+	
 
 	$scope.newEr7SegmentTemplate.name = 'new Er7 Template for '+$scope.newEr7SegmentTemplate.iPath;
 
 
 	$scope.createEr7SegmentTemplate = function() {
-		if(!$rootScope.template.Er7segmentTemplates){
-		$rootScope.template.Er7segmentTemplates=[];
+		if(!$rootScope.template.er7segmentTemplates){
+		$rootScope.template.er7segmentTemplates=[];
 		}
-		$rootScope.template.Er7segmentTemplates.push($scope.newEr7SegmentTemplate);
+		$rootScope.template.er7segmentTemplates.push($scope.newEr7SegmentTemplate);
 		$modalInstance.close();
 
 	};
