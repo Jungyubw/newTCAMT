@@ -67,7 +67,7 @@ angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $roo
         };
 
         $scope.deleteItem = function (index){
-            $scope.selectedTestStoryConfig.testStoryConfig.splice($index, 1);
+            $scope.selectedTestStoryConfig.testStoryConfig.splice(index, 1);
             $scope.setPosition();
         };
 

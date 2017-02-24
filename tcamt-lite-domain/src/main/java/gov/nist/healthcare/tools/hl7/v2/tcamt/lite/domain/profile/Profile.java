@@ -1,5 +1,6 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,6 +39,8 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 	}
 
 	private String id;
+	
+	private String sourceType;
 
 	private ProfileMetaData metaData;
 
@@ -50,6 +53,8 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 	private Tables tables;
 	
 	private Long accountId;
+	
+	private Date lastUpdatedDate;
 
 	public String getId() {
 		return id;
@@ -374,5 +379,21 @@ public class Profile extends TextbasedSectionModel implements java.io.Serializab
 
 	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
+	}
+
+	public Date getLastUpdatedDate() {
+		return lastUpdatedDate;
+	}
+
+	public void setLastUpdatedDate(Date lastUpdatedDate) {
+		this.lastUpdatedDate = lastUpdatedDate;
+	}
+
+	public String getSourceType() {
+		return sourceType;
+	}
+
+	public void setSourceType(String sourceType) {
+		this.sourceType = sourceType;
 	}
 }

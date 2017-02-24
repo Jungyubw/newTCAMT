@@ -51,6 +51,8 @@ public class TestPlan implements Serializable, Cloneable {
 	private String globalTestCaseConfigId;
 	private String globalAutoTestStepConfigId;
 	private String globalManualTestStepConfigId;
+	private boolean emptyStoryContentIgnored;
+	
 	
 	public TestPlan() {
 		super();
@@ -273,6 +275,14 @@ public class TestPlan implements Serializable, Cloneable {
 	public void setGlobalManualTestStepConfigId(String globalManualTestStepConfigId) {
 		this.globalManualTestStepConfigId = globalManualTestStepConfigId;
 	}
-	
+
+	public boolean isEmptyStoryContentIgnored() {
+		return emptyStoryContentIgnored;
+	}
+
+	public void setEmptyStoryContentIgnored(boolean emptyStoryContentIgnored) {
+		this.emptyStoryContentIgnored = emptyStoryContentIgnored;
+	}
+
 	
 }

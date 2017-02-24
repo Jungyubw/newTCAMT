@@ -7,10 +7,10 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 
 
 	$scope.initProfiles= function () {
-		$scope.loadIGAMTProfiles();
-		$scope.loadPrivateProfiles();
-		$scope.loadPublicProfiles();
-	};
+		if(!$rootScope.igamtProfiles || $rootScope.igamtProfiles == []) $scope.loadIGAMTProfiles();
+        if(!$rootScope.privateProfiles || $rootScope.privateProfiles == []) $scope.loadPrivateProfiles();
+        if(!$rootScope.publicProfiles || $rootScope.publicProfiles == []) $scope.loadPublicProfiles();
+};
 
 	$scope.loadPublicProfiles = function () {
 		var delay = $q.defer();

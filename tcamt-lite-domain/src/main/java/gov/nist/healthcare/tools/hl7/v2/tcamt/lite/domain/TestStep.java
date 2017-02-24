@@ -34,8 +34,6 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 
 	private int position;
 
-	private TestStory testStepStory = new TestStory();
-
 	private String type;
 	
 	private String tdsXSL;
@@ -91,21 +89,10 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 		this.version = version;
 	}
 
-
-	public TestStory getTestStepStory() {
-		testStepStory = testStepStory.normalize();
-		return testStepStory;
-	}
-
-	public void setTestStepStory(TestStory testStepStory) {
-		this.testStepStory = testStepStory;
-	}
-
 	@Override
 	public TestStep clone() throws CloneNotSupportedException {
 		TestStep cloned = (TestStep) super.clone();
 		cloned.setId(ObjectId.get().toString());
-		cloned.setTestStepStory((TestStory) testStepStory.clone());
 
 		return cloned;
 	}

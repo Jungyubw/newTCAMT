@@ -97,6 +97,15 @@ body {
 						<div class="col-md-12">
 							<div class="col-md-6">
 								<md-input-container style="width: 100%;">
+									<label>Empty Content in TestStory</label>
+									<md-switch ng-model="selectedTestPlan.emptyStoryContentIgnored" ng-change="recordChanged(selectedTestPlan);">
+										<div ng-show="selectedTestPlan.emptyStoryContentIgnored">will be ignored</div>
+										<div ng-show="!selectedTestPlan.emptyStoryContentIgnored">will be contained</div>
+									</md-switch>
+								</md-input-container>
+							</div>
+							<div class="col-md-6">
+								<md-input-container style="width: 100%;">
 									<label>TestPlan Test Story Configuration</label>
 									<md-select ng-model="selectedTestPlan.testStoryConfigId" ng-change="recordChanged(selectedTestPlan);updateGlobalTestStoryConfigForTestPlan();">
 										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>

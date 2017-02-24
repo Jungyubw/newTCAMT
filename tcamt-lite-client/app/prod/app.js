@@ -306,7 +306,7 @@ app.config(function ($routeProvider, RestangularProvider, $httpProvider, Keepali
 });
 
 
-app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, userInfoService, $http, AppInfo, StorageService, $templateCache, $window, notifications) {
+app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, userInfoService, $http, AppInfo, StorageService, $templateCache, $window, notifications, $q) {
     $rootScope.appInfo = {};
     //Check if the login dialog is already displayed.
     $rootScope.loginDialogShown = false;
@@ -400,9 +400,67 @@ app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, u
             retry(requests[i]);
         }
         $rootScope.requests401 = [];
+        $location.url('/home');
 
-        $location.url('/ig');
+
+        $rootScope.loadIGAMTProfiles();
+        $rootScope.loadPrivateProfiles();
+        $rootScope.loadPublicProfiles();
+
+
     });
+
+    $rootScope.loadPublicProfiles = function () {
+        var delay = $q.defer();
+
+        if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+            $rootScope.publicProfiles = [];
+            $http.get('api/profiles/public').then(function(response) {
+                $rootScope.publicProfiles = angular.fromJson(response.data);
+                delay.resolve(true);
+            }, function(error) {
+                delay.reject(false);
+
+            });
+        }else{
+            delay.reject(false);
+        }
+    };
+
+    $rootScope.loadPrivateProfiles = function () {
+        var delay = $q.defer();
+        if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+            $rootScope.privateProfiles = [];
+            $http.get('api/profiles').then(function(response) {
+                $rootScope.privateProfiles = angular.fromJson(response.data);
+                delay.resolve(true);
+            }, function(error) {
+                delay.reject(false);
+
+            });
+        }else{
+            delay.reject(false);
+        }
+    };
+
+    $rootScope.loadIGAMTProfiles = function () {
+        var delay = $q.defer();
+        if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+            waitingDialog.show('Loading Profiles...', {dialogSize: 'xs', progressType: 'info'});
+            $rootScope.igamtProfiles = [];
+            $http.get('api/igdocuments').then(function(response) {
+                $rootScope.igamtProfiles = angular.fromJson(response.data);
+                delay.resolve(true);
+                waitingDialog.hide();
+            }, function(error) {
+                delay.reject(false);
+                waitingDialog.hide();
+            });
+        }else{
+            delay.reject(false);
+        }
+    };
+
 
     /*jshint sub: true */
     /**

@@ -15,6 +15,7 @@ import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 
 @RestController
@@ -22,6 +23,9 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 public class IGDocumentController extends CommonController {
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	ProfileService profileService;
 
 	@Autowired
 	AccountRepository accountRepository;
@@ -32,13 +36,21 @@ public class IGDocumentController extends CommonController {
 		
 		try {
 			List<Profile> result = new ArrayList<Profile>();
-			for(IGDocument igd: this.userIGDocuments()){
-				Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId());
-				p.getMetaData().setName(igd.getMetaData().getTitle());
-				p.getMetaData().setDescription(igd.getMetaData().getDescription());
-				p.getMetaData().setDate(igd.getMetaData().getDate());
-				
-				result.add(con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId()));
+			List<IGDocument> igdocs = this.userIGDocuments();
+			for(IGDocument igd: igdocs){
+				Profile tcamtP = profileService.findOne(igd.getId());
+				if(tcamtP == null || !tcamtP.getLastUpdatedDate().equals(igd.getDateUpdated())){
+					Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
+					p.getMetaData().setName(igd.getMetaData().getTitle());
+					p.getMetaData().setDescription(igd.getMetaData().getDescription());
+					p.getMetaData().setDate(igd.getMetaData().getDate());
+					p.setSourceType("igamt");
+					
+					profileService.save(p);
+					result.add(p);
+				}else{
+					result.add(tcamtP);
+				}
 			}
 			
 			return result;
@@ -70,6 +82,6 @@ public class IGDocumentController extends CommonController {
 		IGDocument igDocument = con.findIGDocument(id);
 		
 		
-		return con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), id);
+		return con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), id, igDocument.getDateUpdated());
 	}
 }

@@ -1354,8 +1354,7 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
 
             return cp;
         };
-        
-        
+
         $rootScope.erorrForComplexConfStatement = function (newComplexConstraintId, targetComplexId, compositeType, firstConstraint, secondConstraint) {
         	if($rootScope.isEmptyComplexConstraintID(newComplexConstraintId)) return true;
         	if($rootScope.isDuplicatedComplexConstraintID(newComplexConstraintId, targetComplexId))  return true;
@@ -1611,6 +1610,8 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
             }
             return '';
         };
+
+
 
     }]);
 

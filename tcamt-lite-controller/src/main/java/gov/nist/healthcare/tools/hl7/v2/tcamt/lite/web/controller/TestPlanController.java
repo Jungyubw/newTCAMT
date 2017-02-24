@@ -234,7 +234,7 @@ public class TestPlanController extends CommonController {
 			throws Exception {
 		TestPlan tp = findTestPlan(id);
 		InputStream content = null;
-		content = new ExportUtil().exportTestPackageAsHtml(tp);
+		content = new ExportUtil().exportTestPackageAsHtml(tp, testStoryConfigurationService);
 		response.setContentType("text/html");
 		response.setHeader("Content-disposition", "attachment;filename=" + escapeSpace(tp.getName()) + "-"
 				+ new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_TestPackage.html");

@@ -36,6 +36,8 @@ public interface ProfileService {
 	public List<Profile> findAll();
 
 	public List<Profile> findByAccountId(Long accountId);
+	
+	public List<Profile> findByAccountIdAndSourceType(Long accountId, String sourceType);
 
 	public Profile clone(Profile ig) throws CloneNotSupportedException;
 

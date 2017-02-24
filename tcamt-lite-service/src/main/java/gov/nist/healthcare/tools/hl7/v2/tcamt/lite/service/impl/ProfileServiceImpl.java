@@ -140,15 +140,15 @@ public class ProfileServiceImpl implements ProfileService {
 	@Override
 	public List<Profile> findByAccountId(Long accountId) {
 		List<Profile> profiles = profileRepository.findByAccountId(accountId);
-		// if (profiles != null && !profiles.isEmpty()) {
-		// for (Profile profile : profiles) {
-		// processChildren(profile);
-		// }
-		// }
-		log.debug("User Profiles found=" + profiles.size());
 		return profiles;
 	}
 
+	@Override
+	public List<Profile> findByAccountIdAndSourceType(Long accountId, String sourceType) {
+		List<Profile> profiles = profileRepository.findByAccountIdAndSourceType(accountId, sourceType);
+		return profiles;
+	}
+	
 	@Override
 	public Profile clone(Profile p) throws CloneNotSupportedException {
 		return new ProfileClone().clone(p);
@@ -931,7 +931,4 @@ public class ProfileServiceImpl implements ProfileService {
 	public void setPredicates(Constraints predicates) {
 		this.predicates = predicates;
 	}
-	
-	
-
 }

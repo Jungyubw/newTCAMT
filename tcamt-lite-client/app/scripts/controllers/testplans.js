@@ -504,9 +504,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 	$scope.initTestPlans = function () {
-		$scope.loadIGAMTProfiles();
-		$scope.loadPrivateProfiles();
-		$scope.loadPublicProfiles();
+        if(!$rootScope.igamtProfiles || $rootScope.igamtProfiles == []) $scope.loadIGAMTProfiles();
+        if(!$rootScope.privateProfiles || $rootScope.privateProfiles == []) $scope.loadPrivateProfiles();
+        if(!$rootScope.publicProfiles || $rootScope.publicProfiles == []) $scope.loadPublicProfiles();
+
 		$scope.loadTestPlans();
         $scope.loadTemplate();
 		$scope.getScrollbarWidth();

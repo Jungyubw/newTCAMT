@@ -1,6 +1,7 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl;
 
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -14,6 +15,7 @@ import com.mongodb.MongoClient;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DatatypeLink;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ProfileMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentLink;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
@@ -97,7 +99,7 @@ public class IGAMTDBConn {
 	
 	
 
-	public Profile convertIGAMT2TCAMT(gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile p, String igName, String igId) {
+	public Profile convertIGAMT2TCAMT(gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile p, String igName, String igId, Date date) {
 		Profile tcamtProfile = new Profile();
 		tcamtProfile.setAccountId(p.getAccountId());
 		tcamtProfile.setId(igId);
@@ -106,6 +108,7 @@ public class IGAMTDBConn {
 		tcamtProfile.setSectionPosition(p.getSectionPosition());
 		tcamtProfile.setSectionTitle(igName);
 		tcamtProfile.setType(p.getType());
+		tcamtProfile.setLastUpdatedDate(date);
 		tcamtProfile.setMetaData(p.getMetaData());
 		Messages messages = new Messages();
 		messages.setId(p.getMessages().getId());
@@ -164,13 +167,5 @@ public class IGAMTDBConn {
 		tcamtProfile.setTables(tables);
 
 		return tcamtProfile;
-	}
-	
-	
-	public static void main(String[] args) {
-		IGAMTDBConn con = new IGAMTDBConn();		
-		IGDocument igd = con.getUserDocument(10).get(0);
-
-		con.convertIGAMT2TCAMT(igd.getProfile(), "XXX", "RRR");
 	}
 }

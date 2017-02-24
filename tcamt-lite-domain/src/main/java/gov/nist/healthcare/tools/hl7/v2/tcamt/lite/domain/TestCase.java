@@ -24,8 +24,6 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 
 
 	private Set<TestStep> teststeps = new HashSet<TestStep>();
-
-	private TestStory testCaseStory = new TestStory();
 	
 	private String protocol;
 
@@ -36,15 +34,6 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 
 	public void setTeststeps(Set<TestStep> teststeps) {
 		this.teststeps = teststeps;
-	}
-
-	public TestStory getTestCaseStory() {
-		testCaseStory = testCaseStory.normalize();
-		return testCaseStory;
-	}
-
-	public void setTestCaseStory(TestStory testCaseStory) {
-		this.testCaseStory = testCaseStory;
 	}
 
 	public void addTestStep(TestStep teststep) {
@@ -61,7 +50,6 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 			cTeststeps.add(teststep.clone());
 		}
 		cloned.setTeststeps(cTeststeps);
-		cloned.setTestCaseStory((TestStory) testCaseStory.clone());
 
 		return cloned;
 	}

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DocumentMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ConstraintContainer;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
@@ -62,19 +61,8 @@ public class ValidationController {
 		
 		if(igDocument == null){
 			tcamtProfile = profileService.findOne(igDocumentId);
-			
-			igDocument = new IGDocument();
-			DocumentMetaData metaData = new DocumentMetaData();
-			metaData.setDate(tcamtProfile.getMetaData().getDate());
-			metaData.setDescription(tcamtProfile.getMetaData().getDescription());
-			metaData.setExt(tcamtProfile.getMetaData().getExt());
-			metaData.setHl7Version(tcamtProfile.getMetaData().getHl7Version());
-			metaData.setOrgName(tcamtProfile.getMetaData().getOrgName());
-			metaData.setTitle(tcamtProfile.getMetaData().getName());
-			igDocument.setId(tcamtProfile.getId());
-			igDocument.setMetaData(metaData);
 		}else {
-			tcamtProfile = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), igDocumentId);
+			tcamtProfile = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), igDocumentId, igDocument.getDateUpdated());
 		}
 		
 		String profileXML = util.serializeProfileToDoc(tcamtProfile, igDocument).toXML();

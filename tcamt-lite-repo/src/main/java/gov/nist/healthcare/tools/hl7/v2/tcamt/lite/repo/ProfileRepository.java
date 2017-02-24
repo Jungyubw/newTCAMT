@@ -25,4 +25,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
  public interface ProfileRepository  extends MongoRepository<Profile, String>   {
 	 List<Profile> findByAccountId(Long accountId);
+	 
+	 List<Profile> findByAccountIdAndSourceType(Long accountId, String sourceType);
  }

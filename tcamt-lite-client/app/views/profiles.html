@@ -36,7 +36,7 @@
                                                 <td st-ratio="10" ng-bind="row.metaData.name"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.description"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.hl7Version"></td>
-                                                <td st-ratio="10" ng-bind="row.metaData.date"></td>
+                                                <td st-ratio="10">{{row.lastUpdatedDate | date:dateFormat}}</td>
                                                 <td st-ratio="50">
                                                     <li ng-repeat="m in row.messages.children">{{m.name}} [{{m.messageType}}^{{m.event}}^{{m.structID}}, {{m.identifier}}]</li>
                                                 </td>
@@ -72,7 +72,7 @@
                                                 <td st-ratio="10" ng-bind="row.metaData.name"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.description"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.hl7Version"></td>
-                                                <td st-ratio="10" ng-bind="row.metaData.date"></td>
+                                                <td st-ratio="10">{{row.lastUpdatedDate | date:dateFormat}}</td>
                                                 <td st-ratio="45">
                                                     <li ng-repeat="m in row.messages.children">{{m.name}} [{{m.messageType}}^{{m.event}}^{{m.structID}}, {{m.identifier}}]</li>
                                                 </td>
@@ -119,7 +119,7 @@
                                                 <td st-ratio="10" ng-bind="row.metaData.name"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.description"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.hl7Version"></td>
-                                                <td st-ratio="10" ng-bind="row.metaData.date"></td>
+                                                <td st-ratio="10">{{row.lastUpdatedDate | date:dateFormat}}</td>
                                                 <td st-ratio="45">
                                                     <li ng-repeat="m in row.messages.children">{{m.name}} [{{m.messageType}}^{{m.event}}^{{m.structID}}, {{m.identifier}}]</li>
                                                 </td>

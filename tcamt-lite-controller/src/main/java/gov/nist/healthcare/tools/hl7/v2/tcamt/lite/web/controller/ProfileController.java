@@ -1,5 +1,6 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class ProfileController extends CommonController {
 			if (account == null) {
 				throw new UserAccountNotFoundException();
 			}
-			return profileService.findByAccountId(account.getId());
+			return profileService.findByAccountIdAndSourceType(account.getId(),"private");
 		} catch (RuntimeException e) {
 			throw new TestPlanListException(e);
 		} catch (Exception e) {
@@ -74,7 +75,7 @@ public class ProfileController extends CommonController {
 			if (account == null) {
 				throw new UserAccountNotFoundException();
 			}
-			return profileService.findByAccountId((long) 0);
+			return profileService.findByAccountIdAndSourceType((long) 0, "public");
 		} catch (RuntimeException e) {
 			throw new TestPlanListException(e);
 		} catch (Exception e) {
@@ -92,6 +93,8 @@ public class ProfileController extends CommonController {
 
 		Profile p = profileService.readXML2Profile(pds);
 		p.setAccountId(account.getId());
+		p.setLastUpdatedDate(new Date());
+		p.setSourceType("private");
 		profileService.save(p);
 	}
 	
@@ -117,10 +120,12 @@ public class ProfileController extends CommonController {
 			Profile p = profileService.readXML2Profile(pds);
 			p.setId(oldP.getId());
 			p.setAccountId(oldP.getAccountId());
+			p.setLastUpdatedDate(new Date());
+			p.setSourceType("private");
 			
 			for(Message m:p.getMessages().getChildren()){
 				if(m.getIdentifier() != null){
-					String messageID = messageIdIdentifierMap.get(m.getIdentifier())	;
+					String messageID = messageIdIdentifierMap.get(m.getIdentifier());
 					if(messageID != null && !messageID.equals("")){
 						m.setId(messageID);
 					}
@@ -141,6 +146,8 @@ public class ProfileController extends CommonController {
 
 		Profile p = profileService.readXML2Profile(pds);
 		p.setAccountId((long) 0);
+		p.setLastUpdatedDate(new Date());
+		p.setSourceType("public");
 		profileService.save(p);
 	}
 	

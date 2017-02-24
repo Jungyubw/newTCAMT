@@ -16,7 +16,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Case;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
@@ -48,7 +47,6 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStory;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStoryConfiguration;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStroyEntry;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatypes;
@@ -70,17 +68,35 @@ public class ExportUtil {
 		return value != null ? value : "";
 	}
 
-	public InputStream exportTestPackageAsHtml(TestPlan tp) throws Exception {
-		return IOUtils.toInputStream(this.genPackagePages(tp), "UTF-8");
+	public InputStream exportTestPackageAsHtml(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+		return IOUtils.toInputStream(this.genPackagePages(tp, testStoryConfigurationService), "UTF-8");
 	}
 
 	public InputStream exportCoverAsHtml(TestPlan tp) throws Exception {
 		return IOUtils.toInputStream(this.genCoverPage(tp), "UTF-8");
 	}
 	
-	private String genPackagePagesInsideGroup(TestPlan tp, TestCaseGroup group, String packageBodyHTML, String index) throws Exception {
+	private String genPackagePagesInsideGroup(TestPlan tp, TestCaseGroup group, String packageBodyHTML, String index, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + group.getName() + "</h2>" + System.getProperty("line.separator");
 		packageBodyHTML = packageBodyHTML + "<span>" + group.getDescription() + "</span>" + System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>" + System.getProperty("line.separator");
+		String testStoryConfigId = null;
+		if(group.getTestStoryConfigId() != null) {
+			testStoryConfigId = group.getTestStoryConfigId();
+		}else{
+			testStoryConfigId = tp.getGlobalTestGroupConfigId();
+		}
+		
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		
+		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(group.getTestStoryContent(), testStoryConfiguration, "plain", tp));		
 		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
 		
 		HashMap<Integer, TestCaseOrGroup> TestCaseOrGroupMap = new HashMap<Integer, TestCaseOrGroup>();
@@ -91,9 +107,9 @@ public class ExportUtil {
 		for (int i = 0; i < TestCaseOrGroupMap.keySet().size(); i++) {
 			TestCaseOrGroup child = TestCaseOrGroupMap.get(i + 1);
 			if (child instanceof TestCaseGroup) {
-				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup)child, packageBodyHTML, index + "." + (i + 1));
+				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup)child, packageBodyHTML, index + "." + (i + 1), testStoryConfigurationService);
 			}else if (child instanceof TestCase) {
-				packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase)child, packageBodyHTML, index + "." + (i + 1));
+				packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase)child, packageBodyHTML, index + "." + (i + 1), testStoryConfigurationService);
 				
 			}
 		}
@@ -103,11 +119,27 @@ public class ExportUtil {
 		return packageBodyHTML;
 	}
 	
-	private String genPackagePagesForTestCase(TestPlan tp, TestCase tc, String packageBodyHTML, String index) throws Exception {
+	private String genPackagePagesForTestCase(TestPlan tp, TestCase tc, String packageBodyHTML, String index, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + tc.getName() + "</h2>" + System.getProperty("line.separator");
 		packageBodyHTML = packageBodyHTML + "<span>" + tc.getDescription() + "</span>" + System.getProperty("line.separator");
 		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>" + System.getProperty("line.separator");
-//		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(tc.getTestCaseStory(), "plain"));
+		String testStoryConfigId = null;
+		if(tc.getTestStoryConfigId() != null) {
+			testStoryConfigId = tc.getTestStoryConfigId();
+		}else{
+			testStoryConfigId = tp.getGlobalTestCaseConfigId();
+		}
+		
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		
+		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(tc.getTestStoryContent(), testStoryConfiguration, "plain", tp));
 		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
 		
 		HashMap<Integer, TestStep> testStepMap = new HashMap<Integer, TestStep>();
@@ -117,13 +149,13 @@ public class ExportUtil {
 		
 		for (int i = 0; i < testStepMap.keySet().size(); i++) {
 			TestStep child = testStepMap.get(i + 1);
-			packageBodyHTML = genPackagePagesForTestStep(tp, child, packageBodyHTML, index + "." + (i + 1));
+			packageBodyHTML = genPackagePagesForTestStep(tp, child, packageBodyHTML, index + "." + (i + 1), testStoryConfigurationService);
 		}
 		
 		return packageBodyHTML;
 	}
 
-	private String genPackagePagesForTestStep(TestPlan tp, TestStep ts, String packageBodyHTML, String index) throws Exception {
+	private String genPackagePagesForTestStep(TestPlan tp, TestStep ts, String packageBodyHTML, String index, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
 		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + ts.getName() + "</h2>" + System.getProperty("line.separator");
 		if (tp.getType() != null && tp.getType().equals("Isolated")) {
@@ -132,7 +164,27 @@ public class ExportUtil {
 		}
 		packageBodyHTML = packageBodyHTML + "<span>" + ts.getDescription() + "</span>"+ System.getProperty("line.separator");
 		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>"+ System.getProperty("line.separator");
-//		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(ts.getTestStepStory(), "plain"));
+		
+		
+		String testStoryConfigId = null;
+		if(ts.getTestStoryConfigId() != null) {
+			testStoryConfigId = ts.getTestStoryConfigId();
+		}else{
+			if(ts.isManualTS()){
+				testStoryConfigId = tp.getGlobalManualTestStepConfigId();
+			}else{
+				testStoryConfigId = tp.getGlobalAutoTestStepConfigId();
+			}
+		}
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(ts.getTestStoryContent(), testStoryConfiguration, "plain", tp));
 
 		if (ts != null && ts.getEr7Message() != null && ts.getIntegrationProfileId() != null) {
 			if (ts.getMessageContentsXMLCode() != null && !ts.getMessageContentsXMLCode().equals("")) {
@@ -185,12 +237,28 @@ public class ExportUtil {
 		return packageBodyHTML;
 	}
 
-	private String genPackagePages(TestPlan tp) throws Exception {
+	private String genPackagePages(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
 
 		String packageBodyHTML = "";
 		packageBodyHTML = packageBodyHTML + "<h1>" + tp.getName() + "</h1>" + System.getProperty("line.separator");
 		packageBodyHTML = packageBodyHTML + tp.getDescription() + System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>" + System.getProperty("line.separator");
+		String testStoryConfigId = null;
+		if(tp.getTestStoryConfigId() != null) {
+			testStoryConfigId = tp.getTestStoryConfigId();
+		}
+		
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		
+		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(tp.getTestStoryContent(), testStoryConfiguration, "plain", tp));		
 		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
 
 		HashMap<Integer, TestCaseOrGroup> testPlanMap = new HashMap<Integer, TestCaseOrGroup>();
@@ -201,9 +269,9 @@ public class ExportUtil {
 		for (int i = 0; i < testPlanMap.keySet().size(); i++) {
 			TestCaseOrGroup child = testPlanMap.get(i + 1);
 			if (child instanceof TestCaseGroup) {
-				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup)child, packageBodyHTML, "" + (i + 1));
+				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup)child, packageBodyHTML, "" + (i + 1), testStoryConfigurationService);
 			} else if (child instanceof TestCase) {
-				packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase) child, packageBodyHTML, "" + (i + 1));
+				packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase) child, packageBodyHTML, "" + (i + 1), testStoryConfigurationService);
 			}
 		}
 
@@ -221,42 +289,70 @@ public class ExportUtil {
 		return "" + generateTestStory.subSequence(beginIndex + "<body>".length(), endIndex);
 	}
 
-	private String generateTestStory(TestStory testStory, String option) throws Exception {
+	private String generateTestStory(HashMap<String,String> testStoryContent, TestStoryConfiguration testStoryConfiguration, String option, TestPlan tp) throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
-		String xsltStr;
 
 		if (option.equals("ng-tab-html")) {
-			xsltStr = IOUtils
-					.toString(classLoader.getResourceAsStream("xsl" + File.separator + "TestStory_ng-tab-html.xsl"));
+			String testStoryStr = IOUtils.toString(classLoader.getResourceAsStream("rb" + File.separator + "ng-tab-html-TestStory.html"));
+			
+			HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
+			for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+				testStroyEntryMap.put(tse.getPosition(), tse);
+			}
+			String fullStory = "";
+			String tabStory = "";
+			
+			for(int i=0;i<testStroyEntryMap.size();i++){
+				TestStroyEntry tse = testStroyEntryMap.get(i+1);
+				
+				if(tse.isPresent()){
+					String title = tse.getTitle();
+					String content = testStoryContent.get(tse.getId());
+					
+					if(tp.isEmptyStoryContentIgnored()){
+						if(content != null && !"".equals(content)){
+							fullStory = fullStory + "<div class=\"panel-body\"><table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table></div><br/>";
+							tabStory = tabStory + "<tab heading=\"" + title + "\" vertical=\"false\">" + "<div class=\"panel-body\"><table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table></div></tab>";
+						}
+					}else {
+						fullStory = fullStory + "<div class=\"panel-body\"><table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table></div><br/>";
+						tabStory = tabStory + "<tab heading=\"" + title + "\" vertical=\"false\">" + "<div class=\"panel-body\"><table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table></div></tab>";
+					}
+					
+				}
+			}
+			
+			return testStoryStr.replace("?FullStory?", fullStory).replace("?TABStory?", tabStory);
+			
 		} else {
-			xsltStr = IOUtils
-					.toString(classLoader.getResourceAsStream("xsl" + File.separator + "TestStory_plain-html.xsl"));
+			String testStoryStr = IOUtils.toString(classLoader.getResourceAsStream("rb" + File.separator + "PlainTestStory.html"));
+			
+			HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
+			for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+				testStroyEntryMap.put(tse.getPosition(), tse);
+			}
+			String storyContent = "";
+			
+			for(int i=0;i<testStroyEntryMap.size();i++){
+				TestStroyEntry tse = testStroyEntryMap.get(i+1);
+				
+				if(tse.isPresent()){
+					String title = tse.getTitle();
+					String content = testStoryContent.get(tse.getId());
+					
+					if(tp.isEmptyStoryContentIgnored()){
+						if(content != null && !"".equals(content)) storyContent = storyContent + "<table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table><br/>";
+					}else {
+						storyContent = storyContent + "<table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table><br/>";
+					}
+					
+				}
+			}
+			
+			
+			return testStoryStr.replace("?TestStoryContents?", storyContent);
+			
 		}
-
-		String sourceStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<TestStory>" + "<comments><![CDATA["
-				+ testStory.getComments().replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
-						.replace("&nbsp;", " ")
-				+ "]]></comments>" + "<postCondition><![CDATA["
-				+ testStory.getPostCondition().replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
-						.replace("&nbsp;", " ")
-				+ "]]></postCondition>" + "<notes><![CDATA["
-				+ testStory.getNotes().replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&nbsp;",
-						" ")
-				+ "]]></notes>" + "<teststorydesc><![CDATA["
-				+ testStory.getTeststorydesc().replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
-						.replace("&nbsp;", " ")
-				+ "]]></teststorydesc>" + "<evaluationCriteria><![CDATA["
-				+ testStory.getEvaluationCriteria().replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
-						.replace("&nbsp;", " ")
-				+ "]]></evaluationCriteria>" + "<preCondition><![CDATA["
-				+ testStory.getPreCondition().replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
-						.replace("&nbsp;", " ")
-				+ "]]></preCondition>" + "<testObjectives><![CDATA[" + testStory.getTestObjectives()
-						.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&nbsp;", " ")
-				+ "]]></testObjectives>" + "</TestStory>";
-		sourceStr = XMLManager.docToString(XMLManager.stringToDom(sourceStr));
-
-		return XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
 	}
 
 	private String genCoverPage(TestPlan tp) throws IOException {
@@ -299,14 +395,14 @@ public class ExportUtil {
 		ZipOutputStream out = new ZipOutputStream(outputStream);
 
 		this.generateTestPlanSummary(out, tp, testStoryConfigurationService);
-		this.generateTestPlanRB(out, tp);
+		this.generateTestPlanRB(out, tp, testStoryConfigurationService);
 
 		out.close();
 		bytes = outputStream.toByteArray();
 		return new ByteArrayInputStream(bytes);
 	}
 	
-	private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path) throws Exception{
+	private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception{
 		String groupPath = "";
 		if(path == null){
 			groupPath = "TestGroup_" + group.getPosition();
@@ -315,16 +411,35 @@ public class ExportUtil {
 		}
 		this.generateTestGroupJsonRB(out, group, groupPath);
 		
+		String testStoryConfigId = null;
+		if(group.getTestStoryConfigId() != null) {
+			testStoryConfigId = group.getTestStoryConfigId();
+		}else{
+			testStoryConfigId = tp.getGlobalTestGroupConfigId();
+		}
+		
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		
+		this.generateTestStoryRB(out, group.getTestStoryContent(), testStoryConfiguration, groupPath, tp, "ng-tab-html");
+		this.generateTestStoryRB(out, group.getTestStoryContent(), testStoryConfiguration, groupPath, tp, "plain");
+		
 		for(TestCaseOrGroup child : group.getChildren()){
 			if(child instanceof TestCaseGroup){
-				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, groupPath);
+				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, groupPath, tp, testStoryConfigurationService);
 			}else if(child instanceof TestCase){
-				generateTestPlanRBTestCase(out, (TestCase) child, groupPath);
+				generateTestPlanRBTestCase(out, (TestCase) child, groupPath, tp, testStoryConfigurationService);
 			}
 		}
 	}
 
-	private void generateTestPlanRBTestCase(ZipOutputStream out, TestCase tc, String path) throws Exception {
+	private void generateTestPlanRBTestCase(ZipOutputStream out, TestCase tc, String path, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		String tcPath = "";
 		if(path == null){
 			tcPath = "TestCase_" + tc.getPosition();
@@ -332,38 +447,100 @@ public class ExportUtil {
 			tcPath = path + File.separator + "TestCase_" + tc.getPosition();
 		}
 		this.generateTestCaseJsonRB(out, tc, tcPath);
-//		this.generateTestStoryRB(out, tc, tcPath);
+		
+		String testStoryConfigId = null;
+		if(tc.getTestStoryConfigId() != null) {
+			testStoryConfigId = tc.getTestStoryConfigId();
+		}else{
+			testStoryConfigId = tp.getGlobalTestCaseConfigId();
+		}
+		
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		
+		this.generateTestStoryRB(out, tc.getTestStoryContent(), testStoryConfiguration, tcPath, tp, "ng-tab-html");
+		this.generateTestStoryRB(out, tc.getTestStoryContent(), testStoryConfiguration, tcPath, tp, "plain");
 		
 		for(TestStep child : tc.getTeststeps()){
-			generateTestPlanRBTestStep(out, child, tcPath);
+			generateTestPlanRBTestStep(out, child, tcPath, tp, testStoryConfigurationService);
 		}
 	}
 
-	private void generateTestPlanRBTestStep(ZipOutputStream out, TestStep ts, String path) throws Exception {
+	private void generateTestPlanRBTestStep(ZipOutputStream out, TestStep ts, String path, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		String stepPath = path + File.separator + "TestStep_" + ts.getPosition();
-//		this.generateTestStoryRB(out, ts.getTestStepStory(), stepPath);
+		
+		String testStoryConfigId = null;
+		if(ts.getTestStoryConfigId() != null) {
+			testStoryConfigId = ts.getTestStoryConfigId();
+		}else{
+			if(ts.isManualTS()){
+				testStoryConfigId = tp.getGlobalManualTestStepConfigId();
+			}else{
+				testStoryConfigId = tp.getGlobalAutoTestStepConfigId();
+			}
+		}
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		
+		
+		this.generateTestStoryRB(out, ts.getTestStoryContent(), testStoryConfiguration, stepPath, tp, "ng-tab-html");
+		this.generateTestStoryRB(out, ts.getTestStoryContent(), testStoryConfiguration, stepPath, tp, "plain");
+		
 		this.generateTestStepJsonRB(out, ts, stepPath);
 
 		if (ts.getConformanceProfileId() != null && !ts.getConformanceProfileId().equals("")) {
 			this.generateEr7Message(out, ts.getEr7Message(), stepPath);
-			this.generateMessageContent(out, ts.getMessageContentsXMLCode(), stepPath);
+			this.generateMessageContent(out, ts.getMessageContentsXMLCode(), stepPath, "ng-tab-html");
+			this.generateMessageContent(out, ts.getMessageContentsXMLCode(), stepPath, "plain");
 			this.generateConstraintsXML(out, ts.getConstraintsXML(), stepPath);
 
 			if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
 				if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
-					this.generateTestDataSpecification(out, ts, stepPath);
+					this.generateTestDataSpecification(out, ts, stepPath, "ng-tab-html");
+					this.generateTestDataSpecification(out, ts, stepPath, "plain");
 				}
 
 				if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
-					this.generateJurorDocument(out, ts, stepPath);
+					this.generateJurorDocument(out, ts, stepPath, "ng-tab-html");
+					this.generateJurorDocument(out, ts, stepPath, "plain");
 				}
 			}
 		}
 		
 	}
 
-	private void generateTestPlanRB(ZipOutputStream out, TestPlan tp) throws Exception {
+	private void generateTestPlanRB(ZipOutputStream out, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		this.generateTestPlanJsonRB(out, tp);
+		
+		String testStoryConfigId = null;
+		if(tp.getTestStoryConfigId() != null) {
+			testStoryConfigId = tp.getTestStoryConfigId();
+		}
+		
+		TestStoryConfiguration testStoryConfiguration = null;
+		if(testStoryConfigId != null){
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+		
+		if(testStoryConfiguration == null){
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+		}
+		this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, null, tp, "ng-tab-html");
+		this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, null, tp, "plain");
+		
+		
 		HashMap<Integer, TestCaseOrGroup> testPlanMap = new HashMap<Integer, TestCaseOrGroup>();
 		for (TestCaseOrGroup tcog : tp.getChildren()) {
 			testPlanMap.put(tcog.getPosition(), tcog);
@@ -372,20 +549,28 @@ public class ExportUtil {
 		for (int i = 0; i < testPlanMap.keySet().size(); i++) {
 			Object child = testPlanMap.get(i + 1);
 			if (child instanceof TestCaseGroup) {
-				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, null);
+				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, null, tp, testStoryConfigurationService);
 			} else if (child instanceof TestCase) {
-				generateTestPlanRBTestCase(out, (TestCase) child, null);
+				generateTestPlanRBTestCase(out, (TestCase) child, null, tp, testStoryConfigurationService);
 			}
 		}
 	}
 
-	private void generateJurorDocument(ZipOutputStream out, TestStep ts, String teststepPath) throws IOException {
+	private void generateJurorDocument(ZipOutputStream out, TestStep ts, String teststepPath, String option) throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		InputStream is = classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl");
+		String mcXSL = null;
 		if(is != null){
 			byte[] buf = new byte[1024];
-			out.putNextEntry(new ZipEntry(teststepPath + File.separator + "JurorDocument.html"));
-			String mcXSL = IOUtils.toString(is);
+			
+			if(option.equals("ng-tab-html")){
+				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "JurorDocument.html"));
+				mcXSL = IOUtils.toString(is);
+			}else {
+				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "JurorDocumentPDF.html"));
+				mcXSL = IOUtils.toString(is).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>","<xsl:param name=\"output\" select=\"'plain-html'\"/>");
+			}
+
 			InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
 			InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
 			Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
@@ -404,14 +589,23 @@ public class ExportUtil {
 		}
 	}
 
-	private void generateTestDataSpecification(ZipOutputStream out, TestStep ts, String teststepPath)
+	private void generateTestDataSpecification(ZipOutputStream out, TestStep ts, String teststepPath, String option)
 			throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		InputStream is = classLoader.getResourceAsStream("xsl" + File.separator + ts.getTdsXSL() + ".xsl");
+		String mcXSL = null;
 		if(is != null){
 			byte[] buf = new byte[1024];
-			out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestDataSpecification.html"));
-			String mcXSL = IOUtils.toString(is);
+			
+			if(option.equals("ng-tab-html")){
+				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "MessageContent.html"));
+				mcXSL = IOUtils.toString(is);
+			}else {
+				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "MessageContentPDF.html"));
+				mcXSL = IOUtils.toString(is).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>","<xsl:param name=\"output\" select=\"'plain-html'\"/>");
+			}
+			
+			
 			InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
 			InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
 			Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
@@ -444,15 +638,21 @@ public class ExportUtil {
 		inTP.close();
 	}
 
-	private void generateMessageContent(ZipOutputStream out, String messageContentsXMLCode, String teststepPath)
+	private void generateMessageContent(ZipOutputStream out, String messageContentsXMLCode, String teststepPath, String option)
 			throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		byte[] buf = new byte[1024];
-		out.putNextEntry(new ZipEntry(teststepPath + File.separator + "MessageContent.html"));
-		String mcXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"))
-				.replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
-						"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
-		;
+		String mcXSL = null;
+		if(option.equals("ng-tab-html")){
+			out.putNextEntry(new ZipEntry(teststepPath + File.separator + "MessageContent.html"));
+			mcXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"));
+		}else {
+			out.putNextEntry(new ZipEntry(teststepPath + File.separator + "MessageContentPDF.html"));
+			mcXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"))
+					.replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
+							"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
+		}
+		
 		InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
 		InputStream sourceInputStream = new ByteArrayInputStream(messageContentsXMLCode.getBytes());
 		Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
@@ -468,6 +668,7 @@ public class ExportUtil {
 		}
 		out.closeEntry();
 		inTP.close();
+		
 	}
 
 	private void generateEr7Message(ZipOutputStream out, String er7Message, String teststepPath) throws IOException {
@@ -513,12 +714,23 @@ public class ExportUtil {
 
 	}
 
-	private void generateTestStoryRB(ZipOutputStream out, TestStory testStory, String path) throws Exception {
+	private void generateTestStoryRB(ZipOutputStream out, HashMap<String,String> testStoryContent, TestStoryConfiguration testStoryConfiguration, String path, TestPlan tp, String option) throws Exception {
 		byte[] buf = new byte[1024];
-		out.putNextEntry(new ZipEntry(path + File.separator + "TestStory.html"));
+		if(path == null){
+			if(option.equals("ng-tab-html")){
+				out.putNextEntry(new ZipEntry("TestStory.html"));
+			}else{
+				out.putNextEntry(new ZipEntry("TestStoryPDF.html"));	
+			}
+		}else {
+			if(option.equals("ng-tab-html")){
+				out.putNextEntry(new ZipEntry(path + File.separator + "TestStory.html"));	
+			}else{
+				out.putNextEntry(new ZipEntry(path + File.separator + "TestStoryPDF.html"));	
+			}
+		}
 
-		//TODO need to check
-		String testStoryStr = this.generateTestStory(testStory, "plain");
+		String testStoryStr = this.generateTestStory(testStoryContent, testStoryConfiguration, option, tp);
 		InputStream inTestStory = IOUtils.toInputStream(testStoryStr, "UTF-8");
 		int lenTestStory;
 		while ((lenTestStory = inTestStory.read(buf)) > 0) {
@@ -617,7 +829,11 @@ public class ExportUtil {
 				String title = tse.getTitle();
 				String content = group.getTestStoryContent().get(tse.getId());
 				
-				summaryContent = summaryContent + "<br/>" + "<p>" + title + ": </p>" + content;
+				if(tp.isEmptyStoryContentIgnored()){
+					if(content != null && !"".equals(content)) summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+				}else {
+					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+				}
 			}
 		}
 		
@@ -656,12 +872,14 @@ public class ExportUtil {
 		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
 
 		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
+		
 		String testStoryConfigId = null;
 		if(tc.getTestStoryConfigId() != null) {
 			testStoryConfigId = tc.getTestStoryConfigId();
 		}else{
 			testStoryConfigId = tp.getGlobalTestCaseConfigId();
 		}
+		
 		TestStoryConfiguration testStoryConfiguration = null;
 		if(testStoryConfigId != null){
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
@@ -670,6 +888,7 @@ public class ExportUtil {
 		if(testStoryConfiguration == null){
 			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
 		}
+		
 		HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
 		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
 			testStroyEntryMap.put(tse.getPosition(), tse);
@@ -684,7 +903,11 @@ public class ExportUtil {
 				String title = tse.getTitle();
 				String content = tc.getTestStoryContent().get(tse.getId());
 				
-				summaryContent = summaryContent + "<br/>" + "<p>" + title + ": </p>" + content;
+				if(tp.isEmptyStoryContentIgnored()){
+					if(content != null && !"".equals(content)) summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+				}else {
+					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+				}
 			}
 		}
 		
@@ -749,7 +972,11 @@ public class ExportUtil {
 				String title = tse.getTitle();
 				String content = ts.getTestStoryContent().get(tse.getId());
 				
-				summaryContent = summaryContent + "<br/>" + "<p>" + title + ": </p>" + content;
+				if(tp.isEmptyStoryContentIgnored()){
+					if(content != null && !"".equals(content)) summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+				}else {
+					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+				}
 			}
 		}
 		
@@ -800,8 +1027,11 @@ public class ExportUtil {
 			if(tse.isSummaryEntry()){
 				String title = tse.getTitle();
 				String content = tp.getTestStoryContent().get(tse.getId());
-				
-				summaryContent = summaryContent + "<br/>" + "<p>" + title + ": </p>" + content;
+				if(tp.isEmptyStoryContentIgnored()){
+					if(content != null && !"".equals(content)) summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+				}else {
+					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+				}
 			}
 		}
 		
@@ -852,7 +1082,7 @@ public class ExportUtil {
 	private void generateProfileXML(ZipOutputStream out, String id) throws IOException {
 		IGAMTDBConn con = new IGAMTDBConn();
 		IGDocument igDocument = con.findIGDocument(id);
-		Profile tcamtProfile = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), id);
+		Profile tcamtProfile = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), id, igDocument.getDateUpdated());
 		//NEED to check for uploaded Profile
 		
 		String profileXML = this.serializeProfileToDoc(tcamtProfile, igDocument).toXML();
