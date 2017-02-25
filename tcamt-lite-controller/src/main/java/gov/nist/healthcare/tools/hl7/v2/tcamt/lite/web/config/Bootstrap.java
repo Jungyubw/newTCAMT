@@ -19,10 +19,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStoryConfiguration;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStroyEntry;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
 
 @Service
 public class Bootstrap implements InitializingBean {
@@ -35,6 +38,9 @@ public class Bootstrap implements InitializingBean {
 	@Autowired
 	ProfileService profileService;
 	
+	@Autowired
+	TestStoryConfigurationService testStoryConfigurationService;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -44,6 +50,7 @@ public class Bootstrap implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		updateTCAMTProfiles();
+		updateDefaultConfig();
 	}
 
 	public Logger getLogger() {
@@ -64,5 +71,16 @@ public class Bootstrap implements InitializingBean {
 				
 			}
 		}
+	}
+	
+	private void updateDefaultConfig() {
+		TestStoryConfiguration testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);
+		
+		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+			if(tse.getId().equals("Description") || tse.getId().equals("Test Objectives")){
+				tse.setSummaryEntry(true);
+			}	
+		}
+		testStoryConfigurationService.save(testStoryConfiguration);
 	}
 }
