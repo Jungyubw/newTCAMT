@@ -1,10 +1,10 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 
@@ -15,24 +15,22 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 	 */
 	private static final long serialVersionUID = 8586117174000506245L;
 
-	private HashMap<String,String> testStoryContent=new HashMap<String, String>();
+	private HashMap<String, String> testStoryContent = new HashMap<String, String>();
 
 	public TestCase() {
 		super();
 		this.type = "testcase";
 	}
 
+	private List<TestStep> teststeps = new ArrayList<TestStep>();
 
-	private Set<TestStep> teststeps = new HashSet<TestStep>();
-	
 	private String protocol;
 
-	
-	public Set<TestStep> getTeststeps() {
+	public List<TestStep> getTeststeps() {
 		return teststeps;
 	}
 
-	public void setTeststeps(Set<TestStep> teststeps) {
+	public void setTeststeps(List<TestStep> teststeps) {
 		this.teststeps = teststeps;
 	}
 
@@ -45,7 +43,7 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 		TestCase cloned = (TestCase) super.clone();
 		cloned.setId(ObjectId.get().toString());
 
-		Set<TestStep> cTeststeps = new HashSet<TestStep>();
+		List<TestStep> cTeststeps = new ArrayList<TestStep>();
 		for (TestStep teststep : this.teststeps) {
 			cTeststeps.add(teststep.clone());
 		}
@@ -63,13 +61,12 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 		return testCasePositionComparator;
 	}
 
-	public static void setTestCasePositionComparator(
-			Comparator<TestCase> testCasePositionComparator) {
+	public static void setTestCasePositionComparator(Comparator<TestCase> testCasePositionComparator) {
 		TestCase.testCasePositionComparator = testCasePositionComparator;
 	}
 
 	public String getProtocol() {
-		if(this.protocol == null || this.protocol.equals("")){
+		if (this.protocol == null || this.protocol.equals("")) {
 			this.protocol = "soap";
 		}
 		return protocol;
@@ -79,15 +76,13 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 		this.protocol = protocol;
 	}
 
-
-	public HashMap<String,String> getTestStoryContent() {
+	public HashMap<String, String> getTestStoryContent() {
 		return testStoryContent;
 	}
 
-	public void setTestStoryContent(HashMap<String,String> testStoryContent) {
+	public void setTestStoryContent(HashMap<String, String> testStoryContent) {
 		this.testStoryContent = testStoryContent;
 	}
-
 
 	public static Comparator<TestCase> testCasePositionComparator = new Comparator<TestCase>() {
 		public int compare(TestCase tc1, TestCase tc2) {

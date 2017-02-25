@@ -45,6 +45,20 @@
                     </div>
                 </li>
             </ol>
+
+
+            <div ui-tree-handle>
+                     <i data-nodrag ng-click="switcherEr7(Er7Collapsed)" class="fa" ng-class="{'fa-caret-right': Er7Collapsed, 'fa-caret-down': !Er7Collapsed}">
+					</i>   Segment Line Templates
+            </div>
+            <ol ui-tree-nodes="" ng-model="template.er7segmentTemplates" data-nodrag>
+                <li ng-repeat="er7Tmp in template.er7segmentTemplates" ui-tree-node data-nodrag>
+                    <div ui-tree-handle ng-click="Activate(this);OpenEr7SegmentTemplatesMetadata(er7Tmp)" ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[er7Tmp.id]}">
+                        <span context-menu="Er7SegmentOptions" ng-if="selectedTestStep"><span class="label label-success label-icon">SL</span>{{er7Tmp.name}}</span>
+                        <span ng-if="!selectedTestStep"><span class=" label label-success label-icon">SL</span>{{er7Tmp.name}}</span>
+                    </div>
+                </li>
+            </ol>
         </li>
     </ol>
 </div>
@@ -218,6 +232,47 @@
 
     <div class="col-md-12">
         <ui-codemirror disabled ui-codemirror-opts="editorOptions" ng-model="er7Template.er7Message"></ui-codemirror>
+    </div>
+</script>
+
+<script type="text/ng-template" id="Er7SegmentTemplateMetadata.html">
+    <div class="page-header">
+        <span class="header4">Template Metadata</span>
+    </div>
+    <form name="testplanMetaDataForm" class="form-horizontal" novalidate>
+        <div class="row" style="margin-top:35px">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <md-input-container style="width: 100%;">
+                        <label>Name</label>
+                        <input ng-model="er7SegmentTemplate.name" ng-change="recordChanged(er7SegmentTemplate)" type="text"/>
+                    </md-input-container>
+                </div>
+
+                <div class="col-md-6">
+                    <md-input-container style="width: 100%;">
+                        <label>Description</label>
+                        <input ng-model="er7SegmentTemplate.description" ng-change="recordChanged(er7SegmentTemplate)" type="text"/>
+                    </md-input-container>
+                </div>
+            </div>
+
+ 
+
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <md-input-container style="width: 100%;">
+                        <label>Date</label>
+                        <input ng-model="er7SegmentTemplate.date" disabled type="text"/>
+                    </md-input-container>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="col-md-12">
+    Segment Line    <input style="width:100%" disabled ng-model="er7SegmentTemplate.content"></input>
     </div>
 </script>
 <script type="text/ng-template" id="SegmentTemplateMetadata.html">

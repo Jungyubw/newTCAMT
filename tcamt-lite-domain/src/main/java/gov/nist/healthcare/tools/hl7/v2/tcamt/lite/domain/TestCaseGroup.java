@@ -1,10 +1,10 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 
@@ -22,17 +22,17 @@ public class TestCaseGroup extends TestCaseOrGroup implements Serializable, Clon
 
 	private HashMap<String, String> testStoryContent = new HashMap<String, String>();
 
-	private Set<TestCaseOrGroup> children = new HashSet<TestCaseOrGroup>();
+	private List<TestCaseOrGroup> children = new ArrayList<TestCaseOrGroup>();
 
 	public void addTestCase(TestCaseGroup testCaseOrGroup) {
 		this.children.add(testCaseOrGroup);
 	}
 
-	public Set<TestCaseOrGroup> getChildren() {
+	public List<TestCaseOrGroup> getChildren() {
 		return children;
 	}
 
-	public void setChildren(Set<TestCaseOrGroup> children) {
+	public void setChildren(List<TestCaseOrGroup> children) {
 		this.children = children;
 	}
 
@@ -40,8 +40,7 @@ public class TestCaseGroup extends TestCaseOrGroup implements Serializable, Clon
 	public TestCaseGroup clone() throws CloneNotSupportedException {
 		TestCaseGroup cloned = (TestCaseGroup) super.clone();
 		cloned.setId(ObjectId.get().toString());
-
-		Set<TestCaseOrGroup> cTestcaseOrGroup = new HashSet<TestCaseOrGroup>();
+		List<TestCaseOrGroup> cTestcaseOrGroup = new ArrayList<TestCaseOrGroup>();
 		for (TestCaseOrGroup tcg : this.children) {
 			if (tcg instanceof TestCase) {
 				TestCase tc = (TestCase) tcg;

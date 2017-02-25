@@ -126,6 +126,15 @@ angular.module('tcl').run(function ($httpBackend, $q, $http) {
         var profile = angular.fromJson(request.response);
         return [request.status, profile, {}];
     });
+
+       $httpBackend.whenPOST('api/config').respond(function (method, url, data, headers) {
+        var request = new XMLHttpRequest();
+        request.open('POST', '../../resources/configuration.json', false);
+        request.send(null);
+        var profile = angular.fromJson(request.response);
+        return [request.status, profile, {}];
+    });
+    
     
     $httpBackend.whenGET('api/appInfo').respond(function (method, url, data, headers) {
         var request = new XMLHttpRequest();

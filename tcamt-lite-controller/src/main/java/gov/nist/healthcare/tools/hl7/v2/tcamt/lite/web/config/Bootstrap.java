@@ -34,13 +34,13 @@ public class Bootstrap implements InitializingBean {
 
 	@Autowired
 	TestPlanService testplanService;
-	
+
 	@Autowired
 	ProfileService profileService;
-	
+
 	@Autowired
 	TestStoryConfigurationService testStoryConfigurationService;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -56,30 +56,30 @@ public class Bootstrap implements InitializingBean {
 	public Logger getLogger() {
 		return logger;
 	}
-	
-	private void updateTCAMTProfiles() throws ProfileException{
+
+	private void updateTCAMTProfiles() throws ProfileException {
 		List<Profile> profiles = profileService.findAll();
-		
-		for(Profile p:profiles){
-			if(p.getSourceType() == null || p.getSourceType().isEmpty()){
-				if(p.getAccountId().equals((long)0)){
+
+		for (Profile p : profiles) {
+			if (p.getSourceType() == null || p.getSourceType().isEmpty()) {
+				if (p.getAccountId().equals((long) 0)) {
 					p.setSourceType("public");
-				}else{
+				} else {
 					p.setSourceType("private");
 				}
 				profileService.save(p);
-				
+
 			}
 		}
 	}
-	
+
 	private void updateDefaultConfig() {
-		TestStoryConfiguration testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);
-		
-		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
-			if(tse.getId().equals("Description") || tse.getId().equals("Test Objectives")){
+		TestStoryConfiguration testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
+
+		for (TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()) {
+			if (tse.getId().equals("Description") || tse.getId().equals("Test Objectives")) {
 				tse.setSummaryEntry(true);
-			}	
+			}
 		}
 		testStoryConfigurationService.save(testStoryConfiguration);
 	}
