@@ -2,13 +2,12 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import org.bson.types.ObjectId;
 
-public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable, Comparable<TestCase> {
+public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -52,19 +51,6 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 		return cloned;
 	}
 
-	public int compareTo(TestCase comparingTestCase) {
-		int comparePosition = comparingTestCase.getPosition();
-		return this.position - comparePosition;
-	}
-
-	public static Comparator<TestCase> getTestCasePositionComparator() {
-		return testCasePositionComparator;
-	}
-
-	public static void setTestCasePositionComparator(Comparator<TestCase> testCasePositionComparator) {
-		TestCase.testCasePositionComparator = testCasePositionComparator;
-	}
-
 	public String getProtocol() {
 		if (this.protocol == null || this.protocol.equals("")) {
 			this.protocol = "soap";
@@ -83,10 +69,5 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 	public void setTestStoryContent(HashMap<String, String> testStoryContent) {
 		this.testStoryContent = testStoryContent;
 	}
-
-	public static Comparator<TestCase> testCasePositionComparator = new Comparator<TestCase>() {
-		public int compare(TestCase tc1, TestCase tc2) {
-			return tc1.compareTo(tc2);
-		}
-	};
+	
 }

@@ -3,9 +3,7 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Id;
 
@@ -37,7 +35,6 @@ public class TestPlan implements Serializable, Cloneable {
 	
 	private String type;
 	private boolean transport;
-	private Integer position;
 	private String domain;
 	private boolean skip;
 	
@@ -194,14 +191,6 @@ public class TestPlan implements Serializable, Cloneable {
 
 	public void setTransport(boolean transport) {
 		this.transport = transport;
-	}
-
-	public Integer getPosition() {
-		return position;
-	}
-
-	public void setPosition(Integer position) {
-		this.position = position;
 	}
 
 	public String getDomain() {

@@ -8,7 +8,7 @@ import javax.persistence.Id;
 
 import org.bson.types.ObjectId;
 
-public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
+public class TestStep implements Serializable, Cloneable {
 
 	/**
 	 * 
@@ -31,8 +31,6 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	private String er7Message;
 
 	private Integer version;
-
-	private int position;
 
 	private String type;
 	
@@ -97,34 +95,12 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 		return cloned;
 	}
 
-	public int getPosition() {
-		return position;
-	}
-
-	public void setPosition(int position) {
-		this.position = position;
-	}
-
-	public int compareTo(TestStep comparingTestStep) {
-		int comparePosition = comparingTestStep.getPosition();
-		return this.position - comparePosition;
-	}
-
 	public String getType() {
 		return type;
 	}
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public static Comparator<TestStep> getTestCasePositionComparator() {
-		return testCasePositionComparator;
-	}
-
-	public static void setTestCasePositionComparator(
-			Comparator<TestStep> testCasePositionComparator) {
-		TestStep.testCasePositionComparator = testCasePositionComparator;
 	}
 
 	public String getDescription() {
@@ -231,12 +207,6 @@ public class TestStep implements Serializable, Cloneable, Comparable<TestStep> {
 	public void setTestStoryConfigId(String testStoryConfigId) {
 		this.testStoryConfigId = testStoryConfigId;
 	}
-
-	public static Comparator<TestStep> testCasePositionComparator = new Comparator<TestStep>() {
-		public int compare(TestStep ts1, TestStep ts2) {
-			return ts1.compareTo(ts2);
-		}
-	};
 
 	public boolean isManualTS() {
 		if(this.conformanceProfileId == null || this.conformanceProfileId.equals("")) return true;
