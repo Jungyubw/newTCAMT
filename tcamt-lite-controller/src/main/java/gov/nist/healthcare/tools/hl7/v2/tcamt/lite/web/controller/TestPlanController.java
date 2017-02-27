@@ -7,7 +7,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +40,12 @@ import gov.nist.healthcare.nht.acmgt.dto.ResponseMessage;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
@@ -308,6 +316,151 @@ public class TestPlanController extends CommonController {
 		ObjectMapper mapper = new ObjectMapper();
 		TestPlan tp = mapper.readValue(tpds.getJsonTestPlanFileStr(), TestPlan.class);
 		tp.setId(ObjectId.get().toString());
+		testPlanService.save(tp);
+	}
+	
+	@RequestMapping(value = "/importOldJSON", method = RequestMethod.POST)
+	public void importOldXMLFiles(@RequestBody TestPlanDataStr tpds) throws Exception {
+		User u = userService.getCurrentUser();
+		Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+		if (account == null) {
+			throw new Exception();
+		}
+		TestPlan tp = new TestPlan();
+		JSONObject obj = new JSONObject(tpds.getJsonTestPlanFileStr());
+		tp.setName((String) obj.get("name"));
+		tp.setAccountId(account.getId());
+		tp.setCoverPageDate((String) obj.get("coverPageDate"));
+		tp.setCoverPageSubTitle((String) obj.get("coverPageSubTitle"));
+		tp.setCoverPageTitle((String) obj.get("coverPageTitle"));
+		tp.setCoverPageVersion((String) obj.get("coverPageVersion"));
+		tp.setDescription((String) obj.get("description"));
+		tp.setDomain("VR");
+		tp.setTransport(true);
+		tp.setType("Isolated");
+		tp.setVersion((int) obj.get("version") + "");
+		
+		
+		JSONArray groups = (JSONArray) obj.get("testcasegroups");
+		
+		for (int i = 0; i < groups.length(); i++) {
+			JSONObject g = groups.getJSONObject(i);
+			
+			TestCaseGroup tcg = new TestCaseGroup();
+			tcg.setDescription((String) g.get("description"));
+			tcg.setName((String) g.get("name"));
+			tcg.setType("testcasegroup");
+			
+			JSONArray testcases = (JSONArray) g.get("testcases");
+			for (int j = 0; j < testcases.length(); j++) {
+				JSONObject c = testcases.getJSONObject(j);
+				
+				TestCase tc = new TestCase();
+				tc.setDescription((String) c.get("description"));
+				tc.setName((String) c.get("name"));
+				tc.setProtocol("soap");
+				JSONObject testCaseStory = (JSONObject) c.get("testCaseStory");
+				HashMap<String, String> testcaseStoryContent = new HashMap<String, String>();
+				testcaseStoryContent.put("Description", (String) testCaseStory.get("teststorydesc"));
+				testcaseStoryContent.put("Comments", (String) testCaseStory.get("comments"));
+				testcaseStoryContent.put("Pre-condition", (String) testCaseStory.get("preCondition"));
+				testcaseStoryContent.put("Post-Condition", (String) testCaseStory.get("postCondition"));
+				testcaseStoryContent.put("Test Objectives", (String) testCaseStory.get("testObjectives"));
+				testcaseStoryContent.put("Evaluation Criteria", (String) testCaseStory.get("evaluationCriteria"));
+				testcaseStoryContent.put("Notes", (String) testCaseStory.get("notes"));
+				tc.setTestStoryContent(testcaseStoryContent);
+				tc.setType("testcase");
+				
+				JSONArray teststeps = (JSONArray) c.get("teststeps");
+				for (int k = 0; k < teststeps.length(); k++) {
+					JSONObject s = teststeps.getJSONObject(k);
+					
+					TestStep ts = new TestStep();
+					ts.setDescription((String) s.get("description"));
+					
+					JSONObject message = (JSONObject) s.get("message");
+					ts.setEr7Message((String) message.get("hl7EndcodedMessage"));
+					ts.setName((String) s.get("name"));
+					
+					HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>();
+
+					JSONArray tcamtConstraints = (JSONArray) message.get("tcamtConstraints");
+					for (int l = 0; l < tcamtConstraints.length(); l++) {
+						JSONObject constraints = tcamtConstraints.getJSONObject(l);
+						
+						String iPath = (String)constraints.get("ipath");
+						String key = iPath.replaceAll("\\.", "-");
+						String cate = (String)constraints.get("categorization");
+						Categorization value = new Categorization();
+						value.setiPath(iPath);
+						
+						if(cate.equals("Indifferent")){
+							value.setTestDataCategorization("Indifferent");
+						}else if(cate.equals("Presence_ContentIndifferent")){
+							value.setTestDataCategorization("Presence-Content Indifferent");
+						}else if(cate.equals("Presence_Configuration")){
+							value.setTestDataCategorization("Presence-Configuration");
+						}else if(cate.equals("Presence_SystemGenerated")){
+							value.setTestDataCategorization("Presence-System Generated");
+						}else if(cate.equals("Presence_TestCaseProper")){
+							value.setTestDataCategorization("Presence-Test Case Proper");
+						}else if(cate.equals("PresenceLength_ContentIndifferent")){
+							value.setTestDataCategorization("Presence Length-Content Indifferent");
+						}else if(cate.equals("PresenceLength_Configuration")){
+							value.setTestDataCategorization("Presence Length-Configuration");
+						}else if(cate.equals("PresenceLength_SystemGenerated")){
+							value.setTestDataCategorization("Presence Length-System Generated");
+						}else if(cate.equals("PresenceLength_TestCaseProper")){
+							value.setTestDataCategorization("Presence Length-Test Case Proper");
+						}else if(cate.equals("Value_TestCaseFixed")){
+							value.setTestDataCategorization("Value-Test Case Fixed");
+						}else if(cate.equals("Value_TestCaseFixedList")){
+							value.setTestDataCategorization("Value-Test Case Fixed List");
+							List<String> listData = new ArrayList<String>();
+							JSONArray listDataJson = (JSONArray) constraints.get("listData");
+							for (int m = 0; m < listDataJson.length(); m++) {
+								listData.add(listDataJson.getString(m));
+							}
+							
+							value.setListData(listData);
+						}else if(cate.equals("NonPresence")){
+							value.setTestDataCategorization("NonPresence");
+						}else if(cate.equals("Value_ProfileFixed")){
+							value.setTestDataCategorization("Value-Profile Fixed");
+						}else if(cate.equals("Value_ProfileFixedList")){
+							value.setTestDataCategorization("Value-Profile Fixed List");
+							List<String> listData = new ArrayList<String>();
+							JSONArray listDataJson = (JSONArray) constraints.get("listData");
+							for (int m = 0; m < listDataJson.length(); m++) {
+								listData.add(listDataJson.getString(m));
+							}
+						}
+						
+						testDataCategorizationMap.put(key, value);
+					}
+					
+					ts.setTestDataCategorizationMap(testDataCategorizationMap);
+					
+					JSONObject testStepStory = (JSONObject) s.get("testStepStory");
+					HashMap<String, String> testStepStoryContent = new HashMap<String, String>();
+					testStepStoryContent.put("Description", (String) testStepStory.get("teststorydesc"));
+					testStepStoryContent.put("Comments", (String) testStepStory.get("comments"));
+					testStepStoryContent.put("Pre-condition", (String) testStepStory.get("preCondition"));
+					testStepStoryContent.put("Post-Condition", (String) testStepStory.get("postCondition"));
+					testStepStoryContent.put("Test Objectives", (String) testStepStory.get("testObjectives"));
+					testStepStoryContent.put("Evaluation Criteria", (String) testStepStory.get("evaluationCriteria"));
+					testStepStoryContent.put("Notes", (String) testStepStory.get("notes"));
+					ts.setTestStoryContent(testStepStoryContent);
+					ts.setType("teststep");
+					tc.addTestStep(ts);
+				}
+				tcg.addTestCaseOrGroup(tc);
+			}
+			
+			tp.addTestCaseGroup(tcg);
+	    }
+		
+
 		testPlanService.save(tp);
 	}
 

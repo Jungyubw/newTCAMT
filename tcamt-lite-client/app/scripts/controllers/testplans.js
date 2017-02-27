@@ -262,6 +262,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.TestPlanImportModalCtrl = function($scope,$mdDialog,$http) {
 		$scope.jsonFilesData = {};
+		$scope.type = 'new';
 		$scope.cancel = function() {
 			$mdDialog.hide();
 		};
@@ -291,9 +292,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			var importTestPlanButton = $("#importTestPlanButton");
 			importTestPlanButton.prop('disabled', true);
 
-			$http.post('api/testplans/importJSON', $scope.jsonFilesData).then(function (response) {
-			}, function () {
-			});
+			if($scope.type == 'new'){
+                $http.post('api/testplans/importJSON', $scope.jsonFilesData).then(function (response) {
+                }, function () {
+                });
+			}else{
+                $http.post('api/testplans/importOldJSON', $scope.jsonFilesData).then(function (response) {
+                }, function () {
+                });
+			}
 
 			$mdDialog.hide();
 		};
@@ -555,15 +562,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $scope.error = null;
             $rootScope.testStoryConfigs = [];
             $scope.loading = true;
-            // $http.get('api/config/').then(function(response) {
-            //     $rootScope.testStoryConfigs = angular.fromJson(response.data);
-            //     $scope.loading = false;
-            //     delay.resolve(true);
-            // }, function(error) {
-            //     $scope.loading = false;
-            //     $scope.error = error.data;
-            //     delay.reject(false);
-            // });
+            $http.get('api/config/').then(function(response) {
+                $rootScope.testStoryConfigs = angular.fromJson(response.data);
+                $scope.loading = false;
+                delay.resolve(true);
+            }, function(error) {
+                $scope.loading = false;
+                $scope.error = error.data;
+                delay.reject(false);
+            });
         }else{
             delay.reject(false);
         }

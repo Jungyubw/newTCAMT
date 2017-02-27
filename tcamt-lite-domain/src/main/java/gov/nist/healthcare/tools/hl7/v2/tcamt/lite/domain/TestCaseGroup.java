@@ -23,7 +23,7 @@ public class TestCaseGroup extends TestCaseOrGroup implements Serializable, Clon
 
 	private List<TestCaseOrGroup> children = new ArrayList<TestCaseOrGroup>();
 
-	public void addTestCase(TestCaseGroup testCaseOrGroup) {
+	public void addTestCaseOrGroup(TestCaseOrGroup testCaseOrGroup) {
 		this.children.add(testCaseOrGroup);
 	}
 

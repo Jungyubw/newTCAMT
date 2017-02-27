@@ -48,6 +48,8 @@ public class TestPlanServiceImpl implements TestPlanService {
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public TestPlan save(TestPlan tp) throws TestPlanException {
 		try {
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			tp.setLastUpdateDate(dateFormat.format(Calendar.getInstance().getTime()));
 			return testplanRepository.save(tp);
 		} catch (MongoException e) {
 			throw new TestPlanException(e);
