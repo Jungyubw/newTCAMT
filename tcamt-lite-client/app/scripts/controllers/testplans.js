@@ -18,11 +18,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	});
 
 	$scope.expanded = false;
+
     $scope.expandAll = function() {
         $scope.expanded = !$scope.expanded;
 
-        $('#segmentTable').treetable('expandAll');
+
+		$('#segmentTable').treetable('expandAll');
+        $timeout( function(){
+            $('#segmentTable').treetable('expandAll');
+        }, 2000 );
     };
+
     $scope.collapseAll = function() {
         $scope.expanded = !$scope.expanded;
         $('#segmentTable').treetable('collapseAll');
@@ -299,15 +305,16 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 			if($scope.type == 'new'){
                 $http.post('api/testplans/importJSON', $scope.jsonFilesData).then(function (response) {
+                    $mdDialog.hide();
                 }, function () {
                 });
 			}else{
                 $http.post('api/testplans/importOldJSON', $scope.jsonFilesData).then(function (response) {
+                    $mdDialog.hide();
                 }, function () {
                 });
 			}
 
-			$mdDialog.hide();
 		};
 
 	};
@@ -977,8 +984,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		modalInstance.result.then(function(option) {
 			console.log(option);
 			if(option=="Apply"){
-				$rootScope.applyMessageTemplate(msgTemp);
-			}else if(option=="Overrite") {
+                $scope.applyMessageTemplate(msgTemp);
+			}else if(option=="Override") {
 				$scope.overwriteMessageTemplate(msgTemp);
 			}
 			$scope.recordChanged();
@@ -999,9 +1006,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				console.log(option)
 		if(option=="Apply"){
 			console.log(option);
-			$rootScope.applySegmentTemplate(temp);
-		}else if(option=="Overrite"){
-			$rootScope.overwriteSegmentTemplate(temp);
+            $scope.applySegmentTemplate(temp);
+		}else if(option=="Override"){
+            $scope.overwriteSegmentTemplate(temp);
 		}		
 		$scope.recordChanged();
 		});
@@ -3442,7 +3449,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.recordChanged();
     };
 
-    $rootScope.applySegmentTemplate = function (template){
+    $scope.applySegmentTemplate = function (template){
 		if($rootScope.selectedTestStep && $rootScope.selectedSegmentNode){
 			for(var i in template.categorizations){
 				var cate = angular.copy(template.categorizations[i]);
@@ -3464,7 +3471,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.recordChanged($rootScope.selectedTestStep);
     };
 
-    $rootScope.applyMessageTemplate = function (template){
+    $scope.applyMessageTemplate = function (template){
 		if($rootScope.selectedTestStep){
 			for(var i in template.categorizations){
 				var cate = template.categorizations[i];
@@ -3487,7 +3494,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.recordChanged($rootScope.selectedTestStep);
     };
 
-	$rootScope.overwriteMessageTemplate = function (template){
+    $scope.overwriteMessageTemplate = function (template){
 		if($rootScope.selectedTestStep){
 			$rootScope.selectedTestStep.testDataCategorizationMap = {};
 			$scope.applyMessageTemplate(template);
@@ -3497,7 +3504,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 
-    $rootScope.overwriteSegmentTemplate = function (template){
+    $scope.overwriteSegmentTemplate = function (template){
 		if($rootScope.selectedTestStep && $rootScope.selectedSegmentNode){
 			var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
 				if(i.includes($rootScope.selectedSegmentNode.segment.iPath.split('.').join('-')))
@@ -3530,71 +3537,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.recordChanged($rootScope.selectedTestStep);
 		Notification.success("Template "+template.name+" Applied")
     };
-	   $scope.overwriteER7SegmentTemplate = function (template){
-		var sameSegments=[];
-		if($rootScope.selectedTestStep){
 
-			var listLineOfMessage = $rootScope.selectedTestStep.er7Message.split("\n");
-			console.log(listLineOfMessage);
-			angular.forEach(listLineOfMessage, function(segment){
-				
-				if($scope.getNameFromSegment(segment) == template.segmentName){
-					sameSegments.push(segment);
-				}
+    $scope.overwriteER7SegmentTemplate = function (template){
+           $rootScope.selectedSegmentNode.segment.segmentStr = template.content;
+           var updatedER7Message = '';
+           for(var i in $rootScope.segmentList){
+               updatedER7Message = updatedER7Message + $rootScope.segmentList[i].segmentStr + '\n';
+           }
+           $rootScope.selectedTestStep.er7Message = updatedER7Message;
+		   $scope.selectSegment($rootScope.selectedSegmentNode.segment);
+		   $scope.recordChanged($rootScope.selectedTestStep);
 
-			});
-
-			if(sameSegments.length>0){ 
-
-				var segmentToModify=sameSegments[$scope.getInstancePosition($rootScope.selectedSegmentNode.segment.iPath)-1];
-
-
-			}else{
-				Notification.error(template.iPath+"Not Found");
-				return 0;
-			}
-			var generalIndex=0;
-		
-			var indexToModify =$scope.getInstancePosition($rootScope.selectedSegmentNode.segment.iPath);
-			console.log(indexToModify);
-			var x=0;
-			for(i=0 ; i<listLineOfMessage.length; i++){
-				if($scope.getNameFromSegment(listLineOfMessage[i]) == template.segmentName){
-					console.log(x);
-					x=x+1;
-					if(x==indexToModify){
-					
-							listLineOfMessage[i]=template.content;
-							generalIndex=i;
-					}
-				}
-			}
-
-			console.log("general Index");
-			console.log(x);
-			console.log(generalIndex);
-			console.log(generalIndex);
-			// var index = listLineOfMessage.indexOf(segmentToModify);
-			//  if (index > -1) {
-			// listLineOfMessage[index]=template.content;
-			
-			//  }
-			// console.log($rootScope.selectedSegmentNode.segment);
-
-			 $rootScope.selectedTestStep.er7Message=listLineOfMessage.join('\n');
-			 
-
-				var index=$scope.getInstancePosition($rootScope.selectedSegmentNode.segment.iPath)-1;
-				$scope.updateEr7Message();
-				if($scope.selectSegment($rootScope.segmentList[generalIndex])){
-					$scope.selectSegment($rootScope.segmentList[generalIndex]);
-					$scope.refreshTree();
-				}
-			
-		}
-
-		$scope.initHL7EncodedMessageTab();
-		$scope.recordChanged($rootScope.selectedTestStep);
     };
 	$scope.getNameFromSegment=function(segment){
 

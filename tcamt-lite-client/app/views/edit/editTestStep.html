@@ -240,9 +240,9 @@ body {
 													<button type="button" class="btn btn-info btn-sm" ng-click="openCreateSegmentTemplateModal()"><i class="fa fa-plus"></i>
                         								New TestData Categorization Template For Segment
                     								</button>
-													<!--<button type="button" class="btn btn-info btn-sm" ng-click="openCreateEr7SegmentTemplateModal()"><i class="fa fa-plus"></i>
+													<button type="button" class="btn btn-info btn-sm" ng-click="openCreateEr7SegmentTemplateModal()"><i class="fa fa-plus"></i>
                         								New Segment Line Template
-                    								</button>-->
+                    								</button>
 												</span>
 
 												<span class="pull-right">
@@ -270,7 +270,7 @@ body {
 											<div class="col-md-12">
 										<div layout="row" layout-align="center center">
 										<div class="btn-group btn-group-sm" data-toggle="buttons">
-    										<label class="btn btn-primary btn-xs" onclick="jQuery('#segmentTable').treetable('expandAll');" ng-class="{'active':expanded}">
+    										<label class="btn btn-primary btn-xs" ng-click="expandAll()" ng-class="{'active':expanded}">
 												Expand All
 											</label>
 											<label class="btn btn-primary btn-xs" ng-click="collapseAll()" ng-class="{'active':!expanded}">
@@ -1033,61 +1033,62 @@ body {
             <!-- ngIf: appInfo.validationResultInfo == null -->
 
 </script>
+
 <script type="text/ng-template" id="reportResult.html">
-				<div>
-				<div class="modal-header ng-scope">
-               		 <span style="font-weight: bold; font-size: 20px">
-                    Validation Report
-               		 </span>
-               	 	<span class="pull-right">
-                     <button class="btn btn-xs btn-primary" ng-click="close()"><i class="fa fa-times"></i>Close</button>
-                	</span>
-   				</div>
-   				 <br/>
-				<div style="padding: center; max-height: 500px;	margin-left: 10px; overflow-y: scroll;">
-					<ng-bind-html ng-bind-html="report"/>
-				</div>
-				</div>
-			
+	<div>
+		<div class="modal-header ng-scope">
+			<span style="font-weight: bold; font-size: 20px">Validation Report</span>
+			<span class="pull-right">
+				<button class="btn btn-xs btn-primary" ng-click="close()"><i class="fa fa-times"></i>Close</button>
+			</span>
+		</div>
+		<br/>
+		<div style="padding: center; max-height: 500px;	margin-left: 10px; overflow-y: scroll;">
+			<ng-bind-html ng-bind-html="report"/>
+		</div>
+	</div>
 </script>
+
 <script type="text/ng-template" id="OpenApplySegmentTemplate.html">
-
 	<div class="modal-header">
 		<h3 class="modal-title">Apply Template</h3>
 	</div>
 	<div class="modal-body">
-	<form style="width:100%">
-    <select class="form-control" ng-model="option">
-      <option value="apply">Apply</option>
-      <option value="Overrite">Overite</option>
-    </select>
-	</form>
-
-</div>
+		<form style="width:100%">
+    		<select class="form-control" ng-model="option">
+				<option value="Apply">Apply: If template's Data Categorization is empty, use existing Data Categorization.</option>
+      			<option value="Override">Override: If template's Data Categorization is empty, make Data Categorization empty.</option>
+			</select>
+		</form>
+	</div>
 	<div class="modal-footer">
-		<button class="btn btn-default btn-sm" ng-click="cancel()"><span><i class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
+		<button class="btn btn-default btn-sm" ng-click="cancel()">
+			<span><i class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
 		</button>
-		<button class="btn btn-info btn-sm" ng-click="apply()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Apply</span>
+		<button class="btn btn-info btn-sm" ng-click="apply()">
+			<span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Apply</span>
 		</button>
 	</div>
 </script>
-<script type="text/ng-template" id="OpenApplyMessageTemplate.html">
 
+<script type="text/ng-template" id="OpenApplyMessageTemplate.html">
 	<div class="modal-header">
 		<h3 class="modal-title">Apply Template</h3>
 	</div>
 	<div class="modal-body">
-	<form style="width:100%">
-    <select class="form-control" ng-model="option">
-      <option value="Apply">Apply</option>
-      <option value="Overrite">Overite</option>
-    </select>
-	</form>
-</div>
+		<form style="width:100%">
+			<select class="form-control" ng-model="option">
+      			<option value="Apply">Apply: If template's Data Categorization is empty, use existing Data Categorization.</option>
+      			<option value="Override">Override: If template's Data Categorization is empty, make Data Categorization empty.</option>
+    		</select>
+		</form>
+	</div>
 	<div class="modal-footer">
-		<button class="btn btn-default btn-sm" ng-click="cancel()"><span><i class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
+		<button class="btn btn-default btn-sm" ng-click="cancel()">
+			<span><i class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
 		</button>
-		<button class="btn btn-info btn-sm" ng-click="apply()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Apply</span>
+		<button class="btn btn-info btn-sm" ng-click="apply()">
+			<span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Apply</span>
 		</button>
 	</div>
 </script>
