@@ -83,13 +83,8 @@ public class ExportUtil {
 		packageBodyHTML = packageBodyHTML + "<span>" + group.getDescription() + "</span>" + System.getProperty("line.separator");
 		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
 		
-		HashMap<Integer, TestCaseOrGroup> TestCaseOrGroupMap = new HashMap<Integer, TestCaseOrGroup>();
-		for (TestCaseOrGroup tcog : group.getChildren()) {
-			TestCaseOrGroupMap.put(tcog.getPosition(), tcog);
-		}
-		
-		for (int i = 0; i < TestCaseOrGroupMap.keySet().size(); i++) {
-			TestCaseOrGroup child = TestCaseOrGroupMap.get(i + 1);
+		for (int i = 0; i < group.getChildren().size(); i++) {
+			TestCaseOrGroup child = group.getChildren().get(i);
 			if (child instanceof TestCaseGroup) {
 				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup)child, packageBodyHTML, index + "." + (i + 1));
 			}else if (child instanceof TestCase) {
@@ -109,14 +104,9 @@ public class ExportUtil {
 		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>" + System.getProperty("line.separator");
 //		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(tc.getTestCaseStory(), "plain"));
 		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
-		
-		HashMap<Integer, TestStep> testStepMap = new HashMap<Integer, TestStep>();
-		for (TestStep ts : tc.getTeststeps()) {
-			testStepMap.put(ts.getPosition(), ts);
-		}
-		
-		for (int i = 0; i < testStepMap.keySet().size(); i++) {
-			TestStep child = testStepMap.get(i + 1);
+
+		for (int i = 0; i < tc.getTeststeps().size(); i++) {
+			TestStep child = tc.getTeststeps().get(i);
 			packageBodyHTML = genPackagePagesForTestStep(tp, child, packageBodyHTML, index + "." + (i + 1));
 		}
 		
@@ -193,13 +183,8 @@ public class ExportUtil {
 		packageBodyHTML = packageBodyHTML + tp.getDescription() + System.getProperty("line.separator");
 		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
 
-		HashMap<Integer, TestCaseOrGroup> testPlanMap = new HashMap<Integer, TestCaseOrGroup>();
-		for (TestCaseOrGroup tcog : tp.getChildren()) {
-			testPlanMap.put(tcog.getPosition(), tcog);
-		}
-
-		for (int i = 0; i < testPlanMap.keySet().size(); i++) {
-			TestCaseOrGroup child = testPlanMap.get(i + 1);
+		for (int i = 0; i < tp.getChildren().size(); i++) {
+			TestCaseOrGroup child = tp.getChildren().get(i);
 			if (child instanceof TestCaseGroup) {
 				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup)child, packageBodyHTML, "" + (i + 1));
 			} else if (child instanceof TestCase) {
@@ -306,43 +291,46 @@ public class ExportUtil {
 		return new ByteArrayInputStream(bytes);
 	}
 	
-	private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path) throws Exception{
+	private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path, int index) throws Exception{
 		String groupPath = "";
 		if(path == null){
-			groupPath = "TestGroup_" + group.getPosition();
+			groupPath = "TestGroup_" + index;
 		}else {
-			groupPath = path + File.separator + "TestGroup_" + group.getPosition();
+			groupPath = path + File.separator + "TestGroup_" + index;
 		}
-		this.generateTestGroupJsonRB(out, group, groupPath);
+		this.generateTestGroupJsonRB(out, group, groupPath, index);
 		
-		for(TestCaseOrGroup child : group.getChildren()){
+		for(int i=0; i< group.getChildren().size(); i++){
+			TestCaseOrGroup child = group.getChildren().get(i);
+			
+			
 			if(child instanceof TestCaseGroup){
-				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, groupPath);
+				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, groupPath, i + 1);
 			}else if(child instanceof TestCase){
-				generateTestPlanRBTestCase(out, (TestCase) child, groupPath);
+				generateTestPlanRBTestCase(out, (TestCase) child, groupPath, i + 1);
 			}
 		}
 	}
 
-	private void generateTestPlanRBTestCase(ZipOutputStream out, TestCase tc, String path) throws Exception {
+	private void generateTestPlanRBTestCase(ZipOutputStream out, TestCase tc, String path, int index) throws Exception {
 		String tcPath = "";
 		if(path == null){
-			tcPath = "TestCase_" + tc.getPosition();
+			tcPath = "TestCase_" + index;
 		}else {
-			tcPath = path + File.separator + "TestCase_" + tc.getPosition();
+			tcPath = path + File.separator + "TestCase_" + index;
 		}
-		this.generateTestCaseJsonRB(out, tc, tcPath);
+		this.generateTestCaseJsonRB(out, tc, tcPath, index);
 //		this.generateTestStoryRB(out, tc, tcPath);
 		
 		for(TestStep child : tc.getTeststeps()){
-			generateTestPlanRBTestStep(out, child, tcPath);
+			generateTestPlanRBTestStep(out, child, tcPath, index);
 		}
 	}
 
-	private void generateTestPlanRBTestStep(ZipOutputStream out, TestStep ts, String path) throws Exception {
-		String stepPath = path + File.separator + "TestStep_" + ts.getPosition();
+	private void generateTestPlanRBTestStep(ZipOutputStream out, TestStep ts, String path, int index) throws Exception {
+		String stepPath = path + File.separator + "TestStep_" + index;
 //		this.generateTestStoryRB(out, ts.getTestStepStory(), stepPath);
-		this.generateTestStepJsonRB(out, ts, stepPath);
+		this.generateTestStepJsonRB(out, ts, stepPath, index);
 
 		if (ts.getConformanceProfileId() != null && !ts.getConformanceProfileId().equals("")) {
 			this.generateEr7Message(out, ts.getEr7Message(), stepPath);
@@ -363,18 +351,14 @@ public class ExportUtil {
 	}
 
 	private void generateTestPlanRB(ZipOutputStream out, TestPlan tp) throws Exception {
-		this.generateTestPlanJsonRB(out, tp);
-		HashMap<Integer, TestCaseOrGroup> testPlanMap = new HashMap<Integer, TestCaseOrGroup>();
-		for (TestCaseOrGroup tcog : tp.getChildren()) {
-			testPlanMap.put(tcog.getPosition(), tcog);
-		}
+		this.generateTestPlanJsonRB(out, tp, 1); // need to check
 
-		for (int i = 0; i < testPlanMap.keySet().size(); i++) {
-			Object child = testPlanMap.get(i + 1);
+		for (int i = 0; i < tp.getChildren().size(); i++) {
+			Object child = tp.getChildren().get(i);
 			if (child instanceof TestCaseGroup) {
-				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, null);
+				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, null, i+1);
 			} else if (child instanceof TestCase) {
-				generateTestPlanRBTestCase(out, (TestCase) child, null);
+				generateTestPlanRBTestCase(out, (TestCase) child, null, i+1);
 			}
 		}
 	}
@@ -485,7 +469,7 @@ public class ExportUtil {
 
 	}
 
-	private void generateTestStepJsonRB(ZipOutputStream out, TestStep ts, String teststepPath) throws IOException {
+	private void generateTestStepJsonRB(ZipOutputStream out, TestStep ts, String teststepPath, int index) throws IOException {
 		byte[] buf = new byte[1024];
 		out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestStep.json"));
 
@@ -495,7 +479,7 @@ public class ExportUtil {
 		obj.put("name", ts.getName());
 		obj.put("description", ts.getDescription());
 		obj.put("type", ts.getType());
-		obj.put("position", ts.getPosition());
+		obj.put("position", index);
 
 		JSONObject hl7v2Obj = new JSONObject();
 		hl7v2Obj.put("messageId", ts.getConformanceProfileId());
@@ -528,14 +512,14 @@ public class ExportUtil {
 		out.closeEntry();
 	}
 
-	private void generateTestCaseJsonRB(ZipOutputStream out, TestCase tc, String testcasePath) throws IOException {
+	private void generateTestCaseJsonRB(ZipOutputStream out, TestCase tc, String testcasePath, int index) throws IOException {
 		byte[] buf = new byte[1024];
 		out.putNextEntry(new ZipEntry(testcasePath + File.separator + "TestCase.json"));
 
 		JSONObject obj = new JSONObject();
 		obj.put("name", tc.getName());
 		obj.put("description", tc.getDescription());
-		obj.put("position", tc.getPosition());
+		obj.put("position", index);
 		obj.put("protocol", tc.getProtocol());
 
 		InputStream inTP = IOUtils.toInputStream(obj.toString());
@@ -547,14 +531,14 @@ public class ExportUtil {
 		inTP.close();
 	}
 
-	private void generateTestGroupJsonRB(ZipOutputStream out, TestCaseGroup tg, String groupPath) throws IOException {
+	private void generateTestGroupJsonRB(ZipOutputStream out, TestCaseGroup tg, String groupPath, int index) throws IOException {
 		byte[] buf = new byte[1024];
 		out.putNextEntry(new ZipEntry(groupPath + File.separator + "TestCaseGroup.json"));
 
 		JSONObject obj = new JSONObject();
 		obj.put("name", tg.getName());
 		obj.put("description", tg.getDescription());
-		obj.put("position", tg.getPosition());
+		obj.put("position", index);
 
 		InputStream inTP = IOUtils.toInputStream(obj.toString());
 		int lenTP;
@@ -565,11 +549,11 @@ public class ExportUtil {
 		inTP.close();
 	}
 
-	private void generateTestPlanJsonRB(ZipOutputStream out, TestPlan tp) throws IOException {
+	private void generateTestPlanJsonRB(ZipOutputStream out, TestPlan tp, int index) throws IOException {
 		JSONObject obj = new JSONObject();
 		obj.put("name", tp.getName());
 		obj.put("description", tp.getDescription());
-		obj.put("position", tp.getPosition());
+		obj.put("position", index);
 		obj.put("type", tp.getType());
 		obj.put("transport", tp.isTransport());
 		obj.put("domain", tp.getDomain());
@@ -591,13 +575,8 @@ public class ExportUtil {
 		contentsHTML = contentsHTML + group.getDescription() + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "<br/>" + System.getProperty("line.separator");
 		
-		HashMap<Integer, TestCaseOrGroup> testCaseOrGroupMap = new HashMap<Integer, TestCaseOrGroup>();
-		for (TestCaseOrGroup tcg : group.getChildren()) {
-			testCaseOrGroupMap.put(tcg.getPosition(), tcg);
-		}
-		
-		for (int i = 0; i < testCaseOrGroupMap.keySet().size(); i++) {
-			Object child = testCaseOrGroupMap.get(i + 1);
+		for (int i = 0; i < group.getChildren().size(); i++) {
+			Object child = group.getChildren().get(i);
 			
 			if (child instanceof TestCaseGroup) {
 				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, (TestCaseGroup)child);
@@ -624,13 +603,9 @@ public class ExportUtil {
 		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "<th colspan='2'>Test Steps</th>" + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-		
-		HashMap<Integer, TestStep> testStepMap = new HashMap<Integer, TestStep>();
-		for (TestStep ts : tc.getTeststeps()) {
-			testStepMap.put(ts.getPosition(), ts);
-		}
-		for (int i = 0; i < testStepMap.keySet().size(); i++) {
-			TestStep ts = testStepMap.get(i + 1);
+
+		for (int i = 0; i < tc.getTeststeps().size(); i++) {
+			TestStep ts = tc.getTeststeps().get(i);
 			contentsHTML = generateTestPlanSummaryForTestStep(contentsHTML, ts);
 			
 		}
@@ -660,15 +635,10 @@ public class ExportUtil {
 				.toString(classLoader.getResourceAsStream("rb" + File.separator + "TestPlanSummary.html"));
 		testPlanSummaryStr = testPlanSummaryStr.replace("?TestPlanName?", tp.getName());
 
-		HashMap<Integer, TestCaseOrGroup> testPlanMap = new HashMap<Integer, TestCaseOrGroup>();
-		for (TestCaseOrGroup tcog : tp.getChildren()) {
-			testPlanMap.put(tcog.getPosition(), tcog);
-		}
-
 		String contentsHTML = "";
 
-		for (int i = 0; i < testPlanMap.keySet().size(); i++) {
-			Object child = testPlanMap.get(i + 1);
+		for (int i = 0; i < tp.getChildren().size(); i++) {
+			Object child = tp.getChildren().get(i);
 			if (child instanceof TestCaseGroup) {
 				TestCaseGroup group = (TestCaseGroup) child;
 				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, group);

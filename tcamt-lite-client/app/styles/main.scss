@@ -3073,3 +3073,14 @@ li.active > a{
       background-color: #f1c3c3 !important;
 
 }
+.MenuDisabled{
+background-color:gray;
+text-decoration: line-through;
+
+
+}
+.MenuEnabled{
+
+background-color: black;
+color:white;
+}

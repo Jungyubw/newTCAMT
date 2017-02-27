@@ -23,7 +23,7 @@ public abstract class TestCaseOrGroup {
 	
 	protected Integer version;
 	
-	protected int position;
+
 	
 	protected String type;
 	
@@ -66,13 +66,6 @@ public abstract class TestCaseOrGroup {
 		this.version = version;
 	}
 
-	public int getPosition() {
-		return position;
-	}
-
-	public void setPosition(int position) {
-		this.position = position;
-	}
 
 	public String getType() {
 		return type;

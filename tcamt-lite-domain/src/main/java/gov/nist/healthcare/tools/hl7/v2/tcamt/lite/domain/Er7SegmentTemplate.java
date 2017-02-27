@@ -7,24 +7,16 @@ public class Er7SegmentTemplate {
 	@Id
 	private String id;
 
-	private String ipath;
 	private String description;
 	private String date;
 	private String content;
 	private String name;
-	private String path;
-	private int position;
+	private String segmentName;
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public String getIpath() {
-		return ipath;
-	}
-	public void setIpath(String ipath) {
-		this.ipath = ipath;
 	}
 	public String getDescription() {
 		return description;
@@ -50,17 +42,11 @@ public class Er7SegmentTemplate {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getPath() {
-		return path;
+	public String getSegmentName() {
+		return segmentName;
 	}
-	public void setPath(String path) {
-		this.path = path;
-	}
-	public int getPosition() {
-		return position;
-	}
-	public void setPosition(int position) {
-		this.position = position;
+	public void setSegmentName(String segmentName) {
+		this.segmentName = segmentName;
 	}
 
 

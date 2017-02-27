@@ -37,7 +37,6 @@ public class TestPlan implements Serializable, Cloneable {
 	
 	private String type;
 	private boolean transport;
-	private Integer position;
 	private String domain;
 	private boolean skip;
 	
@@ -192,14 +191,6 @@ public class TestPlan implements Serializable, Cloneable {
 
 	public void setTransport(boolean transport) {
 		this.transport = transport;
-	}
-
-	public Integer getPosition() {
-		return position;
-	}
-
-	public void setPosition(Integer position) {
-		this.position = position;
 	}
 
 	public String getDomain() {
