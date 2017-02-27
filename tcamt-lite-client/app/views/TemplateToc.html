@@ -35,7 +35,7 @@
             <div ui-tree-handle>
                      <i data-nodrag ng-click="switcherEr7(Er7Collapsed)" class="fa" ng-class="{'fa-caret-right': Er7Collapsed, 'fa-caret-down': !Er7Collapsed}">
 					</i>   Er7 Templates
-                <span ng-show="selectedIntegrationProfile">for {{selectedIntegrationProfile.sectionTitle}}-{{selectedConformanceProfile.name}}/span>
+                <span ng-show="selectedIntegrationProfile">for {{selectedIntegrationProfile.sectionTitle}}-{{selectedConformanceProfile.name}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.er7Templates" ng-if="!Er7Collapsed">
                 <li ng-repeat="er7Tmp in template.er7Templates" ui-tree-node ng-if="selectedTestStep.integrationProfileId===er7Tmp.integrationProfileId || selectedTestStep.conformanceProfileId===er7Tmp.conformanceProfileId|| selectedTestStep===null">
