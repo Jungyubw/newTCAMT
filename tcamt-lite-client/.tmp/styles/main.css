@@ -10882,12 +10882,10 @@ li.active > a {
 
 /* line 3076, ../../app/styles/main.scss */
 .MenuDisabled {
-  background-color: gray;
-  text-decoration: line-through;
+  color: gray;
 }
 
 /* line 3082, ../../app/styles/main.scss */
 .MenuEnabled {
-  background-color: black;
-  color: white;
+  color: black;
 }

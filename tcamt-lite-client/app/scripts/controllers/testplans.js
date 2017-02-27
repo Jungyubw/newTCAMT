@@ -4184,7 +4184,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		['Apply Message', function($itemScope) {
 			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
 		$scope.overwriteER7Template($itemScope.er7Tmp);
-		Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
 
 		}]
 	];
