@@ -30,10 +30,6 @@ public class TestStep implements Serializable, Cloneable {
 
 	private Integer version;
 
-	<<<<<<<HEAD=======
-	private TestStory testStepStory = new TestStory();
-
-	>>>>>>>Abdel-branch
 	private String type;
 
 	private String tdsXSL;
@@ -95,9 +91,7 @@ public class TestStep implements Serializable, Cloneable {
 		cloned.setId(ObjectId.get().toString());
 
 		return cloned;
-	}<<<<<<<HEAD
-
-	=======>>>>>>>Abdel-branch
+	}
 
 	public String getType() {
 		return type;
