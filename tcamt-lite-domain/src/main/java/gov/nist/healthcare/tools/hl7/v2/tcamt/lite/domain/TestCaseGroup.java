@@ -61,4 +61,5 @@ public class TestCaseGroup extends TestCaseOrGroup implements Serializable, Clon
 	public void setTestStoryContent(HashMap<String, String> testStoryContent) {
 		this.testStoryContent = testStoryContent;
 	}
+
 }
