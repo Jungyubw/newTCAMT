@@ -211,6 +211,13 @@
                 <div class="md-dialog-content">
                     <div class="form-group">
                         <div class="col-md-12">
+                            <label>Type</label>
+                            <md-select ng-model="type">
+                                <md-option value="old">Old TestPlan Json</md-option>
+                                <md-option value="new">New TestPlan Json</md-option>
+                            </md-select>
+                        </div>
+                        <div class="col-md-12">
                             <label for="testplanJSONFile" class="custom-file-upload">
                                 <i class="fa fa-cloud-upload"></i> Choose TestPlan JSON File
                                 <div id="errorMessageForJSONTestPlan"></div>

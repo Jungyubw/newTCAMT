@@ -69,5 +69,4 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 	public void setTestStoryContent(HashMap<String, String> testStoryContent) {
 		this.testStoryContent = testStoryContent;
 	}
-	
 }

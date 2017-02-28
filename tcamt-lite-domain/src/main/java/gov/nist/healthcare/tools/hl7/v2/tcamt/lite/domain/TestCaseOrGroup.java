@@ -6,26 +6,22 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
-
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = As.PROPERTY, property = "type")
-@JsonSubTypes({
-		@JsonSubTypes.Type(value = TestCase.class, name = "testcase"),
+@JsonSubTypes({ @JsonSubTypes.Type(value = TestCase.class, name = "testcase"),
 		@JsonSubTypes.Type(value = TestCaseGroup.class, name = "testcasegroup") })
 public abstract class TestCaseOrGroup {
 	@Id
 	protected String id;
-	
+
 	protected String name;
-	
+
 	protected String testStoryConfigId;
-	
-	protected String description ="";
-	
+
+	protected String description = "";
+
 	protected Integer version;
-	
+
 	protected String type;
-	
-	
 
 	public TestCaseOrGroup() {
 		super();
@@ -79,7 +75,5 @@ public abstract class TestCaseOrGroup {
 	public void setTestStoryConfigId(String testStoryConfigId) {
 		this.testStoryConfigId = testStoryConfigId;
 	}
-	
-	
-	
+
 }

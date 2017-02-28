@@ -10878,3 +10878,13 @@ li.active > a {
 .invalidValue {
   background-color: #f1c3c3 !important;
 }
+
+/* line 3076, ../../app/styles/main.scss */
+.MenuDisabled {
+  color: gray;
+}
+
+/* line 3082, ../../app/styles/main.scss */
+.MenuEnabled {
+  color: black;
+}

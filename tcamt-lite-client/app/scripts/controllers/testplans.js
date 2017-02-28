@@ -6,26 +6,36 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.loading = false;
 	$scope.selectedTestCaseTab = 0;
     $scope.selectedTestStepTab = {};
+	$rootScope.messageTree = null;
 	$scope.selectedTestStepTab.tabNum = 0;
 	$rootScope.tps = [];
 	$rootScope.sr={
 			name:"",
 			
 	};
+	$('#segmentTable').treetable({
+    expandable:     true
+	});
 
 	$scope.expanded = false;
+
     $scope.expandAll = function() {
         $scope.expanded = !$scope.expanded;
 
-        $('#segmentTable').treetable('expandAll');
+
+		$('#segmentTable').treetable('expandAll');
+        $timeout( function(){
+            $('#segmentTable').treetable('expandAll');
+        }, 2000 );
     };
+
     $scope.collapseAll = function() {
         $scope.expanded = !$scope.expanded;
         $('#segmentTable').treetable('collapseAll');
     }
-	$scope.expandNode=function(node){
+	$scope.expandNode=function(id){
 		//treetable('collapseAll');
-		$('#segmentTable').treetable("expandNode", node)
+		$('#segmentTable').treetable("expandNode", id)
 	}
 	$scope.hasError= function(cat, value){
 		if(!cat || cat==""){
@@ -196,6 +206,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         }
     };
 
+
     $scope.updateTestStoryConfigForTestGroup = function () {
         $rootScope.selectedTestCaseGroup.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestCaseGroup.testStoryConfigId;  });
     };
@@ -262,6 +273,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.TestPlanImportModalCtrl = function($scope,$mdDialog,$http) {
 		$scope.jsonFilesData = {};
+		$scope.type = 'new';
 		$scope.cancel = function() {
 			$mdDialog.hide();
 		};
@@ -291,11 +303,18 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			var importTestPlanButton = $("#importTestPlanButton");
 			importTestPlanButton.prop('disabled', true);
 
-			$http.post('api/testplans/importJSON', $scope.jsonFilesData).then(function (response) {
-			}, function () {
-			});
+			if($scope.type == 'new'){
+                $http.post('api/testplans/importJSON', $scope.jsonFilesData).then(function (response) {
+                    $mdDialog.hide();
+                }, function () {
+                });
+			}else{
+                $http.post('api/testplans/importOldJSON', $scope.jsonFilesData).then(function (response) {
+                    $mdDialog.hide();
+                }, function () {
+                });
+			}
 
-			$mdDialog.hide();
 		};
 
 	};
@@ -413,7 +432,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		document.body.appendChild(form);
 		form.submit();
 	};
-
+    
 	$scope.exportCoverHTML = function () {
 		var changes = angular.toJson([]);
 		var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
@@ -555,19 +574,68 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $scope.error = null;
             $rootScope.testStoryConfigs = [];
             $scope.loading = true;
-            // $http.get('api/config/').then(function(response) {
-            //     $rootScope.testStoryConfigs = angular.fromJson(response.data);
-            //     $scope.loading = false;
-            //     delay.resolve(true);
-            // }, function(error) {
-            //     $scope.loading = false;
-            //     $scope.error = error.data;
-            //     delay.reject(false);
-            // });
+            $http.get('api/config/').then(function(response) {
+                $rootScope.testStoryConfigs = angular.fromJson(response.data);
+                $scope.loading = false;
+                delay.resolve(true);
+            }, function(error) {
+                $scope.loading = false;
+                $scope.error = error.data;
+                delay.reject(false);
+            });
         }else{
             delay.reject(false);
         }
     };
+
+
+	$scope.segmentTemplateApplicable= function(temp){
+		if(!$rootScope.selectedTestStep){
+			return false;
+		}
+		if(!$rootScope.selectedSegmentNode){
+			return false;
+		}else{
+			if($rootScope.selectedSegmentNode.segment.obj){
+				if($rootScope.selectedSegmentNode.segment.obj.name && $rootScope.selectedSegmentNode.segment.obj.name===temp.segmentName){
+					return true;
+				}else{
+					return false;
+				}
+			}else{
+				return false
+			}
+		}
+
+	}
+	$scope.messageTemplateApplicable=function(er7Tmp){
+		if(!$rootScope.selectedTestStep){
+			return false
+		} else{
+			if($rootScope.selectedTestStep.integrationProfileId&&$rootScope.selectedTestStep.conformanceProfileId){
+				return $rootScope.selectedTestStep.integrationProfileId===er7Tmp.integrationProfileId &&$rootScope.selectedTestStep.conformanceProfileId;
+			}
+		}
+
+	}
+	$scope.selectIg=function(ig){
+		console.log(ig);
+		$rootScope.segmentsMap={};
+		$rootScope.datatypesMap={};
+		$rootScope.tablesMap={};
+
+		angular.forEach(ig.datatypes.children, function(dt){
+			$rootScope.datatypesMap[dt.id]=dt;
+		})
+			angular.forEach(ig.segments.children, function(seg){
+			$rootScope.segmentsMap[seg.id]=seg;
+		})
+			angular.forEach(ig.tables.children, function(tbl){
+			$rootScope.tablesMap[tbl.id]=tbl;
+		})
+	}
+
+	
 
 	$scope.loadPublicProfiles = function () {
 		var delay = $q.defer();
@@ -642,62 +710,178 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		return true;
 	};
 
-	$rootScope.processMessageTree = function(element, parent) {
-		try {
-			if (element != undefined && element != null) {
-				if (element.type === "message") {
-					var m = {};
-					m.children = [];
-					$rootScope.messageTree = m;
+	// $rootScope.processMessageTree = function(element, parent) {
+	// 	try {
+	// 		if (element != undefined && element != null) {
+	// 			if (element.type === "message") {
+	// 				var m = {};
+	// 				m.children = [];
+	// 				$rootScope.messageTree = m;
 
-					angular.forEach(element.children, function(segmentRefOrGroup) {
-						$rootScope.processMessageTree(segmentRefOrGroup, m);
-					});
+	// 				angular.forEach(element.children, function(segmentRefOrGroup) {
+	// 					$rootScope.processMessageTree(segmentRefOrGroup, m);
+	// 				});
 
-				} else if (element.type === "group" && element.children) {
-					var g = {};
-					g.path = element.position + "[1]";
-					g.obj = element;
-					g.children = [];
-					if (parent.path) {
-						g.path = parent.path + "." + element.position + "[1]";
-					}
-					parent.children.push(g);
-					angular.forEach(element.children, function(segmentRefOrGroup) {
-						$rootScope.processMessageTree(segmentRefOrGroup, g);
-					});
-				} else if (element.type === "segmentRef") {
-					var s = {};
-					s.path = element.position + "[1]";
-					s.obj = element;
-					s.children = [];
-					if (parent.path) {
-						s.path = parent.path + "." + element.position + "[1]";
-					}
-					s.obj.ref.ext = s.obj.ref.ext;
-					//s.obj.ref.label=$rootScope.getLabel(s.obj.ref.name,s.obj.ref.ext);
-					parent.children.push(s);
+	// 			} else if (element.type === "group" && element.children) {
+	// 				var g = {};
+	// 				g.path = element.position + "[1]";
+	// 				g.obj = element;
+	// 				g.children = [];
+	// 				if (parent.path) {
+	// 					g.path = parent.path + "." + element.position + "[1]";
+	// 				}
+	// 				parent.children.push(g);
+	// 				angular.forEach(element.children, function(segmentRefOrGroup) {
+	// 					$rootScope.processMessageTree(segmentRefOrGroup, g);
+	// 				});
+	// 			} else if (element.type === "segmentRef") {
+	// 				var s = {};
+	// 				s.path = element.position + "[1]";
+	// 				s.obj = element;
+	// 				s.children = [];
+	// 				if (parent.path) {
+	// 					s.path = parent.path + "." + element.position + "[1]";
+	// 				}
+	// 				s.obj.ref.ext = s.obj.ref.ext;
+	// 				//s.obj.ref.label=$rootScope.getLabel(s.obj.ref.name,s.obj.ref.ext);
+	// 				parent.children.push(s);
 
-					//$rootScope.processMessageTree(ref, s);
+	// 				//$rootScope.processMessageTree(ref, s);
 
-				} else if (element.type === "segment") {
-					if (!parent) {
-						var s = {};
-						s.obj = element;
-						s.path = element.name;
-						s.children = [];
-						parent = s;
-					}
+	// 			} else if (element.type === "segment") {
+	// 				if (!parent) {
+	// 					var s = {};
+	// 					s.obj = element;
+	// 					s.path = element.name;
+	// 					s.children = [];
+	// 					parent = s;
+	// 				}
 
-					angular.forEach(element.fields, function(field) {
-						$rootScope.processMessageTree(field, parent);
-					});
-				}
+	// 				angular.forEach(element.fields, function(field) {
+	// 					$rootScope.processMessageTree(field, parent);
+	// 				});
+	// 			}
+	// 		}
+	// 	} catch (e) {
+	// 		throw e;
+	// 	}};
+
+		$rootScope.getLabel=function(name, ext){
+			if(ext){
+				return name+"_"+ext;
+			}else{
+				return name;
 			}
-		} catch (e) {
-			throw e;
 		}
-	};
+
+		$rootScope.processMessageTree = function(element, parent) {
+
+			console.log(element);
+			console.log("element");
+        try {
+            if (element != undefined && element != null) {
+                if (element.type === "message") {
+                    $rootScope.selectedMessage = element;
+                    var m = {};
+                    m.children = [];
+                    $rootScope.messageTree = m;
+
+                    angular.forEach(element.children, function(segmentRefOrGroup) {
+                        $rootScope.processMessageTree(segmentRefOrGroup, m);
+                    });
+
+                } else if (element.type === "group" && element.children) {
+                    var g = {};
+                    g.path = element.position + "[1]";
+                    g.locationPath = element.name.substr(element.name.lastIndexOf('.') + 1) + '[1]';
+                    g.obj = element;
+                    g.children = [];
+                    if (parent.path) {
+                        g.path = parent.path + "." + g.path;
+                        g.locationPath = parent.locationPath + "." + g.locationPath;
+                    }
+                    parent.children.push(g);
+                    angular.forEach(element.children, function(segmentRefOrGroup) {
+                        $rootScope.processMessageTree(segmentRefOrGroup, g);
+                    });
+                } else if (element.type === "segmentRef") {
+                    var s = {};
+                    s.path = element.position + "[1]";
+                    s.locationPath = element.ref.name + '[1]';
+                    s.obj = element;
+                    s.children = [];
+                    if (parent.path) {
+                        s.path = parent.path + "." + element.position + "[1]";
+                        s.locationPath = parent.locationPath + "." + s.locationPath;
+                    }
+                    s.obj.ref.ext = s.obj.ref.ext;
+                    s.obj.ref.label = $rootScope.getLabel(s.obj.ref.name, s.obj.ref.ext);
+                    parent.children.push(s);
+
+                    var ref = $rootScope.segmentsMap[element.ref.id];
+                    $rootScope.processMessageTree(ref, s);
+
+                } else if (element.type === "segment") {
+                    if (!parent) {
+                        var s = {};
+                        s.obj = element;
+                        s.path = element.name;
+                        s.locationPath = element.name;
+                        s.children = [];
+                        parent = s;
+                    }
+                    angular.forEach(element.fields, function(field) {
+                        $rootScope.processMessageTree(field, parent);
+                    });
+                } else if (element.type === "field") {
+                    var f = {};
+                    f.obj = element;
+                    f.path = parent.path + "." + element.position + "[1]";
+                    f.locationPath = parent.locationPath + "." + element.position + "[1]";
+                    f.children = [];
+                    var d = $rootScope.datatypesMap[f.obj.datatype.id];
+                    if (d === undefined) {
+                        throw new Error("Cannot find Data Type[id=" + f.obj.datatype.id + ", name= " + f.obj.datatype.name + "]");
+                    }
+                    f.obj.datatype.ext = $rootScope.datatypesMap[f.obj.datatype.id].ext;
+                    f.obj.datatype.label = $rootScope.getLabel(f.obj.datatype.name, f.obj.datatype.ext);
+                
+                    parent.children.push(f);
+                    $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype.id], f);
+                } else if (element.type === "component") {
+                    var c = {};
+
+                    c.obj = element;
+                    c.path = parent.path + "." + element.position + "[1]";
+                    c.locationPath = parent.locationPath + "." + element.position + "[1]";
+                    c.children = [];
+                    var d = $rootScope.datatypesMap[c.obj.datatype.id];
+                    if (d === undefined) {
+                        throw new Error("Cannot find Data Type[id=" + c.obj.datatype.id + ", name= " + c.obj.datatype.name + "]");
+                    }
+                    c.obj.datatype.ext = d.ext;
+                    c.obj.datatype.label = $rootScope.getLabel(c.obj.datatype.name, c.obj.datatype.ext);
+                    parent.children.push(c);
+                    $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype.id], c);
+                } else if (element.type === "datatype") {
+                    if (!parent) {
+                        var d = {};
+                        d.obj = element;
+                        d.path = element.name;
+                        d.locationPath = element.name;
+                        d.children = [];
+                        parent = d;
+                    }
+                    angular.forEach(element.components, function(component) {
+                        $rootScope.processMessageTree(component, parent);
+                    });
+                }
+            }
+        } catch (e) {
+            throw e;
+        }
+    };
+
 
 	$scope.loadIntegrationProfile = function () {
 		if($rootScope.selectedTestStep.integrationProfileId != undefined && $rootScope.selectedTestStep.integrationProfileId !== null){
@@ -783,6 +967,50 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		});
 		modalInstance.result.then(function() {
 			$scope.recordChanged();
+		});
+	};
+
+	$scope.openApplyMessageTemplate = function(msgTemp) {
+		var modalInstance = $modal.open({
+			templateUrl: 'OpenApplyMessageTemplate.html',
+			controller: 'OpenApplyMessageTemplate',
+			size: 'md',
+			resolve: {
+				messageTemp: function(){
+					return msgTemp;
+				}
+			}
+		});
+		modalInstance.result.then(function(option) {
+			console.log(option);
+			if(option=="Apply"){
+                $scope.applyMessageTemplate(msgTemp);
+			}else if(option=="Override") {
+				$scope.overwriteMessageTemplate(msgTemp);
+			}
+			$scope.recordChanged();
+		});
+	};
+	$scope.openApplySegmentTemplate = function(temp) {
+		var modalInstance = $modal.open({
+			templateUrl: 'OpenApplySegmentTemplate.html',
+			controller: 'OpenApplySegmentTemplate',
+			size: 'md',
+			resolve: {
+				segTemplate:function(){
+					return temp;
+				}
+			}
+		});
+		modalInstance.result.then(function(option) {
+				console.log(option)
+		if(option=="Apply"){
+			console.log(option);
+            $scope.applySegmentTemplate(temp);
+		}else if(option=="Override"){
+            $scope.overwriteSegmentTemplate(temp);
+		}		
+		$scope.recordChanged();
 		});
 	};
 
@@ -1334,6 +1562,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		return str.substring(str.indexOf('[') + 1, str.indexOf(']'));
 	};
 
+	$scope.getInstancePosition=function(segment){
+		return parseInt($scope.getInstanceValue(segment));
+	}
 	$scope.initHL7EncodedMessageTab = function () {
 		$scope.initCodemirror();
         if($scope.editor){
@@ -1427,6 +1658,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 					type: 'field',
 					path : segment.path + "." + (i + 1),
 					iPath : segment.iPath + "." + (i + 1) + "[" + (h + 1) + "]",
+					ID: segment.iPath + "." + (i + 1) + "[" + (h + 1) + "]",
+					
+					
 					positionPath : segment.positionPath + "." + (i + 1),
 					positioniPath : segment.positioniPath + "." + (i + 1) + "[" + (h + 1) + "]",
 					usagePath : segment.usagePath + "-" + segment.obj.fields[i].usage,
@@ -1521,6 +1755,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 						type: 'component',
 						path : fieldNode.path + "." + (j + 1),
 						iPath : fieldNode.iPath + "." + (j + 1) + "[1]",
+						ID:fieldNode.iPath + "." + (j + 1) + "[1]",
+						parentID:fieldNode.iPath,
 						positionPath : fieldNode.positionPath + "." + (j + 1),
 						positioniPath : fieldNode.positioniPath + "." + (j + 1) + "[1]",
 						usagePath : fieldNode.usagePath + "-" + fieldNode.dt.components[j].usage,
@@ -1568,6 +1804,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 							type: 'subcomponent',
 							path : componentNode.path + "." + (k + 1),
 							iPath : componentNode.iPath + "." + (k + 1) + "[1]",
+							ID:componentNode.iPath + "." + (k + 1) + "[1]",
+							parentID:componentNode.iPath,
 							positionPath : componentNode.positionPath + "." + (k + 1),
 							positioniPath : componentNode.positioniPath + "." + (k + 1) + "[1]",
 							usagePath : componentNode.usagePath + "-" + componentNode.dt.components[k].usage,
@@ -1624,7 +1862,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		setTimeout(function () {
 			$scope.refreshTree();
-		}, 100);
+		}, 1000);
 	};
     $scope.findTestCaseNameOfTestStepInsideGroup = function (group, result){
     	for(i in group.children){
@@ -1706,24 +1944,41 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$rootScope.getNodesForMessage = function(parent, root) {
-		if (!parent || parent == null) {
-			return root.children;
-		} else {
-			return parent.children;
-		}
+              if (!parent || parent == null) {
+                	if(root&&root.children){
+                    return root.children;
+                	}else{
+                		var children=[];
+                		return children;
+                	}
+                } else {
+                    return parent.children;
+                }
 	};
 
 	$rootScope.getTemplatesForMessage = function(node, root) {
 		console.log("node+++++++++");
 		console.log(node);
+		console.log($rootScope.messageTree);
+		// if (node.obj.type === 'segmentRef') {
+		// 	return 'MessageSegmentRefReadTree.html';
+		// } else if (node.obj.type === 'group') {
+		// 	return 'MessageGroupReadTree.html';
+		// } else {
+		// 	return 'MessageReadTree.html';
+		// }
 
-		if (node.obj.type === 'segmentRef') {
-			return 'MessageSegmentRefReadTree.html';
-		} else if (node.obj.type === 'group') {
-			return 'MessageGroupReadTree.html';
-		} else {
-			return 'MessageReadTree.html';
-		}
+		        	 if (node.obj.type === 'segmentRef') {
+                        return 'MessageSegmentRefReadTree.html';
+                    } else if (node.obj.type === 'group') {
+                        return 'MessageGroupReadTree.html';
+                    } else if (node.obj.type === 'field') {
+                        return 'MessageFieldViewTree.html';
+                    } else if (node.obj.type === 'component') {
+                        return 'MessageComponentViewTree.html';
+                    } else {
+                        return 'MessageReadTree.html';
+                    }
 
 	};
 	$scope.getSegLabel = function(name, ext) {
@@ -1733,7 +1988,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			return name + '_' + ext;
 		}
 	};
+	$rootScope.messageParams = new ngTreetableParams({
+			getNodes: function(parent) {
+				return $rootScope.getNodesForMessage(parent, $rootScope.messageTree);
+			},
+			getTemplate: function(node) {
+				return $rootScope.getTemplatesForMessage(node, $rootScope.messageTree);
+			}
+		});
+
 	$rootScope.getMessageParams = function() {
+		console.log($rootScope.messageTree);
 		return new ngTreetableParams({
 			getNodes: function(parent) {
 				return $rootScope.getNodesForMessage(parent, $rootScope.messageTree);
@@ -1744,8 +2009,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		});
 	};
 
-	$scope.OpenMessageMetadata = function(msg) {
+	$scope.OpenMessageMetadata = function(msg,ip) {
+		$scope.selectIg(ip);
 		$rootScope.selectedTestCaseGroup=null;
+		$rootScope.message=null;
 		$rootScope.selectedTestCase = null;
 		$rootScope.selectedTestStep = null;
 		$rootScope.selectedSegmentNode =null;
@@ -1756,28 +2023,24 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		$rootScope.CurrentTitle="Conformance Profile"+":"+ msg.name;
 		$scope.subview = "EditMessages.html";
-		if($rootScope.messageTree && $rootScope.messageParams){
-            $timeout(function () {
-                $rootScope.message=msg;
-                $rootScope.processMessageTree($rootScope.message);
-            }, 0);
 
-            $timeout(function () {
-                $rootScope.messageParams.refresh();
-            }, 100);
+		if($rootScope.messageTree && $rootScope.messageParams){
+ 
+                $rootScope.message=msg;
+                $rootScope.processMessageTree($rootScope.message,null);
+				$rootScope.messageParams.refresh();
+			
 		}
 		else{
-            $timeout(function () {
                 $rootScope.message=msg;
-                $rootScope.processMessageTree($rootScope.message);
-            }, 0);
+                $rootScope.processMessageTree($rootScope.message,null);
+				$rootScope.messageParams = $rootScope.getMessageParams();
 
-            $timeout(function () {
-                $rootScope.messageParams = $rootScope.getMessageParams();
-            }, 100);
+				console.log($rootScope.messageTree);
+
+
 		}
 	};
-
 
 	$scope.generateConstraintsXML = function (segmentList, testStep, selectedConformanceProfile, selectedIntegrationProfile){
 		$rootScope.categorizationsDataMap = {};
@@ -3227,15 +3490,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.selectedTestStep.messageContentsXMLCode = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 			$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 		}
+		Notification.success("Template "+template.name+" Applied")
 		$scope.recordChanged($rootScope.selectedTestStep);
     };
 
-	$scope.overwriteMessageTemplate = function (template){
+    $scope.overwriteMessageTemplate = function (template){
 		if($rootScope.selectedTestStep){
 			$rootScope.selectedTestStep.testDataCategorizationMap = {};
 			$scope.applyMessageTemplate(template);
 		}
 		$scope.recordChanged($rootScope.selectedTestStep);
+			Notification.success("Template "+template.name+" Applied")
 	};
 
 
@@ -3253,6 +3518,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.applySegmentTemplate(template);
 		}
 		$scope.recordChanged($rootScope.selectedTestStep);
+			Notification.success("Template "+template.name+" Applied")
     };
 
     $scope.overwriteER7Template = function (template){
@@ -3269,49 +3535,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		$scope.initHL7EncodedMessageTab();
 		$scope.recordChanged($rootScope.selectedTestStep);
+		Notification.success("Template "+template.name+" Applied")
     };
-	   $scope.overwriteER7SegmentTemplate = function (template){
-		var sameSegments=[];
-		if($rootScope.selectedTestStep){
 
-			var listLineOfMessage = $rootScope.selectedTestStep.er7Message.split("\n");
-			console.log(listLineOfMessage);
-			angular.forEach(listLineOfMessage, function(segment){
-				
-				if($scope.getNameFromSegment(segment) == template.path){
-					sameSegments.push(segment);
-				}
+    $scope.overwriteER7SegmentTemplate = function (template){
+           $rootScope.selectedSegmentNode.segment.segmentStr = template.content;
+           var updatedER7Message = '';
+           for(var i in $rootScope.segmentList){
+               updatedER7Message = updatedER7Message + $rootScope.segmentList[i].segmentStr + '\n';
+           }
+           $rootScope.selectedTestStep.er7Message = updatedER7Message;
+		   $scope.selectSegment($rootScope.selectedSegmentNode.segment);
+		   $scope.recordChanged($rootScope.selectedTestStep);
 
-			});
-
-			if(sameSegments.length>0){
-				var segmentToModify=sameSegments[template.position-1];
-
-			}else{
-				Notification.error(template.iPath+"Not Found");
-			}
-
-			var index = listLineOfMessage.indexOf(segmentToModify);
-			 if (index > -1) {
-			listLineOfMessage[index]=template.content;
-			
-			 }
-			 $rootScope.selectedTestStep.er7Message=listLineOfMessage.join('\n');
-
-
-			$scope.updateEr7Message();
-
-				angular.forEach($rootScope.segmentList, function(segment){
-					if(segment.iPath==template.iPath){
-						$scope.selectSegment(segment);
-					}
-				});
-				$scope.refreshTree();
-			
-		}
-
-		$scope.initHL7EncodedMessageTab();
-		$scope.recordChanged($rootScope.selectedTestStep);
     };
 	$scope.getNameFromSegment=function(segment){
 
@@ -3640,7 +3876,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 	$scope.testPlanOptions = [
-		['Add New Testgroup', function($itemScope) {
+		['Add New Test Group', function($itemScope) {
 			if( !$itemScope.$nodeScope.$modelValue.children){
 				$itemScope.$nodeScope.$modelValue.children=[];
 			}
@@ -3663,7 +3899,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		}],
 
-		['Add New Testcase', function($itemScope) {
+		['Add New Test Case', function($itemScope) {
 			if( !$itemScope.$nodeScope.$modelValue.children){
 				$itemScope.$nodeScope.$modelValue.children=[];
 			}
@@ -3688,7 +3924,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	];
 
 	$scope.testGroupOptions = [
-		['Add New TestCase', function($itemScope) {
+		['Add New Test Case', function($itemScope) {
 			var caseId=new ObjectId().toString();
 			$rootScope.changesMap[caseId]=true;
 			$rootScope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
@@ -3707,7 +3943,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}],
 
 
-		['Add New Test Case Group', function($itemScope) {
+		['Add New Test Group', function($itemScope) {
 			var caseId=new ObjectId().toString();
 			$rootScope.changesMap[caseId]=true;
 			console.log($itemScope.$nodeScope.$modelValue);
@@ -3750,7 +3986,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	
 	$scope.testCaseOptions =[
-		['Add New Teststep', function($itemScope) {
+		['Add New Test Step', function($itemScope) {
 			
 			if( !$itemScope.$nodeScope.$modelValue.teststeps){
 				$itemScope.$nodeScope.$modelValue.teststeps=[];
@@ -3855,16 +4091,16 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		['Apply', function($itemScope) {
 			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
-			$scope.applyMessageTemplate($itemScope.msgTmp);
-			Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
+			$scope.openApplyMessageTemplate($itemScope.msgTmp);
+			//Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
 
-		}],
+		 }]
 
-		['Overwrite', function($itemScope) {
-			$scope.overwriteMessageTemplate($itemScope.msgTmp);
-			Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
+		// ['Overwrite', function($itemScope) {
+		// 	$scope.overwriteMessageTemplate($itemScope.msgTmp);
+		// 	Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
 
-		}]
+		// }]
 
 	];
 
@@ -3881,20 +4117,21 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		['Apply Template', function($itemScope) {
 
-			$scope.applySegmentTemplate($itemScope.segTmp);
-			Notification.success("Template"+$itemScope.$modelValue.name+" Applied");
+			$scope.openApplySegmentTemplate($itemScope.segTmp);
+			//Notification.success("Template"+$itemScope.$modelValue.name+" Applied");
 
 
-		}],
+		 }]
 
-		['Overwrite Template', function($itemScope) {
-			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
-			$scope.overwriteSegmentTemplate($itemScope.segTmp);
-			Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
+		// ['Overwrite Template', function($itemScope) {
+		// 	$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
+		// 	$scope.overwriteSegmentTemplate($itemScope.segTmp);
+		// 	Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
 
-		}]
+		// }]
 
 	];
+
 
 	  $scope.Er7Options=[
 		['Delete Template', function($itemScope) {
@@ -3908,7 +4145,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		['Apply Message', function($itemScope) {
 			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
 		$scope.overwriteER7Template($itemScope.er7Tmp);
-		Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
 
 		}]
 	];
@@ -3968,6 +4204,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		
 
 	}
+
 	$scope.OpenMsgTemplateMetadata=function(msgtemp){
 		$rootScope.selectedTestCaseGroup=null;
 		$rootScope.selectedTestCase = null;
@@ -4317,7 +4554,7 @@ angular.module('tcl').controller('Er7TemplateCreationModalCtrl', function($scope
 	$scope.newEr7Template.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
 	$scope.newEr7Template.er7Message = $rootScope.selectedTestStep.er7Message;
 
-	$scope.createSegmentTemplate = function() {
+	$scope.createEr7Template = function() {
 		$rootScope.template.er7Templates.push($scope.newEr7Template);
 		$modalInstance.close();
 
@@ -4336,19 +4573,9 @@ angular.module('tcl').controller('Er7SegmentTemplateCreationModalCtrl', function
 	$scope.newEr7SegmentTemplate.descrption = 'No Desc';
 	$scope.newEr7SegmentTemplate.date = new Date();
 	$scope.newEr7SegmentTemplate.content=$rootScope.selectedSegmentNode.segment.segmentStr;
-	
-	$scope.newEr7SegmentTemplate.iPath=$rootScope.selectedSegmentNode.segment.iPath;
-	$scope.newEr7SegmentTemplate.path=$rootScope.selectedSegmentNode.segment.path;
-	//$scope.newEr7SegmentTemplate.position=$rootScope.selectedSegmentNode.segment.positionPath;
+	$scope.newEr7SegmentTemplate.segmentName = $rootScope.selectedSegmentNode.segment.obj.name;
 
-	var positionString=$scope.newEr7SegmentTemplate.iPath;
-	var n = positionString.indexOf("[");
-    var x= positionString.indexOf("]");
-   	var m= positionString.substring(n+1,x);
-	$scope.newEr7SegmentTemplate.position=parseInt(m);
-	
-
-	$scope.newEr7SegmentTemplate.name = 'new Er7 Template for '+$scope.newEr7SegmentTemplate.iPath;
+	$scope.newEr7SegmentTemplate.name = 'new Er7 Template for '+$scope.newEr7SegmentTemplate.segmentName;
 
 
 	$scope.createEr7SegmentTemplate = function() {
@@ -4396,4 +4623,29 @@ angular.module('tcl').controller('MessageViewCtrl', function($scope, $rootScope)
         $scope.setData($scope.msg);
         $scope.loading = false;
     };
+});
+angular.module('tcl').controller('OpenApplySegmentTemplate', function($scope, $modalInstance, $rootScope) {
+
+	$scope.option="apply";
+	$scope.options=["apply", "overrite"];
+	$scope.apply = function() {
+		$modalInstance.close($scope.option);
+
+	};
+
+	$scope.cancel = function() {
+		$modalInstance.dismiss('cancel');
+	};
+});
+angular.module('tcl').controller('OpenApplyMessageTemplate', function($scope, $modalInstance, $rootScope) {
+	$scope.option="apply";
+	$scope.options=["apply", "overrite"]
+	$scope.apply = function() {
+		$modalInstance.close($scope.option);
+
+	};
+
+	$scope.cancel = function() {
+		$modalInstance.dismiss('cancel');
+	};
 });

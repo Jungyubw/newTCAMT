@@ -1,7 +1,6 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import javax.persistence.Id;
@@ -21,33 +20,32 @@ public class TestStep implements Serializable, Cloneable {
 	private String name;
 
 	private String description;
-	private HashMap<String,String> testStoryContent=new HashMap<String, String>();
-
+	private HashMap<String, String> testStoryContent = new HashMap<String, String>();
 
 	private String integrationProfileId;
-	
+
 	private String conformanceProfileId;
-	
+
 	private String er7Message;
 
 	private Integer version;
 
 	private String type;
-	
+
 	private String tdsXSL;
-	
+
 	private String jdXSL;
-	
+
 	private String nistXMLCode;
-	
+
 	private String stdXMLCode;
-	
+
 	private String constraintsXML;
-	
+
 	private String messageContentsXMLCode;
-	
+
 	private HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>();
-	
+
 	private String testStoryConfigId;
 
 	public TestStep(String id, String name, String description, Integer version) {
@@ -104,7 +102,8 @@ public class TestStep implements Serializable, Cloneable {
 	}
 
 	public String getDescription() {
-		if(this.description == null) return "";
+		if (this.description == null)
+			return "";
 		return description;
 	}
 
@@ -192,11 +191,11 @@ public class TestStep implements Serializable, Cloneable {
 		this.stdXMLCode = stdXMLCode;
 	}
 
-	public HashMap<String,String> getTestStoryContent() {
+	public HashMap<String, String> getTestStoryContent() {
 		return testStoryContent;
 	}
 
-	public void setTestStoryContent(HashMap<String,String> testStoryContent) {
+	public void setTestStoryContent(HashMap<String, String> testStoryContent) {
 		this.testStoryContent = testStoryContent;
 	}
 
@@ -209,7 +208,9 @@ public class TestStep implements Serializable, Cloneable {
 	}
 
 	public boolean isManualTS() {
-		if(this.conformanceProfileId == null || this.conformanceProfileId.equals("")) return true;
+		if (this.conformanceProfileId == null || this.conformanceProfileId.equals(""))
+			return true;
 		return false;
 	}
+
 }

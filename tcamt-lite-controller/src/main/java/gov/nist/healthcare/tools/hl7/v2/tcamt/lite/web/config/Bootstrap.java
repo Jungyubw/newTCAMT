@@ -49,8 +49,8 @@ public class Bootstrap implements InitializingBean {
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		updateTCAMTProfiles();
-		updateDefaultConfig();
+//		updateTCAMTProfiles();
+//		updateDefaultConfig();
 	}
 
 	public Logger getLogger() {
