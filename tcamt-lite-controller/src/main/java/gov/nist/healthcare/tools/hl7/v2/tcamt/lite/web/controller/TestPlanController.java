@@ -47,6 +47,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanListException;
@@ -77,6 +78,9 @@ public class TestPlanController extends CommonController {
 	
 	@Autowired
 	TestStoryConfigurationService testStoryConfigurationService;
+	
+	@Autowired
+	ProfileService profileService;
 
 	/**
 	 * 
@@ -269,7 +273,7 @@ public class TestPlanController extends CommonController {
 			throws Exception {
 		log.info("Exporting as zip file Profiles with id=" + ipid);
 	    InputStream content = null;
-	    content = new ExportUtil().exportProfileXMLZip(ipid);
+	    content = new ExportUtil().exportProfileXMLZip(ipid, profileService);
 	    response.setContentType("application/zip");
 	    response.setHeader("Content-disposition",
 	        "attachment;filename=Profiles-"

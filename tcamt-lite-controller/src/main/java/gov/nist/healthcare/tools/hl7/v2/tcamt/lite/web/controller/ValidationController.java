@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ConstraintContainer;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 import gov.nist.healthcare.unified.enums.Context;
 import gov.nist.healthcare.unified.model.EnhancedReport;
@@ -53,21 +51,15 @@ public class ValidationController {
 			@RequestParam(value = "context") String context,
 			@RequestBody ConstraintContainer cbConstraints) throws Exception {
 		ExportUtil util = new ExportUtil();
-		IGAMTDBConn con = new IGAMTDBConn();
 		String html="";
 		String error="";
-		IGDocument igDocument = con.findIGDocument(igDocumentId);
-		Profile tcamtProfile = null;
+
+		Profile tcamtProfile = profileService.findOne(igDocumentId);
+
 		
-		if(igDocument == null){
-			tcamtProfile = profileService.findOne(igDocumentId);
-		}else {
-			tcamtProfile = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), igDocumentId, igDocument.getDateUpdated());
-		}
-		
-		String profileXML = util.serializeProfileToDoc(tcamtProfile, igDocument).toXML();
-		String valueSetXML = util.serializeTableLibraryToElement(tcamtProfile, igDocument).toXML();
-		String constraintsXML = util.serializeConstraintsToDoc(tcamtProfile, igDocument).toXML();
+		String profileXML = util.serializeProfileToDoc(tcamtProfile).toXML();
+		String valueSetXML = util.serializeTableLibraryToElement(tcamtProfile).toXML();
+		String constraintsXML = util.serializeConstraintsToDoc(tcamtProfile).toXML();
 		String testStepConstraintXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator") + cbConstraints.getConstraint();
 		
 		System.out.println(profileXML);

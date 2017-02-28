@@ -21,10 +21,8 @@ import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Case;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DocumentMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Field;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Group;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Mapping;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ProfileMetaData;
@@ -53,8 +51,8 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatypes;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segments;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 import nu.xom.Attribute;
 import nu.xom.Builder;
 import nu.xom.NodeFactory;
@@ -1029,7 +1027,7 @@ public class ExportUtil {
 		inTestPlanSummary.close();
 	}
 
-	public InputStream exportProfileXMLZip(String[] ipid) throws IOException {
+	public InputStream exportProfileXMLZip(String[] ipid, ProfileService profileService) throws IOException {
 
 		ByteArrayOutputStream outputStream = null;
 		byte[] bytes;
@@ -1037,58 +1035,61 @@ public class ExportUtil {
 		ZipOutputStream out = new ZipOutputStream(outputStream);
 
 		for (String id : ipid) {
-			this.generateProfileXML(out, id);
+			if(id != null && !id.isEmpty()){
+				this.generateProfileXML(out, id, profileService);
+			}
 		}
 		out.close();
 		bytes = outputStream.toByteArray();
 		return new ByteArrayInputStream(bytes);
 	}
 
-	private void generateProfileXML(ZipOutputStream out, String id) throws IOException {
-		IGAMTDBConn con = new IGAMTDBConn();
-		IGDocument igDocument = con.findIGDocument(id);
-		Profile tcamtProfile = con.convertIGAMT2TCAMT(igDocument.getProfile(), igDocument.getMetaData().getTitle(), id, igDocument.getDateUpdated());
-		//NEED to check for uploaded Profile
+	private void generateProfileXML(ZipOutputStream out, String id, ProfileService profileService) throws IOException {
+		Profile tcamtProfile = profileService.findOne(id);
 		
-		String profileXML = this.serializeProfileToDoc(tcamtProfile, igDocument).toXML();
-		String valueSetXML = this.serializeTableLibraryToElement(tcamtProfile, igDocument).toXML();
-		String constraintsXML = this.serializeConstraintsToDoc(tcamtProfile, igDocument).toXML();
+		if(tcamtProfile != null) {
+			String profileXML = this.serializeProfileToDoc(tcamtProfile).toXML();
+			String valueSetXML = this.serializeTableLibraryToElement(tcamtProfile).toXML();
+			String constraintsXML = this.serializeConstraintsToDoc(tcamtProfile).toXML();
 
-		byte[] buf = new byte[1024];
-		out.putNextEntry(new ZipEntry(id + "_Profile.xml"));
-		InputStream inTP = null;
-		inTP = IOUtils.toInputStream(profileXML);
-		int lenTP;
-		while ((lenTP = inTP.read(buf)) > 0) {
-			out.write(buf, 0, lenTP);
-		}
-		out.closeEntry();
-		inTP.close();
+			byte[] buf = new byte[1024];
+			out.putNextEntry(new ZipEntry(id + "_Profile.xml"));
+			InputStream inTP = null;
+			inTP = IOUtils.toInputStream(profileXML);
+			int lenTP;
+			while ((lenTP = inTP.read(buf)) > 0) {
+				out.write(buf, 0, lenTP);
+			}
+			out.closeEntry();
+			inTP.close();
 
-		out.putNextEntry(new ZipEntry(id + "_ValueSet.xml"));
-		inTP = null;
-		inTP = IOUtils.toInputStream(valueSetXML);
-		lenTP = 0;
-		while ((lenTP = inTP.read(buf)) > 0) {
-			out.write(buf, 0, lenTP);
+			out.putNextEntry(new ZipEntry(id + "_ValueSet.xml"));
+			inTP = null;
+			inTP = IOUtils.toInputStream(valueSetXML);
+			lenTP = 0;
+			while ((lenTP = inTP.read(buf)) > 0) {
+				out.write(buf, 0, lenTP);
+			}
+			out.closeEntry();
+			inTP.close();
+			
+			out.putNextEntry(new ZipEntry(id + "_Constraints.xml"));
+			inTP = null;
+			inTP = IOUtils.toInputStream(constraintsXML);
+			lenTP = 0;
+			while ((lenTP = inTP.read(buf)) > 0) {
+				out.write(buf, 0, lenTP);
+			}
+			out.closeEntry();
+			inTP.close();	
 		}
-		out.closeEntry();
-		inTP.close();
 		
-		out.putNextEntry(new ZipEntry(id + "_Constraints.xml"));
-		inTP = null;
-		inTP = IOUtils.toInputStream(constraintsXML);
-		lenTP = 0;
-		while ((lenTP = inTP.read(buf)) > 0) {
-			out.write(buf, 0, lenTP);
-		}
-		out.closeEntry();
-		inTP.close();
+		
 	}
 
-	public nu.xom.Document serializeProfileToDoc(Profile profile, IGDocument igDoc) {
+	public nu.xom.Document serializeProfileToDoc(Profile profile) {
 		nu.xom.Element e = new nu.xom.Element("ConformanceProfile");
-		this.serializeProfileMetaData(e, profile.getMetaData(), igDoc.getMetaData(), igDoc.getId());
+		this.serializeProfileMetaData(e, profile.getMetaData(), profile.getId());
 
 		nu.xom.Element ms = new nu.xom.Element("Messages");
 		for (Message m : profile.getMessages().getChildren()) {
@@ -1113,7 +1114,7 @@ public class ExportUtil {
 		return doc;
 	}
 
-	private void serializeProfileMetaData(nu.xom.Element e, ProfileMetaData metaData, DocumentMetaData igMetaData, String id) {
+	private void serializeProfileMetaData(nu.xom.Element e, ProfileMetaData metaData, String id) {
 		e.addAttribute(new Attribute("ID", id));
 
 		if (metaData.getType() != null && !metaData.getType().equals(""))
@@ -1124,14 +1125,10 @@ public class ExportUtil {
 			e.addAttribute(new Attribute("SchemaVersion", ExportUtil.str(metaData.getSchemaVersion())));
 
 		nu.xom.Element elmMetaData = new nu.xom.Element("MetaData");
-		elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(igMetaData.getTitle()).equals("")
-				? ExportUtil.str(igMetaData.getTitle()) : "No Title Info"));
-		elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(igMetaData.getOrgName()).equals("")
-				? ExportUtil.str(igMetaData.getOrgName()) : "No Org Info"));
-		elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(igMetaData.getVersion()).equals("")
-				? ExportUtil.str(igMetaData.getVersion()) : "No Version Info"));
-		elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(igMetaData.getDate()).equals("")
-				? ExportUtil.str(igMetaData.getDate()) : "No Date Info"));
+		elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(metaData.getName()).equals("") ? ExportUtil.str(metaData.getName()) : "No Title Info"));
+		elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metaData.getOrgName()).equals("") ? ExportUtil.str(metaData.getOrgName()) : "No Org Info"));
+		elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metaData.getVersion()).equals("") ? ExportUtil.str(metaData.getVersion()) : "No Version Info"));
+		elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(metaData.getDate()).equals("") ? ExportUtil.str(metaData.getDate()) : "No Date Info"));
 
 		if (metaData.getSpecificationName() != null && !metaData.getSpecificationName().equals(""))
 			elmMetaData
@@ -1361,32 +1358,26 @@ public class ExportUtil {
 		return elmDatatype;
 	}
 
-	public nu.xom.Element serializeTableLibraryToElement(Profile profile, IGDocument igdoc) {
+	public nu.xom.Element serializeTableLibraryToElement(Profile profile) {
 		Tables tableLibrary = profile.getTables();
 		nu.xom.Element elmTableLibrary = new nu.xom.Element("ValueSetLibrary");
-		elmTableLibrary.addAttribute(new Attribute("ValueSetLibraryIdentifier", igdoc.getId()));
+		elmTableLibrary.addAttribute(new Attribute("ValueSetLibraryIdentifier", profile.getId()));
 
 		nu.xom.Element elmMetaData = new nu.xom.Element("MetaData");
-		DocumentMetaData metadata = igdoc.getMetaData();
+		ProfileMetaData metadata = profile.getMetaData();
 		if (metadata == null) {
 			elmMetaData.addAttribute(new Attribute("Name", "Vocab for " + "Profile"));
 			elmMetaData.addAttribute(new Attribute("OrgName", "NIST"));
 			elmMetaData.addAttribute(new Attribute("Version", "1.0.0"));
 			elmMetaData.addAttribute(new Attribute("Date", ""));
 		} else {
-			elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(metadata.getTitle()).equals("")
-					? ExportUtil.str(metadata.getTitle()) : "No Title Info"));
-			elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metadata.getOrgName()).equals("")
-					? ExportUtil.str(metadata.getOrgName()) : "No Org Info"));
-			elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metadata.getVersion()).equals("")
-					? ExportUtil.str(metadata.getVersion()) : "No Version Info"));
-			elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(metadata.getDate()).equals("")
-					? ExportUtil.str(metadata.getDate()) : "No Date Info"));
+			elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(metadata.getName()).equals("") ? ExportUtil.str(metadata.getName()) : "No Title Info"));
+			elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metadata.getOrgName()).equals("") ? ExportUtil.str(metadata.getOrgName()) : "No Org Info"));
+			elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metadata.getVersion()).equals("") ? ExportUtil.str(metadata.getVersion()) : "No Version Info"));
+			elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(metadata.getDate()).equals("") ? ExportUtil.str(metadata.getDate()) : "No Date Info"));
 
-			if (profile.getMetaData().getSpecificationName() != null
-					&& !profile.getMetaData().getSpecificationName().equals(""))
-				elmMetaData.addAttribute(new Attribute("SpecificationName",
-						ExportUtil.str(profile.getMetaData().getSpecificationName())));
+			if (profile.getMetaData().getSpecificationName() != null && !profile.getMetaData().getSpecificationName().equals(""))
+				elmMetaData.addAttribute(new Attribute("SpecificationName", ExportUtil.str(profile.getMetaData().getSpecificationName())));
 			if (profile.getMetaData().getStatus() != null && !profile.getMetaData().getStatus().equals(""))
 				elmMetaData.addAttribute(new Attribute("Status", ExportUtil.str(profile.getMetaData().getStatus())));
 			if (profile.getMetaData().getTopics() != null && !profile.getMetaData().getTopics().equals(""))
@@ -1483,13 +1474,13 @@ public class ExportUtil {
 		return elmTableLibrary;
 	}
 
-	public nu.xom.Document serializeConstraintsToDoc(Profile profile, IGDocument igdoc) {
+	public nu.xom.Document serializeConstraintsToDoc(Profile profile) {
 		Constraints predicates = findAllPredicates(profile);
 		Constraints conformanceStatements = findAllConformanceStatement(profile);
 		nu.xom.Element e = new nu.xom.Element("ConformanceContext");
-		e.addAttribute(new Attribute("UUID", igdoc.getId()));
+		e.addAttribute(new Attribute("UUID", profile.getId()));
 
-		DocumentMetaData metadata = igdoc.getMetaData();
+		ProfileMetaData metadata = profile.getMetaData();
 		nu.xom.Element elmMetaData = new nu.xom.Element("MetaData");
 		if (metadata == null) {
 			elmMetaData.addAttribute(new Attribute("Name", "Constraints for " + "Profile"));
@@ -1497,19 +1488,13 @@ public class ExportUtil {
 			elmMetaData.addAttribute(new Attribute("Version", "1.0.0"));
 			elmMetaData.addAttribute(new Attribute("Date", ""));
 		} else {
-			elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(metadata.getTitle()).equals("")
-					? ExportUtil.str(metadata.getTitle()) : "No Title Info"));
-			elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metadata.getOrgName()).equals("")
-					? ExportUtil.str(metadata.getOrgName()) : "No Org Info"));
-			elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metadata.getVersion()).equals("")
-					? ExportUtil.str(metadata.getVersion()) : "No Version Info"));
-			elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(metadata.getDate()).equals("")
-					? ExportUtil.str(metadata.getDate()) : "No Date Info"));
+			elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(metadata.getName()).equals("") ? ExportUtil.str(metadata.getName()) : "No Title Info"));
+			elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metadata.getOrgName()).equals("") ? ExportUtil.str(metadata.getOrgName()) : "No Org Info"));
+			elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metadata.getVersion()).equals("") ? ExportUtil.str(metadata.getVersion()) : "No Version Info"));
+			elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(metadata.getDate()).equals("") ? ExportUtil.str(metadata.getDate()) : "No Date Info"));
 
-			if (profile.getMetaData().getSpecificationName() != null
-					&& !profile.getMetaData().getSpecificationName().equals(""))
-				elmMetaData.addAttribute(new Attribute("SpecificationName",
-						ExportUtil.str(profile.getMetaData().getSpecificationName())));
+			if (profile.getMetaData().getSpecificationName() != null && !profile.getMetaData().getSpecificationName().equals(""))
+				elmMetaData.addAttribute(new Attribute("SpecificationName", ExportUtil.str(profile.getMetaData().getSpecificationName())));
 			if (profile.getMetaData().getStatus() != null && !profile.getMetaData().getStatus().equals(""))
 				elmMetaData.addAttribute(new Attribute("Status", ExportUtil.str(profile.getMetaData().getStatus())));
 			if (profile.getMetaData().getTopics() != null && !profile.getMetaData().getTopics().equals(""))

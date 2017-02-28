@@ -3353,7 +3353,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 
-	$scope.selectedCols = [];
+	$scope.selectedCols = [{id: 2, label: "Usage"}];
 	$scope.colsData = [
 		{id: 1, label: "DT"},
 		{id: 2, label: "Usage"},
