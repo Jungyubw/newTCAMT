@@ -577,10 +577,10 @@ public class ExportUtil {
 			byte[] buf = new byte[1024];
 			
 			if(option.equals("ng-tab-html")){
-				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestDataSpecification.html"));
+				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "MessageContent.html"));
 				mcXSL = IOUtils.toString(is);
 			}else {
-				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestDataSpecificationPDF.html"));
+				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "MessageContentPDF.html"));
 				mcXSL = IOUtils.toString(is).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>","<xsl:param name=\"output\" select=\"'plain-html'\"/>");
 			}
 			
@@ -1089,10 +1089,6 @@ public class ExportUtil {
 
 	public nu.xom.Document serializeProfileToDoc(Profile profile) {
 		nu.xom.Element e = new nu.xom.Element("ConformanceProfile");
-		Attribute schemaLocation = new Attribute("xsi:noNamespaceSchemaLocation", "http://www.w3.org/2001/XMLSchema-instance", "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/Profile.xsd");
-		e.addAttribute(schemaLocation);
-		
-		
 		this.serializeProfileMetaData(e, profile.getMetaData(), profile.getId());
 
 		nu.xom.Element ms = new nu.xom.Element("Messages");
@@ -1365,9 +1361,6 @@ public class ExportUtil {
 	public nu.xom.Element serializeTableLibraryToElement(Profile profile) {
 		Tables tableLibrary = profile.getTables();
 		nu.xom.Element elmTableLibrary = new nu.xom.Element("ValueSetLibrary");
-		Attribute schemaLocation = new Attribute("xsi:noNamespaceSchemaLocation", "http://www.w3.org/2001/XMLSchema-instance", "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ValueSets.xsd");
-		elmTableLibrary.addAttribute(schemaLocation);
-		
 		elmTableLibrary.addAttribute(new Attribute("ValueSetLibraryIdentifier", profile.getId()));
 
 		nu.xom.Element elmMetaData = new nu.xom.Element("MetaData");
@@ -1485,8 +1478,6 @@ public class ExportUtil {
 		Constraints predicates = findAllPredicates(profile);
 		Constraints conformanceStatements = findAllConformanceStatement(profile);
 		nu.xom.Element e = new nu.xom.Element("ConformanceContext");
-		Attribute schemaLocation = new Attribute("xsi:noNamespaceSchemaLocation", "http://www.w3.org/2001/XMLSchema-instance", "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ConformanceContext.xsd");
-		e.addAttribute(schemaLocation);
 		e.addAttribute(new Attribute("UUID", profile.getId()));
 
 		ProfileMetaData metadata = profile.getMetaData();

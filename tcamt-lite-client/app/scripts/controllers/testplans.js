@@ -10,10 +10,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.selectedTestStepTab.tabNum = 0;
 	$rootScope.tps = [];
 	$rootScope.sr={
-			name:""
+			name:"",
+			
 	};
-
-	$('#segmentTable').treetable({expandable:true});
+	$('#segmentTable').treetable({
+    expandable:     true
+	});
 
 	$scope.expanded = false;
 
@@ -2048,9 +2050,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var parser = new DOMParser();
 		var xmlDoc = parser.parseFromString(xmlString, "text/xml");
 		var rootElement = xmlDoc.getElementsByTagName(rootName)[0];
-        rootElement.setAttribute("UUID", new ObjectId().toString());
-		rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        rootElement.setAttribute("xsi:noNamespaceSchemaLocation", "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ConformanceContext.xsd");
+		rootElement.setAttribute("UUID", new ObjectId().toString());
+
 
 		//TODO METADATA need to update
 		var elmMetaData = xmlDoc.createElement("MetaData");
