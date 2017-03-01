@@ -7,13 +7,9 @@ tcamt-lite-client/.idea/
 tcamt-lite-client/.sass-cache/
 tcamt-lite-client/.classpath
 tcamt-lite-client/.DS_Store
-tcamt-lite-client/.project
 tcamt-lite-controller/src/main/webapp/
 tcamt-lite-domain/.settings/
-tcamt-lite-domain/.project
 tcamt-lite-repo/.settings/
-tcamt-lite-repo/.project
 tcamt-lite-resource/.settings/
-tcamt-lite-resource/.project
 tcamt-lite-service/.settings/
-tcamt-lite-service/.project
+.project
