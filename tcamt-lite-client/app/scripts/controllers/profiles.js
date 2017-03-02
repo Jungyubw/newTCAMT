@@ -92,7 +92,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 			.cancel('Cancel');
 
 		$mdDialog.show(confirm).then(function(result) {
-			if(result == 'iamrob'){
+			if(result == 'nist1234'){
 				$http.post($rootScope.api('api/profiles/' + profile.id + '/delete')).then(function (response) {
 					$rootScope.msg().text = "profileDeleteSuccess";
 					$rootScope.msg().type = "success";
@@ -207,7 +207,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 		};
 
 		$scope.checkPassCode = function () {
-			if($scope.passcode == 'iamrob') $scope.isSuperUser = true;
+			if($scope.passcode == 'nist1234') $scope.isSuperUser = true;
 		};
 
 		$scope.checkLoadAll = function (){
@@ -279,7 +279,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 		};
 
 		$scope.checkPassCode = function () {
-			if($scope.passcode == 'iamrob') $scope.isSuperUser = true;
+			if($scope.passcode == 'nist1234') $scope.isSuperUser = true;
 		};
 
 		$scope.checkLoadAll = function (){

@@ -24,15 +24,18 @@
                     <tr >
                         <th colspan="8" st-ratio="100"><input st-search="" class="form-control" type="text"/></th>
                     </tr>
-                    <tr class="tbl-header" style="margin-right: {{scrollbarWidth}}px;">
+                    <tr class="tbl-header" style="">
                         <th st-ratio="5"></th>
-                        <th st-sort="fullName" st-ratio="20">
+                        <th st-sort="fullName" st-ratio="15">
                             <div msg key='account.fullName'></div>
                         </th>
-                        <th st-sort="email" st-ratio="20">
+                        <th st-sort="email" st-ratio="15">
                             <div msg key='account.email'></div>
                         </th>
-                        <th st-sort="employer" st-ratio="20">
+                        <th st-sort="username" st-ratio="15">
+                            <div msg key='account.username'></div>
+                        </th>
+                        <th st-sort="employer" st-ratio="15">
                             <div msg key='account.employer'></div>
                         </th>
                         <th st-sort="title" st-ratio="20">
@@ -44,16 +47,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="row in tmpAccountList">
+                    <tr ng-repeat="row in tmpAccountList track by row.id">
                         <td st-ratio="5">
                             <input ng-click="selectAccount(row)"
                                    ng-checked="account != null && row == account"
                                    type="radio">
                             </td>
-                        <td ng-bind="row.fullName" st-ratio="20"></td>
-                        <td ng-bind="row.email" st-ratio="20"></td>
+                        <td ng-bind="row.fullName" st-ratio="15"></td>
+                        <td ng-bind="row.email" st-ratio="15"></td>
+                        <td ng-bind="row.username" st-ratio="15"></td>
                         <!--<td ng-bind="row.phone" st-ratio="10"></td>-->
-                        <td ng-bind="row.employer" st-ratio="20"></td>
+                        <td ng-bind="row.employer" st-ratio="15"></td>
                         <td ng-bind="row.title" st-ratio="20"></td>
                         <!--<td ng-bind="row.juridiction" st-ratio="10"></td>-->
                         <td st-ratio="15">
@@ -62,8 +66,8 @@
                         </td>
                     </tr>
                     </tbody>
-                    <tfoot ng-show="tmpAccountList.length >= 20">
-                    <tr style="margin-right: {{scrollbarWidth}}px;">
+                    <tfoot ng-show="accountList.length >= 20">
+                    <tr style="">
                         <td colspan="8">
                             <div st-pagination="" st-items-by-page="20" st-displayed-pages="7"></div>
                         </td>
@@ -71,12 +75,6 @@
                     </tfoot>
                 </table>
             </div>
-
-
-
-
-
-
 
         </div>
     </div>
@@ -128,7 +126,7 @@
                 </div>
                 <div class="control-group form-group">
                     <div class="col-md-offset-2 col-md-7">
-                        <button class="btn btn-primary" ng-click='changePassword()' ng-disabled='!changePasswordForm.$valid'><div msg key="account.changePasswordButton"></div></button>
+                        <button class="btn btn-raised btn-raised btn-primary" ng-click='changePassword()' ng-disabled='!changePasswordForm.$valid'><div msg key="account.changePasswordButton"></div></button>
                     </div>
                 </div>
             </div>
@@ -141,7 +139,7 @@
                 </p>
                 <div class="control-group form-group">
                     <div class="controls col-md-10">
-                        <button class="btn btn-success" ng-click='approveAccount()'><i class="fa fa-check"></i>&nbsp;<span msg key="account.approveUserButton"></span></button>
+                        <button class="btn btn-raised btn-raised btn-success" ng-click='approveAccount()'><i class="fa fa-check"></i>&nbsp;<span msg key="account.approveUserButton"></span></button>
                     </div>
                 </div>
             </div>
@@ -155,7 +153,7 @@
                 </p>
                 <div class="control-group form-group">
                     <div class="controls col-md-10">
-                        <button class="btn btn-warning" ng-click='suspendAccount()'><i class="fa fa-times"></i>&nbsp;<span msg key="account.suspendUserButton"></span></button>
+                        <button class="btn btn-raised btn-raised btn-raised btn-warning" ng-click='suspendAccount()'><i class="fa fa-times"></i>&nbsp;<span msg key="account.suspendUserButton"></span></button>
                     </div>
                 </div>
             </div>
@@ -170,7 +168,7 @@
                 </p>
                 <div class="control-group form-group">
                     <div class="controls col-md-10">
-                        <button class="btn btn-danger" ng-click='deleteAccount()'><i class="fa fa-times"></i>&nbsp;<span msg key="account.deleteButton"></span></button>
+                        <button class="btn btn-raised btn-raised btn-raised btn-danger" ng-click='deleteAccount()'><i class="fa fa-times"></i>&nbsp;<span msg key="account.deleteButton"></span></button>
                     </div>
                 </div>
             </div>
@@ -194,10 +192,10 @@
     </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" ng-click="cancel()"><span><i class="fa fa-times fa-fw">&nbsp; </i><span msg
+        <button class="btn btn-raised btn-raised btn-raised btn-primary" ng-click="cancel()"><span><i class="fa fa-times fa-fw">&nbsp; </i><span msg
                                                                                                                 key='manage.account.deleteModal.cancelButton'></span></span>
         </button>
-        <button class="btn btn-danger" ng-click="delete()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i><span msg
+        <button class="btn btn-raised btn-raised btn-raised btn-danger" ng-click="delete()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i><span msg
                                                                                                                  key='manage.account.deleteModal.okButton'></span></span>
         </button>
     </div>

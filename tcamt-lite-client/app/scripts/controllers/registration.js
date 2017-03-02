@@ -97,7 +97,7 @@ angular.module('tcl')
     }
 ]);
 //
-//angular.module('tcl').controller('AgreementCtrl', ['$scope', '$modalInstance',
+//angular.module('igl').controller('AgreementCtrl', ['$scope', '$modalInstance',
 //    function ($scope, $modalInstance) {
 //
 //        $scope.acceptAgreement =  function() {
