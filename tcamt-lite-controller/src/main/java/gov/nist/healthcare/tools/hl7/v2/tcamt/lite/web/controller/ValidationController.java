@@ -62,6 +62,7 @@ public class ValidationController {
 		String constraintsXML = util.serializeConstraintsToDoc(tcamtProfile).toXML();
 		String testStepConstraintXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator") + cbConstraints.getConstraint();
 		
+		System.out.println(message);
 		System.out.println(profileXML);
 		System.out.println(valueSetXML);
 		System.out.println(constraintsXML);
@@ -77,7 +78,7 @@ public class ValidationController {
 				InputStream contextXML = new ByteArrayInputStream(constraintsXML.getBytes(StandardCharsets.UTF_8));
 				List<InputStream> confContexts = Arrays.asList(contextXML);
 				ConformanceContext cc = DefaultConformanceContext.apply(confContexts).get();
-				report = (EnhancedReport) vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Free);
+				report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Free);
 			} else if (context.equals("based")) {
 				InputStream contextXML = new ByteArrayInputStream(testStepConstraintXML.getBytes(StandardCharsets.UTF_8));
 				List<InputStream> confContexts = Arrays.asList(contextXML);
@@ -85,7 +86,6 @@ public class ValidationController {
 				report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Based);
 			}
 			response  = report.to("json").toString();
-			//response = report.toString();
 			html = report.render("report", null);
 		} catch (Exception e) {
 			error=e.getMessage();

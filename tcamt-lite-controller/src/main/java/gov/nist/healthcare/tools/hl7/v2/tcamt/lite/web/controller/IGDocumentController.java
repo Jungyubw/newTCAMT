@@ -45,6 +45,7 @@ public class IGDocumentController extends CommonController {
 					p.getMetaData().setDescription(igd.getMetaData().getDescription());
 					p.getMetaData().setDate(igd.getMetaData().getDate());
 					p.setSourceType("igamt");
+					p.setAccountId(igd.getAccountId());
 					
 					profileService.save(p);
 					result.add(p);

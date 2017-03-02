@@ -1150,15 +1150,12 @@ public class ExportUtil {
 
 		elmMessage.addAttribute(new Attribute("ID", m.getId()));
 		
-		if (m.getIdentifier() != null && !m.getIdentifier().equals(""))
-			elmMessage.addAttribute(new Attribute("Identifier", ExportUtil.str(m.getIdentifier())));
-		if (m.getName() != null && !m.getName().equals(""))
-			elmMessage.addAttribute(new Attribute("Name", ExportUtil.str(m.getName())));
+		if (m.getIdentifier() != null && !m.getIdentifier().equals("")) elmMessage.addAttribute(new Attribute("Identifier", ExportUtil.str(m.getIdentifier())));
+		if (m.getName() != null && !m.getName().equals("")) elmMessage.addAttribute(new Attribute("Name", ExportUtil.str(m.getName())));
 		elmMessage.addAttribute(new Attribute("Type", ExportUtil.str(m.getMessageType())));
 		elmMessage.addAttribute(new Attribute("Event", ExportUtil.str(m.getEvent())));
 		elmMessage.addAttribute(new Attribute("StructID", ExportUtil.str(m.getStructID())));
-		if (m.getDescription() != null && !m.getDescription().equals(""))
-			elmMessage.addAttribute(new Attribute("Description", ExportUtil.str(m.getDescription())));
+		if (m.getDescription() != null && !m.getDescription().equals("")) elmMessage.addAttribute(new Attribute("Description", ExportUtil.str(m.getDescription())));
 
 		Map<Integer, SegmentRefOrGroup> segmentRefOrGroups = new HashMap<Integer, SegmentRefOrGroup>();
 
@@ -1169,25 +1166,26 @@ public class ExportUtil {
 		for (int i = 1; i < segmentRefOrGroups.size() + 1; i++) {
 			SegmentRefOrGroup segmentRefOrGroup = segmentRefOrGroups.get(i);
 			if (segmentRefOrGroup instanceof SegmentRef) {
-				elmMessage.appendChild(serializeSegmentRef((SegmentRef) segmentRefOrGroup));
+				elmMessage.appendChild(serializeSegmentRef((SegmentRef) segmentRefOrGroup, segments));
 			} else if (segmentRefOrGroup instanceof Group) {
-				elmMessage.appendChild(serializeGroup((Group) segmentRefOrGroup));
+				elmMessage.appendChild(serializeGroup((Group) segmentRefOrGroup, segments));
 			}
 		}
 
 		return elmMessage;
 	}
 
-	private nu.xom.Element serializeSegmentRef(SegmentRef segmentRef) {
+	private nu.xom.Element serializeSegmentRef(SegmentRef segmentRef, Segments segments) {
 		nu.xom.Element elmSegment = new nu.xom.Element("Segment");
-		elmSegment.addAttribute(new Attribute("Ref", ExportUtil.str(segmentRef.getRef().getLabel())));
+		Segment s = segments.findOneSegmentById(segmentRef.getRef().getId());
+		elmSegment.addAttribute(new Attribute("Ref", ExportUtil.str(s.getLabel())));
 		elmSegment.addAttribute(new Attribute("Usage", ExportUtil.str(segmentRef.getUsage().value())));
 		elmSegment.addAttribute(new Attribute("Min", ExportUtil.str(segmentRef.getMin() + "")));
 		elmSegment.addAttribute(new Attribute("Max", ExportUtil.str(segmentRef.getMax())));
 		return elmSegment;
 	}
 
-	private nu.xom.Element serializeGroup(Group group) {
+	private nu.xom.Element serializeGroup(Group group, Segments segments) {
 		nu.xom.Element elmGroup = new nu.xom.Element("Group");
 		elmGroup.addAttribute(new Attribute("ID", ExportUtil.str(group.getName())));
 		elmGroup.addAttribute(new Attribute("Name", ExportUtil.str(group.getName())));
@@ -1204,9 +1202,9 @@ public class ExportUtil {
 		for (int i = 1; i < segmentRefOrGroups.size() + 1; i++) {
 			SegmentRefOrGroup segmentRefOrGroup = segmentRefOrGroups.get(i);
 			if (segmentRefOrGroup instanceof SegmentRef) {
-				elmGroup.appendChild(serializeSegmentRef((SegmentRef) segmentRefOrGroup));
+				elmGroup.appendChild(serializeSegmentRef((SegmentRef) segmentRefOrGroup, segments));
 			} else if (segmentRefOrGroup instanceof Group) {
-				elmGroup.appendChild(serializeGroup((Group) segmentRefOrGroup));
+				elmGroup.appendChild(serializeGroup((Group) segmentRefOrGroup, segments));
 			}
 		}
 
@@ -1272,15 +1270,16 @@ public class ExportUtil {
 
 				for (int k = 0; k < f.getTables().size(); k++) {
 					TableLink tl = f.getTables().get(k);
-
-					if (bindingIdentifier.equals("")) {
-						bindingIdentifier = tl.getBindingIdentifier();
-					} else {
-						bindingIdentifier = bindingIdentifier + ":" + tl.getBindingIdentifier();
+					Table t = tables.findOneTableById(tl.getId());
+					if(t != null){
+						if (bindingIdentifier.equals("")) {
+							bindingIdentifier = t.getBindingIdentifier();
+						} else {
+							bindingIdentifier = bindingIdentifier + ":" + t.getBindingIdentifier();
+						}
+						bindingStrength = tl.getBindingStrength();
+						bindingLocation = tl.getBindingLocation();	
 					}
-					bindingStrength = tl.getBindingStrength();
-					bindingLocation = tl.getBindingLocation();
-
 				}
 				if (bindingIdentifier != null && !bindingIdentifier.equals("")) 
 					elmField.addAttribute(new Attribute("Binding", bindingIdentifier));
@@ -1322,8 +1321,7 @@ public class ExportUtil {
 				nu.xom.Element elmComponent = new nu.xom.Element("Component");
 				elmComponent.addAttribute(new Attribute("Name", ExportUtil.str(c.getName())));
 				elmComponent.addAttribute(new Attribute("Usage", ExportUtil.str(c.getUsage().toString())));
-				elmComponent.addAttribute(new Attribute("Datatype",
-						ExportUtil.str(datatypes.findOne(c.getDatatype().getId()).getLabel())));
+				elmComponent.addAttribute(new Attribute("Datatype", ExportUtil.str(datatypes.findOne(c.getDatatype().getId()).getLabel())));
 				elmComponent.addAttribute(new Attribute("MinLength", "" + c.getMinLength()));
 				if (c.getMaxLength() != null && !c.getMaxLength().equals(""))
 					elmComponent.addAttribute(new Attribute("MaxLength", ExportUtil.str(c.getMaxLength())));
@@ -1336,15 +1334,16 @@ public class ExportUtil {
 
 					for (int k = 0; k < c.getTables().size(); k++) {
 						TableLink tl = c.getTables().get(k);
-
-						if (bindingIdentifier.equals("")) {
-							bindingIdentifier = tl.getBindingIdentifier();
-						} else {
-							bindingIdentifier = bindingIdentifier + ":" + tl.getBindingIdentifier();
+						Table t = tables.findOneTableById(tl.getId());
+						if(t != null){
+							if (bindingIdentifier.equals("")) {
+								bindingIdentifier = t.getBindingIdentifier();
+							} else {
+								bindingIdentifier = bindingIdentifier + ":" + t.getBindingIdentifier();
+							}
+							bindingStrength = tl.getBindingStrength();
+							bindingLocation = tl.getBindingLocation();	
 						}
-						bindingStrength = tl.getBindingStrength();
-						bindingLocation = tl.getBindingLocation();
-
 					}
 					if (bindingIdentifier != null && !bindingIdentifier.equals("")) 
 						elmComponent.addAttribute(new Attribute("Binding", bindingIdentifier));
@@ -1797,7 +1796,7 @@ public class ExportUtil {
 
 						nu.xom.Element elmPlainCoConstraint = new nu.xom.Element("PlainCoConstraint");
 
-						elmPlainCoConstraint.addAttribute(new Attribute("KeuPath",
+						elmPlainCoConstraint.addAttribute(new Attribute("KeyPath",
 								s.getCoConstraints().getColumnList().get(0).getField().getPosition() + "[1]"));
 						elmPlainCoConstraint.addAttribute(new Attribute("KeyValue", cc.getValues().get(0).getValue()));
 
@@ -1814,6 +1813,8 @@ public class ExportUtil {
 										nu.xom.Element elmValueSetCheck = new nu.xom.Element("ValueSet");
 										elmValueSetCheck.addAttribute(new Attribute("Path", path));
 										elmValueSetCheck.addAttribute(new Attribute("ValueSetID", profile.getTables().findOneTableById(value).getBindingIdentifier()));
+										elmValueSetCheck.addAttribute(new Attribute("BindingStrength", "R"));
+										elmValueSetCheck.addAttribute(new Attribute("BindingLocation", "1"));
 										elmPlainCoConstraint.appendChild(elmValueSetCheck);	
 									}
 								} else {
