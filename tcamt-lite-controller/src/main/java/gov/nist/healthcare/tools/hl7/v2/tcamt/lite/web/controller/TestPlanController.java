@@ -23,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -338,7 +339,7 @@ public class TestPlanController extends CommonController {
 		tp.setCoverPageSubTitle((String) obj.get("coverPageSubTitle"));
 		tp.setCoverPageTitle((String) obj.get("coverPageTitle"));
 		tp.setCoverPageVersion((String) obj.get("coverPageVersion"));
-		tp.setDescription(((String) obj.get("description")).replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " "));
+		tp.setDescription(Jsoup.parse((String) obj.get("description")).text());
 		tp.setDomain("VR");
 		tp.setTransport(true);
 		tp.setType("Isolated");
@@ -351,7 +352,7 @@ public class TestPlanController extends CommonController {
 			JSONObject g = groups.getJSONObject(i);
 			
 			TestCaseGroup tcg = new TestCaseGroup();
-			tcg.setDescription(((String) g.get("description")).replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " "));
+			tcg.setDescription(Jsoup.parse((String) g.get("description")).text());
 			tcg.setName((String) g.get("name"));
 			tcg.setType("testcasegroup");
 			
@@ -360,7 +361,7 @@ public class TestPlanController extends CommonController {
 				JSONObject c = testcases.getJSONObject(j);
 				
 				TestCase tc = new TestCase();
-				tc.setDescription(((String) c.get("description")).replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " "));
+				tc.setDescription(Jsoup.parse((String) c.get("description")).text());
 				tc.setName((String) c.get("name"));
 				tc.setProtocol("soap");
 				JSONObject testCaseStory = (JSONObject) c.get("testCaseStory");
@@ -380,7 +381,7 @@ public class TestPlanController extends CommonController {
 					JSONObject s = teststeps.getJSONObject(k);
 					
 					TestStep ts = new TestStep();
-					ts.setDescription(((String) s.get("description")).replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " "));
+					ts.setDescription(Jsoup.parse((String) s.get("description")).text());
 					
 					JSONObject message = (JSONObject) s.get("message");
 					if(message != null){
