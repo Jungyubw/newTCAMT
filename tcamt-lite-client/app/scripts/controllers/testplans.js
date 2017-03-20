@@ -3826,13 +3826,33 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.updatePositions(event.dest.nodesScope.$modelValue);
 			$scope.updatePositions(event.source.nodesScope.$modelValue);
 
-			
+            if($scope.sourceDrag.position!==sourceNode.$modelValue.position){
+                $rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
+                $rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
+                $scope.recordChanged();
+                console.log("debug")
+            }else{
+                if($scope.parentDrag.id!==destNodes.$parent.$modelValue.id){
 
 
-		},
+                    $rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
+                    $rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
+                    $scope.recordChanged();
+                    console.log("debug")
+
+                }
+            }
+
+        },
 		dragStart:function(event){
-			
-			
+            var sourceNode = event.source.nodeScope;
+            var destNodes = event.dest.nodesScope;
+
+            $scope.sourceDrag=angular.copy(sourceNode.$modelValue);
+            //$scope.destDrag=angular.copy(sourceNode.$parent.$nodeScope.$modelValue);
+            $scope.parentDrag=sourceNode.$parentNodeScope.$modelValue;
+            console.log($scope.parentDrag);
+
 		}
 	};
 

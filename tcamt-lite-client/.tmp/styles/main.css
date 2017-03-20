@@ -10885,13 +10885,23 @@ li.active > a {
   color: gray;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/ena3\/newTCAMT\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000033082}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/ena3\/newTCAMT\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000033079}}
 .MenuEnabled {
   color: black;
 }
 
-@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/ena3\/newTCAMT\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000033086}}
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/ena3\/newTCAMT\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000033083}}
 .md-button.md-default-theme.md-accent, .md-button.md-accent {
   /* color: rgb(255,64,129); */
   color: #3f51b5 !important;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/ena3\/newTCAMT\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000033087}}
+.panel {
+  overflow: hidden !important;
+}
+
+@media -sass-debug-info{filename{font-family:file\:\/\/\/Users\/ena3\/newTCAMT\/tcamt-lite-client\/app\/styles\/main\.scss}line{font-family:\000033090}}
+.panel-body {
+  overflow: scroll !important;
 }

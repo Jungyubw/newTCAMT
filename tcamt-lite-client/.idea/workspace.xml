@@ -2,15 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b3f93df7-fb36-4446-a655-d817031195bf" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.tmp/styles/main.css" afterPath="$PROJECT_DIR$/.tmp/styles/main.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/dev/profileBackEndStub.js" afterPath="$PROJECT_DIR$/app/dev/profileBackEndStub.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/index.html" afterPath="$PROJECT_DIR$/app/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" afterPath="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/styles/main.scss" afterPath="$PROJECT_DIR$/app/styles/main.scss" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/IgToc.html" afterPath="$PROJECT_DIR$/app/views/IgToc.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTestStep.html" afterPath="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/tp2.html" afterPath="$PROJECT_DIR$/app/views/tp2.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/edit/editTP.html" afterPath="$PROJECT_DIR$/app/views/edit/editTP.html" />
     </list>
     <ignored path="tcamt-lite-client.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,21 +25,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="testplans.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="testplans.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="39" lean-forward="false" selection-start-line="19" selection-start-column="39" selection-end-line="19" selection-end-column="39" />
+            <state relative-caret-position="355">
+              <caret line="3841" column="0" lean-forward="true" selection-start-line="3841" selection-start-column="0" selection-end-line="3841" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="IgToc.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="IgToc.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/IgToc.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="69" column="54" lean-forward="false" selection-start-line="69" selection-start-column="54" selection-end-line="69" selection-end-column="54" />
+            <state relative-caret-position="206">
+              <caret line="314" column="47" lean-forward="false" selection-start-line="314" selection-start-column="46" selection-end-line="314" selection-end-column="47" />
               <folding />
             </state>
           </provider>
@@ -53,8 +48,8 @@
       <file leaf-file-name="main.scss" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/styles/main.scss">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
-              <caret line="3087" column="34" lean-forward="false" selection-start-line="3087" selection-start-column="34" selection-end-line="3087" selection-end-column="34" />
+            <state relative-caret-position="510">
+              <caret line="3087" column="29" lean-forward="false" selection-start-line="3087" selection-start-column="29" selection-end-line="3087" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -80,34 +75,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="editTestStep.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/edit/editTestStep.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4230">
-              <caret line="282" column="187" lean-forward="false" selection-start-line="282" selection-start-column="175" selection-end-line="282" selection-end-column="187" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="editTestPlan.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/edit/editTestPlan.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="16" column="19" lean-forward="false" selection-start-line="16" selection-start-column="16" selection-end-line="16" selection-end-column="19" />
+            <state relative-caret-position="-195">
+              <caret line="35" column="30" lean-forward="true" selection-start-line="35" selection-start-column="30" selection-end-line="35" selection-end-column="30" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="config.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/config.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="66" lean-forward="false" selection-start-line="11" selection-start-column="66" selection-end-line="11" selection-end-column="66" />
-              <folding>
-                <element signature="n#div#0;n#!!top" expanded="false" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -115,13 +88,44 @@
       <file leaf-file-name="listTP.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/edit/listTP.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="855">
+            <state relative-caret-position="495">
               <caret line="57" column="10" lean-forward="false" selection-start-line="57" selection-start-column="10" selection-end-line="57" selection-end-column="10" />
               <folding>
                 <element signature="n#script#1;n#!!top" expanded="false" />
                 <element signature="n#script#2;n#!!top" expanded="false" />
                 <element signature="n#script#3;n#!!top" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="editTP.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/edit/editTP.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1140">
+              <caret line="76" column="34" lean-forward="false" selection-start-line="76" selection-start-column="34" selection-end-line="76" selection-end-column="34" />
+              <folding>
+                <element signature="n#style#0;n#div#1;n#div#0;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#2;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#span#1;n#span#0;n#div#0;n#div#2;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#1;n#span#1;n#span#0;n#div#0;n#div#2;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#2;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#4;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#2;n#div#0;n#div#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#div#2;n#div#0;n#div#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#1;n#div#0;n#div#2;n#div#0;n#div#1;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="angular-scenario.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bower_components/angular-scenario/angular-scenario.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="223">
+              <caret line="11771" column="10" lean-forward="false" selection-start-line="11771" selection-start-column="10" selection-end-line="11771" selection-end-column="10" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -143,8 +147,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>$index</find>
-      <find>login</find>
       <find>Please enter your username and password.</find>
       <find>login.banner</find>
       <find>api/accounts/login</find>
@@ -171,8 +173,10 @@
       <find>getGroup</find>
       <find>segmentR</find>
       <find>editMes</find>
-      <find>getComPonentN</find>
       <find>md</find>
+      <find>getComPonentN</find>
+      <find>Definition</find>
+      <find>dropp</find>
     </findStrings>
     <replaceStrings>
       <replace>md-input</replace>
@@ -190,7 +194,6 @@
         <option value="$PROJECT_DIR$/app/resources/57450d2bd4c6f57e697c4078.json" />
         <option value="$PROJECT_DIR$/app/views/edit/editER7Message.html" />
         <option value="$PROJECT_DIR$/app/views/home.html" />
-        <option value="$PROJECT_DIR$/app/views/edit/editTP.html" />
         <option value="$PROJECT_DIR$/app/prod/index.html" />
         <option value="$PROJECT_DIR$/.tmp/concat/scripts/scripts.js" />
         <option value="$PROJECT_DIR$/app/resources/57450d2ad4c6f57e697ab7e3.json" />
@@ -224,9 +227,10 @@
         <option value="$PROJECT_DIR$/app/views/edit/editTestPlan.html" />
         <option value="$PROJECT_DIR$/app/views/edit/editTestStep.html" />
         <option value="$PROJECT_DIR$/app/views/tp2.html" />
-        <option value="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
-        <option value="$PROJECT_DIR$/app/styles/main.scss" />
         <option value="$PROJECT_DIR$/app/views/IgToc.html" />
+        <option value="$PROJECT_DIR$/app/styles/main.scss" />
+        <option value="$PROJECT_DIR$/app/views/edit/editTP.html" />
+        <option value="$PROJECT_DIR$/app/scripts/controllers/testplans.js" />
       </list>
     </option>
   </component>
@@ -656,12 +660,12 @@
       <workItem from="1487343478328" duration="12825000" />
       <workItem from="1487971063261" duration="3997000" />
       <workItem from="1487995333518" duration="14242000" />
-      <workItem from="1490018356976" duration="5052000" />
+      <workItem from="1490018356976" duration="8482000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="387933000" />
+    <option name="totallyTimeSpent" value="391363000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="73" y="23" width="1400" height="789" extended-state="0" />
@@ -710,13 +714,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/scripts/directives/PreventRighClickDir.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/directives/compile.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -791,13 +788,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="19" column="4" lean-forward="false" selection-start-line="19" selection-start-column="4" selection-end-line="19" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/edit/editTP.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1470">
-          <caret line="98" column="77" lean-forward="false" selection-start-line="98" selection-start-column="77" selection-end-line="98" selection-end-column="111" />
         </state>
       </provider>
     </entry>
@@ -1001,26 +991,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/edit/listTP.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="855">
-          <caret line="57" column="10" lean-forward="false" selection-start-line="57" selection-start-column="10" selection-end-line="57" selection-end-column="10" />
-          <folding>
-            <element signature="n#script#1;n#!!top" expanded="false" />
-            <element signature="n#script#2;n#!!top" expanded="false" />
-            <element signature="n#script#3;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/edit/editTestPlan.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="19" lean-forward="false" selection-start-line="16" selection-start-column="16" selection-end-line="16" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/lib/angular-treetable/js/jquery.treetable.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="106">
@@ -1063,26 +1033,73 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
+    <entry file="file://$PROJECT_DIR$/app/views/edit/editTestPlan.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="39" lean-forward="false" selection-start-line="19" selection-start-column="39" selection-end-line="19" selection-end-column="39" />
+        <state relative-caret-position="-195">
+          <caret line="35" column="30" lean-forward="true" selection-start-line="35" selection-start-column="30" selection-end-line="35" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/edit/listTP.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="57" column="10" lean-forward="false" selection-start-line="57" selection-start-column="10" selection-end-line="57" selection-end-column="10" />
+          <folding>
+            <element signature="n#script#1;n#!!top" expanded="false" />
+            <element signature="n#script#2;n#!!top" expanded="false" />
+            <element signature="n#script#3;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bower_components/angular-scenario/angular-scenario.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="11771" column="10" lean-forward="false" selection-start-line="11771" selection-start-column="10" selection-end-line="11771" selection-end-column="10" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/styles/main.scss">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="3087" column="34" lean-forward="false" selection-start-line="3087" selection-start-column="34" selection-end-line="3087" selection-end-column="34" />
+        <state relative-caret-position="510">
+          <caret line="3087" column="29" lean-forward="false" selection-start-line="3087" selection-start-column="29" selection-end-line="3087" selection-end-column="29" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/edit/editTP.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1140">
+          <caret line="76" column="34" lean-forward="false" selection-start-line="76" selection-start-column="34" selection-end-line="76" selection-end-column="34" />
+          <folding>
+            <element signature="n#style#0;n#div#1;n#div#0;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#2;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#span#1;n#span#0;n#div#0;n#div#2;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#1;n#span#1;n#span#0;n#div#0;n#div#2;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#2;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#4;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#2;n#div#0;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#div#2;n#div#0;n#div#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#1;n#div#0;n#div#2;n#div#0;n#div#1;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/IgToc.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="69" column="54" lean-forward="false" selection-start-line="69" selection-start-column="54" selection-end-line="69" selection-end-column="54" />
+        <state relative-caret-position="206">
+          <caret line="314" column="47" lean-forward="false" selection-start-line="314" selection-start-column="46" selection-end-line="314" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/testplans.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="355">
+          <caret line="3841" column="0" lean-forward="true" selection-start-line="3841" selection-start-column="0" selection-end-line="3841" selection-end-column="0" />
           <folding />
         </state>
       </provider>
