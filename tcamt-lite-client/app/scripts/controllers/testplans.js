@@ -577,15 +577,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $scope.error = null;
             $rootScope.testStoryConfigs = [];
             $scope.loading = true;
-            // $http.get('api/config/').then(function(response) {
-            //     $rootScope.testStoryConfigs = angular.fromJson(response.data);
-            //     $scope.loading = false;
-            //     delay.resolve(true);
-            // }, function(error) {
-            //     $scope.loading = false;
-            //     $scope.error = error.data;
-            //     delay.reject(false);
-            // });
+            $http.get('api/config/').then(function(response) {
+                $rootScope.testStoryConfigs = angular.fromJson(response.data);
+                $scope.loading = false;
+                delay.resolve(true);
+            }, function(error) {
+                $scope.loading = false;
+                $scope.error = error.data;
+                delay.reject(false);
+            });
         }else{
             delay.reject(false);
         }
@@ -4464,7 +4464,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	}
     $rootScope.getTableLabel=function(table){
-      return table.bindingIdentifier;
+    	if(table) return table.bindingIdentifier;
+    	return null;
     }
 
 });
