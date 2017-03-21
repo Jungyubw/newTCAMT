@@ -22,6 +22,7 @@ angular.module('tcl').factory('loginTestingToolSvc',
         svc.push = function( host,username, password) {
             var delay = $q.defer();
             var httpHeaders = {};
+            
             httpHeaders['Accept'] = 'application/json';
             var auth =  base64.encode(username + ':' + password);
             httpHeaders['Authorization'] = 'Basic ' + auth;
