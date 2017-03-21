@@ -15,6 +15,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$('#segmentTable').treetable({expandable:true});
 
+	$scope.currentNavItem="CfMetaData";
 	$scope.expanded = false;
 
     $scope.expandAll = function() {
@@ -54,6 +55,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	}
 
+	
 	
 	$scope.testPlanOptions=[];
 	$scope.accordi = {metaData: false, definition: true, tpList: true, tpDetails: false};
@@ -401,7 +403,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.saved = false;
 		});
 	};
-
+	$scope.debug= function(node){
+		console.log("DEBUGGING");
+		console.log(node);
+	}
 	$scope.copyTestPlan = function(tp) {
 		$http.post($rootScope.api('api/testplans/' + tp.id + '/copy')).then(function (response) {
 			$rootScope.msg().text = "testplanCopySuccess";
@@ -572,15 +577,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $scope.error = null;
             $rootScope.testStoryConfigs = [];
             $scope.loading = true;
-            $http.get('api/config/').then(function(response) {
-                $rootScope.testStoryConfigs = angular.fromJson(response.data);
-                $scope.loading = false;
-                delay.resolve(true);
-            }, function(error) {
-                $scope.loading = false;
-                $scope.error = error.data;
-                delay.reject(false);
-            });
+            // $http.get('api/config/').then(function(response) {
+            //     $rootScope.testStoryConfigs = angular.fromJson(response.data);
+            //     $scope.loading = false;
+            //     delay.resolve(true);
+            // }, function(error) {
+            //     $scope.loading = false;
+            //     $scope.error = error.data;
+            //     delay.reject(false);
+            // });
         }else{
             delay.reject(false);
         }
@@ -3820,13 +3825,33 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.updatePositions(event.dest.nodesScope.$modelValue);
 			$scope.updatePositions(event.source.nodesScope.$modelValue);
 
-			
+            if($scope.sourceDrag.position!==sourceNode.$modelValue.position){
+                $rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
+                $rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
+                $scope.recordChanged();
+                console.log("debug")
+            }else{
+                if($scope.parentDrag.id!==destNodes.$parent.$modelValue.id){
 
 
-		},
+                    $rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
+                    $rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
+                    $scope.recordChanged();
+                    console.log("debug")
+
+                }
+            }
+
+        },
 		dragStart:function(event){
-			
-			
+            var sourceNode = event.source.nodeScope;
+            var destNodes = event.dest.nodesScope;
+
+            $scope.sourceDrag=angular.copy(sourceNode.$modelValue);
+            //$scope.destDrag=angular.copy(sourceNode.$parent.$nodeScope.$modelValue);
+            $scope.parentDrag=sourceNode.$parentNodeScope.$modelValue;
+            console.log($scope.parentDrag);
+
 		}
 	};
 
@@ -4417,6 +4442,30 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		// Notification.success("Test Group "+testCaseGroup.name +" Clonned");
 		return clone;
 	};
+
+
+	$rootScope.getComponentNodeName=function(obj){
+		return obj.name;
+	}
+    $rootScope.getFieldNodeName=function (obj) {
+		return obj.name;
+    }
+    $rootScope.getSegmentRefNodeName=function(obj){
+		return obj.label;
+	}
+	$rootScope.getGroupNodeName=function (obj) {
+	return obj.name;
+    }
+    $rootScope.getDatatypeLabel=function(datatype){
+    	if(datatype.ext!==""||datatype.ext!==null){
+    		return datatype.name;
+		}else{
+    		return datatype.name+"_"+datatype.ext;
+		}
+	}
+    $rootScope.getTableLabel=function(table){
+      return table.bindingIdentifier;
+    }
 
 });
 

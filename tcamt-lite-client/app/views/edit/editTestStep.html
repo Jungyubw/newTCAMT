@@ -299,6 +299,8 @@ body {
 														</thead>
 														<tbody></tbody>
 													</table>
+
+
 												</div>
 											</div>
 										</div>
@@ -517,9 +519,9 @@ body {
 </script>
 
 <script type="text/ng-template" id="FieldTree.html">
-	<tr tt-node is-branch="hasChildren(node)"  data-tt-branch='true' data-tt-id="{{node.ID}}" data-tt-parent-id="{{node.parentID}}">
+	<tr tt-node is-branch="hasChildren(node)"  data-tt-branch='true' data-tt-id="{{node.ID}}" data-tt-parent-id="{{node.parentID}}"  >
 		<td class="col-md-1">
-			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
+			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}} <button ng-click="debug(node)"></button>
         </td>
 		<td class="col-md-1">
 			{{node.field.name}}
@@ -561,7 +563,7 @@ body {
         </td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value"  ng-class="{'invalidValue':hasError(node.testDataCategorization,node.value)}"/>
+				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value"  ng-class="{'invalidValue':hasError(node.testDataCategorization,node.value, node.usagePath)}"/>
 			</div>
         </td>
 		<td class="col-md-1">
@@ -588,7 +590,7 @@ body {
 <script type="text/ng-template" id="ComponentTree.html">
 	<tr tt-node is-branch="hasChildren(node)"  data-tt-branch='true' data-tt-id="{{node.ID}}" data-tt-parent-id="{{node.parentID}}">
 		<td class="col-md-1">
-			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
+			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}  <button ng-click="debug(node)"></button>
         </td>
 		<td class="col-md-1">
 			{{node.component.name}}
@@ -630,7 +632,7 @@ body {
 		</td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value"  ng-class="{'invalidValue':hasError(node.testDataCategorization,node.value)}" />
+				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value"  ng-class="{'invalidValue':hasError(node.testDataCategorization,node.value,node.usagePath)}" />
 			</div>
 		</td>
 		<td class="col-md-1">
@@ -652,7 +654,7 @@ body {
 <script type="text/ng-template" id="SubComponentTree.html">
 	<tr tt-node is-branch="hasChildren(node)"  data-tt-id="{{node.ID}}" data-tt-branch='true' data-tt-parent-id="{{node.parentID}}">
 		<td class="col-md-1">
-			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
+			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}} <button ng-click="debug(node)"></button>
         </td>
 		<td class="col-md-1">
 			{{node.component.name}}
@@ -694,7 +696,7 @@ body {
 		</td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
-				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value"  ng-class="{'invalidValue':hasError(node.testDataCategorization,node.value)}"/>
+				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value"  ng-class="{'invalidValue':hasError(node.testDataCategorization,node.value,node.usagePath)}"/>
 			</div>
 		</td>
 		<td class="col-md-1">
