@@ -1,0 +1,82 @@
+<style id="antiClickjack">body{display:none !important;}</style>
+<script type="text/javascript">
+    if (self === top) {
+        var antiClickjack = document.getElementById("antiClickjack");
+        antiClickjack.parentNode.removeChild(antiClickjack);
+    } else {
+        top.location = self.location;
+    }
+</script>
+<form name="testingLoginForm" id="testingLoginForm" novalidate class="form-horizontal">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal"></a>
+        <h3 class="modal-title">
+            <i class="fa fa-sign-in"></i>&nbsp;<span> Pushing the testplan</span>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div align="row" layout-align="center center">
+            <label flex="40">Select Testing Tool</label>
+            <select flex="60" ng-model="testingUrl" style="width: 100%">
+                <option ng-value="opt" ng-repeat="opt in ['https://hit-dev.nist.gov:8098/iztool/','url2']">Nist Immunization Test Suite</option>
+            </select>
+        </div>
+        <!--<label>-->
+        <!--<div msg key="testing.login.banner"></div>-->
+        <!--</label>-->
+        <div ng-if="testingUrl">
+        <div ng-class="'alert alert-danger'" ng-show="error.show" id="ehrloginalert">
+            <button type="button" class="close" ng-click="error.show=false">×</button>
+            <div msg key-expr="error.text"></div>
+        </div>
+
+        <div class="form-group control-group"
+             ng-class="{'has-success has-feedback': testingLoginForm.username.$valid, 'igl-has-error has-feedback': !testingLoginForm.username.$valid}">
+            <label class="control-label col-md-2" for="username">
+                <div msg key="login.username"></div>
+            </label>
+
+            <div class="col-md-10">
+                <input type="text" class="form-control focus"  autofocus  id="username" name="username" ng-model="username"
+                       ng-minlength="4" required>
+            </div>
+        </div>
+        <div class="form-group control-group"
+             ng-class="{'has-success has-feedback': testingLoginForm.password.$valid, 'igl-has-error has-feedback': !testingLoginForm.password.$valid}">
+            <label class="control-label col-md-2" for="password">
+                <div msg key="login.password"></div>
+            </label>
+
+            <div class="col-md-10">
+                <input type="password"   autocomplete="off" class="form-control immediate-help account-input focus"  id="password" name="password"
+                       ng-model="password" ng-minlength="4" required>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <!--<div class="form-group">-->
+        <div clas="col-md-offset-2 col-md-10" style="margin-bottom: 10px">
+            <button ng-click="submit()" class="btn btn-raised btn-primary" type="submit"
+                    ng-disabled='!testingLoginForm.$valid'>
+                <i class="fa fa-sign-in"></i>   <span msg key="login.button.login"></span>
+            </button>
+            <button class="btn btn-raised btn-warning" ng-click="cancel()">
+                <i class="fa fa-times"></i>  <span msg key="login.button.cancel"></span>
+            </button>
+        </div>
+
+        <div clas="col-md-12" >
+            <a ng-href="{{testingUrl}}#/forgotten" target="_blank"  style="text-align:center">
+                <span msg key="testing.login.forgotPwd"></span>
+            </a>
+        </div>
+
+        <div clas="col-md-12">
+            <a ng-href="{{testingUrl}}#/registration" target="_blank" style="text-align:center">
+                <span msg key="testing.login.newAccount"></span>
+            </a>
+        </div>
+
+    </div>
+    </div>
+</form>

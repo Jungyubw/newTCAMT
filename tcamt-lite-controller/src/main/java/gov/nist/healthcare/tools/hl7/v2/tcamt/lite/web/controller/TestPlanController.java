@@ -2,6 +2,7 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +22,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
@@ -27,10 +31,12 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +47,7 @@ import gov.nist.healthcare.nht.acmgt.dto.ResponseMessage;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
@@ -62,6 +69,9 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config.TestPlanChangeComm
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAllowException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
+import gov.nist.hit.resources.deploy.client.RequestModel;
+import gov.nist.hit.resources.deploy.client.ResourceClient;
+import gov.nist.hit.resources.deploy.factory.ResourceClientFactory;
 
 @RestController
 @RequestMapping("/testplans")
@@ -299,6 +309,28 @@ public class TestPlanController extends CommonController {
 	            + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".zip");
 	    FileCopyUtils.copy(content, response.getOutputStream());
 	}
+	
+	
+	 @RequestMapping(value = "/pushRB", method = RequestMethod.POST,
+		      produces = "application/json")
+		  public Map<String, Object> pushRB(@PathVariable("testplanId") String testplanId,
+		      @RequestBody String host, @RequestHeader("testing-auth") String authorization,
+		      HttpServletRequest request, HttpServletResponse response) throws Exception{
+		      ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
+//			TestPlan tp = findTestPlan(testplanId);
+//		    InputStream content = new InputStream("/resources/rb");
+//		 //   content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
+//		    response.setContentType("application/zip");
+//		    content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
+//		
+//		    File tempFile = File.createTempFile(testplan.getName(), ".zip");
+//		    tempFile.deleteOnExit();
+//		    FileUtils.copyInputStreamToFile(content,tempFile);
+//		  
+		    
+		 
+		 return null;
+	 }
 	
 	@RequestMapping(value = "/{ipid}/exportProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
 	public void exportProfileXMLs(@PathVariable("ipid") String[] ipid, HttpServletRequest request, HttpServletResponse response)
