@@ -19,23 +19,32 @@ angular.module('tcl').factory('loginTestingToolSvc',
 //            return delay.promise;
 //        };
 
-        svc.push = function( host,username, password) {
+        svc.pushRB = function(host,username,password) {
             var delay = $q.defer();
             var httpHeaders = {};
-            
             httpHeaders['Accept'] = 'application/json';
             var auth =  base64.encode(username + ':' + password);
             httpHeaders['Authorization'] = 'Basic ' + auth;
+            $http.post('api/testplans/pushRB').then(function (re) {
+                //httpHeaders.common['Authorization'] = null;
 
-            $http.get(host+'/accounts/login', {headers:httpHeaders}).then(function (re) {
-                delay.resolve(auth);
-                console.log("OK");
-                httpHeaders['testing-auth'] = auth;
-                $http.post('api/testplans/' + $rootScope.testplan.id + '/pushRB',{headers:httpHeaders});
-
-            }, function(er){
-                delay.reject(er);
+                console.log("SUCCESS")
+                //delay.resolve(auth);
+            }, function(error){
+                console.log("ERROR");
+                delay.reject(error);
             });
+
+
+            // $http.get(host+'/api/accounts/login', {headers:httpHeaders}).then(function (re) {
+            //     httpHeaders.common['Authorization'] = null;
+            //
+            //     console.log("SUCCESS")
+            //     //delay.resolve(auth);
+            // }, function(error){
+            //     console.log("ERROR");
+            //     delay.reject(error);
+            // });
             return delay.promise;
         };
 

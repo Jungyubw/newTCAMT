@@ -282,20 +282,17 @@ public class TestPlanController extends CommonController {
 	
 	 @RequestMapping(value = "/pushRB", method = RequestMethod.POST,
 		      produces = "application/json")
-		  public Map<String, Object> pushRB(@PathVariable("testplanId") String testplanId,
-		      @RequestBody String host, @RequestHeader("testing-auth") String authorization,
+		  public Map<String, Object> pushRB(
 		      HttpServletRequest request, HttpServletResponse response) throws Exception{
-		      ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
-//			TestPlan tp = findTestPlan(testplanId);
-//		    InputStream content = new InputStream("/resources/rb");
-//		 //   content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
-//		    response.setContentType("application/zip");
-//		    content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
-//		
-//		    File tempFile = File.createTempFile(testplan.getName(), ".zip");
-//		    tempFile.deleteOnExit();
-//		    FileUtils.copyInputStreamToFile(content,tempFile);
-//		  
+	     // ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
+	      String host2="https://hit-dev.nist.gov:8098/";
+	      ResourceClient client2=ResourceClientFactory.createResourceClientWithDefault(host2,"wakili","Ae725055");
+	   
+	      String url ="tcamt.nist.gov/tcamt/resources/resourceBundle/NewTestPlan.zip";
+	      
+	      RequestModel m=new RequestModel(url);
+	      
+		  client2.addOrUpdateTestPlan(m);
 		    
 		 
 		 return null;

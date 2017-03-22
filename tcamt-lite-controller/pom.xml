@@ -88,6 +88,7 @@
 		</dependency>
 
 
+
 		<dependency>
 			<groupId>gov.nist.healthcare.tools.hl7.v2.tcamt.lite</groupId>
 			<artifactId>tcamt-lite-service</artifactId>
@@ -247,7 +248,7 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.10.2</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>gov.nist.hit.resources.deploy</groupId>
 			<artifactId>hit-resource-client</artifactId>
@@ -261,4 +262,13 @@
 			<url>http://repo.springsource.org/libs-milestone/</url>
 		</repository>
 	</repositories>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>4.4.6</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

@@ -305,7 +305,13 @@ app.config(function ($routeProvider, RestangularProvider, $httpProvider, Keepali
 
 });
 
-
+app.config([
+    "$routeProvider",
+    "$httpProvider",
+    function($routeProvider, $httpProvider){
+        $httpProvider.defaults.headers.common['Access-Control-Allow-Headers'] = '*';
+    }
+]);
 app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, userInfoService, $http, AppInfo, StorageService, $templateCache, $window, notifications, $q) {
     $rootScope.appInfo = {};
     //Check if the login dialog is already displayed.
