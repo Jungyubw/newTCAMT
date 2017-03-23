@@ -23,6 +23,7 @@
 	<sec:http pattern="/styles/**" security="none" />
 	<sec:http pattern="/views/**" security="none" />
 	<sec:http pattern="/fonts/**" security="none" />
+<sec:http pattern="/resources/resourceBundle/**" security="none" />
 	<sec:http pattern="/lib/**" security="none" />
  	
 	<sec:http pattern="/api/igdocuments/config" security="none" />

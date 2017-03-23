@@ -32,6 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -92,7 +95,11 @@ public class TestPlanController extends CommonController {
 	
 	@Autowired
 	ProfileService profileService;
+	@Autowired
+	private MailSender mailSender;
 
+	@Autowired
+	private SimpleMailMessage templateMessage;
 	/**
 	 * 
 	 * @param type
@@ -280,23 +287,60 @@ public class TestPlanController extends CommonController {
 	}
 	
 	
-	 @RequestMapping(value = "/pushRB", method = RequestMethod.POST,
+	 @RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST,
 		      produces = "application/json")
-		  public Map<String, Object> pushRB(
-		      HttpServletRequest request, HttpServletResponse response) throws Exception{
+		  public ResponseEntity<String> pushRB(@PathVariable("testplanId") String testplanId,@RequestBody String host,@RequestHeader("gvt-auth") String authorization) throws Exception{
 	     // ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
-	      String host2="https://hit-dev.nist.gov:8098/";
-	      ResourceClient client2=ResourceClientFactory.createResourceClientWithDefault(host2,"wakili","Ae725055");
-	   
-	      String url ="tcamt.nist.gov/tcamt/resources/resourceBundle/NewTestPlan.zip";
-	      
+//	      String host2="https://hit-dev.nist.gov:8098/";
+		 try{
+		  String url ="https://github.com/Jungyubw/newTCAMT/blob/PushRB/tcamt-lite-controller/src/main/resources/1.zip?raw=true";
+	      ResourceClient client2=ResourceClientFactory.createResourceClientWithDefault(host,authorization);
 	      RequestModel m=new RequestModel(url);
-	      
-		  client2.addOrUpdateTestPlan(m);
-		    
+
+	      ResponseEntity<String> response=client2.addOrUpdateTestPlan(m);
+	  	User u = userService.getCurrentUser();
+		Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+		TestPlan tp=testPlanService.findOne(testplanId);
+		if (account == null){
+			
+			throw new UserAccountNotFoundException();
+		}
+		else{
+			sendPushConfirmation(tp, account, host);
+		}
+		
+		return response;
+		 }catch(Exception e ){
+		      throw new PushRBException(e);
+
+		 }
 		 
-		 return null;
+	      //replace this with the URL 
+	     
+	      
+	   
+	
+
+		 
+		 //return response;
 	 }
+	 
+	 @RequestMapping(value = "/createSession", method = RequestMethod.POST,
+		      produces = "application/json")
+		  public boolean createSession(@RequestBody String host,@RequestHeader("gvt-auth") String authorization) {
+		 try{
+	      ResourceClient client=ResourceClientFactory.createResourceClientWithDefault(host,authorization);
+	      return client.validCredentials();
+		 }catch(Exception e){
+			 return false;
+		 }
+	      
+	    	 
+
+
+		 
+	 }
+	 
 	
 	@RequestMapping(value = "/{ipid}/exportProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
 	public void exportProfileXMLs(@PathVariable("ipid") String[] ipid, HttpServletRequest request, HttpServletResponse response)
@@ -504,5 +548,22 @@ public class TestPlanController extends CommonController {
 	private String escapeSpace(String str) {
 		return str.replaceAll(" ", "-");
 	}
+	
+	
+ private void sendPushConfirmation(TestPlan doc, Account target, String  host) {
+
+	 		SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
+
+		    msg.setSubject("Your Test Plan is Pushed to the testing tool");
+		    msg.setTo(target.getEmail());
+		    msg.setText("Dear " + target.getUsername() + ", \n\n" 
+		        + "your Test Plan has been successfully pusshed to"+host);
+		    try {
+		      this.mailSender.send(msg);
+		      
+		    } catch (MailException ex) {
+		      log.error(ex.getMessage(), ex);
+		    }
+		  }
 
 }
