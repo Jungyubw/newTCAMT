@@ -1385,8 +1385,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				if($rootScope.selectedTestStep.testDataCategorizationMap == undefined || $rootScope.selectedTestStep == null){
 					$rootScope.selectedTestStep.testDataCategorizationMap = {};
 				}
-				$scope.loadIntegrationProfile();
 			}, 0);
+            $timeout(function () {
+                $scope.loadIntegrationProfile();
+            }, 100);
+
 
 			$timeout(function () {
 				$rootScope.selectedTestCaseGroup=null;
@@ -1394,8 +1397,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.selectedTemplate=null;
 				$rootScope.selectedSegmentNode =null;
 				$scope.subview = "EditTestStepMetadata.html";
-				$scope.initTestStepTab($scope.selectedTestStepTab.tabNum);
 				$scope.selectedTestStepTab.tabNum = 0;
+                $scope.initTestStepTab($scope.selectedTestStepTab.tabNum);
 
                 if($rootScope.selectedTestStep.testStoryConfigId){
                     $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestStep.testStoryConfigId; });
@@ -1421,7 +1424,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 				waitingDialog.hide();
-			}, 100);
+			}, 200);
 		}
 	};
 
@@ -2343,6 +2346,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.findNodeNameByIPath = function (ip, m, iPositionPath){
+        console.log("----START-----");
+        console.log(iPositionPath);
 		var currentChildren = m.children;
 		var currentObject = null;
 		var pathList = iPositionPath.split(".");
@@ -2350,7 +2355,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			var p = pathList[i];
 			var position = parseInt(p.substring(0,p.indexOf("[")));
 			var o = $scope.findChildByPosition(position, currentChildren, m, ip);
-
+            console.log(position);
+            console.log(o.name);
+            console.log("--------");
 			if(o.type ==  'group'){
 				var group = o;
 				currentObject = group;

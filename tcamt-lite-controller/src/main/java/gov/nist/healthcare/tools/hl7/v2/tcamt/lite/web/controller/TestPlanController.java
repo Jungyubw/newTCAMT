@@ -387,7 +387,7 @@ public class TestPlanController extends CommonController {
 					if(message != null){
 						if(!message.isNull("hl7EndcodedMessage")){
 							ts.setEr7Message((String) message.get("hl7EndcodedMessage"));	
-							
+							HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>();
 							if(!message.isNull("tcamtConstraints")){
 								JSONArray tcamtConstraints = (JSONArray) message.get("tcamtConstraints");	
 								for (int l = 0; l < tcamtConstraints.length(); l++) {
@@ -440,10 +440,10 @@ public class TestPlanController extends CommonController {
 											listData.add(listDataJson.getString(m));
 										}
 									}
-									HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>();
 									testDataCategorizationMap.put(key, value);
-									ts.setTestDataCategorizationMap(testDataCategorizationMap);
 								}
+								
+								ts.setTestDataCategorizationMap(testDataCategorizationMap);
 							}
 						}
 					}
