@@ -16,8 +16,6 @@ angular.module('tcl').controller('loginTestingTool', ['$scope','$rootScope', '$m
 
     $scope.submit = function(testingUsername,testingPassword) {
 
-        console.log("testing")
-        console.log(testingPassword);
         $rootScope.error = {text: undefined, show:false};
         loginTestingToolSvc.pushRB( $scope.testingUrl,testingUsername,  testingPassword).then(function(auth){
 
@@ -42,14 +40,13 @@ angular.module('tcl').controller('loginTestingTool', ['$scope','$rootScope', '$m
             console.log($scope.testingUrl);
             var response=angular.fromJson(re.data);
 
-            console.log(re);
             if(response){
                 console.log("SUCCESS")
                 $modalInstance.close();
 
                // $rootScope.s.text =  error.data != null ? error.data : "ERROR: Cannot access server.";
                 $rootScope.error.show =false;
-                Notification.success({message:"We are processing your request. You will be notified By e-mail once we are done", delay: 2000});
+                Notification.success({message:"We are processing your request. You will be notified by e-mail once we are done", delay: 2000});
                 $scope.submit(username, password);
             }else{
                 $rootScope.error.text = "ERROR: Cannot access server. Please verify you Credentials";

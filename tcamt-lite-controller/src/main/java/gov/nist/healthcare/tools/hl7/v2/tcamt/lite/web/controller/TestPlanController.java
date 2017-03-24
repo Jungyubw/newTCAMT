@@ -311,6 +311,7 @@ public class TestPlanController extends CommonController {
 		
 		return response;
 		 }catch(Exception e ){
+//			 sendPushFailConfirmation(tp, account, host);
 		      throw new PushRBException(e);
 
 		 }
@@ -557,13 +558,28 @@ public class TestPlanController extends CommonController {
 		    msg.setSubject("Your Test Plan is Pushed to the testing tool");
 		    msg.setTo(target.getEmail());
 		    msg.setText("Dear " + target.getUsername() + ", \n\n" 
-		        + "your Test Plan has been successfully pusshed to"+host);
+		        + "your Test Plan has been successfully pusshed to "+host);
 		    try {
 		      this.mailSender.send(msg);
 		      
 		    } catch (MailException ex) {
 		      log.error(ex.getMessage(), ex);
 		    }
-		  }
+}
+ private void sendPushFailConfirmation(TestPlan doc, Account target, String  host) {
+
+		SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
+
+	    msg.setSubject("Push Test Plan Faild");
+	    msg.setTo(target.getEmail());
+	    msg.setText("Dear " + target.getUsername() + ", \n\n" 
+	        + "We are Sorry, We couldn't Push your testplan to the "+host);
+	    try {
+	      this.mailSender.send(msg);
+	      
+	    } catch (MailException ex) {
+	      log.error(ex.getMessage(), ex);
+	    }
+}
 
 }
