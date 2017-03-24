@@ -403,64 +403,10 @@ app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, u
         $location.url('/home');
 
 
-        $rootScope.loadIGAMTProfiles();
-        $rootScope.loadPrivateProfiles();
-        $rootScope.loadPublicProfiles();
+        $rootScope.loadProfiles();
 
 
     });
-
-    $rootScope.loadPublicProfiles = function () {
-        var delay = $q.defer();
-
-        if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-            $rootScope.publicProfiles = [];
-            $http.get('api/profiles/public').then(function(response) {
-                $rootScope.publicProfiles = angular.fromJson(response.data);
-                delay.resolve(true);
-            }, function(error) {
-                delay.reject(false);
-
-            });
-        }else{
-            delay.reject(false);
-        }
-    };
-
-    $rootScope.loadPrivateProfiles = function () {
-        var delay = $q.defer();
-        if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-            $rootScope.privateProfiles = [];
-            $http.get('api/profiles').then(function(response) {
-                $rootScope.privateProfiles = angular.fromJson(response.data);
-                delay.resolve(true);
-            }, function(error) {
-                delay.reject(false);
-
-            });
-        }else{
-            delay.reject(false);
-        }
-    };
-
-    $rootScope.loadIGAMTProfiles = function () {
-        var delay = $q.defer();
-        if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-            waitingDialog.show('Loading Profiles...', {dialogSize: 'xs', progressType: 'info'});
-            $rootScope.igamtProfiles = [];
-            $http.get('api/igdocuments').then(function(response) {
-                $rootScope.igamtProfiles = angular.fromJson(response.data);
-                delay.resolve(true);
-                waitingDialog.hide();
-            }, function(error) {
-                delay.reject(false);
-                waitingDialog.hide();
-            });
-        }else{
-            delay.reject(false);
-        }
-    };
-
 
     /*jshint sub: true */
     /**

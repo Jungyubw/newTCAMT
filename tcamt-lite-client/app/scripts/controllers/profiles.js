@@ -7,77 +7,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 
 
 	$scope.initProfiles= function () {
-		if(!$rootScope.igamtProfiles || $rootScope.igamtProfiles == []) $scope.loadIGAMTProfiles();
-        if(!$rootScope.privateProfiles || $rootScope.privateProfiles == []) $scope.loadPrivateProfiles();
-        if(!$rootScope.publicProfiles || $rootScope.publicProfiles == []) $scope.loadPublicProfiles();
-};
-
-	$scope.loadPublicProfiles = function () {
-		var delay = $q.defer();
-
-		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-			$scope.error = null;
-			$rootScope.publicProfiles = [];
-			$scope.loading = true;
-			$http.get('api/profiles/public').then(function(response) {
-				$rootScope.publicProfiles = angular.fromJson(response.data);
-				$scope.loading = false;
-				delay.resolve(true);
-			}, function(error) {
-				$scope.loading = false;
-				$scope.error = error.data;
-				delay.reject(false);
-
-			});
-		}else{
-			delay.reject(false);
-		}
-	};
-
-	$scope.loadPrivateProfiles = function () {
-		var delay = $q.defer();
-
-		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-			$scope.error = null;
-			$rootScope.privateProfiles = [];
-			$scope.loading = true;
-			$http.get('api/profiles').then(function(response) {
-				$rootScope.privateProfiles = angular.fromJson(response.data);
-				$scope.loading = false;
-				delay.resolve(true);
-			}, function(error) {
-				$scope.loading = false;
-				$scope.error = error.data;
-				delay.reject(false);
-
-			});
-		}else{
-			delay.reject(false);
-		}
-	};
-
-	$scope.loadIGAMTProfiles = function () {
-		var delay = $q.defer();
-
-		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-			waitingDialog.show('Loading Profiles...', {dialogSize: 'xs', progressType: 'info'});
-			$scope.error = null;
-			$rootScope.igamtProfiles  = [];
-			$scope.loading = true;
-			$http.get('api/igdocuments').then(function(response) {
-				$rootScope.igamtProfiles = angular.fromJson(response.data);
-				$scope.loading = false;
-				delay.resolve(true);
-				waitingDialog.hide();
-			}, function(error) {
-				$scope.loading = false;
-				$scope.error = error.data;
-				delay.reject(false);
-				waitingDialog.hide();
-			});
-		}else{
-			delay.reject(false);
-		}
+		if(!$rootScope.profiles || $rootScope.profiles == [] ) $rootScope.loadProfiles();
 	};
 
 	$scope.confirmDeletePublicProfile = function(ev, profile) {
@@ -98,7 +28,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 					$rootScope.msg().type = "success";
 					$rootScope.msg().show = true;
 					$rootScope.manualHandle = true;
-					$scope.loadPublicProfiles();
+                    $rootScope.loadProfiles();
 				}, function (error) {
 					$scope.error = error;
 					$scope.loading = false;
@@ -126,7 +56,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 				$rootScope.msg().type = "success";
 				$rootScope.msg().show = true;
 				$rootScope.manualHandle = true;
-				$scope.loadPrivateProfiles();
+                $rootScope.loadProfiles();
 			}, function (error) {
 				$scope.error = error;
 				$scope.loading = false;
@@ -147,7 +77,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 			clickOutsideToClose:false,
 			fullscreen: false // Only for -xs, -sm breakpoints.
 		}).then(function() {
-			$scope.loadPrivateProfiles();
+            $rootScope.loadProfiles();
 		}, function() {
 
 		});
@@ -163,7 +93,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 			clickOutsideToClose:false,
 			fullscreen: false // Only for -xs, -sm breakpoints.
 		}).then(function() {
-			$scope.loadPrivateProfiles();
+            $rootScope.loadProfiles();
 		}, function() {
 		});
 	};
@@ -178,7 +108,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 			clickOutsideToClose:false,
 			fullscreen: false // Only for -xs, -sm breakpoints.
 		}).then(function() {
-			$scope.loadPublicProfiles();
+            $rootScope.loadProfiles();
 		}, function() {
 		});
 	};
@@ -192,7 +122,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 			clickOutsideToClose:false,
 			fullscreen: false // Only for -xs, -sm breakpoints.
 		}).then(function() {
-			$scope.loadPublicProfiles();
+            $rootScope.loadProfiles();
 		}, function() {
 
 		});

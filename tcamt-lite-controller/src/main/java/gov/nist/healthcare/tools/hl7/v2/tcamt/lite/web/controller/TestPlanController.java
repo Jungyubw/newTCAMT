@@ -45,6 +45,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
@@ -99,6 +100,36 @@ public class TestPlanController extends CommonController {
 				throw new UserAccountNotFoundException();
 			}
 			return testPlanService.findByAccountId(account.getId());
+		} catch (RuntimeException e) {
+			throw new TestPlanListException(e);
+		} catch (Exception e) {
+			throw new TestPlanListException(e);
+		}
+	}
+	
+	@RequestMapping(value = "/getListTestPlanAbstract", method = RequestMethod.GET)
+	public List<TestPlanAbstract> getListTestPlanAbstract() throws UserAccountNotFoundException, TestPlanListException {
+		try {
+			User u = userService.getCurrentUser();
+			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+			if (account == null) {
+				throw new UserAccountNotFoundException();
+			}
+			List<TestPlan> testplans = testPlanService.findByAccountId(account.getId());
+			List<TestPlanAbstract> results = new ArrayList<TestPlanAbstract>();
+			for(TestPlan tp : testplans){
+				TestPlanAbstract tpa = new TestPlanAbstract();
+				tpa.setDescription(tp.getDescription());
+				tpa.setId(tp.getId());
+				tpa.setLastUpdateDate(tp.getLastUpdateDate());
+				tpa.setName(tp.getName());
+				tpa.setVersion(tp.getVersion());
+				
+				results.add(tpa);
+			}
+			
+			return results;
+			
 		} catch (RuntimeException e) {
 			throw new TestPlanListException(e);
 		} catch (Exception e) {

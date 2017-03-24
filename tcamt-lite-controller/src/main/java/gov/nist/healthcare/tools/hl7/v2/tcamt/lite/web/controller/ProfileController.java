@@ -1,5 +1,6 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,12 +17,19 @@ import gov.nist.healthcare.nht.acmgt.dto.ResponseMessage;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileDataStr;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.MessageAbstract;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.MessagesAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileDeleteException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanListException;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanNotFoundException;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 
 @RestController
@@ -37,18 +45,78 @@ public class ProfileController extends CommonController {
 	AccountRepository accountRepository;
 	
 	@RequestMapping(method = RequestMethod.GET, produces = "application/json")
-	public List<Profile> getAllPrivateProfiles() throws UserAccountNotFoundException, TestPlanListException {
+	public List<ProfileAbstract> getAllProfiles() throws Exception {
+		User u = userService.getCurrentUser();
+		Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+		if (account == null) {
+			throw new Exception();
+		}
+		
+		IGAMTDBConn con = new IGAMTDBConn();
 		try {
-			User u = userService.getCurrentUser();
-			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-			if (account == null) {
-				throw new UserAccountNotFoundException();
+			List<Profile> result = new ArrayList<Profile>();
+			List<ProfileAbstract> abstractResult = new ArrayList<ProfileAbstract>();
+			List<IGDocument> igdocs = this.userIGDocuments();
+			for(IGDocument igd: igdocs){
+				Profile tcamtP = profileService.findOne(igd.getId());
+				if(tcamtP == null || !tcamtP.getLastUpdatedDate().equals(igd.getDateUpdated())){
+					Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
+					p.getMetaData().setName(igd.getMetaData().getTitle());
+					p.getMetaData().setDescription(igd.getMetaData().getDescription());
+					p.getMetaData().setDate(igd.getMetaData().getDate());
+					p.setSourceType("igamt");
+					p.setAccountId(igd.getAccountId());
+					profileService.save(p);
+					result.add(p);
+				}else{
+					result.add(tcamtP);
+				}
 			}
-			return profileService.findByAccountIdAndSourceType(account.getId(),"private");
-		} catch (RuntimeException e) {
-			throw new TestPlanListException(e);
+			List<Profile> privateProfiles = getAllPrivateProfiles(account); 
+			List<Profile> publicProfiles = getAllPublicProfiles(); 
+			result.addAll(privateProfiles);
+			result.addAll(publicProfiles);
+			
+			for(Profile p : result){
+				ProfileAbstract pa = new ProfileAbstract();
+				pa.setAccountId(p.getAccountId());
+				pa.setId(p.getId());
+				pa.setLastUpdatedDate(p.getLastUpdatedDate());
+				pa.setMetaData(p.getMetaData());
+				pa.setSourceType(p.getSourceType());
+				
+				MessagesAbstract msa = new MessagesAbstract();
+				msa.setId(p.getMessages().getId());
+				for(Message m : p.getMessages().getChildren()){
+					MessageAbstract ma = new MessageAbstract();
+					ma.setDescription(m.getDescription());
+					ma.setEvent(m.getEvent());
+					ma.setId(m.getId());
+					ma.setIdentifier(m.getIdentifier());
+					ma.setMessageID(m.getMessageID());
+					ma.setMessageType(m.getMessageType());
+					ma.setName(m.getName());
+					ma.setPosition(m.getPosition());
+					ma.setStructID(m.getStructID());
+					msa.addMessage(ma);
+				}
+				pa.setMessages(msa);
+				
+				abstractResult.add(pa);
+			}
+			
+			return abstractResult;
 		} catch (Exception e) {
-			throw new TestPlanListException(e);
+			throw new Exception(e);
+		}
+	}
+	
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public Profile get(@PathVariable("id") String id) throws Exception {
+		try {
+			return profileService.findOne(id);
+		} catch (Exception e) {
+			throw new Exception(e);
 		}
 	}
 	
@@ -64,22 +132,6 @@ public class ProfileController extends CommonController {
 			throw new ProfileDeleteException(e);
 		} catch (Exception e) {
 			throw new ProfileDeleteException(e);
-		}
-	}
-	
-	@RequestMapping(value = "/public", method = RequestMethod.GET, produces = "application/json")
-	public List<Profile> getAllPublicProfiles() throws UserAccountNotFoundException, TestPlanListException {
-		try {
-			User u = userService.getCurrentUser();
-			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-			if (account == null) {
-				throw new UserAccountNotFoundException();
-			}
-			return profileService.findByAccountIdAndSourceType((long) 0, "public");
-		} catch (RuntimeException e) {
-			throw new TestPlanListException(e);
-		} catch (Exception e) {
-			throw new TestPlanListException(e);
 		}
 	}
 
@@ -151,6 +203,32 @@ public class ProfileController extends CommonController {
 		profileService.save(p);
 	}
 	
+	private List<IGDocument> userIGDocuments() throws Exception {
+		User u = userService.getCurrentUser();
+		Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+		if (account == null) {
+			throw new Exception();
+		}
+		return new IGAMTDBConn().getUserDocument(account.getId());
+	}
 	
+	private List<Profile> getAllPrivateProfiles(Account account) throws UserAccountNotFoundException, TestPlanListException {
+		try {
+			return profileService.findByAccountIdAndSourceType(account.getId(),"private");
+		} catch (RuntimeException e) {
+			throw new TestPlanListException(e);
+		} catch (Exception e) {
+			throw new TestPlanListException(e);
+		}
+	}
 	
+	private List<Profile> getAllPublicProfiles() throws TestPlanListException {
+		try {
+			return profileService.findByAccountIdAndSourceType((long) 0, "public");
+		} catch (RuntimeException e) {
+			throw new TestPlanListException(e);
+		} catch (Exception e) {
+			throw new TestPlanListException(e);
+		}
+	}
 }
