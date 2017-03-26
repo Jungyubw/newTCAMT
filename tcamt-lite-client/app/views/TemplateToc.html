@@ -172,7 +172,9 @@
                         {{categorization.iPath}}
                     </td>
                     <td class="col-md-5">
-                        {{categorization.testDataCategorization}}
+                        <select class="form-control" ng-model="categorization.testDataCategorization" ng-change="recordChanged(msgTemplate);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
+                            <option value="">No test data Cate.</option>
+                        </select>
                     </td>
                     <td class="col-md-5">
 						<ul>
@@ -338,7 +340,10 @@
                         {{segmentTemplateObject.segmentName}}{{categorization.iPath}}
                     </td>
                     <td class="col-md-5">
-                        {{categorization.testDataCategorization}}
+
+                        <select class="form-control" ng-model="categorization.testDataCategorization" ng-change="recordChanged(segmentTemplateObject);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
+                            <option value="">No test data Cate.</option>
+                        </select>
                     </td>
                     <td class="col-md-5">
 						<ul>
