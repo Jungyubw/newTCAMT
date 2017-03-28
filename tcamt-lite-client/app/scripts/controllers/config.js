@@ -51,6 +51,7 @@ angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $roo
     $scope.editTestStoryConfigModalCtrl = function($scope, $mdDialog, $http, userInfoService) {
     	if(!$rootScope.selectedTestStoryConfig){
             $scope.selectedTestStoryConfig =  angular.copy(_.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; }));
+            $scope.selectedTestStoryConfig.id = new ObjectId().toString();
             $scope.selectedTestStoryConfig.name = 'NewTestStoryConfig';
             $scope.selectedTestStoryConfig.accountId = userInfoService.getAccountID();
     	}else{
