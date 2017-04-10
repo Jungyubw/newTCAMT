@@ -900,22 +900,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		});
 	};
 
-    $scope.pushRB = function (testplan) {
-        var modalInstance = $modal.open({
-            templateUrl: 'views/testingConnection/loginTestingTool.html',
-            controller: 'loginTestingTool',
-            resolve: {
-                testplan: function () {
-                    return testplan;
-                }
-            }
-        });
-        modalInstance.result.then(function (testplan) {
-
-
-        });
-    };
-
 	$scope.showReport = function () {
 		var modalInstance = $modal.open({
 			templateUrl: 'reportResult.html',
@@ -4662,4 +4646,3 @@ angular.module('tcl').controller('OpenApplyMessageTemplate', function($scope, $m
 		$modalInstance.dismiss('cancel');
 	};
 });
-
