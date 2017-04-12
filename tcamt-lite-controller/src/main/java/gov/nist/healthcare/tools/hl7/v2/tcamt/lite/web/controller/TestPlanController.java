@@ -2,6 +2,7 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +22,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
@@ -27,10 +31,15 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +50,7 @@ import gov.nist.healthcare.nht.acmgt.dto.ResponseMessage;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
@@ -62,6 +72,9 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config.TestPlanChangeComm
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAllowException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
+import gov.nist.hit.resources.deploy.client.RequestModel;
+import gov.nist.hit.resources.deploy.client.ResourceClient;
+import gov.nist.hit.resources.deploy.factory.ResourceClientFactory;
 
 @RestController
 @RequestMapping("/testplans")
@@ -83,7 +96,11 @@ public class TestPlanController extends CommonController {
 	
 	@Autowired
 	ProfileService profileService;
+	@Autowired
+	private MailSender mailSender;
 
+	@Autowired
+	private SimpleMailMessage templateMessage;
 	/**
 	 * 
 	 * @param type
@@ -300,6 +317,64 @@ public class TestPlanController extends CommonController {
 	    FileCopyUtils.copy(content, response.getOutputStream());
 	}
 	
+	
+	 @RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST,
+		      produces = "application/json")
+		  public ResponseEntity<String> pushRB(@PathVariable("testplanId") String testplanId,@RequestBody String host,@RequestHeader("gvt-auth") String authorization) throws Exception{
+	     // ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
+//	      String host2="https://hit-dev.nist.gov:8098/";
+		 try{
+		  String url ="https://github.com/Jungyubw/newTCAMT/blob/PushRB/tcamt-lite-controller/src/main/resources/1.zip?raw=true";
+		 // url="https://github.com/Jungyubw/newTCAMT/blob/PushRB/tcamt-lite-controller/src/main/resources/TP_12.zip?raw=true";
+	      ResourceClient client2=ResourceClientFactory.createResourceClientWithDefault(host,authorization);
+	      RequestModel m=new RequestModel(url);
+
+	      ResponseEntity<String> response=client2.addOrUpdateTestPlan(m);
+	  	  User u = userService.getCurrentUser();
+		  Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+		  TestPlan tp=testPlanService.findOne(testplanId);
+		  if (account == null){
+			
+			throw new UserAccountNotFoundException();
+		  }
+		 else{
+			sendPushConfirmation(tp, account, host);
+		}
+		
+		return response;
+		 }catch(Exception e ){
+//			 sendPushFailConfirmation(tp, account, host);
+		      throw new PushRBException(e);
+
+		 }
+		 
+	      //replace this with the URL 
+	     
+	      
+	   
+	
+
+		 
+		 //return response;
+	 }
+	 
+	 @RequestMapping(value = "/createSession", method = RequestMethod.POST,
+		      produces = "application/json")
+		  public boolean createSession(@RequestBody String host,@RequestHeader("gvt-auth") String authorization) {
+		 try{
+	      ResourceClient client=ResourceClientFactory.createResourceClientWithDefault(host,authorization);
+	      return client.validCredentials();
+		 }catch(Exception e){
+			 return false;
+		 }
+	      
+	    	 
+
+
+		 
+	 }
+	 
+	
 	@RequestMapping(value = "/{ipid}/exportProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
 	public void exportProfileXMLs(@PathVariable("ipid") String[] ipid, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
@@ -506,5 +581,37 @@ public class TestPlanController extends CommonController {
 	private String escapeSpace(String str) {
 		return str.replaceAll(" ", "-");
 	}
+	
+	
+ private void sendPushConfirmation(TestPlan doc, Account target, String  host) {
+
+	 		SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
+
+		    msg.setSubject("Your Test Plan is Pushed to the testing tool");
+		    msg.setTo(target.getEmail());
+		    msg.setText("Dear " + target.getUsername() + ", \n\n" 
+		        + "your Test Plan has been successfully pusshed to "+host);
+		    try {
+		      this.mailSender.send(msg);
+		      
+		    } catch (MailException ex) {
+		      log.error(ex.getMessage(), ex);
+		    }
+}
+ private void sendPushFailConfirmation(TestPlan doc, Account target, String  host) {
+
+		SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
+
+	    msg.setSubject("Push Test Plan Faild");
+	    msg.setTo(target.getEmail());
+	    msg.setText("Dear " + target.getUsername() + ", \n\n" 
+	        + "We are Sorry, We couldn't Push your testplan to the "+host);
+	    try {
+	      this.mailSender.send(msg);
+	      
+	    } catch (MailException ex) {
+	      log.error(ex.getMessage(), ex);
+	    }
+}
 
 }
