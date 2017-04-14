@@ -800,7 +800,7 @@ public class UserController {
 
 	private void sendRegistrationNotificationToAdmin(Account acc) {
 		SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
-		msg.setSubject("New Registration Application on IGAMT");
+		msg.setSubject("New Registration Application on TCAMT");
 		msg.setTo(ADMIN_EMAIL);
 		msg.setText("Hello Admin,  \n A new application has been submitted and is waiting for approval. The user information are as follow: \n\n"
 				+ "Name: "
@@ -892,7 +892,7 @@ public class UserController {
 				+ "**** If you have not requested a password reset, please disregard this email **** \n\n\n"
 				+ "You password reset request has been processed.\n"
 				+ "Copy and paste the following url to your browser to initiate the password change:\n"
-				+ url + " \n\n" + "Sincerely, " + "\n\n" + "The IGAMT Team"
+				+ url + " \n\n" + "Sincerely, " + "\n\n" + "The TCAMT Team"
 				+ "\n\n" + "P.S: If you need help, contact us at '"
 				+ ADMIN_EMAIL + "'");
 
