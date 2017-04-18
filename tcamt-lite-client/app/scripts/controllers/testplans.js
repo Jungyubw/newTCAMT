@@ -900,6 +900,22 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		});
 	};
 
+    $scope.pushRB = function (testplan) {
+        var modalInstance = $modal.open({
+            templateUrl: 'views/testingConnection/loginTestingTool.html',
+            controller: 'loginTestingTool',
+            resolve: {
+                testplan: function () {
+                    return testplan;
+                }
+            }
+        });
+        modalInstance.result.then(function (testplan) {
+
+
+        });
+    };
+
 	$scope.showReport = function () {
 		var modalInstance = $modal.open({
 			templateUrl: 'reportResult.html',
@@ -4015,7 +4031,23 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
     $scope.MessageOptions=[
 
+        ['Apply Template', function($itemScope) {
+            $rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
+            $scope.openApplyMessageTemplate($itemScope.msgTmp);
+            //Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
 
+        }] ,
+
+        ['Copy Template', function($itemScope) {
+
+            var copy =  angular.copy($itemScope.$nodeScope.$modelValue);
+            copy.name=copy.name+"copy";
+            copy.id=new ObjectId().toString();
+
+            $itemScope.$nodeScope.$parent.$modelValue.push(copy);
+            Notification.success("Template "+$itemScope.$modelValue.name+" copied");
+
+        }],
 
 		['Delete Template', function($itemScope) {
 			$scope.subview=null;
@@ -4023,16 +4055,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		Notification.success("Template "+$itemScope.$modelValue.name+" Deleted");
 
 
-		}],
+		}]
 
-		['Apply', function($itemScope) {
-			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
-			$scope.openApplyMessageTemplate($itemScope.msgTmp);
-			//Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
 
-		 }]
 
-		// ['Overwrite', function($itemScope) {
+
+
+
+        // ['Overwrite', function($itemScope) {
 		// 	$scope.overwriteMessageTemplate($itemScope.msgTmp);
 		// 	Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
 
@@ -4040,16 +4070,46 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	];
 
+
+    $scope.MessageOptionsDisabled=[
+
+        ['Copy Template', function($itemScope) {
+            var copy =  angular.copy($itemScope.$nodeScope.$modelValue);
+            copy.name=copy.name+"copy";
+            copy.id=new ObjectId().toString();
+
+            $itemScope.$nodeScope.$parent.$modelValue.push(copy);
+            Notification.success("Template "+$itemScope.$modelValue.name+" copied");
+
+
+
+
+        }],
+
+        ['Delete Template', function($itemScope) {
+            $scope.subview=null;
+            $scope.deleteMessageTemplate($itemScope.msgTmp);
+            Notification.success("Template "+$itemScope.$modelValue.name+" Deleted");
+
+
+        }]
+
+
+
+
+
+
+        // ['Overwrite', function($itemScope) {
+        // 	$scope.overwriteMessageTemplate($itemScope.msgTmp);
+        // 	Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
+
+        // }]
+
+    ];
+
     $scope.SegmentOptions=[
 
 
-
-		['Delete Template', function($itemScope) {
-			
-			$scope.subview=null;
-		$scope.deleteSegmentTemplate($itemScope.segTmp);
-		Notification.success("Template "+$itemScope.$modelValue.name+" Deleted");
-		}],
 
 		['Apply Template', function($itemScope) {
 
@@ -4057,7 +4117,26 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			//Notification.success("Template"+$itemScope.$modelValue.name+" Applied");
 
 
-		 }]
+		 }],
+        ['Copy Template', function($itemScope) {
+            var copy =  angular.copy($itemScope.$nodeScope.$modelValue);
+            copy.name=copy.name+"(copy)";
+            copy.id=new ObjectId().toString();
+
+            $itemScope.$nodeScope.$parent.$modelValue.push(copy);
+            Notification.success("Template "+$itemScope.$modelValue.name+" copied");
+
+
+
+
+        }],
+
+        ['Delete Template', function($itemScope) {
+
+            $scope.subview=null;
+            $scope.deleteSegmentTemplate($itemScope.segTmp);
+            Notification.success("Template "+$itemScope.$modelValue.name+" Deleted");
+        }]
 
 		// ['Overwrite Template', function($itemScope) {
 		// 	$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
@@ -4068,38 +4147,127 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	];
 
+    $scope.SegmentOptionsDisabled=[
+
+        ['Copy Template', function($itemScope) {
+
+            var copy =  angular.copy($itemScope.$nodeScope.$modelValue);
+            copy.name=copy.name+"(copy)";
+            copy.id=new ObjectId().toString();
+
+            $itemScope.$nodeScope.$parent.$modelValue.push(copy);
+
+
+        }],
+
+        ['Delete Template', function($itemScope) {
+
+            $scope.subview=null;
+            $scope.deleteSegmentTemplate($itemScope.segTmp);
+            Notification.success("Template "+$itemScope.$modelValue.name+" Deleted");
+        }]
+
+        // ['Overwrite Template', function($itemScope) {
+        // 	$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
+        // 	$scope.overwriteSegmentTemplate($itemScope.segTmp);
+        // 	Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
+
+        // }]
+
+    ];
+
 
 	  $scope.Er7Options=[
-		['Delete Template', function($itemScope) {
+          ['Apply Message', function($itemScope) {
+              $rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
+              $scope.overwriteER7Template($itemScope.er7Tmp);
+
+          }],
+          ['Copy Template', function($itemScope) {
+
+
+              var copy =  angular.copy($itemScope.$nodeScope.$modelValue);
+              copy.name=copy.name+"(copy)";
+              copy.id=new ObjectId().toString();
+
+              $itemScope.$nodeScope.$parent.$modelValue.push(copy);
+
+          }],
+		  ['Delete Template', function($itemScope) {
 			$scope.subview=null;
 		$scope.deleteER7Template($itemScope.er7Tmp);
 		Notification.success("Template "+$itemScope.$modelValue.name+"Deleted");
-
-
-		}],
-
-		['Apply Message', function($itemScope) {
-			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
-		$scope.overwriteER7Template($itemScope.er7Tmp);
-
 		}]
 	];
+
+
+    $scope.Er7OptionsDisabled=[
+
+        ['Copy Template', function($itemScope) {
+            var copy =  angular.copy($itemScope.$nodeScope.$modelValue);
+            copy.name=copy.name+"(copy)";
+            copy.id=new ObjectId().toString();
+
+            $itemScope.$nodeScope.$parent.$modelValue.push(copy);
+            Notification.success("Template "+$itemScope.$modelValue.name+" copied");
+
+
+        }],
+        ['Delete Template', function($itemScope) {
+            $scope.subview=null;
+            $scope.deleteER7Template($itemScope.er7Tmp);
+            Notification.success("Template "+$itemScope.$modelValue.name+"Deleted");
+
+
+        }]
+
+    ];
+
 	  $scope.Er7SegmentOptions=[
-		['Delete Template', function($itemScope) {
-			$scope.subview=null;
-		$scope.deleteEr7SegmentTemplate($itemScope.er7Tmp);
-		Notification.success("Template "+$itemScope.$modelValue.name+"Deleted");
+
+		  ['Apply Template', function($itemScope) {
+			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
+			$scope.overwriteER7SegmentTemplate($itemScope.er7Tmp);
+			Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
+
+			}],
+          ['Copy Template', function($itemScope) {
+
+              var copy =  angular.copy($itemScope.$nodeScope.$modelValue);
+              copy.name=copy.name+"(copy)";
+              copy.id=new ObjectId().toString();
+
+              $itemScope.$nodeScope.$parent.$modelValue.push(copy);
+              Notification.success("Template "+$itemScope.$modelValue.name+" copied");
 
 
-		}],
 
-		['Apply Template', function($itemScope) {
-		$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
-		$scope.overwriteER7SegmentTemplate($itemScope.er7Tmp);
-		Notification.success("Template "+$itemScope.$modelValue.name+"Applied");
-
-		}]
+          }],
+          ['Delete Template', function($itemScope) {
+              $scope.subview=null;
+              $scope.deleteEr7SegmentTemplate($itemScope.er7Tmp);
+              Notification.success("Template "+$itemScope.$modelValue.name+"Deleted");
+          }]
 	];
+
+    $scope.Er7SegmentOptionsDisabled=[
+
+        ['Copy Template', function($itemScope) {
+            var copy =  angular.copy($itemScope.$nodeScope.$modelValue);
+            copy.name=copy.name+"(copy)";
+            copy.id=new ObjectId().toString();
+
+            $itemScope.$nodeScope.$parent.$modelValue.push(copy);
+            Notification.success("Template "+$itemScope.$modelValue.name+" copied");
+
+
+        }],
+        ['Delete Template', function($itemScope) {
+            $scope.subview=null;
+            $scope.deleteEr7SegmentTemplate($itemScope.er7Tmp);
+            Notification.success("Template "+$itemScope.$modelValue.name+"Deleted");
+        }]
+    ];
 
 
 	$scope.ApplyProfile = [
@@ -4646,3 +4814,4 @@ angular.module('tcl').controller('OpenApplyMessageTemplate', function($scope, $m
 		$modalInstance.dismiss('cancel');
 	};
 });
+
