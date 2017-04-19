@@ -322,6 +322,7 @@ public class TestPlanController extends CommonController {
 		 try{
 		  String url ="https://github.com/Jungyubw/newTCAMT/blob/PushRB/tcamt-lite-controller/src/main/resources/1.zip?raw=true";
 		  //url="https://github.com/Jungyubw/newTCAMT/blob/PushRB/tcamt-lite-controller/src/main/resources/TP_12.zip?raw=true";
+		  url="https://github.com/Jungyubw/newTCAMT/blob/pushingResourceBundle/tcamt-lite-controller/src/main/resources/onctest.zip?raw=true";
 	      ResourceClient client2=ResourceClientFactory.createResourceClientWithDefault(host,authorization);
 	      RequestModel m=new RequestModel(url);
 
