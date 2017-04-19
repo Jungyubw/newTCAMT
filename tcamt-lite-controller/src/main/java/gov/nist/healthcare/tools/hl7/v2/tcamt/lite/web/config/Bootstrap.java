@@ -19,6 +19,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStoryConfiguration;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStroyEntry;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
@@ -51,6 +54,41 @@ public class Bootstrap implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 //		updateTCAMTProfiles();
 //		updateDefaultConfig();
+		
+		
+		updateHL7Version();
+	}
+
+	private void updateHL7Version() throws ProfileException {
+		List<Profile> profiles = profileService.findAll();
+
+		for (Profile p : profiles) {
+			if (p.getSourceType().equals("private")) {
+				String version = p.getMetaData().getHl7Version();
+				
+				for(Segment s: p.getSegments().getChildren()){
+					if(s.getHl7Version() == null){
+						s.setHl7Version(version);
+					}
+				}
+				
+				for(Datatype d: p.getDatatypes().getChildren()){
+					if(d.getHl7Version() == null){
+						d.setHl7Version(version);
+					}
+				}
+				
+				for(Table t: p.getTables().getChildren()){
+					if(t.getHl7Version() == null){
+						t.setHl7Version(version);
+					}
+				}
+		
+				profileService.save(p);
+
+			}
+		}
+		
 	}
 
 	public Logger getLogger() {

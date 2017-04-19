@@ -9,8 +9,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -21,16 +23,19 @@ import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Case;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DocumentMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Field;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Group;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Mapping;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Messages;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ProfileMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRef;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRefOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TableLink;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ValueSetOrSingleCodeBinding;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByID;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByName;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByNameOrByID;
@@ -53,6 +58,8 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segments;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
+import gov.nist.healthcare.tools.hl7.v2.xml.ExportTool;
 import nu.xom.Attribute;
 import nu.xom.Builder;
 import nu.xom.NodeFactory;
@@ -1043,19 +1050,118 @@ public class ExportUtil {
 		bytes = outputStream.toByteArray();
 		return new ByteArrayInputStream(bytes);
 	}
+	
+	private void addDatatype(Datatype d, Map<String, Datatype> datatypesMap, IGAMTDBConn igamtDB) {
+		if (d != null) {
+			datatypesMap.put(d.getId(), d);
+			for (Component c : d.getComponents()) {
+				this.addDatatype(igamtDB.findDatatypeById(c.getDatatype().getId()), datatypesMap, igamtDB);
+			}
+		}
+	}
+	
 
+	private void visit(SegmentRefOrGroup seog, Map<String, Segment> segmentsMap, Map<String, Datatype> datatypesMap,
+			Map<String, Table> tablesMap, gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile,
+			IGAMTDBConn igamtDB) {
+		if (seog instanceof SegmentRef) {
+			SegmentRef sr = (SegmentRef) seog;
+			Segment s = segmentsMap.get(sr.getRef().getId());
+
+			if (s.getName().equals("OBX") || s.getName().equals("MFA") || s.getName().equals("MFE")) {
+				String reference = null;
+				String referenceTableId = null;
+
+				if (s.getName().equals("OBX")) {
+					reference = "2";
+				}
+
+				if (s.getName().equals("MFA")) {
+					reference = "6";
+				}
+
+				if (s.getName().equals("MFE")) {
+					reference = "5";
+				}
+
+				referenceTableId = this.findValueSetID(s.getValueSetBindings(), reference);
+
+				if (referenceTableId != null) {
+					Table table = tablesMap.get(referenceTableId);
+					if (table != null) {
+						for (Code c : table.getCodes()) {
+							if (c.getValue() != null && table.getHl7Version() != null) {
+								// TODO
+								Datatype d = igamtDB.findByNameAndVesionAndScope(c.getValue(), table.getHl7Version(), "HL7STANDARD");
+
+								if (d != null) {
+									this.addDatatype(d, datatypesMap, igamtDB);
+								}
+							}
+						}
+					}
+				}
+			}
+
+		} else {
+			Group g = (Group) seog;
+			for (SegmentRefOrGroup child : g.getChildren()) {
+				this.visit(child, segmentsMap, datatypesMap,tablesMap, profile, igamtDB);
+			}
+		}
+	}
+	
+	private String findValueSetID(List<ValueSetOrSingleCodeBinding> valueSetBindings, String referenceLocation) {
+		for (ValueSetOrSingleCodeBinding vsb : valueSetBindings) {
+			if (vsb.getLocation().equals(referenceLocation))
+				return vsb.getTableId();
+		}
+		return null;
+	}
+	
 	private void generateProfileXML(ZipOutputStream out, String id, ProfileService profileService) throws IOException {
 		Profile tcamtProfile = profileService.findOne(id);
 		
 		if(tcamtProfile != null) {
-			String profileXML = this.serializeProfileToDoc(tcamtProfile).toXML();
-			String valueSetXML = this.serializeTableLibraryToElement(tcamtProfile).toXML();
-			String constraintsXML = this.serializeConstraintsToDoc(tcamtProfile).toXML();
+			
+			IGAMTDBConn igamtDB = new IGAMTDBConn();
+			gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile = new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
+			profile.setAccountId(tcamtProfile.getAccountId());
+			profile.setMetaData(tcamtProfile.getMetaData());
+			profile.setMessages(new Messages());
+			DocumentMetaData metadata = new DocumentMetaData();
+			Map<String, Segment> segmentsMap = new HashMap<String, Segment>();
+			Map<String, Datatype> datatypesMap = new HashMap<String, Datatype>();
+			Map<String, Table> tablesMap = new HashMap<String, Table>();
+
+			for (Segment s : tcamtProfile.getSegments().getChildren()) {
+				System.out.println(s.getId());
+				segmentsMap.put(s.getId(), s);
+			}
+
+			for (Datatype d : tcamtProfile.getDatatypes().getChildren()) {
+				datatypesMap.put(d.getId(), d);
+			}
+
+			for (Table t : tcamtProfile.getTables().getChildren()) {
+				tablesMap.put(t.getId(), t);
+			}
+
+			for (Message m : tcamtProfile.getMessages().getChildren()) {
+				if (m.getMessageID() == null)
+					m.setMessageID(UUID.randomUUID().toString());
+
+				profile.getMessages().addMessage(m);
+
+				for (SegmentRefOrGroup seog : m.getChildren()) {
+					this.visit(seog, segmentsMap, datatypesMap, tablesMap, profile, igamtDB);
+				}
+			}
 
 			byte[] buf = new byte[1024];
-			out.putNextEntry(new ZipEntry(id + "_Profile.xml"));
+			out.putNextEntry(new ZipEntry("Global" + File.separator + "Profiles" + File.separator + id + "_Profile.xml"));
 			InputStream inTP = null;
-			inTP = IOUtils.toInputStream(profileXML);
+			inTP = IOUtils.toInputStream(new ExportTool().serializeProfileToDoc(profile, metadata, segmentsMap, datatypesMap, tablesMap).toXML());
 			int lenTP;
 			while ((lenTP = inTP.read(buf)) > 0) {
 				out.write(buf, 0, lenTP);
@@ -1063,9 +1169,9 @@ public class ExportUtil {
 			out.closeEntry();
 			inTP.close();
 
-			out.putNextEntry(new ZipEntry(id + "_ValueSet.xml"));
+			out.putNextEntry(new ZipEntry("Global" + File.separator + "Tables" + File.separator + id + "_ValueSet.xml"));
 			inTP = null;
-			inTP = IOUtils.toInputStream(valueSetXML);
+			inTP = IOUtils.toInputStream(new ExportTool().serializeTableXML(profile, metadata, tablesMap));
 			lenTP = 0;
 			while ((lenTP = inTP.read(buf)) > 0) {
 				out.write(buf, 0, lenTP);
@@ -1073,9 +1179,9 @@ public class ExportUtil {
 			out.closeEntry();
 			inTP.close();
 			
-			out.putNextEntry(new ZipEntry(id + "_Constraints.xml"));
+			out.putNextEntry(new ZipEntry("Global" + File.separator + "Constraints" + File.separator + id  + "_Constraints.xml"));
 			inTP = null;
-			inTP = IOUtils.toInputStream(constraintsXML);
+			inTP = IOUtils.toInputStream(new ExportTool().serializeConstraintsXML(profile, metadata, segmentsMap, datatypesMap, tablesMap));
 			lenTP = 0;
 			while ((lenTP = inTP.read(buf)) > 0) {
 				out.write(buf, 0, lenTP);
