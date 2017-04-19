@@ -521,7 +521,7 @@ body {
 <script type="text/ng-template" id="FieldTree.html">
 	<tr tt-node is-branch="hasChildren(node)"  data-tt-branch='true' data-tt-id="{{node.ID}}" data-tt-parent-id="{{node.parentID}}"  >
 		<td class="col-md-1">
-			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}} <button ng-click="debug(node)"></button>
+			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
 			{{node.field.name}}
@@ -590,7 +590,7 @@ body {
 <script type="text/ng-template" id="ComponentTree.html">
 	<tr tt-node is-branch="hasChildren(node)"  data-tt-branch='true' data-tt-id="{{node.ID}}" data-tt-parent-id="{{node.parentID}}">
 		<td class="col-md-1">
-			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}  <button ng-click="debug(node)"></button>
+			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
 			{{node.component.name}}
@@ -654,7 +654,7 @@ body {
 <script type="text/ng-template" id="SubComponentTree.html">
 	<tr tt-node is-branch="hasChildren(node)"  data-tt-id="{{node.ID}}" data-tt-branch='true' data-tt-parent-id="{{node.parentID}}">
 		<td class="col-md-1">
-			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}} <button ng-click="debug(node)"></button>
+			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
 			{{node.component.name}}

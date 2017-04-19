@@ -249,11 +249,11 @@
 			<version>1.10.2</version>
 		</dependency>
 
-<!-- 		<dependency>
+	   <dependency>
 			<groupId>gov.nist.hit.resources.deploy</groupId>
 			<artifactId>hit-resource-client</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency> -->
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>

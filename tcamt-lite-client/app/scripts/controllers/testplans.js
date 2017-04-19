@@ -260,6 +260,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			var data = angular.fromJson({"changes": changes, "tp": $scope.newTestPlan});
 			$http.post('api/testplans/save', data).then(function (response) {
 				var saveResponse = angular.fromJson(response.data);
+                $rootScope.isChanged=false;
+
 			}, function (error) {
 			});
 			$mdDialog.hide();
@@ -518,6 +520,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
 			$http.get('api/testplans/getListTestPlanAbstract').then(function (response) {
 				$rootScope.tps = angular.fromJson(response.data);
+				$rootScope.isChanged=false;
 				delay.resolve(true);
 			}, function (error) {
 				$scope.error = error.data;
@@ -1062,7 +1065,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
                 $scope.editor.on("change", function () {
                     $rootScope.selectedTestStep.er7Message = $scope.editor.getValue();
-                    $scope.recordChanged($rootScope.selectedTestStep);
+                    //$scope.recordChanged($rootScope.selectedTestStep);
                 });
 			}
 
@@ -1145,6 +1148,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.selectTestPlan = function (testplanAbstract) {
+		$rootScope.isChanged=false;
 		if (testplanAbstract != null) {
 			waitingDialog.show('Opening Test Plan...', {dialogSize: 'xs', progressType: 'info'});
 			$scope.selectTPTab(1);
@@ -3767,17 +3771,24 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.updatePositions(event.dest.nodesScope.$modelValue);
 			$scope.updatePositions(event.source.nodesScope.$modelValue);
 
-            if($scope.sourceDrag.position!==sourceNode.$modelValue.position){
-                $rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
-                $rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
-                $scope.recordChanged();
-            }else{
+
                 if($scope.parentDrag.id!==destNodes.$parent.$modelValue.id){
                     $rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
                     $rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
                     $scope.recordChanged();
+                }else {
+                	console.log
+                	console.log($scope.sourceDrag);
+                    console.log($scope.parentDrag);
+                    console.log(destNodes.$modelValue);
+                	if($scope.checkIfChanged($scope.sourceDrag,$scope.parentDrag,destNodes.$modelValue)){
+                        $rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
+                        $rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
+                        $scope.recordChanged();
+
+					}
+
                 }
-            }
 
         },
 		dragStart:function(event){
@@ -3785,13 +3796,29 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             var destNodes = event.dest.nodesScope;
 
             $scope.sourceDrag=angular.copy(sourceNode.$modelValue);
-            //$scope.destDrag=angular.copy(sourceNode.$parent.$nodeScope.$modelValue);
-            $scope.parentDrag=sourceNode.$parentNodeScope.$modelValue;
+            $scope.destDrag=angular.copy(sourceNode.$parent.$nodeScope.$modelValue);
+            $scope.parentDrag=angular.copy(sourceNode.$parentNodeScope.$modelValue);
 		}
 	};
 
 
+    $scope.checkIfChanged=function(element,parent,destination){
+	var temp=[];
+	if(parent.type=='testcase'){
+		temp=parent.teststeps;
+	}else{
+		temp=parent.children;
 
+	}
+	for(i=0; i<destination.length; i++){
+		if(destination[i].id===element.id){
+			console.log(destination[i]);
+			return temp[i].id!==element.id;
+
+		}
+	}
+
+	};
 
 	$scope.updatePositions= function(arr){
 		for (var i = arr.length - 1; i >= 0; i--){
