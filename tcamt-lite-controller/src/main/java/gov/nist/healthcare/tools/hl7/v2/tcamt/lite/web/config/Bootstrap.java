@@ -12,6 +12,7 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config;
 
 import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +23,13 @@ import org.springframework.stereotype.Service;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStoryConfiguration;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStroyEntry;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
 
@@ -56,9 +59,23 @@ public class Bootstrap implements InitializingBean {
 //		updateDefaultConfig();
 		
 		
-		updateHL7Version();
+//		updateHL7Version();
+		
+		updateLongIDforTestPlan();
 	}
 
+	private void updateLongIDforTestPlan() throws TestPlanException{
+		List<TestPlan> tps = testplanService.findAll();
+		
+		for(TestPlan tp : tps){
+			if(tp.getTpId() == null){
+				long range = 1234567L;
+				Random r = new Random();
+				tp.setTpId((long)(r.nextDouble()*range));
+				testplanService.save(tp);
+			}	
+		}
+	}
 	private void updateHL7Version() throws ProfileException {
 		List<Profile> profiles = profileService.findAll();
 

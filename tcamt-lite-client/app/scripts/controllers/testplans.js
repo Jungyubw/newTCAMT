@@ -497,7 +497,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		});
 
 		var form = document.createElement("form");
-		form.action = $rootScope.api('api/testplans/' + listOfIGID + '/exportProfileXMLs/');
+		form.action = $rootScope.api('api/testplans/' + listOfIGID + '/' + $rootScope.selectedTestPlan.id + '/exportProfileXMLs/');
 		form.method = "POST";
 		form.target = "_target";
 		var csrfInput = document.createElement("input");

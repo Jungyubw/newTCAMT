@@ -20,6 +20,8 @@ public class TestPlan implements Serializable, Cloneable {
 
 	@Id
 	private String id;
+	
+	private Long tpId;
 
 	private String name;
 	private String description;
@@ -271,6 +273,14 @@ public class TestPlan implements Serializable, Cloneable {
 
 	public void setEmptyStoryContentIgnored(boolean emptyStoryContentIgnored) {
 		this.emptyStoryContentIgnored = emptyStoryContentIgnored;
+	}
+
+	public Long getTpId() {
+		return tpId;
+	}
+
+	public void setTpId(Long tpId) {
+		this.tpId = tpId;
 	}
 
 	
