@@ -53,7 +53,18 @@ public class TestPlan implements Serializable, Cloneable {
 	private String globalManualTestStepConfigId;
 	private boolean emptyStoryContentIgnored;
 	
+	private boolean GvtPresence=false;
+	private String GvtDate=null;
 	
+	
+	public boolean isGvtPresence() {
+		return GvtPresence;
+	}
+
+	public void setGvtPresence(boolean gvtPresence) {
+		GvtPresence = gvtPresence;
+	}
+
 	public TestPlan() {
 		super();
 		this.id = ObjectId.get().toString();
@@ -274,6 +285,14 @@ public class TestPlan implements Serializable, Cloneable {
 
 	public void setEmptyStoryContentIgnored(boolean emptyStoryContentIgnored) {
 		this.emptyStoryContentIgnored = emptyStoryContentIgnored;
+	}
+
+	public String getGvtDate() {
+		return GvtDate;
+	}
+
+	public void setGvtDate(String gvtDate) {
+		GvtDate = gvtDate;
 	}
 
 	

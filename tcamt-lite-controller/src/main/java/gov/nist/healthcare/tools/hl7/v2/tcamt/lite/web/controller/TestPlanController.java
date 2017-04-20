@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +21,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
@@ -54,6 +57,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.repo.TestPlanRepository;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
@@ -80,6 +84,8 @@ public class TestPlanController extends CommonController {
 	@Autowired
 	private TestPlanService testPlanService;
 
+	@Autowired
+	private TestPlanRepository testPlanRepository;
 	@Autowired
 	UserService userService;
 
@@ -136,7 +142,6 @@ public class TestPlanController extends CommonController {
 				tpa.setLastUpdateDate(tp.getLastUpdateDate());
 				tpa.setName(tp.getName());
 				tpa.setVersion(tp.getVersion());
-				
 				results.add(tpa);
 			}
 			
@@ -315,19 +320,41 @@ public class TestPlanController extends CommonController {
 	
 	 @RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST,
 		      produces = "application/json")
-		  public ResponseEntity<String> pushRB(@PathVariable("testplanId") String testplanId,@RequestBody String host,@RequestHeader("gvt-auth") String authorization) throws Exception{
+		  public void pushRB(@PathVariable("testplanId") String testplanId,@RequestBody String host,@RequestHeader("gvt-auth") String authorization) throws Exception{
 	     ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
 		// 	String host2="https://hit-dev.nist.gov:8098/";
+	     String localHost="http://localhost:8080/gvt/";
 		 	TestPlan tp=testPlanService.findOne(testplanId);
+		 	
+		 	
 		 try{
-		  String url ="https://github.com/Jungyubw/newTCAMT/blob/PushRB/tcamt-lite-controller/src/main/resources/1.zip?raw=true";
-		  //url="https://github.com/Jungyubw/newTCAMT/blob/PushRB/tcamt-lite-controller/src/main/resources/TP_12.zip?raw=true";
-		  url="https://github.com/Jungyubw/newTCAMT/blob/pushingResourceBundle/tcamt-lite-controller/src/main/resources/onctest.zip?raw=true";
-	      ResourceClient client2=ResourceClientFactory.createResourceClientWithDefault(host,authorization);
-	      RequestModel m=new RequestModel(url);
+		  
+		  
+		  String url="file:///Users/ena3/Downloads/uuuu.zip";
+		  String profileUrl="file:///Users/ena3/Downloads/Profiles.zip";
+		  String ConstraintsUrl="file:///Users/ena3/Downloads/Constraints.zip";
+		  String ValueSetUrl="file:///Users/ena3/Downloads/Tables.zip";
+		  
+	      ResourceClient client2=ResourceClientFactory.createResourceClientWithDefault(localHost,authorization);
+	      RequestModel profile=new RequestModel(profileUrl);
 
-	      ResponseEntity<String> response=client2.addOrUpdateTestPlan(m);
-	  	  User u = userService.getCurrentUser();
+	      client2.addOrUpdateProfile(profile);
+	      RequestModel constraints=new RequestModel(ConstraintsUrl);
+
+	      client2.addOrUpdateConstraints(constraints);
+	      
+	      RequestModel valueSet=new RequestModel(ValueSetUrl);
+
+	      client2.addOrUpdateValueSet(valueSet);
+	  
+	  	  RequestModel m=new RequestModel(url);
+
+		  client2.addOrUpdateTestPlan(m);
+		  DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			tp.setGvtDate(dateFormat.format(Calendar.getInstance().getTime()));
+			testPlanRepository.save(tp);
+		  User u = userService.getCurrentUser();
+
 		  Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 		  
 		  if (account == null){
@@ -338,28 +365,20 @@ public class TestPlanController extends CommonController {
 			sendPushConfirmation(tp, account, host);
 		}
 		
-		return response;
+
 		 }catch(Exception e ){
-    	// sendPushFailConfirmation(tp, account, host);
 		      throw new PushRBException(e);
 
 		 }
-		 
-	      //replace this with the URL 
-	     
-	      
-	   
-	
 
-		 
-		 //return response;
 	 }
 	 
 	 @RequestMapping(value = "/createSession", method = RequestMethod.POST,
 		      produces = "application/json")
 		  public boolean createSession(@RequestBody String host,@RequestHeader("gvt-auth") String authorization) {
+		 String localHost="http://localhost:8080/gvt/";
 		 try{
-	      ResourceClient client=ResourceClientFactory.createResourceClientWithDefault(host,authorization);
+	      ResourceClient client=ResourceClientFactory.createResourceClientWithDefault(localHost,authorization);
 	      return client.validCredentials();
 		 }catch(Exception e){
 			 return false;

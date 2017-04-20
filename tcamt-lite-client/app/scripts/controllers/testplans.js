@@ -903,19 +903,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		});
 	};
 
-    $scope.pushRB = function (testplan) {
-        var modalInstance = $modal.open({
+    $scope.pushRB = function (testplan,mode) {
+       $mdDialog.show({
             templateUrl: 'views/testingConnection/loginTestingTool.html',
             controller: 'loginTestingTool',
-            resolve: {
-                testplan: function () {
-                    return testplan;
-                }
+            locals: {
+                testplan:testplan,
+				mode:mode
+
             }
-        });
-        modalInstance.result.then(function (testplan) {
-
-
         });
     };
 
@@ -1035,12 +1031,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			name: 'New TestPlan',
 			accountId : userInfoService.getAccountID()
 		};
+		$scope.changesMap[newTestPlan.id]=false;
 		var changes = angular.toJson([]);
 		var data = angular.fromJson({"changes": changes, "tp": newTestPlan});
 		$http.post('api/testplans/save', data).then(function (response) {
 			var saveResponse = angular.fromJson(response.data);
 			newTestPlan.lastUpdateDate = saveResponse.date;
 			$rootScope.saved = true;
+
+
 		}, function (error) {
 			$rootScope.saved = false;
 		});
@@ -1156,6 +1155,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                 $rootScope.selectedTestPlan = angular.fromJson(response.data);
                 $rootScope.testplans = [];
                 $rootScope.testplans.push($rootScope.selectedTestPlan);
+
 
                 $scope.updateListOfIntegrationAbstractProfiles();
                 $timeout(function () {
