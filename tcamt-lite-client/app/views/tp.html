@@ -28,6 +28,23 @@
                 </div>
 
                 <div class="pull-right">
+                    <div ng-show="accordi.tpDetails" class="btn-group" >
+                        <button type="button" class="btn btn-info btn-sm">
+                            <span><i class="fa fa-download fa-fw"></i> Connect With GVT</span>
+                        </button>
+                        <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu igl-menu" role="menu">
+                            <li><a class="point" ng-click="pushRB(testplan,'Pushing')">Push</a></li>
+                            <li><a class="point" ng-click="pushRB(testplan,'Deleting')">DELETE</a></li>
+                            <li><a class="point" ng-click="pushRB(testplan ,'Updating')">UPDATE </a></li>
+
+                        </ul>
+                    </div>
+
+
                     <button ng-show="accordi.tpList" type="button" class="btn btn-info btn-sm" ng-click="openDialogForNewTestPlan($event)" style="margin-bottom:10px !important;"><i class="fa fa-plus"></i> New
                     </button>
                     <button ng-show="accordi.tpList" type="button" class="btn btn-info btn-sm" ng-click="openDialogForImportTestPlan($event)" style="margin-bottom:10px !important;"><i class="fa fa-plus"></i> Import JSON
@@ -50,9 +67,12 @@
                             <li><a class="point" ng-click="exportCoverHTML()">Cover Page HTML</a></li>
                             <li><a class="point" ng-click="exportTestPackageHTML()">Test Package HTML</a></li>
                             <li><a class="point" ng-click="exportProfileXMLs()">Export Profile XML ZIP</a></li>
-                            <li><a class="point" ng-click="pushRB(testplan)">Push to a testing tool</a></li>
+                            <!--<li><a class="point" ng-click="pushRB(testplan)">Push to a testing tool</a></li>-->
                         </ul>
                     </div>
+
+
+
 
                     <div ng-show="accordi.tpDetails && selectedTestStep != null" class="btn-group">
                         <button type="button" class="btn btn-info btn-sm">

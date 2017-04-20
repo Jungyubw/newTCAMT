@@ -25,7 +25,7 @@ angular.module('tcl').factory('loginTestingToolSvc',
 
 
                 console.log("SUCCESS")
-                //delay.resolve(auth);
+
             }, function(error){
                 console.log("ERROR");
                 console.log(error);

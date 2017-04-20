@@ -7,68 +7,76 @@
         top.location = self.location;
     }
 </script>
-<form name="testingLoginForm" id="testingLoginForm" novalidate class="form-horizontal">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal"></a>
-        <h3 class="modal-title">
-            <i class="fa fa-sign-in"></i>&nbsp;<span>Push To The Testing Tool</span>
-        </h3>
-    </div>
-    <div class="modal-body">
-        <!--<label>-->
-        <!--<div msg key="testing.login.banner"></div>-->
-        <!--</label>-->
-        <div ng-class="'alert alert-danger'" ng-show="error.show" id="ehrloginalert">
-            <button type="button" class="close" ng-click="error.show=false">×</button>
-            <div msg key-expr="error.text"></div>
-        </div>
 
-        <div class="form-group control-group"
+
+<md-dialog aria-label="Create New TestPlan" style="width: 50%">
+    <form ng-cloak name="testingLoginForm" id="testingLoginForm" novalidate class="form-horizontal">
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{mode}} Test Plan</h2>
+                <span flex></span>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+
+            <div class="md-dialog-content">
+
+            <div class="alert alert-danger row" ng-show="alert" id="ehrloginalert">
+                <button type="button" class="close" ng-click="initAlert()">×</button>
+                <div>{{alertText}}</div>
+            </div>
+
+            <div class="form-group control-group row"
              ng-class="{'has-success has-feedback': testingLoginForm.username.$valid, 'igl-has-error has-feedback': !testingLoginForm.username.$valid}">
             <label class="control-label col-md-2" for="username">
-                <div msg key="login.username"></div>
+              Username
             </label>
 
             <div class="col-md-10">
                 <input type="text" class="form-control focus"  autofocus  id="username" name="username" ng-model="user.username"
                        ng-minlength="4" required>
             </div>
-        </div>
-        <div class="form-group control-group"
+            </div>
+            <div class="form-group control-group row"
              ng-class="{'has-success has-feedback': testingLoginForm.password.$valid, 'igl-has-error has-feedback': !testingLoginForm.password.$valid}">
-            <label class="control-label col-md-2" for="password">
-               Username
-            </label>
+                <label class="control-label col-md-2" for="password">
+               Password
+                </label>
 
             <div class="col-md-10">
                 <input type="password"   autocomplete="off" class="form-control immediate-help account-input focus"  id="password" name="password"
                        ng-model="user.password" ng-minlength="4" required>
             </div>
+            </div>
         </div>
-    </div>
-    <div class="modal-footer">
-        <!--<div class="form-group">-->
-        <div clas="col-md-offset-2 col-md-10" style="margin-bottom: 10px">
-            <button ng-click="login(user.username,user.password)" class="btn btn-raised btn-primary" type="submit"
+        </md-dialog-content>
+        <md-dialog-actions layout="column">
+            <div layout="row" flex layout-align="end end">
+            <md-button flex ng-click="login(user.username,user.password)" class="btn btn-raised btn-primary" type="submit"
                     ng-disabled='!testingLoginForm.$valid'>
-                <i class="fa fa-sign-in"></i>   <span msg key="login.button.login"></span>
-            </button>
-            <button class="btn btn-raised btn-warning" ng-click="cancel()">
+                <i class="fa fa-sign-in"></i>   Confirm
+            </md-button>
+            <md-button flex class="btn btn-raised btn-warning" ng-click="cancel()">
                 <i class="fa fa-times"></i>  <span msg key="login.button.cancel"></span>
-            </button>
-        </div>
+            </md-button>
+            </div>
+            <div layout="row" flex layout-align="end end" class="pull-right">
 
-        <div clas="col-md-12" >
-            <a ng-href="{{testingUrl}}#/forgotten" target="_blank"  style="text-align:center">
-                <span> Forgot your Password</span>
-            </a>
-        </div>
+                <a flex ng-href="{{testingUrl}}#/forgotten" target="_blank"  class="pull-right">
+                    <span> Forgot your Password</span>
+                </a>
+            </div>
 
-        <div clas="col-md-12">
-            <a ng-href="{{testingUrl}}#/registration" target="_blank" style="text-align:center">
-                <span> Create an Account</span>
-            </a>
-        </div>
 
-    </div>
-</form>
+            <div layout="row" flex layout-align="end end" class="pull-right">
+                <a flex ng-href="{{testingUrl}}#/registration" target="_blank" class="pull-right">
+                    <span> Create an Account</span>
+                </a>
+            </div>
+        </md-dialog-actions>
+
+
+
+
+    </form>
+</md-dialog>

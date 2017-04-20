@@ -530,7 +530,7 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
         };
 
         $rootScope.clearChanges = function (path) {
-//        $rootScope.changes = {};
+            $rootScope.changes = {};
             $rootScope.igChanged = false;
         };
 

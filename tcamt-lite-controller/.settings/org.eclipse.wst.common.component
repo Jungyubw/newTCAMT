@@ -25,9 +25,6 @@
         <dependent-module archiveName="tcamt-lite-resource-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/tcamt-lite-resource/tcamt-lite-resource">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="hit-resource-client-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/hit-resource-client/hit-resource-client">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="context-root" value="tcamt"/>
         <property name="java-output-path" value="/tcamt-lite-controller/target/classes"/>
         <property name="component.exclusion.patterns" value="WEB-INF/web.xml"/>

@@ -9,8 +9,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +39,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,6 +59,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.repo.TestPlanRepository;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ResourceBundleService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
@@ -71,9 +75,12 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAll
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 import gov.nist.healthcare.tools.hl7.v2.xml.PDFGeneratorTool;
+import gov.nist.hit.resources.deploy.client.RequestModel;
+import gov.nist.hit.resources.deploy.client.ResourceClient;
+import gov.nist.hit.resources.deploy.factory.ResourceClientFactory;
 
-@RestController
-@RequestMapping("/testplans")
+@RestController @RequestMapping("/testplans")
+
 public class TestPlanController extends CommonController {
 
 	Logger log = LoggerFactory.getLogger(TestPlanController.class);
@@ -84,6 +91,8 @@ public class TestPlanController extends CommonController {
 	@Autowired
 	private ResourceBundleService resourceBundleService;
 
+	private TestPlanRepository testPlanRepository;
+	
 	@Autowired
 	UserService userService;
 
@@ -141,7 +150,6 @@ public class TestPlanController extends CommonController {
 				tpa.setLastUpdateDate(tp.getLastUpdateDate());
 				tpa.setName(tp.getName());
 				tpa.setVersion(tp.getVersion());
-
 				results.add(tpa);
 			}
 
@@ -302,8 +310,8 @@ public class TestPlanController extends CommonController {
 		FileCopyUtils.copy(content, response.getOutputStream());
 
 	}
-	
-	private void generateFileFromInputStream(OutputStream outputStream, InputStream content) throws IOException{
+
+	private void generateFileFromInputStream(OutputStream outputStream, InputStream content) throws IOException {
 		int read = 0;
 		byte[] bytes = new byte[1024];
 
@@ -322,7 +330,7 @@ public class TestPlanController extends CommonController {
 		TestPlan tp = findTestPlan(id);
 		InputStream content = null;
 		content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
-		
+
 		ResourceBundle rb = resourceBundleService.findById(id);
 		if (rb == null) {
 			rb = new ResourceBundle();
@@ -334,35 +342,96 @@ public class TestPlanController extends CommonController {
 			rb.setName(tp.getName());
 			rb.setAccountId(account.getId());
 		}
-		
+
 		rb.setDate(new Date());
 		rb.setHasResourceBundle(true);
 		rb.setName(tp.getName());
 		rb.setAccountId(account.getId());
-		
+
 		resourceBundleService.save(rb);
 		ClassLoader classLoader = getClass().getClassLoader();
 		String dir = classLoader.getResource(File.separator).getFile();
-		File directory = new File(dir + id +  File.separator);
+		File directory = new File(dir + id + File.separator);
 		directory.mkdirs();
-		OutputStream outputStream = new FileOutputStream(dir + id +  File.separator + "Contextbased.zip");
+		OutputStream outputStream = new FileOutputStream(dir + id + File.separator + "Contextbased.zip");
 		this.generateFileFromInputStream(outputStream, content);
-	
-		new PDFGeneratorTool().unZipIt(dir + id +  File.separator + "Contextbased.zip", dir + id +  File.separator );
-		new PDFGeneratorTool().gen(dir + id +  File.separator + "Contextbased");
-		new PDFGeneratorTool().zipIt(dir + id +  File.separator + "Contextbased", dir + id +  File.separator + "ContextbasedPDF.zip");
-		
-		
+
+		new PDFGeneratorTool().unZipIt(dir + id + File.separator + "Contextbased.zip", dir + id + File.separator);
+		new PDFGeneratorTool().gen(dir + id + File.separator + "Contextbased");
+		new PDFGeneratorTool().zipIt(dir + id + File.separator + "Contextbased",
+				dir + id + File.separator + "ContextbasedPDF.zip");
+
 		this.downloadResourceBundleZip(id, request, response);
 	}
-	
+
+	@RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST, produces = "application/json")
+	public void pushRB(@PathVariable("testplanId") String testplanId, @RequestBody String host,
+			@RequestHeader("gvt-auth") String authorization) throws Exception {
+		ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
+		// String host2="https://hit-dev.nist.gov:8098/";
+		String localHost = "http://localhost:8080/gvt/";
+		TestPlan tp = testPlanService.findOne(testplanId);
+
+		try {
+
+			String url = "file:///Users/ena3/Downloads/uuuu.zip";
+			String profileUrl = "file:///Users/ena3/Downloads/Profiles.zip";
+			String ConstraintsUrl = "file:///Users/ena3/Downloads/Constraints.zip";
+			String ValueSetUrl = "file:///Users/ena3/Downloads/Tables.zip";
+
+			ResourceClient client2 = ResourceClientFactory.createResourceClientWithDefault(localHost, authorization);
+			RequestModel profile = new RequestModel(profileUrl);
+
+			client2.addOrUpdateProfile(profile);
+			RequestModel constraints = new RequestModel(ConstraintsUrl);
+
+			client2.addOrUpdateConstraints(constraints);
+
+			RequestModel valueSet = new RequestModel(ValueSetUrl);
+
+			client2.addOrUpdateValueSet(valueSet);
+
+			RequestModel m = new RequestModel(url);
+
+			client2.addOrUpdateTestPlan(m);
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			tp.setGvtDate(dateFormat.format(Calendar.getInstance().getTime()));
+			testPlanRepository.save(tp);
+			User u = userService.getCurrentUser();
+
+			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+
+			if (account == null) {
+
+				throw new UserAccountNotFoundException();
+			} else {
+				sendPushConfirmation(tp, account, host);
+			}
+
+		} catch (Exception e) {
+			throw new PushRBException(e);
+
+		}
+
+	}
+
+	@RequestMapping(value = "/createSession", method = RequestMethod.POST, produces = "application/json")
+	public boolean createSession(@RequestBody String host, @RequestHeader("gvt-auth") String authorization) {
+		String localHost = "http://localhost:8080/gvt/";
+		try {
+			ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(localHost, authorization);
+			return client.validCredentials();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	@RequestMapping(value = "/{id}/downloadRBZip", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
 	public void downloadResourceBundleZip(@PathVariable("id") String id, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
 		InputStream io = classLoader.getResourceAsStream(id + File.separator + "Contextbased.zip");
-		
-		
+
 		response.setContentType("application/zip");
 		response.setHeader("Content-disposition", "attachment;filename=" + "Contextbased.zip");
 		FileCopyUtils.copy(io, response.getOutputStream());
@@ -389,31 +458,29 @@ public class TestPlanController extends CommonController {
 			rb.setName(tp.getName());
 			rb.setAccountId(account.getId());
 		}
-		
+
 		rb.setDate(new Date());
 		rb.setHasXML(true);
 		rb.setName(tp.getName());
 		rb.setAccountId(account.getId());
-		
+
 		ClassLoader classLoader = getClass().getClassLoader();
 		String dir = classLoader.getResource(File.separator).getFile();
-		File directory = new File(dir + tpid +  File.separator);
+		File directory = new File(dir + tpid + File.separator);
 		directory.mkdirs();
-		OutputStream outputStream = new FileOutputStream(dir + tpid +  File.separator + "Global.zip");
+		OutputStream outputStream = new FileOutputStream(dir + tpid + File.separator + "Global.zip");
 		this.generateFileFromInputStream(outputStream, content);
 		resourceBundleService.save(rb);
-		
-		
+
 		this.downloadProfileXMLs(tpid, request, response);
 	}
-	
+
 	@RequestMapping(value = "/{id}/downloadProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
 	public void downloadProfileXMLs(@PathVariable("id") String id, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
 		InputStream io = classLoader.getResourceAsStream(id + File.separator + "Global.zip");
-		
-		
+
 		response.setContentType("application/zip");
 		response.setHeader("Content-disposition", "attachment;filename=" + "Global.zip");
 		FileCopyUtils.copy(io, response.getOutputStream());

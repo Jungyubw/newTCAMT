@@ -24,7 +24,7 @@
                 <div context-menu="testPlanOptions" style="margin-left:5px;">
                 <i data-nodrag ng-click="toggle(this)" class="fa" ng-class="{'fa-caret-right': collapsed, 'fa-caret-down': !collapsed}">
 				</i>
-<span class="label label-sub-component label-icon">TP</span> </span> <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':test.isChanged}"
+<span class="label label-sub-component label-icon">TP</span> </span> <span data-nodrag ng-class="{'selected1' : this.$modelValue===activeModel,'unsaved':changesMap[test.id]}"
     ng-click="Activate(this); selectTestPlan(test);">
 						{{test.name}}</span>
 </div>

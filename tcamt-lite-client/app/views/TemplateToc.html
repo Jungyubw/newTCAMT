@@ -11,7 +11,6 @@
                      <i data-nodrag ng-click="switchermsg(messagetempCollapsed)" class="fa" ng-class="{'fa-caret-right': messagetempCollapsed, 'fa-caret-down': !messagetempCollapsed}">
 					</i>       
                 Messages Template
-                <span ng-show="selectedIntegrationProfile">for {{selectedIntegrationProfile.sectionTitle}}-{{selectedConformanceProfile.name}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.messageTemplates" ng-if="!messagetempCollapsed">
                 <li ng-repeat="msgTmp in template.messageTemplates" ui-tree-node>
@@ -25,7 +24,6 @@
                     <i data-nodrag ng-click="switcherseg(segmenttempCollapsed)" class="fa" ng-class="{'fa-caret-right': segmenttempCollapsed, 'fa-caret-down': !segmenttempCollapsed}">
 					</i>   
 				Segment Templates
-                <span ng-show="selectedSegmentNode">for {{selectedSegmentNode.segment.obj.name}}</span>
             </div>
             <ol ui-tree-nodes="" ng-model="template.segmentTemplates" ng-if="!segmenttempCollapsed">
                 <li ng-repeat="segTmp in template.segmentTemplates" ui-tree-node ng-if="selectedSegmentNode===null ||selectedSegmentNode.segment.obj.name===segTmp.segmentName">

@@ -20,7 +20,7 @@ public class TestPlan implements Serializable, Cloneable {
 
 	@Id
 	private String id;
-	
+
 	private Long tpId;
 
 	private String name;
@@ -34,25 +34,35 @@ public class TestPlan implements Serializable, Cloneable {
 	private String coverPageSubTitle;
 	private String coverPageVersion;
 	private String coverPageDate;
-	
+
 	private String type;
 	private boolean transport;
 	private String domain;
 	private boolean skip;
-	
+
 	private List<String> listOfIntegrationProfileIds = new ArrayList<String>();
-	
-	private HashMap<String,String> testStoryContent = new HashMap<String, String>();
-	
+
+	private HashMap<String, String> testStoryContent = new HashMap<String, String>();
+
 	private String testStoryConfigId;
-	
+
 	private String globalTestGroupConfigId;
 	private String globalTestCaseConfigId;
 	private String globalAutoTestStepConfigId;
 	private String globalManualTestStepConfigId;
 	private boolean emptyStoryContentIgnored;
-	
-	
+
+	private boolean GvtPresence = false;
+	private String GvtDate = null;
+
+	public boolean isGvtPresence() {
+		return GvtPresence;
+	}
+
+	public void setGvtPresence(boolean gvtPresence) {
+		GvtPresence = gvtPresence;
+	}
+
 	public TestPlan() {
 		super();
 		this.id = ObjectId.get().toString();
@@ -89,7 +99,7 @@ public class TestPlan implements Serializable, Cloneable {
 	public void addTestCaseGroup(TestCaseGroup testcasegroup) {
 		this.children.add(testcasegroup);
 	}
-	
+
 	public void addTestCaseOrGroup(TestCaseOrGroup testcaseorgroup) {
 		this.children.add(testcaseorgroup);
 	}
@@ -111,10 +121,10 @@ public class TestPlan implements Serializable, Cloneable {
 
 		List<TestCaseOrGroup> cChildren = new ArrayList<TestCaseOrGroup>();
 		for (TestCaseOrGroup o : this.children) {
-			if(o instanceof TestCase){
-				cChildren.add(((TestCase)o).clone());
-			}else if(o instanceof TestCaseGroup){
-				cChildren.add(((TestCaseGroup)o).clone());
+			if (o instanceof TestCase) {
+				cChildren.add(((TestCase) o).clone());
+			} else if (o instanceof TestCaseGroup) {
+				cChildren.add(((TestCaseGroup) o).clone());
 			}
 		}
 		cloned.setChildren(cChildren);
@@ -171,7 +181,8 @@ public class TestPlan implements Serializable, Cloneable {
 	}
 
 	public String getDescription() {
-		if(this.description == null) return "";
+		if (this.description == null)
+			return "";
 		return description;
 	}
 
@@ -186,7 +197,7 @@ public class TestPlan implements Serializable, Cloneable {
 	public void setChildren(List<TestCaseOrGroup> children) {
 		this.children = children;
 	}
-	
+
 	public boolean isTransport() {
 		return transport;
 	}
@@ -219,11 +230,11 @@ public class TestPlan implements Serializable, Cloneable {
 		this.listOfIntegrationProfileIds = listOfIntegrationProfileIds;
 	}
 
-	public HashMap<String,String> getTestStoryContent() {
+	public HashMap<String, String> getTestStoryContent() {
 		return testStoryContent;
 	}
 
-	public void setTestStoryContent(HashMap<String,String> testStoryContent) {
+	public void setTestStoryContent(HashMap<String, String> testStoryContent) {
 		this.testStoryContent = testStoryContent;
 	}
 
@@ -281,7 +292,15 @@ public class TestPlan implements Serializable, Cloneable {
 
 	public void setTpId(Long tpId) {
 		this.tpId = tpId;
+
 	}
 
-	
+	public String getGvtDate() {
+		return GvtDate;
+	}
+
+	public void setGvtDate(String gvtDate) {
+		GvtDate = gvtDate;
+	}
+
 }
