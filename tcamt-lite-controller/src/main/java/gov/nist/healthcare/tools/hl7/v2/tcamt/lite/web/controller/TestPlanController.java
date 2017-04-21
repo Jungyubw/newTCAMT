@@ -76,7 +76,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config.TestPlanChangeComm
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAllowException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
-import gov.nist.healthcare.tools.hl7.v2.xml.PDFGeneratorTool;
+import gov.nist.healthcare.tools.hl7.v2.xml.ExportTool;
 import gov.nist.hit.resources.deploy.client.RequestModel;
 import gov.nist.hit.resources.deploy.client.ResourceClient;
 import gov.nist.hit.resources.deploy.factory.ResourceClientFactory;
@@ -394,9 +394,14 @@ public class TestPlanController extends CommonController {
 		String dir = "pushResourceBundles";
 		File directory = new File(absoluteDiskPath + testplanId + File.separator);
 		directory.mkdirs();
-		OutputStream testPlanOS = new FileOutputStream(absoluteDiskPath + testplanId + File.separator + "Contextbased.zip");
+		OutputStream testPlanOS = new FileOutputStream(absoluteDiskPath + testplanId + File.separator + "Contextbasedtemp.zip");
 		this.generateFileFromInputStream(testPlanOS, testPlanIO);
-
+		
+		
+		new ExportTool().unZipIt(absoluteDiskPath + testplanId + File.separator + "Contextbasedtemp.zip", absoluteDiskPath + testplanId + File.separator + "Contextbased");
+		new ExportTool().zipIt(absoluteDiskPath + testplanId + File.separator + "Contextbased.zip", absoluteDiskPath + testplanId + File.separator + "Contextbased");
+		
+		
 		Map<String, String> ipidMap = new HashMap<String, String>();
 
 		for (TestCaseOrGroup tcog : tp.getChildren()) {
