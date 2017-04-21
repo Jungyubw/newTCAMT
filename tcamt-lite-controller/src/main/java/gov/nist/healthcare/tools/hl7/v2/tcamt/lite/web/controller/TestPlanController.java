@@ -324,17 +324,27 @@ public class TestPlanController extends CommonController {
 	     ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
 		// 	String host2="https://hit-dev.nist.gov:8098/";
 	     String localHost="http://localhost:8080/gvt/";
+	     //localHost=host;
 		 	TestPlan tp=testPlanService.findOne(testplanId);
 		 	
 		 	
 		 try{
 		  
 		  
-		  String url="file:///Users/ena3/Downloads/uuuu.zip";
-		  String profileUrl="file:///Users/ena3/Downloads/Profiles.zip";
+		  String url="file:///Users/ena3/Downloads/tpTest.zip";
+		  String profileUrl="file:///Users/ena3/Downloads/Profile.zip";
 		  String ConstraintsUrl="file:///Users/ena3/Downloads/Constraints.zip";
-		  String ValueSetUrl="file:///Users/ena3/Downloads/Tables.zip";
+		  String ValueSetUrl="file:///Users/ena3/Downloads/valueSet.zip";
+			 
+			 
+//		  String url="https://github.com/Jungyubw/newTCAMT/blob/pushingResourceBundle/tcamt-lite-controller/src/main/resources/uuuu.zip?raw=true";
+//		  String profileUrl="https://github.com/Jungyubw/newTCAMT/blob/pushingResourceBundle/tcamt-lite-controller/src/main/resources/Profiles.zip?raw=true";
+//		  String ConstraintsUrl="https://github.com/Jungyubw/newTCAMT/blob/pushingResourceBundle/tcamt-lite-controller/src/main/resources/Constraints.zip?raw=true";
+//		  String ValueSetUrl="https://github.com/Jungyubw/newTCAMT/blob/pushingResourceBundle/tcamt-lite-controller/src/main/resources/Tables.zip?raw=true";
+////		  
 		  
+		  
+		 
 	      ResourceClient client2=ResourceClientFactory.createResourceClientWithDefault(localHost,authorization);
 	      RequestModel profile=new RequestModel(profileUrl);
 
@@ -377,6 +387,7 @@ public class TestPlanController extends CommonController {
 		      produces = "application/json")
 		  public boolean createSession(@RequestBody String host,@RequestHeader("gvt-auth") String authorization) {
 		 String localHost="http://localhost:8080/gvt/";
+		 //localHost=host;
 		 try{
 	      ResourceClient client=ResourceClientFactory.createResourceClientWithDefault(localHost,authorization);
 	      return client.validCredentials();
