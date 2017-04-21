@@ -370,21 +370,31 @@ public class TestPlanController extends CommonController {
 		this.downloadResourceBundleZip(id, request, response);
 	}
 
+	private static String getBaseUrl(HttpServletRequest request) {
+		String scheme = request.getScheme() + "://";
+		String serverName = request.getServerName();
+		String serverPort = (request.getServerPort() == 80) ? "" : ":" + request.getServerPort();
+		String contextPath = request.getContextPath();
+		return scheme + serverName + serverPort + contextPath;
+	}
+
 	@RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST, produces = "application/json")
 	public void pushRB(@PathVariable("testplanId") String testplanId, @RequestBody String host,
-			@RequestHeader("gvt-auth") String authorization) throws Exception {
+			@RequestHeader("gvt-auth") String authorization, HttpServletRequest request) throws Exception {
 		ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
-		// String host2="https://hit-dev.nist.gov:8098/";
-		String localHost = "http://localhost:8080/gvt/";
-
 		TestPlan tp = findTestPlan(testplanId);
 		InputStream testPlanIO = null;
 		testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
-		ClassLoader classLoader = getClass().getClassLoader();
-		String dir = classLoader.getResource(File.separator).getFile();
-		File directory = new File(dir + testplanId + File.separator);
+		
+		String relativeWebPath = "pushResourceBundles/";
+		String absoluteDiskPath = request.getServletContext().getRealPath(relativeWebPath);
+		System.out.println(absoluteDiskPath);
+		
+		
+		String dir = "pushResourceBundles";
+		File directory = new File(absoluteDiskPath + testplanId + File.separator);
 		directory.mkdirs();
-		OutputStream testPlanOS = new FileOutputStream(dir + testplanId + File.separator + "Contextbased.zip");
+		OutputStream testPlanOS = new FileOutputStream(absoluteDiskPath + testplanId + File.separator + "Contextbased.zip");
 		this.generateFileFromInputStream(testPlanOS, testPlanIO);
 
 		Map<String, String> ipidMap = new HashMap<String, String>();
@@ -403,22 +413,29 @@ public class TestPlanController extends CommonController {
 
 		InputStream[] xmlArrayIO = new InputStream[3];
 		xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(ipidMap.keySet(), profileService);
-		OutputStream profileOS = new FileOutputStream(dir + testplanId + File.separator + "Profile.zip");
+
+		OutputStream profileOS = new FileOutputStream(absoluteDiskPath + testplanId + File.separator + "Profile.zip");
+		OutputStream valueSetOS = new FileOutputStream(absoluteDiskPath + testplanId + File.separator + "ValueSet.zip");
+		OutputStream constraintsOS = new FileOutputStream(absoluteDiskPath  + testplanId + File.separator + "Constraints.zip");
+
 		this.generateFileFromInputStream(profileOS, xmlArrayIO[0]);
-		OutputStream valueSetOS = new FileOutputStream(dir + testplanId + File.separator + "ValueSet.zip");
 		this.generateFileFromInputStream(valueSetOS, xmlArrayIO[1]);
-		OutputStream constraintsOS = new FileOutputStream(dir + testplanId + File.separator + "Constraints.zip");
 		this.generateFileFromInputStream(constraintsOS, xmlArrayIO[2]);
-		
 
 		try {
 
-			String url = dir + testplanId + File.separator + "Contextbased.zip";
-			String profileUrl = dir + testplanId + File.separator + "Profile.zip";
-			String ValueSetUrl = dir + testplanId + File.separator + "ValueSet.zip";
-			String ConstraintsUrl = dir + testplanId + File.separator + "Constraints.zip";
+			String baseURL = TestPlanController.getBaseUrl(request);
+			
+			String url = baseURL + File.separator + "pushResourceBundles" + File.separator + testplanId + File.separator + "Contextbased.zip";
+			String profileUrl = baseURL + File.separator + "pushResourceBundles" + File.separator + testplanId + File.separator +  "Profile.zip";
+			String ValueSetUrl = baseURL + File.separator + "pushResourceBundles" + File.separator + testplanId + File.separator +  "ValueSet.zip";
+			String ConstraintsUrl = baseURL + File.separator + "pushResourceBundles" + File.separator + testplanId + File.separator +  "Constraints.zip";
 
-			ResourceClient client2 = ResourceClientFactory.createResourceClientWithDefault(localHost, authorization);
+			System.out.println(profileUrl);			
+			
+			
+
+			ResourceClient client2 = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
 			RequestModel profile = new RequestModel(profileUrl);
 
 			client2.addOrUpdateProfile(profile);
@@ -456,9 +473,8 @@ public class TestPlanController extends CommonController {
 
 	@RequestMapping(value = "/createSession", method = RequestMethod.POST, produces = "application/json")
 	public boolean createSession(@RequestBody String host, @RequestHeader("gvt-auth") String authorization) {
-		String localHost = "http://localhost:8080/gvt/";
 		try {
-			ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(localHost, authorization);
+			ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
 			return client.validCredentials();
 		} catch (Exception e) {
 			return false;

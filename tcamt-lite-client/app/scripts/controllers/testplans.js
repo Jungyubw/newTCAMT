@@ -251,6 +251,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.TestPlanCreationModalCtrl = function($scope,$mdDialog,$http) {
 		$scope.newTestPlan = {};
 		$scope.newTestPlan.accountId = userInfoService.getAccountID();
+        $scope.newTestPlan.longId = Math.random() * 1000000000;
 		$scope.igamtProfiles = $rootScope.igamtProfiles;
 		$scope.privateProfiles = $rootScope.privateProfiles;
 		$scope.publicProfiles = $rootScope.publicProfiles;
@@ -3836,6 +3837,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
 			$itemScope.$nodeScope.$modelValue.children.push({
 				id: genId,
+                longId: Math.random() * 1000000000,
 				type : "testcasegroup",
 				name: "New Test Group",
 				children:[],
@@ -3857,6 +3859,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$itemScope.$nodeScope.$modelValue.children.push(
 				{
 					id: testCaseId,
+                    longId: Math.random() * 1000000000,
 					type : "testcase",
 					name: "New Test Case",
 					teststeps:[],
@@ -3873,11 +3876,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.testGroupOptions = [
 		['Add New Test Case', function($itemScope) {
-			var caseId=new ObjectId().toString();
+			var caseId = new ObjectId().toString();
+
 			$rootScope.changesMap[caseId]=true;
 			$rootScope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
 			$itemScope.$nodeScope.$modelValue.children.push({
 				id: caseId,
+                longId: Math.random() * 1000000000,
 				type : "testcase",
 				name: "New Test Case",
 				isChanged:true,
@@ -3897,6 +3902,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
 			$itemScope.$nodeScope.$modelValue.children.push({
 				id: caseId,
+                longId: Math.random() * 1000000000,
 				type : "testcasegroup",
 				name: "New Test Case Group",
 				isChanged:true,
@@ -3942,6 +3948,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.changesMap[$itemScope.$nodeScope.$modelValue.id]=true;
             var newTestStep = {
                 id: stepId,
+                longId: Math.random() * 1000000000,
                 type : "teststep",
                 name : "New Test Step",
 				isChanged : true,

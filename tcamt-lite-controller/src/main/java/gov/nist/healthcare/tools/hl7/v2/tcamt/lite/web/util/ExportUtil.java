@@ -17,6 +17,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Case;
@@ -730,6 +731,15 @@ public class ExportUtil {
 		obj.put("description", ts.getDescription());
 		obj.put("type", ts.getType());
 		obj.put("position", index);
+		
+		if(ts.getIntegrationProfileId() != null){
+			
+			JSONArray plist = new JSONArray();
+			plist.put("soap");
+			obj.put("protocols", plist);
+	        
+	        
+		}
 
 		JSONObject hl7v2Obj = new JSONObject();
 		hl7v2Obj.put("messageId", ts.getConformanceProfileId());
