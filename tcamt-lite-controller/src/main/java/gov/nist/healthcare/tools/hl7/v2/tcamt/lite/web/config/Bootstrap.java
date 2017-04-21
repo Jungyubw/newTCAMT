@@ -61,10 +61,10 @@ public class Bootstrap implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 //		updateTCAMTProfiles();
 //		updateDefaultConfig();
-		
-		
+//		
+//		
 //		updateHL7Version();
-		
+//		
 //		updateLongIDforTestPlan();
 	}
 
