@@ -832,7 +832,7 @@ public class ProfileServiceImpl implements ProfileService {
 			}
 			NodeList descriptionNodes = elmConstraint.getElementsByTagName("Description");
 			if (descriptionNodes != null && descriptionNodes.getLength() == 1) {
-				constraintObj.setDescription(descriptionNodes.item(0).getFirstChild().getNodeValue());
+				constraintObj.setDescription(descriptionNodes.item(0).getTextContent());
 			}else {
 				constraintObj.setDescription("NO DESC");
 			}
@@ -857,7 +857,7 @@ public class ProfileServiceImpl implements ProfileService {
 			predicateObj.setFalseUsage(Usage.fromValue(elmPredicate.getAttribute("FalseUsage")));
 			NodeList descriptionNodes = elmPredicate.getElementsByTagName("Description");
 			if (descriptionNodes != null && descriptionNodes.getLength() == 1) {
-				predicateObj.setDescription(descriptionNodes.item(0).getFirstChild().getNodeValue());
+				predicateObj.setDescription(descriptionNodes.item(0).getTextContent());
 			}else {
 				predicateObj.setDescription("NO DESC");
 			}

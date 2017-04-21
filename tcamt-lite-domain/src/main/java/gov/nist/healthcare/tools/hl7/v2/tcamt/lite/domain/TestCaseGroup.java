@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.bson.types.ObjectId;
 
@@ -39,6 +40,9 @@ public class TestCaseGroup extends TestCaseOrGroup implements Serializable, Clon
 	public TestCaseGroup clone() throws CloneNotSupportedException {
 		TestCaseGroup cloned = (TestCaseGroup) super.clone();
 		cloned.setId(ObjectId.get().toString());
+		long range = Long.MAX_VALUE;
+		Random r = new Random();
+		cloned.setLongId((long)(r.nextDouble()*range));
 		List<TestCaseOrGroup> cTestcaseOrGroup = new ArrayList<TestCaseOrGroup>();
 		for (TestCaseOrGroup tcg : this.children) {
 			if (tcg instanceof TestCase) {

@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,6 +55,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ResourceBundle;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
@@ -79,7 +81,8 @@ import gov.nist.hit.resources.deploy.client.RequestModel;
 import gov.nist.hit.resources.deploy.client.ResourceClient;
 import gov.nist.hit.resources.deploy.factory.ResourceClientFactory;
 
-@RestController @RequestMapping("/testplans")
+@RestController
+@RequestMapping("/testplans")
 
 public class TestPlanController extends CommonController {
 
@@ -92,7 +95,7 @@ public class TestPlanController extends CommonController {
 	private ResourceBundleService resourceBundleService;
 
 	private TestPlanRepository testPlanRepository;
-	
+
 	@Autowired
 	UserService userService;
 
@@ -356,10 +359,13 @@ public class TestPlanController extends CommonController {
 		OutputStream outputStream = new FileOutputStream(dir + id + File.separator + "Contextbased.zip");
 		this.generateFileFromInputStream(outputStream, content);
 
-		new PDFGeneratorTool().unZipIt(dir + id + File.separator + "Contextbased.zip", dir + id + File.separator);
-		new PDFGeneratorTool().gen(dir + id + File.separator + "Contextbased");
-		new PDFGeneratorTool().zipIt(dir + id + File.separator + "Contextbased",
-				dir + id + File.separator + "ContextbasedPDF.zip");
+		// new PDFGeneratorTool().unZipIt(dir + id + File.separator +
+		// "Contextbased.zip", dir + id + File.separator);
+		// new PDFGeneratorTool().gen(dir + id + File.separator +
+		// "Contextbased");
+		// new PDFGeneratorTool().zipIt(dir + id + File.separator +
+		// "Contextbased",
+		// dir + id + File.separator + "ContextbasedPDF.zip");
 
 		this.downloadResourceBundleZip(id, request, response);
 	}
@@ -370,14 +376,47 @@ public class TestPlanController extends CommonController {
 		ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
 		// String host2="https://hit-dev.nist.gov:8098/";
 		String localHost = "http://localhost:8080/gvt/";
-		TestPlan tp = testPlanService.findOne(testplanId);
+
+		TestPlan tp = findTestPlan(testplanId);
+		InputStream testPlanIO = null;
+		testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
+		ClassLoader classLoader = getClass().getClassLoader();
+		String dir = classLoader.getResource(File.separator).getFile();
+		File directory = new File(dir + testplanId + File.separator);
+		directory.mkdirs();
+		OutputStream testPlanOS = new FileOutputStream(dir + testplanId + File.separator + "Contextbased.zip");
+		this.generateFileFromInputStream(testPlanOS, testPlanIO);
+
+		Map<String, String> ipidMap = new HashMap<String, String>();
+
+		for (TestCaseOrGroup tcog : tp.getChildren()) {
+			if (tcog instanceof TestCaseGroup) {
+				TestCaseGroup group = (TestCaseGroup) tcog;
+				visitGroup(group, ipidMap);
+			} else if (tcog instanceof TestCase) {
+				TestCase tc = (TestCase) tcog;
+				for (TestStep ts : tc.getTeststeps()) {
+					addProfileId(ts, ipidMap);
+				}
+			}
+		}
+
+		InputStream[] xmlArrayIO = new InputStream[3];
+		xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(ipidMap.keySet(), profileService);
+		OutputStream profileOS = new FileOutputStream(dir + testplanId + File.separator + "Profile.zip");
+		this.generateFileFromInputStream(profileOS, xmlArrayIO[0]);
+		OutputStream valueSetOS = new FileOutputStream(dir + testplanId + File.separator + "ValueSet.zip");
+		this.generateFileFromInputStream(valueSetOS, xmlArrayIO[1]);
+		OutputStream constraintsOS = new FileOutputStream(dir + testplanId + File.separator + "Constraints.zip");
+		this.generateFileFromInputStream(constraintsOS, xmlArrayIO[2]);
+		
 
 		try {
 
-			String url = "file:///Users/ena3/Downloads/uuuu.zip";
-			String profileUrl = "file:///Users/ena3/Downloads/Profiles.zip";
-			String ConstraintsUrl = "file:///Users/ena3/Downloads/Constraints.zip";
-			String ValueSetUrl = "file:///Users/ena3/Downloads/Tables.zip";
+			String url = dir + testplanId + File.separator + "Contextbased.zip";
+			String profileUrl = dir + testplanId + File.separator + "Profile.zip";
+			String ValueSetUrl = dir + testplanId + File.separator + "ValueSet.zip";
+			String ConstraintsUrl = dir + testplanId + File.separator + "Constraints.zip";
 
 			ResourceClient client2 = ResourceClientFactory.createResourceClientWithDefault(localHost, authorization);
 			RequestModel profile = new RequestModel(profileUrl);
@@ -438,16 +477,32 @@ public class TestPlanController extends CommonController {
 
 	}
 
-	@RequestMapping(value = "/{ipid}/{tpid}/exportProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
-	public void exportProfileXMLs(@PathVariable("ipid") String[] ipid, @PathVariable("tpid") String tpid,
-			HttpServletRequest request, HttpServletResponse response) throws Exception {
-		log.info("Exporting as zip file Profiles with id=" + ipid);
+	@RequestMapping(value = "/{tpid}/exportProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	public void exportProfileXMLs(@PathVariable("tpid") String tpid, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		log.info("Exporting as zip files for TestPlan with id=" + tpid);
 		User u = userService.getCurrentUser();
 		Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-		InputStream content = null;
-		content = new ExportUtil().exportProfileXMLZip(ipid, profileService);
-		ResourceBundle rb = resourceBundleService.findById(tpid);
+
 		TestPlan tp = findTestPlan(tpid);
+
+		Map<String, String> ipidMap = new HashMap<String, String>();
+
+		for (TestCaseOrGroup tcog : tp.getChildren()) {
+			if (tcog instanceof TestCaseGroup) {
+				TestCaseGroup group = (TestCaseGroup) tcog;
+				visitGroup(group, ipidMap);
+			} else if (tcog instanceof TestCase) {
+				TestCase tc = (TestCase) tcog;
+				for (TestStep ts : tc.getTeststeps()) {
+					addProfileId(ts, ipidMap);
+				}
+			}
+		}
+
+		InputStream content = null;
+		content = new ExportUtil().exportProfileXMLZip(ipidMap.keySet(), profileService);
+		ResourceBundle rb = resourceBundleService.findById(tpid);
 		if (rb == null) {
 			rb = new ResourceBundle();
 			rb.setId(tpid);
@@ -473,6 +528,28 @@ public class TestPlanController extends CommonController {
 		resourceBundleService.save(rb);
 
 		this.downloadProfileXMLs(tpid, request, response);
+	}
+
+	private void addProfileId(TestStep ts, Map<String, String> ipidMap) {
+		if (ts.getIntegrationProfileId() != null) {
+			ipidMap.put(ts.getIntegrationProfileId(), ts.getIntegrationProfileId());
+		}
+
+	}
+
+	private void visitGroup(TestCaseGroup group, Map<String, String> ipidMap) {
+		for (TestCaseOrGroup child : group.getChildren()) {
+			if (child instanceof TestCaseGroup) {
+				TestCaseGroup childGroup = (TestCaseGroup) child;
+				visitGroup(childGroup, ipidMap);
+			} else if (child instanceof TestCase) {
+				TestCase childTestCase = (TestCase) child;
+				for (TestStep ts : childTestCase.getTeststeps()) {
+					addProfileId(ts, ipidMap);
+				}
+			}
+		}
+
 	}
 
 	@RequestMapping(value = "/{id}/downloadProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")

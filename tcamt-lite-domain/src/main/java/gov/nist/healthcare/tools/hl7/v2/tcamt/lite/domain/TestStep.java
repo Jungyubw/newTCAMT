@@ -2,6 +2,7 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.persistence.Id;
 
@@ -17,6 +18,8 @@ public class TestStep implements Serializable, Cloneable {
 	@Id
 	private String id;
 
+	private Long longId;
+	
 	private String name;
 
 	private String description;
@@ -89,6 +92,9 @@ public class TestStep implements Serializable, Cloneable {
 	public TestStep clone() throws CloneNotSupportedException {
 		TestStep cloned = (TestStep) super.clone();
 		cloned.setId(ObjectId.get().toString());
+		long range = Long.MAX_VALUE;
+		Random r = new Random();
+		cloned.setLongId((long)(r.nextDouble()*range));
 
 		return cloned;
 	}
@@ -211,6 +217,14 @@ public class TestStep implements Serializable, Cloneable {
 		if (this.conformanceProfileId == null || this.conformanceProfileId.equals(""))
 			return true;
 		return false;
+	}
+
+	public Long getLongId() {
+		return longId;
+	}
+
+	public void setLongId(Long longId) {
+		this.longId = longId;
 	}
 
 }

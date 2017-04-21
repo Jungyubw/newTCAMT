@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 public abstract class TestCaseOrGroup {
 	@Id
 	protected String id;
+	
+	protected Long longId;
 
 	protected String name;
 
@@ -75,5 +77,15 @@ public abstract class TestCaseOrGroup {
 	public void setTestStoryConfigId(String testStoryConfigId) {
 		this.testStoryConfigId = testStoryConfigId;
 	}
+
+	public Long getLongId() {
+		return longId;
+	}
+
+	public void setLongId(Long longId) {
+		this.longId = longId;
+	}
+	
+	
 
 }

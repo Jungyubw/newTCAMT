@@ -462,44 +462,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	};
 
-	$scope.exportProfileXMLsInsideGroup = function (group, listOfIGID) {
-		for(i in group.children){
-			if(group.children[i].type == 'testcasegroup'){
-                listOfIGID = $scope.exportProfileXMLsInsideGroup(group.children[i],listOfIGID)
-			}else if (group.children[i].type == 'testcase'){
-                group.children[i].teststeps.forEach(function(teststep){
-                    var isDuplicatedId = false;
-                    for(j in listOfIGID){
-                        var id = listOfIGID[j];
-                        if(id == teststep.integrationProfileId) isDuplicatedId = true;
-                    }
-                    if(!isDuplicatedId) listOfIGID.push(teststep.integrationProfileId);
-                });
-            }
-		}
-
-		return listOfIGID;
-	};
-
 	$scope.exportProfileXMLs = function () {
-		var listOfIGID = [];
-		$rootScope.selectedTestPlan.children.forEach(function(child) {
-			if(child.type == "testcasegroup"){
-                $scope.exportProfileXMLsInsideGroup(child, listOfIGID);
-			}else if(child.type == "testcase"){
-				child.teststeps.forEach(function(teststep){
-					var isDuplicatedId = false;
-					for(i in listOfIGID){
-						var id = listOfIGID[i];
-						if(id == teststep.integrationProfileId) isDuplicatedId = true;
-					}
-					if(!isDuplicatedId) listOfIGID.push(teststep.integrationProfileId);
-				});
-			}
-		});
-
 		var form = document.createElement("form");
-		form.action = $rootScope.api('api/testplans/' + listOfIGID + '/' + $rootScope.selectedTestPlan.id + '/exportProfileXMLs/');
+		form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportProfileXMLs/');
 		form.method = "POST";
 		form.target = "_target";
 		var csrfInput = document.createElement("input");
@@ -4455,6 +4420,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var clone= angular.copy(testStep);
 		clone.name= testStep.name+" Copy";
 		clone.id= new ObjectId().toString();
+        clone.longId = Math.random() * 1000000000;
 		$rootScope.changesMap[clone.id]=true;
 		$scope.recordChanged(clone);
 		return clone;
@@ -4463,6 +4429,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var clone= angular.copy(testCase);
 		clone.name= testCase.name+" Copy";
 		clone.id= new ObjectId().toString();
+        clone.longId = Math.random() * 1000000000;
 		$rootScope.changesMap[clone.id]=true;
 		clone.teststeps=[];
 		if(testCase.teststeps.length>0){
@@ -4529,6 +4496,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var clone = angular.copy(testCaseGroup);
 		clone.name= testCaseGroup.name+" Copy";
 		clone.id= new ObjectId().toString();
+        clone.longId = Math.random() * 1000000000;
 		$rootScope.changesMap[clone.id]=true;
 		clone.children=[];
 		if(testCaseGroup.children.length>0){

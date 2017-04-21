@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import javax.persistence.Id;
 
@@ -21,7 +22,7 @@ public class TestPlan implements Serializable, Cloneable {
 	@Id
 	private String id;
 
-	private Long tpId;
+	private Long longId;
 
 	private String name;
 	private String description;
@@ -116,6 +117,9 @@ public class TestPlan implements Serializable, Cloneable {
 	public TestPlan clone() throws CloneNotSupportedException {
 		TestPlan cloned = (TestPlan) super.clone();
 		cloned.setId(ObjectId.get().toString());
+		long range = Long.MAX_VALUE;
+		Random r = new Random();
+		cloned.setLongId((long)(r.nextDouble()*range));
 		cloned.setVersion("init");
 		cloned.setName(this.name + " copy");
 
@@ -286,21 +290,20 @@ public class TestPlan implements Serializable, Cloneable {
 		this.emptyStoryContentIgnored = emptyStoryContentIgnored;
 	}
 
-	public Long getTpId() {
-		return tpId;
-	}
-
-	public void setTpId(Long tpId) {
-		this.tpId = tpId;
-
-	}
-
 	public String getGvtDate() {
 		return GvtDate;
 	}
 
 	public void setGvtDate(String gvtDate) {
 		GvtDate = gvtDate;
+	}
+
+	public Long getLongId() {
+		return longId;
+	}
+
+	public void setLongId(Long longId) {
+		this.longId = longId;
 	}
 
 }
