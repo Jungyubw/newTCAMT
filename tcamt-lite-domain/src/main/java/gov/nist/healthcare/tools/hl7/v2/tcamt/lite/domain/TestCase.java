@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.bson.types.ObjectId;
 
@@ -41,6 +42,9 @@ public class TestCase extends TestCaseOrGroup implements Serializable, Cloneable
 	public TestCase clone() throws CloneNotSupportedException {
 		TestCase cloned = (TestCase) super.clone();
 		cloned.setId(ObjectId.get().toString());
+		long range = Long.MAX_VALUE;
+		Random r = new Random();
+		cloned.setLongId((long)(r.nextDouble()*range));
 
 		List<TestStep> cTeststeps = new ArrayList<TestStep>();
 		for (TestStep teststep : this.teststeps) {

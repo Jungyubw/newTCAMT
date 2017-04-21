@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -15,11 +16,11 @@ import com.mongodb.MongoClient;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DatatypeLink;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ProfileMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentLink;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TableLink;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.User;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatypes;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Messages;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
@@ -64,7 +65,7 @@ public class IGAMTDBConn {
 		return null;
 	}
 	
-	private Table findTableById(String id) {
+	public Table findTableById(String id) {
 		try {
 			return mongoOps.findOne(Query.query(Criteria.where("_id").is(id)), Table.class);
 
@@ -75,7 +76,7 @@ public class IGAMTDBConn {
 		return null;
 	}
 
-	private Segment findSegmentById(String id) {
+	public Segment findSegmentById(String id) {
 		try {
 			return mongoOps.findOne(Query.query(Criteria.where("_id").is(id)), Segment.class);
 
@@ -86,7 +87,7 @@ public class IGAMTDBConn {
 		return null;
 	}
 
-	private Datatype findDatatypeById(String id) {
+	public Datatype findDatatypeById(String id) {
 		try {
 			return mongoOps.findOne(Query.query(Criteria.where("_id").is(id)), Datatype.class);
 
@@ -127,7 +128,6 @@ public class IGAMTDBConn {
 		datatypes.setType(p.getDatatypeLibrary().getType());
 		for (DatatypeLink link : p.getDatatypeLibrary().getChildren()) {
 			Datatype dt = this.findDatatypeById(link.getId());
-			System.out.println(dt);
 			datatypes.addDatatype(dt);
 		}
 		tcamtProfile.setDatatypes(datatypes);
@@ -167,5 +167,10 @@ public class IGAMTDBConn {
 		tcamtProfile.setTables(tables);
 
 		return tcamtProfile;
+	}
+
+	public Datatype findByNameAndVesionAndScope(String name, String hl7Version, String scope) {
+		BasicQuery query1 = new BasicQuery("{ name : '" + name + "', hl7Version : '" + hl7Version + "', scope : '", scope + "'}");
+	    return mongoOps.findOne(query1, Datatype.class);
 	}
 }

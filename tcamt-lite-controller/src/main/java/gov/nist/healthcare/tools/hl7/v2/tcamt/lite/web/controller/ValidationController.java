@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ConstraintContainer;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 import gov.nist.healthcare.unified.enums.Context;
@@ -54,48 +53,50 @@ public class ValidationController {
 		String html="";
 		String error="";
 
-		Profile tcamtProfile = profileService.findOne(igDocumentId);
-
+		String[] xmls = util.generateProfileXML(igDocumentId, profileService);
 		
-		String profileXML = util.serializeProfileToDoc(tcamtProfile).toXML();
-		String valueSetXML = util.serializeTableLibraryToElement(tcamtProfile).toXML();
-		String constraintsXML = util.serializeConstraintsToDoc(tcamtProfile).toXML();
-		String testStepConstraintXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator") + cbConstraints.getConstraint();
-		
-		System.out.println(message);
-		System.out.println(profileXML);
-		System.out.println(valueSetXML);
-		System.out.println(constraintsXML);
-		System.out.println(testStepConstraintXML);
-		String response = "";
-		try {
-			ValidationProxy vp = new ValidationProxy("Unified Report Test Application", "NIST");
-			EnhancedReport report = new EnhancedReport();
-			InputStream vsLibXML = new ByteArrayInputStream(valueSetXML.getBytes(StandardCharsets.UTF_8));
-			ValueSetLibrary valueSetLibrary = ValueSetLibraryImpl.apply(vsLibXML).get();
+		if(xmls != null){
+			String profileXML = xmls[0];
+			String valueSetXML = xmls[1];
+			String constraintsXML = xmls[2];
+			String testStepConstraintXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + System.getProperty("line.separator") + cbConstraints.getConstraint();
+			
+			System.out.println(message);
+			System.out.println(profileXML);
+			System.out.println(valueSetXML);
+			System.out.println(constraintsXML);
+			System.out.println(testStepConstraintXML);
+			String response = "";
+			try {
+				ValidationProxy vp = new ValidationProxy("Unified Report Test Application", "NIST");
+				EnhancedReport report = new EnhancedReport();
+				InputStream vsLibXML = new ByteArrayInputStream(valueSetXML.getBytes(StandardCharsets.UTF_8));
+				ValueSetLibrary valueSetLibrary = ValueSetLibraryImpl.apply(vsLibXML).get();
 
-			if (context.equals("free")) {
-				InputStream contextXML = new ByteArrayInputStream(constraintsXML.getBytes(StandardCharsets.UTF_8));
-				List<InputStream> confContexts = Arrays.asList(contextXML);
-				ConformanceContext cc = DefaultConformanceContext.apply(confContexts).get();
-				report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Free);
-			} else if (context.equals("based")) {
-				InputStream contextXML = new ByteArrayInputStream(testStepConstraintXML.getBytes(StandardCharsets.UTF_8));
-				List<InputStream> confContexts = Arrays.asList(contextXML);
-				ConformanceContext cc = DefaultConformanceContext.apply(confContexts).get();
-				report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Based);
+				if (context.equals("free")) {
+					InputStream contextXML = new ByteArrayInputStream(constraintsXML.getBytes(StandardCharsets.UTF_8));
+					List<InputStream> confContexts = Arrays.asList(contextXML);
+					ConformanceContext cc = DefaultConformanceContext.apply(confContexts).get();
+					report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Free);
+				} else if (context.equals("based")) {
+					InputStream contextXML = new ByteArrayInputStream(testStepConstraintXML.getBytes(StandardCharsets.UTF_8));
+					List<InputStream> confContexts = Arrays.asList(contextXML);
+					ConformanceContext cc = DefaultConformanceContext.apply(confContexts).get();
+					report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Based);
+				}
+				response  = report.to("json").toString();
+				html = report.render("report", null);
+			} catch (Exception e) {
+				error=e.getMessage();
+				e.printStackTrace();
 			}
-			response  = report.to("json").toString();
-			html = report.render("report", null);
-		} catch (Exception e) {
-			error=e.getMessage();
-			e.printStackTrace();
+			JSONObject obj = new JSONObject();
+			obj.put("json", response);
+			obj.put("html",html);
+			obj.put("error",error);
+			return obj.toString();	
 		}
-		JSONObject obj = new JSONObject();
-		obj.put("json", response);
-		obj.put("html",html);
-		obj.put("error",error);
-		return obj.toString();
-
+		
+		return null;
 	}
 }

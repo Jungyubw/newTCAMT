@@ -2,8 +2,11 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.text.DateFormat;
@@ -13,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +25,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
@@ -30,7 +33,6 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -50,8 +52,10 @@ import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ResourceBundle;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
@@ -59,6 +63,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.repo.TestPlanRepository;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ResourceBundleService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanListException;
@@ -71,12 +76,14 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config.TestPlanChangeComm
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAllowException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
+import gov.nist.healthcare.tools.hl7.v2.xml.PDFGeneratorTool;
 import gov.nist.hit.resources.deploy.client.RequestModel;
 import gov.nist.hit.resources.deploy.client.ResourceClient;
 import gov.nist.hit.resources.deploy.factory.ResourceClientFactory;
 
 @RestController
 @RequestMapping("/testplans")
+
 public class TestPlanController extends CommonController {
 
 	Logger log = LoggerFactory.getLogger(TestPlanController.class);
@@ -85,16 +92,19 @@ public class TestPlanController extends CommonController {
 	private TestPlanService testPlanService;
 
 	@Autowired
+	private ResourceBundleService resourceBundleService;
+
 	private TestPlanRepository testPlanRepository;
+
 	@Autowired
 	UserService userService;
 
 	@Autowired
 	AccountRepository accountRepository;
-	
+
 	@Autowired
 	TestStoryConfigurationService testStoryConfigurationService;
-	
+
 	@Autowired
 	ProfileService profileService;
 	@Autowired
@@ -102,6 +112,7 @@ public class TestPlanController extends CommonController {
 
 	@Autowired
 	private SimpleMailMessage templateMessage;
+
 	/**
 	 * 
 	 * @param type
@@ -124,7 +135,7 @@ public class TestPlanController extends CommonController {
 			throw new TestPlanListException(e);
 		}
 	}
-	
+
 	@RequestMapping(value = "/getListTestPlanAbstract", method = RequestMethod.GET)
 	public List<TestPlanAbstract> getListTestPlanAbstract() throws UserAccountNotFoundException, TestPlanListException {
 		try {
@@ -135,7 +146,7 @@ public class TestPlanController extends CommonController {
 			}
 			List<TestPlan> testplans = testPlanService.findByAccountId(account.getId());
 			List<TestPlanAbstract> results = new ArrayList<TestPlanAbstract>();
-			for(TestPlan tp : testplans){
+			for (TestPlan tp : testplans) {
 				TestPlanAbstract tpa = new TestPlanAbstract();
 				tpa.setDescription(tp.getDescription());
 				tpa.setId(tp.getId());
@@ -144,9 +155,9 @@ public class TestPlanController extends CommonController {
 				tpa.setVersion(tp.getVersion());
 				results.add(tpa);
 			}
-			
+
 			return results;
-			
+
 		} catch (RuntimeException e) {
 			throw new TestPlanListException(e);
 		} catch (Exception e) {
@@ -192,7 +203,7 @@ public class TestPlanController extends CommonController {
 			throw new TestPlanDeleteException(e);
 		}
 	}
-	
+
 	@RequestMapping(value = "/{id}/copy", method = RequestMethod.POST)
 	public ResponseMessage copy(@PathVariable("id") String id) throws TestPlanDeleteException {
 		try {
@@ -216,14 +227,14 @@ public class TestPlanController extends CommonController {
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public TestPlanSaveResponse save(@RequestBody TestPlanChangeCommand command) throws TestPlanSaveException {
-		
+
 		System.out.println("SAVE REQ");
 		try {
 			User u = userService.getCurrentUser();
 			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 			if (account == null)
 				throw new UserAccountNotFoundException();
-			
+
 			TestPlan saved = testPlanService.apply(command.getTp());
 			return new TestPlanSaveResponse(saved.getLastUpdateDate(), saved.getVersion());
 		} catch (RuntimeException e) {
@@ -291,8 +302,8 @@ public class TestPlanController extends CommonController {
 	}
 
 	@RequestMapping(value = "/{id}/exportTestPackageHTML", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
-	public void exportTestPackage(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	public void exportTestPackage(@PathVariable("id") String id, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		TestPlan tp = findTestPlan(id);
 		InputStream content = null;
 		content = new ExportUtil().exportTestPackageAsHtml(tp, testStoryConfigurationService);
@@ -302,120 +313,257 @@ public class TestPlanController extends CommonController {
 		FileCopyUtils.copy(content, response.getOutputStream());
 
 	}
-	
-	@RequestMapping(value = "/{id}/exportRBZip", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
-	public void exportResourceBundleZip(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		log.info("Exporting as zip file RB with id=" + id);
-		TestPlan tp = findTestPlan(id);
-	    InputStream content = null;
-	    content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
-	    response.setContentType("application/zip");
-	    response.setHeader("Content-disposition",
-	        "attachment;filename=" + escapeSpace(tp.getName()) + "-"
-	            + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".zip");
-	    FileCopyUtils.copy(content, response.getOutputStream());
-	}
-	
-	
-	 @RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST,
-		      produces = "application/json")
-		  public void pushRB(@PathVariable("testplanId") String testplanId,@RequestBody String host,@RequestHeader("gvt-auth") String authorization) throws Exception{
-	     ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
-		// 	String host2="https://hit-dev.nist.gov:8098/";
-	     String localHost="http://localhost:8080/gvt/";
-	     //localHost=host;
-		 	TestPlan tp=testPlanService.findOne(testplanId);
-		 	
-		 	
-		 try{
-		  
-		  
-		  String url="file:///Users/ena3/Downloads/tpTest.zip";
-		  String profileUrl="file:///Users/ena3/Downloads/Profile.zip";
-		  String ConstraintsUrl="file:///Users/ena3/Downloads/Constraints.zip";
-		  String ValueSetUrl="file:///Users/ena3/Downloads/valueSet.zip";
-			 
-			 
-//		  String url="https://github.com/Jungyubw/newTCAMT/blob/pushingResourceBundle/tcamt-lite-controller/src/main/resources/uuuu.zip?raw=true";
-//		  String profileUrl="https://github.com/Jungyubw/newTCAMT/blob/pushingResourceBundle/tcamt-lite-controller/src/main/resources/Profiles.zip?raw=true";
-//		  String ConstraintsUrl="https://github.com/Jungyubw/newTCAMT/blob/pushingResourceBundle/tcamt-lite-controller/src/main/resources/Constraints.zip?raw=true";
-//		  String ValueSetUrl="https://github.com/Jungyubw/newTCAMT/blob/pushingResourceBundle/tcamt-lite-controller/src/main/resources/Tables.zip?raw=true";
-////		  
-		  
-		  
-		 
-	      ResourceClient client2=ResourceClientFactory.createResourceClientWithDefault(localHost,authorization);
-	      RequestModel profile=new RequestModel(profileUrl);
 
-	      client2.addOrUpdateProfile(profile);
-	      RequestModel constraints=new RequestModel(ConstraintsUrl);
+	private void generateFileFromInputStream(OutputStream outputStream, InputStream content) throws IOException {
+		int read = 0;
+		byte[] bytes = new byte[1024];
 
-	      client2.addOrUpdateConstraints(constraints);
-	      
-	      RequestModel valueSet=new RequestModel(ValueSetUrl);
-
-	      client2.addOrUpdateValueSet(valueSet);
-	  
-	  	  RequestModel m=new RequestModel(url);
-
-		  client2.addOrUpdateTestPlan(m);
-		  DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-			tp.setGvtDate(dateFormat.format(Calendar.getInstance().getTime()));
-			testPlanRepository.save(tp);
-		  User u = userService.getCurrentUser();
-
-		  Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-		  
-		  if (account == null){
-			
-			throw new UserAccountNotFoundException();
-		  }
-		 else{
-			sendPushConfirmation(tp, account, host);
+		while ((read = content.read(bytes)) != -1) {
+			outputStream.write(bytes, 0, read);
 		}
+		outputStream.close();
+	}
+
+	@RequestMapping(value = "/{id}/exportRBZip", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	public void exportResourceBundleZip(@PathVariable("id") String id, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		log.info("Exporting as zip file RB with id=" + id);
+		User u = userService.getCurrentUser();
+		Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+		TestPlan tp = findTestPlan(id);
+		InputStream content = null;
+		content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
+
+		ResourceBundle rb = resourceBundleService.findById(id);
+		if (rb == null) {
+			rb = new ResourceBundle();
+			rb.setId(id);
+			rb.setDate(new Date());
+			rb.setHasPDF(false);
+			rb.setHasResourceBundle(true);
+			rb.setHasXML(false);
+			rb.setName(tp.getName());
+			rb.setAccountId(account.getId());
+		}
+
+		rb.setDate(new Date());
+		rb.setHasResourceBundle(true);
+		rb.setName(tp.getName());
+		rb.setAccountId(account.getId());
+
+		resourceBundleService.save(rb);
+		ClassLoader classLoader = getClass().getClassLoader();
+		String dir = classLoader.getResource(File.separator).getFile();
+		File directory = new File(dir + id + File.separator);
+		directory.mkdirs();
+		OutputStream outputStream = new FileOutputStream(dir + id + File.separator + "Contextbased.zip");
+		this.generateFileFromInputStream(outputStream, content);
+
+		// new PDFGeneratorTool().unZipIt(dir + id + File.separator +
+		// "Contextbased.zip", dir + id + File.separator);
+		// new PDFGeneratorTool().gen(dir + id + File.separator +
+		// "Contextbased");
+		// new PDFGeneratorTool().zipIt(dir + id + File.separator +
+		// "Contextbased",
+		// dir + id + File.separator + "ContextbasedPDF.zip");
+
+		this.downloadResourceBundleZip(id, request, response);
+	}
+
+	@RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST, produces = "application/json")
+	public void pushRB(@PathVariable("testplanId") String testplanId, @RequestBody String host,
+			@RequestHeader("gvt-auth") String authorization) throws Exception {
+		ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
+		// String host2="https://hit-dev.nist.gov:8098/";
+		String localHost = "http://localhost:8080/gvt/";
+
+		TestPlan tp = findTestPlan(testplanId);
+		InputStream testPlanIO = null;
+		testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
+		ClassLoader classLoader = getClass().getClassLoader();
+		String dir = classLoader.getResource(File.separator).getFile();
+		File directory = new File(dir + testplanId + File.separator);
+		directory.mkdirs();
+		OutputStream testPlanOS = new FileOutputStream(dir + testplanId + File.separator + "Contextbased.zip");
+		this.generateFileFromInputStream(testPlanOS, testPlanIO);
+
+		Map<String, String> ipidMap = new HashMap<String, String>();
+
+		for (TestCaseOrGroup tcog : tp.getChildren()) {
+			if (tcog instanceof TestCaseGroup) {
+				TestCaseGroup group = (TestCaseGroup) tcog;
+				visitGroup(group, ipidMap);
+			} else if (tcog instanceof TestCase) {
+				TestCase tc = (TestCase) tcog;
+				for (TestStep ts : tc.getTeststeps()) {
+					addProfileId(ts, ipidMap);
+				}
+			}
+		}
+
+		InputStream[] xmlArrayIO = new InputStream[3];
+		xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(ipidMap.keySet(), profileService);
+		OutputStream profileOS = new FileOutputStream(dir + testplanId + File.separator + "Profile.zip");
+		this.generateFileFromInputStream(profileOS, xmlArrayIO[0]);
+		OutputStream valueSetOS = new FileOutputStream(dir + testplanId + File.separator + "ValueSet.zip");
+		this.generateFileFromInputStream(valueSetOS, xmlArrayIO[1]);
+		OutputStream constraintsOS = new FileOutputStream(dir + testplanId + File.separator + "Constraints.zip");
+		this.generateFileFromInputStream(constraintsOS, xmlArrayIO[2]);
 		
 
-		 }catch(Exception e ){
-		      throw new PushRBException(e);
+		try {
 
-		 }
+			String url = dir + testplanId + File.separator + "Contextbased.zip";
+			String profileUrl = dir + testplanId + File.separator + "Profile.zip";
+			String ValueSetUrl = dir + testplanId + File.separator + "ValueSet.zip";
+			String ConstraintsUrl = dir + testplanId + File.separator + "Constraints.zip";
 
-	 }
-	 
-	 @RequestMapping(value = "/createSession", method = RequestMethod.POST,
-		      produces = "application/json")
-		  public boolean createSession(@RequestBody String host,@RequestHeader("gvt-auth") String authorization) {
-		 String localHost="http://localhost:8080/gvt/";
-		 //localHost=host;
-		 try{
-	      ResourceClient client=ResourceClientFactory.createResourceClientWithDefault(localHost,authorization);
-	      return client.validCredentials();
-		 }catch(Exception e){
-			 return false;
-		 }
-	      
-	    	 
+			ResourceClient client2 = ResourceClientFactory.createResourceClientWithDefault(localHost, authorization);
+			RequestModel profile = new RequestModel(profileUrl);
 
+			client2.addOrUpdateProfile(profile);
+			RequestModel constraints = new RequestModel(ConstraintsUrl);
 
-		 
-	 }
-	 
-	
-	@RequestMapping(value = "/{ipid}/exportProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
-	public void exportProfileXMLs(@PathVariable("ipid") String[] ipid, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		log.info("Exporting as zip file Profiles with id=" + ipid);
-	    InputStream content = null;
-	    content = new ExportUtil().exportProfileXMLZip(ipid, profileService);
-	    response.setContentType("application/zip");
-	    response.setHeader("Content-disposition",
-	        "attachment;filename=Profiles-"
-	            + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".zip");
-	    FileCopyUtils.copy(content, response.getOutputStream());
+			client2.addOrUpdateConstraints(constraints);
+
+			RequestModel valueSet = new RequestModel(ValueSetUrl);
+
+			client2.addOrUpdateValueSet(valueSet);
+
+			RequestModel m = new RequestModel(url);
+
+			client2.addOrUpdateTestPlan(m);
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			tp.setGvtDate(dateFormat.format(Calendar.getInstance().getTime()));
+			testPlanRepository.save(tp);
+			User u = userService.getCurrentUser();
+
+			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+
+			if (account == null) {
+
+				throw new UserAccountNotFoundException();
+			} else {
+				sendPushConfirmation(tp, account, host);
+			}
+
+		} catch (Exception e) {
+			throw new PushRBException(e);
+
+		}
+
 	}
-	
-	
+
+	@RequestMapping(value = "/createSession", method = RequestMethod.POST, produces = "application/json")
+	public boolean createSession(@RequestBody String host, @RequestHeader("gvt-auth") String authorization) {
+		String localHost = "http://localhost:8080/gvt/";
+		try {
+			ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(localHost, authorization);
+			return client.validCredentials();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@RequestMapping(value = "/{id}/downloadRBZip", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	public void downloadResourceBundleZip(@PathVariable("id") String id, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		ClassLoader classLoader = getClass().getClassLoader();
+		InputStream io = classLoader.getResourceAsStream(id + File.separator + "Contextbased.zip");
+
+		response.setContentType("application/zip");
+		response.setHeader("Content-disposition", "attachment;filename=" + "Contextbased.zip");
+		FileCopyUtils.copy(io, response.getOutputStream());
+
+	}
+
+	@RequestMapping(value = "/{tpid}/exportProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	public void exportProfileXMLs(@PathVariable("tpid") String tpid, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		log.info("Exporting as zip files for TestPlan with id=" + tpid);
+		User u = userService.getCurrentUser();
+		Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+
+		TestPlan tp = findTestPlan(tpid);
+
+		Map<String, String> ipidMap = new HashMap<String, String>();
+
+		for (TestCaseOrGroup tcog : tp.getChildren()) {
+			if (tcog instanceof TestCaseGroup) {
+				TestCaseGroup group = (TestCaseGroup) tcog;
+				visitGroup(group, ipidMap);
+			} else if (tcog instanceof TestCase) {
+				TestCase tc = (TestCase) tcog;
+				for (TestStep ts : tc.getTeststeps()) {
+					addProfileId(ts, ipidMap);
+				}
+			}
+		}
+
+		InputStream content = null;
+		content = new ExportUtil().exportProfileXMLZip(ipidMap.keySet(), profileService);
+		ResourceBundle rb = resourceBundleService.findById(tpid);
+		if (rb == null) {
+			rb = new ResourceBundle();
+			rb.setId(tpid);
+			rb.setDate(new Date());
+			rb.setHasPDF(false);
+			rb.setHasResourceBundle(false);
+			rb.setHasXML(true);
+			rb.setName(tp.getName());
+			rb.setAccountId(account.getId());
+		}
+
+		rb.setDate(new Date());
+		rb.setHasXML(true);
+		rb.setName(tp.getName());
+		rb.setAccountId(account.getId());
+
+		ClassLoader classLoader = getClass().getClassLoader();
+		String dir = classLoader.getResource(File.separator).getFile();
+		File directory = new File(dir + tpid + File.separator);
+		directory.mkdirs();
+		OutputStream outputStream = new FileOutputStream(dir + tpid + File.separator + "Global.zip");
+		this.generateFileFromInputStream(outputStream, content);
+		resourceBundleService.save(rb);
+
+		this.downloadProfileXMLs(tpid, request, response);
+	}
+
+	private void addProfileId(TestStep ts, Map<String, String> ipidMap) {
+		if (ts.getIntegrationProfileId() != null) {
+			ipidMap.put(ts.getIntegrationProfileId(), ts.getIntegrationProfileId());
+		}
+
+	}
+
+	private void visitGroup(TestCaseGroup group, Map<String, String> ipidMap) {
+		for (TestCaseOrGroup child : group.getChildren()) {
+			if (child instanceof TestCaseGroup) {
+				TestCaseGroup childGroup = (TestCaseGroup) child;
+				visitGroup(childGroup, ipidMap);
+			} else if (child instanceof TestCase) {
+				TestCase childTestCase = (TestCase) child;
+				for (TestStep ts : childTestCase.getTeststeps()) {
+					addProfileId(ts, ipidMap);
+				}
+			}
+		}
+
+	}
+
+	@RequestMapping(value = "/{id}/downloadProfileXMLs", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+	public void downloadProfileXMLs(@PathVariable("id") String id, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		ClassLoader classLoader = getClass().getClassLoader();
+		InputStream io = classLoader.getResourceAsStream(id + File.separator + "Global.zip");
+
+		response.setContentType("application/zip");
+		response.setHeader("Content-disposition", "attachment;filename=" + "Global.zip");
+		FileCopyUtils.copy(io, response.getOutputStream());
+
+	}
+
 	@RequestMapping(value = "/{id}/exportCover", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
 	public void exportCoverPage(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
@@ -428,10 +576,10 @@ public class TestPlanController extends CommonController {
 		FileCopyUtils.copy(content, response.getOutputStream());
 
 	}
-	
+
 	@RequestMapping(value = "/{id}/exportJson", method = RequestMethod.POST, produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
-	public void exportTestPlanJson(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	public void exportTestPlanJson(@PathVariable("id") String id, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		TestPlan tp = findTestPlan(id);
 		InputStream content = null;
 		ObjectMapper mapper = new ObjectMapper();
@@ -442,7 +590,7 @@ public class TestPlanController extends CommonController {
 				+ new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_TestPlan.json");
 		FileCopyUtils.copy(content, response.getOutputStream());
 	}
-	
+
 	@RequestMapping(value = "/importJSON", method = RequestMethod.POST)
 	public void importXMLFiles(@RequestBody TestPlanDataStr tpds) throws Exception {
 		User u = userService.getCurrentUser();
@@ -450,13 +598,13 @@ public class TestPlanController extends CommonController {
 		if (account == null) {
 			throw new Exception();
 		}
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		TestPlan tp = mapper.readValue(tpds.getJsonTestPlanFileStr(), TestPlan.class);
 		tp.setId(ObjectId.get().toString());
 		testPlanService.save(tp);
 	}
-	
+
 	@RequestMapping(value = "/importOldJSON", method = RequestMethod.POST)
 	public void importOldXMLFiles(@RequestBody TestPlanDataStr tpds) throws Exception {
 		User u = userService.getCurrentUser();
@@ -477,22 +625,21 @@ public class TestPlanController extends CommonController {
 		tp.setTransport(true);
 		tp.setType("Isolated");
 		tp.setVersion((int) obj.get("version") + "");
-		
-		
+
 		JSONArray groups = (JSONArray) obj.get("testcasegroups");
-		
+
 		for (int i = 0; i < groups.length(); i++) {
 			JSONObject g = groups.getJSONObject(i);
-			
+
 			TestCaseGroup tcg = new TestCaseGroup();
 			tcg.setDescription(Jsoup.parse((String) g.get("description")).text());
 			tcg.setName((String) g.get("name"));
 			tcg.setType("testcasegroup");
-			
+
 			JSONArray testcases = (JSONArray) g.get("testcases");
 			for (int j = 0; j < testcases.length(); j++) {
 				JSONObject c = testcases.getJSONObject(j);
-				
+
 				TestCase tc = new TestCase();
 				tc.setDescription(Jsoup.parse((String) c.get("description")).text());
 				tc.setName((String) c.get("name"));
@@ -508,64 +655,64 @@ public class TestPlanController extends CommonController {
 				testcaseStoryContent.put("Notes", (String) testCaseStory.get("notes"));
 				tc.setTestStoryContent(testcaseStoryContent);
 				tc.setType("testcase");
-				
+
 				JSONArray teststeps = (JSONArray) c.get("teststeps");
 				for (int k = 0; k < teststeps.length(); k++) {
 					JSONObject s = teststeps.getJSONObject(k);
-					
+
 					TestStep ts = new TestStep();
 					ts.setDescription(Jsoup.parse((String) s.get("description")).text());
-					
+
 					JSONObject message = (JSONObject) s.get("message");
-					if(message != null){
-						if(!message.isNull("hl7EndcodedMessage")){
-							ts.setEr7Message((String) message.get("hl7EndcodedMessage"));	
+					if (message != null) {
+						if (!message.isNull("hl7EndcodedMessage")) {
+							ts.setEr7Message((String) message.get("hl7EndcodedMessage"));
 							HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>();
-							if(!message.isNull("tcamtConstraints")){
-								JSONArray tcamtConstraints = (JSONArray) message.get("tcamtConstraints");	
+							if (!message.isNull("tcamtConstraints")) {
+								JSONArray tcamtConstraints = (JSONArray) message.get("tcamtConstraints");
 								for (int l = 0; l < tcamtConstraints.length(); l++) {
 									JSONObject constraints = tcamtConstraints.getJSONObject(l);
-									
-									String iPath = (String)constraints.get("ipath");
+
+									String iPath = (String) constraints.get("ipath");
 									String key = iPath.replaceAll("\\.", "-");
-									String cate = (String)constraints.get("categorization");
+									String cate = (String) constraints.get("categorization");
 									Categorization value = new Categorization();
 									value.setiPath(iPath);
-									
-									if(cate.equals("Indifferent")){
+
+									if (cate.equals("Indifferent")) {
 										value.setTestDataCategorization("Indifferent");
-									}else if(cate.equals("Presence_ContentIndifferent")){
+									} else if (cate.equals("Presence_ContentIndifferent")) {
 										value.setTestDataCategorization("Presence-Content Indifferent");
-									}else if(cate.equals("Presence_Configuration")){
+									} else if (cate.equals("Presence_Configuration")) {
 										value.setTestDataCategorization("Presence-Configuration");
-									}else if(cate.equals("Presence_SystemGenerated")){
+									} else if (cate.equals("Presence_SystemGenerated")) {
 										value.setTestDataCategorization("Presence-System Generated");
-									}else if(cate.equals("Presence_TestCaseProper")){
+									} else if (cate.equals("Presence_TestCaseProper")) {
 										value.setTestDataCategorization("Presence-Test Case Proper");
-									}else if(cate.equals("PresenceLength_ContentIndifferent")){
+									} else if (cate.equals("PresenceLength_ContentIndifferent")) {
 										value.setTestDataCategorization("Presence Length-Content Indifferent");
-									}else if(cate.equals("PresenceLength_Configuration")){
+									} else if (cate.equals("PresenceLength_Configuration")) {
 										value.setTestDataCategorization("Presence Length-Configuration");
-									}else if(cate.equals("PresenceLength_SystemGenerated")){
+									} else if (cate.equals("PresenceLength_SystemGenerated")) {
 										value.setTestDataCategorization("Presence Length-System Generated");
-									}else if(cate.equals("PresenceLength_TestCaseProper")){
+									} else if (cate.equals("PresenceLength_TestCaseProper")) {
 										value.setTestDataCategorization("Presence Length-Test Case Proper");
-									}else if(cate.equals("Value_TestCaseFixed")){
+									} else if (cate.equals("Value_TestCaseFixed")) {
 										value.setTestDataCategorization("Value-Test Case Fixed");
-									}else if(cate.equals("Value_TestCaseFixedList")){
+									} else if (cate.equals("Value_TestCaseFixedList")) {
 										value.setTestDataCategorization("Value-Test Case Fixed List");
 										List<String> listData = new ArrayList<String>();
 										JSONArray listDataJson = (JSONArray) constraints.get("listData");
 										for (int m = 0; m < listDataJson.length(); m++) {
 											listData.add(listDataJson.getString(m));
 										}
-										
+
 										value.setListData(listData);
-									}else if(cate.equals("NonPresence")){
+									} else if (cate.equals("NonPresence")) {
 										value.setTestDataCategorization("NonPresence");
-									}else if(cate.equals("Value_ProfileFixed")){
+									} else if (cate.equals("Value_ProfileFixed")) {
 										value.setTestDataCategorization("Value-Profile Fixed");
-									}else if(cate.equals("Value_ProfileFixedList")){
+									} else if (cate.equals("Value_ProfileFixedList")) {
 										value.setTestDataCategorization("Value-Profile Fixed List");
 										List<String> listData = new ArrayList<String>();
 										JSONArray listDataJson = (JSONArray) constraints.get("listData");
@@ -575,12 +722,12 @@ public class TestPlanController extends CommonController {
 									}
 									testDataCategorizationMap.put(key, value);
 								}
-								
+
 								ts.setTestDataCategorizationMap(testDataCategorizationMap);
 							}
 						}
 					}
-					
+
 					ts.setName((String) s.get("name"));
 					JSONObject testStepStory = (JSONObject) s.get("testStepStory");
 					HashMap<String, String> testStepStoryContent = new HashMap<String, String>();
@@ -597,10 +744,9 @@ public class TestPlanController extends CommonController {
 				}
 				tcg.addTestCaseOrGroup(tc);
 			}
-			
+
 			tp.addTestCaseGroup(tcg);
-	    }
-		
+		}
 
 		testPlanService.save(tp);
 	}
@@ -608,37 +754,37 @@ public class TestPlanController extends CommonController {
 	private String escapeSpace(String str) {
 		return str.replaceAll(" ", "-");
 	}
-	
-	
- private void sendPushConfirmation(TestPlan doc, Account target, String  host) {
 
-	 		SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
-
-		    msg.setSubject("Your Test Plan is Pushed to the testing tool");
-		    msg.setTo(target.getEmail());
-		    msg.setText("Dear " + target.getUsername() + ", \n\n" 
-		        + "your Test Plan has been successfully pusshed to "+host);
-		    try {
-		      this.mailSender.send(msg);
-		      
-		    } catch (MailException ex) {
-		      log.error(ex.getMessage(), ex);
-		    }
-}
- private void sendPushFailConfirmation(TestPlan doc, Account target, String  host) {
+	private void sendPushConfirmation(TestPlan doc, Account target, String host) {
 
 		SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
 
-	    msg.setSubject("Push Test Plan Faild");
-	    msg.setTo(target.getEmail());
-	    msg.setText("Dear " + target.getUsername() + ", \n\n" 
-	        + "We are Sorry, We couldn't Push your testplan to the "+host);
-	    try {
-	      this.mailSender.send(msg);
-	      
-	    } catch (MailException ex) {
-	      log.error(ex.getMessage(), ex);
-	    }
-}
+		msg.setSubject("Your Test Plan is Pushed to the testing tool");
+		msg.setTo(target.getEmail());
+		msg.setText(
+				"Dear " + target.getUsername() + ", \n\n" + "your Test Plan has been successfully pusshed to " + host);
+		try {
+			this.mailSender.send(msg);
+
+		} catch (MailException ex) {
+			log.error(ex.getMessage(), ex);
+		}
+	}
+
+	private void sendPushFailConfirmation(TestPlan doc, Account target, String host) {
+
+		SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
+
+		msg.setSubject("Push Test Plan Faild");
+		msg.setTo(target.getEmail());
+		msg.setText("Dear " + target.getUsername() + ", \n\n" + "We are Sorry, We couldn't Push your testplan to the "
+				+ host);
+		try {
+			this.mailSender.send(msg);
+
+		} catch (MailException ex) {
+			log.error(ex.getMessage(), ex);
+		}
+	}
 
 }

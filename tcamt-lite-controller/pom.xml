@@ -86,8 +86,12 @@
 			<artifactId>validation-proxy</artifactId>
 			<version>1.0.6</version>
 		</dependency>
-
-
+		
+		<dependency>
+			<groupId>gov.nist.healthcare.tools.hl7.v2.xml</groupId>
+			<artifactId>xml-tool</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
 		<dependency>
 			<groupId>gov.nist.healthcare.tools.hl7.v2.tcamt.lite</groupId>

@@ -4,13 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.bson.types.ObjectId;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "testplan")
@@ -24,6 +22,8 @@ public class TestPlan implements Serializable, Cloneable {
 	@Id
 	private String id;
 
+	private Long longId;
+
 	private String name;
 	private String description;
 	private String version;
@@ -35,28 +35,27 @@ public class TestPlan implements Serializable, Cloneable {
 	private String coverPageSubTitle;
 	private String coverPageVersion;
 	private String coverPageDate;
-	
+
 	private String type;
 	private boolean transport;
 	private String domain;
 	private boolean skip;
-	
+
 	private List<String> listOfIntegrationProfileIds = new ArrayList<String>();
-	
-	private HashMap<String,String> testStoryContent = new HashMap<String, String>();
-	
+
+	private HashMap<String, String> testStoryContent = new HashMap<String, String>();
+
 	private String testStoryConfigId;
-	
+
 	private String globalTestGroupConfigId;
 	private String globalTestCaseConfigId;
 	private String globalAutoTestStepConfigId;
 	private String globalManualTestStepConfigId;
 	private boolean emptyStoryContentIgnored;
-	
-	private boolean GvtPresence=false;
-	private String GvtDate=null;
-	
-	
+
+	private boolean GvtPresence = false;
+	private String GvtDate = null;
+
 	public boolean isGvtPresence() {
 		return GvtPresence;
 	}
@@ -101,7 +100,7 @@ public class TestPlan implements Serializable, Cloneable {
 	public void addTestCaseGroup(TestCaseGroup testcasegroup) {
 		this.children.add(testcasegroup);
 	}
-	
+
 	public void addTestCaseOrGroup(TestCaseOrGroup testcaseorgroup) {
 		this.children.add(testcaseorgroup);
 	}
@@ -118,15 +117,18 @@ public class TestPlan implements Serializable, Cloneable {
 	public TestPlan clone() throws CloneNotSupportedException {
 		TestPlan cloned = (TestPlan) super.clone();
 		cloned.setId(ObjectId.get().toString());
+		long range = Long.MAX_VALUE;
+		Random r = new Random();
+		cloned.setLongId((long)(r.nextDouble()*range));
 		cloned.setVersion("init");
 		cloned.setName(this.name + " copy");
 
 		List<TestCaseOrGroup> cChildren = new ArrayList<TestCaseOrGroup>();
 		for (TestCaseOrGroup o : this.children) {
-			if(o instanceof TestCase){
-				cChildren.add(((TestCase)o).clone());
-			}else if(o instanceof TestCaseGroup){
-				cChildren.add(((TestCaseGroup)o).clone());
+			if (o instanceof TestCase) {
+				cChildren.add(((TestCase) o).clone());
+			} else if (o instanceof TestCaseGroup) {
+				cChildren.add(((TestCaseGroup) o).clone());
 			}
 		}
 		cloned.setChildren(cChildren);
@@ -183,7 +185,8 @@ public class TestPlan implements Serializable, Cloneable {
 	}
 
 	public String getDescription() {
-		if(this.description == null) return "";
+		if (this.description == null)
+			return "";
 		return description;
 	}
 
@@ -198,7 +201,7 @@ public class TestPlan implements Serializable, Cloneable {
 	public void setChildren(List<TestCaseOrGroup> children) {
 		this.children = children;
 	}
-	
+
 	public boolean isTransport() {
 		return transport;
 	}
@@ -231,11 +234,11 @@ public class TestPlan implements Serializable, Cloneable {
 		this.listOfIntegrationProfileIds = listOfIntegrationProfileIds;
 	}
 
-	public HashMap<String,String> getTestStoryContent() {
+	public HashMap<String, String> getTestStoryContent() {
 		return testStoryContent;
 	}
 
-	public void setTestStoryContent(HashMap<String,String> testStoryContent) {
+	public void setTestStoryContent(HashMap<String, String> testStoryContent) {
 		this.testStoryContent = testStoryContent;
 	}
 
@@ -295,5 +298,12 @@ public class TestPlan implements Serializable, Cloneable {
 		GvtDate = gvtDate;
 	}
 
-	
+	public Long getLongId() {
+		return longId;
+	}
+
+	public void setLongId(Long longId) {
+		this.longId = longId;
+	}
+
 }

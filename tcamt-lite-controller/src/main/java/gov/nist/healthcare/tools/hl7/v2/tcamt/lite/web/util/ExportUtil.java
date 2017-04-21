@@ -9,8 +9,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -21,16 +23,19 @@ import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Case;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DocumentMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Field;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Group;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Mapping;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Messages;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ProfileMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRef;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRefOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TableLink;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ValueSetOrSingleCodeBinding;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByID;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByName;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByNameOrByID;
@@ -53,6 +58,8 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segments;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
+import gov.nist.healthcare.tools.hl7.v2.xml.ExportTool;
 import nu.xom.Attribute;
 import nu.xom.Builder;
 import nu.xom.NodeFactory;
@@ -61,122 +68,137 @@ import nu.xom.ValidityException;
 
 public class ExportUtil {
 
-
 	public static String str(String value) {
 		return value != null ? value : "";
 	}
 
-	public InputStream exportTestPackageAsHtml(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+	public InputStream exportTestPackageAsHtml(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService)
+			throws Exception {
 		return IOUtils.toInputStream(this.genPackagePages(tp, testStoryConfigurationService), "UTF-8");
 	}
 
 	public InputStream exportCoverAsHtml(TestPlan tp) throws Exception {
 		return IOUtils.toInputStream(this.genCoverPage(tp), "UTF-8");
 	}
-	
-	private String genPackagePagesInsideGroup(TestPlan tp, TestCaseGroup group, String packageBodyHTML, String index, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
-		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + group.getName() + "</h2>" + System.getProperty("line.separator");
-		packageBodyHTML = packageBodyHTML + "<span>" + group.getDescription() + "</span>" + System.getProperty("line.separator");
+
+	private String genPackagePagesInsideGroup(TestPlan tp, TestCaseGroup group, String packageBodyHTML, String index,
+			TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + group.getName()
+				+ "</h2>" + System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<span>" + group.getDescription() + "</span>"
+				+ System.getProperty("line.separator");
 		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>" + System.getProperty("line.separator");
 		String testStoryConfigId = null;
-		if(group.getTestStoryConfigId() != null) {
+		if (group.getTestStoryConfigId() != null) {
 			testStoryConfigId = group.getTestStoryConfigId();
-		}else{
+		} else {
 			testStoryConfigId = tp.getGlobalTestGroupConfigId();
 		}
-		
+
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
-		
-		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(group.getTestStoryContent(), testStoryConfiguration, "plain", tp));		
+
+		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(
+				this.generateTestStory(group.getTestStoryContent(), testStoryConfiguration, "plain", tp));
 		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
-		
+
 		for (int i = 0; i < group.getChildren().size(); i++) {
 			TestCaseOrGroup child = group.getChildren().get(i);
 			if (child instanceof TestCaseGroup) {
-				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup)child, packageBodyHTML, index + "." + (i + 1), testStoryConfigurationService);
-			}else if (child instanceof TestCase) {
-				packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase)child, packageBodyHTML, index + "." + (i + 1), testStoryConfigurationService);
-				
+				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup) child, packageBodyHTML,
+						index + "." + (i + 1), testStoryConfigurationService);
+			} else if (child instanceof TestCase) {
+				packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase) child, packageBodyHTML,
+						index + "." + (i + 1), testStoryConfigurationService);
+
 			}
 		}
-		
-		
-		
-		return packageBodyHTML;
-	}
-	
-	private String genPackagePagesForTestCase(TestPlan tp, TestCase tc, String packageBodyHTML, String index, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
-		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + tc.getName() + "</h2>" + System.getProperty("line.separator");
-		packageBodyHTML = packageBodyHTML + "<span>" + tc.getDescription() + "</span>" + System.getProperty("line.separator");
-		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>" + System.getProperty("line.separator");
-		String testStoryConfigId = null;
-		if(tc.getTestStoryConfigId() != null) {
-			testStoryConfigId = tc.getTestStoryConfigId();
-		}else{
-			testStoryConfigId = tp.getGlobalTestCaseConfigId();
-		}
-		
-		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
-			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
-		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
-		}
-		
-		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(tc.getTestStoryContent(), testStoryConfiguration, "plain", tp));
-		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
-		
-		for (int i = 0; i < tc.getTeststeps().size(); i++) {
-			TestStep child = tc.getTeststeps().get(i);
-			packageBodyHTML = genPackagePagesForTestStep(tp, child, packageBodyHTML, index + "." + (i + 1), testStoryConfigurationService);
-		}
-		
+
 		return packageBodyHTML;
 	}
 
-	private String genPackagePagesForTestStep(TestPlan tp, TestStep ts, String packageBodyHTML, String index, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+	private String genPackagePagesForTestCase(TestPlan tp, TestCase tc, String packageBodyHTML, String index,
+			TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + tc.getName()
+				+ "</h2>" + System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<span>" + tc.getDescription() + "</span>"
+				+ System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>" + System.getProperty("line.separator");
+		String testStoryConfigId = null;
+		if (tc.getTestStoryConfigId() != null) {
+			testStoryConfigId = tc.getTestStoryConfigId();
+		} else {
+			testStoryConfigId = tp.getGlobalTestCaseConfigId();
+		}
+
+		TestStoryConfiguration testStoryConfiguration = null;
+		if (testStoryConfigId != null) {
+			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
+		}
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
+		}
+
+		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(
+				this.generateTestStory(tc.getTestStoryContent(), testStoryConfiguration, "plain", tp));
+		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
+
+		for (int i = 0; i < tc.getTeststeps().size(); i++) {
+			TestStep child = tc.getTeststeps().get(i);
+			packageBodyHTML = genPackagePagesForTestStep(tp, child, packageBodyHTML, index + "." + (i + 1),
+					testStoryConfigurationService);
+		}
+
+		return packageBodyHTML;
+	}
+
+	private String genPackagePagesForTestStep(TestPlan tp, TestStep ts, String packageBodyHTML, String index,
+			TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
-		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + ts.getName() + "</h2>" + System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". " + ts.getName()
+				+ "</h2>" + System.getProperty("line.separator");
 		if (tp.getType() != null && tp.getType().equals("Isolated")) {
 			packageBodyHTML = packageBodyHTML + "<span>Test Step Type: " + ts.getType() + "</span><br/>"
 					+ System.getProperty("line.separator");
 		}
-		packageBodyHTML = packageBodyHTML + "<span>" + ts.getDescription() + "</span>"+ System.getProperty("line.separator");
-		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>"+ System.getProperty("line.separator");
-		
-		
+		packageBodyHTML = packageBodyHTML + "<span>" + ts.getDescription() + "</span>"
+				+ System.getProperty("line.separator");
+		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>" + System.getProperty("line.separator");
+
 		String testStoryConfigId = null;
-		if(ts.getTestStoryConfigId() != null) {
+		if (ts.getTestStoryConfigId() != null) {
 			testStoryConfigId = ts.getTestStoryConfigId();
-		}else{
-			if(ts.isManualTS()){
+		} else {
+			if (ts.isManualTS()) {
 				testStoryConfigId = tp.getGlobalManualTestStepConfigId();
-			}else{
+			} else {
 				testStoryConfigId = tp.getGlobalAutoTestStepConfigId();
 			}
 		}
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
-		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(ts.getTestStoryContent(), testStoryConfiguration, "plain", tp));
+		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(
+				this.generateTestStory(ts.getTestStoryContent(), testStoryConfiguration, "plain", tp));
 
 		if (ts != null && ts.getEr7Message() != null && ts.getIntegrationProfileId() != null) {
 			if (ts.getMessageContentsXMLCode() != null && !ts.getMessageContentsXMLCode().equals("")) {
-				String mcXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl")).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>", "<xsl:param name=\"output\" select=\"'plain-html'\"/>");
+				String mcXSL = IOUtils
+						.toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"))
+						.replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
+								"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
 				InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
 				InputStream sourceInputStream = new ByteArrayInputStream(ts.getMessageContentsXMLCode().getBytes());
 				Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
@@ -185,13 +207,17 @@ public class ExportUtil {
 				String sourceStr = IOUtils.toString(sourceReader);
 
 				String messageContentHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-				packageBodyHTML = packageBodyHTML + "<h3>" + "Message Contents" + "</h3>" + System.getProperty("line.separator");
+				packageBodyHTML = packageBodyHTML + "<h3>" + "Message Contents" + "</h3>"
+						+ System.getProperty("line.separator");
 				packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(messageContentHTMLStr);
 			}
 
 			if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
 				if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
-					String tdXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + ts.getTdsXSL() + ".xsl")).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>", "<xsl:param name=\"output\" select=\"'plain-html'\"/>");
+					String tdXSL = IOUtils
+							.toString(classLoader.getResourceAsStream("xsl" + File.separator + ts.getTdsXSL() + ".xsl"))
+							.replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
+									"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
 					InputStream xsltInputStream = new ByteArrayInputStream(tdXSL.getBytes());
 					InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
 					Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
@@ -200,12 +226,14 @@ public class ExportUtil {
 					String sourceStr = IOUtils.toString(sourceReader);
 
 					String testDataSpecificationHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-					packageBodyHTML = packageBodyHTML + "<h3>" + "Test Data Specification" + "</h3>"+ System.getProperty("line.separator");
+					packageBodyHTML = packageBodyHTML + "<h3>" + "Test Data Specification" + "</h3>"
+							+ System.getProperty("line.separator");
 					packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(testDataSpecificationHTMLStr);
 				}
 
 				if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
-					String jdXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl"));
+					String jdXSL = IOUtils
+							.toString(classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl"));
 					InputStream xsltInputStream = new ByteArrayInputStream(jdXSL.getBytes());
 					InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
 					Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
@@ -214,7 +242,8 @@ public class ExportUtil {
 					String sourceStr = IOUtils.toString(sourceReader);
 
 					String jurorDocumentHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-					packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>"+ System.getProperty("line.separator");
+					packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>"
+							+ System.getProperty("line.separator");
 					packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jurorDocumentHTMLStr);
 				}
 			}
@@ -225,7 +254,8 @@ public class ExportUtil {
 		return packageBodyHTML;
 	}
 
-	private String genPackagePages(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+	private String genPackagePages(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService)
+			throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
 
 		String packageBodyHTML = "";
@@ -233,28 +263,31 @@ public class ExportUtil {
 		packageBodyHTML = packageBodyHTML + tp.getDescription() + System.getProperty("line.separator");
 		packageBodyHTML = packageBodyHTML + "<h3>" + "Test Story" + "</h3>" + System.getProperty("line.separator");
 		String testStoryConfigId = null;
-		if(tp.getTestStoryConfigId() != null) {
+		if (tp.getTestStoryConfigId() != null) {
 			testStoryConfigId = tp.getTestStoryConfigId();
 		}
-		
+
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
-		
-		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(this.generateTestStory(tp.getTestStoryContent(), testStoryConfiguration, "plain", tp));		
+
+		packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(
+				this.generateTestStory(tp.getTestStoryContent(), testStoryConfiguration, "plain", tp));
 		packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
 
 		for (int i = 0; i < tp.getChildren().size(); i++) {
 			TestCaseOrGroup child = tp.getChildren().get(i);
 			if (child instanceof TestCaseGroup) {
-				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup)child, packageBodyHTML, "" + (i + 1), testStoryConfigurationService);
+				packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup) child, packageBodyHTML, "" + (i + 1),
+						testStoryConfigurationService);
 			} else if (child instanceof TestCase) {
-				packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase) child, packageBodyHTML, "" + (i + 1), testStoryConfigurationService);
+				packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase) child, packageBodyHTML, "" + (i + 1),
+						testStoryConfigurationService);
 			}
 		}
 
@@ -272,69 +305,80 @@ public class ExportUtil {
 		return "" + generateTestStory.subSequence(beginIndex + "<body>".length(), endIndex);
 	}
 
-	private String generateTestStory(HashMap<String,String> testStoryContent, TestStoryConfiguration testStoryConfiguration, String option, TestPlan tp) throws Exception {
+	private String generateTestStory(HashMap<String, String> testStoryContent,
+			TestStoryConfiguration testStoryConfiguration, String option, TestPlan tp) throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
 
 		if (option.equals("ng-tab-html")) {
-			String testStoryStr = IOUtils.toString(classLoader.getResourceAsStream("rb" + File.separator + "ng-tab-html-TestStory.html"));
-			
+			String testStoryStr = IOUtils
+					.toString(classLoader.getResourceAsStream("rb" + File.separator + "ng-tab-html-TestStory.html"));
+
 			HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
-			for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+			for (TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()) {
 				testStroyEntryMap.put(tse.getPosition(), tse);
 			}
 			String fullStory = "";
 			String tabStory = "";
-			
-			for(int i=0;i<testStroyEntryMap.size();i++){
-				TestStroyEntry tse = testStroyEntryMap.get(i+1);
-				
-				if(tse.isPresent()){
+
+			for (int i = 0; i < testStroyEntryMap.size(); i++) {
+				TestStroyEntry tse = testStroyEntryMap.get(i + 1);
+
+				if (tse.isPresent()) {
 					String title = tse.getTitle();
 					String content = testStoryContent.get(tse.getId());
-					
-					if(tp.isEmptyStoryContentIgnored()){
-						if(content != null && !"".equals(content)){
-							fullStory = fullStory + "<div class=\"panel-body\"><table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table></div><br/>";
-							tabStory = tabStory + "<tab heading=\"" + title + "\" vertical=\"false\">" + "<div class=\"panel-body\"><table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table></div></tab>";
+
+					if (tp.isEmptyStoryContentIgnored()) {
+						if (content != null && !"".equals(content)) {
+							fullStory = fullStory + "<div class=\"panel-body\"><table><tr><th>" + title
+									+ "</th></tr><tr><td>" + content + "</td></tr></table></div><br/>";
+							tabStory = tabStory + "<tab heading=\"" + title + "\" vertical=\"false\">"
+									+ "<div class=\"panel-body\"><table><tr><th>" + title + "</th></tr><tr><td>"
+									+ content + "</td></tr></table></div></tab>";
 						}
-					}else {
-						fullStory = fullStory + "<div class=\"panel-body\"><table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table></div><br/>";
-						tabStory = tabStory + "<tab heading=\"" + title + "\" vertical=\"false\">" + "<div class=\"panel-body\"><table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table></div></tab>";
+					} else {
+						fullStory = fullStory + "<div class=\"panel-body\"><table><tr><th>" + title
+								+ "</th></tr><tr><td>" + content + "</td></tr></table></div><br/>";
+						tabStory = tabStory + "<tab heading=\"" + title + "\" vertical=\"false\">"
+								+ "<div class=\"panel-body\"><table><tr><th>" + title + "</th></tr><tr><td>" + content
+								+ "</td></tr></table></div></tab>";
 					}
-					
+
 				}
 			}
-			
+
 			return testStoryStr.replace("?FullStory?", fullStory).replace("?TABStory?", tabStory);
-			
+
 		} else {
-			String testStoryStr = IOUtils.toString(classLoader.getResourceAsStream("rb" + File.separator + "PlainTestStory.html"));
-			
+			String testStoryStr = IOUtils
+					.toString(classLoader.getResourceAsStream("rb" + File.separator + "PlainTestStory.html"));
+
 			HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
-			for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+			for (TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()) {
 				testStroyEntryMap.put(tse.getPosition(), tse);
 			}
 			String storyContent = "";
-			
-			for(int i=0;i<testStroyEntryMap.size();i++){
-				TestStroyEntry tse = testStroyEntryMap.get(i+1);
-				
-				if(tse.isPresent()){
+
+			for (int i = 0; i < testStroyEntryMap.size(); i++) {
+				TestStroyEntry tse = testStroyEntryMap.get(i + 1);
+
+				if (tse.isPresent()) {
 					String title = tse.getTitle();
 					String content = testStoryContent.get(tse.getId());
-					
-					if(tp.isEmptyStoryContentIgnored()){
-						if(content != null && !"".equals(content)) storyContent = storyContent + "<table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table><br/>";
-					}else {
-						storyContent = storyContent + "<table><tr><th>" + title + "</th></tr><tr><td>" + content + "</td></tr></table><br/>";
+
+					if (tp.isEmptyStoryContentIgnored()) {
+						if (content != null && !"".equals(content))
+							storyContent = storyContent + "<table><tr><th>" + title + "</th></tr><tr><td>" + content
+									+ "</td></tr></table><br/>";
+					} else {
+						storyContent = storyContent + "<table><tr><th>" + title + "</th></tr><tr><td>" + content
+								+ "</td></tr></table><br/>";
 					}
-					
+
 				}
 			}
-			
-			
+
 			return testStoryStr.replace("?TestStoryContents?", storyContent);
-			
+
 		}
 	}
 
@@ -371,7 +415,8 @@ public class ExportUtil {
 		return coverpageStr;
 	}
 
-	public InputStream exportResourceBundleAsZip(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+	public InputStream exportResourceBundleAsZip(TestPlan tp,
+			TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		ByteArrayOutputStream outputStream = null;
 		byte[] bytes;
 		outputStream = new ByteArrayOutputStream();
@@ -384,105 +429,109 @@ public class ExportUtil {
 		bytes = outputStream.toByteArray();
 		return new ByteArrayInputStream(bytes);
 	}
-	
-	private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, int index) throws Exception{
+
+	private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path, TestPlan tp,
+			TestStoryConfigurationService testStoryConfigurationService, int index) throws Exception {
 		String groupPath = "";
-		if(path == null){
+		if (path == null) {
 			groupPath = "TestGroup_" + index;
-		}else {
+		} else {
 			groupPath = path + File.separator + "TestGroup_" + index;
 		}
 		this.generateTestGroupJsonRB(out, group, groupPath, index);
-		
+
 		String testStoryConfigId = null;
-		if(group.getTestStoryConfigId() != null) {
+		if (group.getTestStoryConfigId() != null) {
 			testStoryConfigId = group.getTestStoryConfigId();
-		}else{
+		} else {
 			testStoryConfigId = tp.getGlobalTestGroupConfigId();
 		}
-		
+
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
-		
-		this.generateTestStoryRB(out, group.getTestStoryContent(), testStoryConfiguration, groupPath, tp, "ng-tab-html");
+
+		this.generateTestStoryRB(out, group.getTestStoryContent(), testStoryConfiguration, groupPath, tp,
+				"ng-tab-html");
 		this.generateTestStoryRB(out, group.getTestStoryContent(), testStoryConfiguration, groupPath, tp, "plain");
-		
-		for(int i=0; i< group.getChildren().size(); i++){
+
+		for (int i = 0; i < group.getChildren().size(); i++) {
 			TestCaseOrGroup child = group.getChildren().get(i);
-			if(child instanceof TestCaseGroup){
-				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, groupPath, tp, testStoryConfigurationService, i + 1);
-			}else if(child instanceof TestCase){
+			if (child instanceof TestCaseGroup) {
+				generateTestPlanRBTestGroup(out, (TestCaseGroup) child, groupPath, tp, testStoryConfigurationService,
+						i + 1);
+			} else if (child instanceof TestCase) {
 				generateTestPlanRBTestCase(out, (TestCase) child, groupPath, tp, testStoryConfigurationService, i + 1);
 			}
 		}
 	}
 
-	private void generateTestPlanRBTestCase(ZipOutputStream out, TestCase tc, String path, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, int index) throws Exception {
+	private void generateTestPlanRBTestCase(ZipOutputStream out, TestCase tc, String path, TestPlan tp,
+			TestStoryConfigurationService testStoryConfigurationService, int index) throws Exception {
 		String tcPath = "";
-		if(path == null){
+		if (path == null) {
 			tcPath = "TestCase_" + index;
-		}else {
+		} else {
 			tcPath = path + File.separator + "TestCase_" + index;
 		}
 		this.generateTestCaseJsonRB(out, tc, tcPath, index);
-		
+
 		String testStoryConfigId = null;
-		if(tc.getTestStoryConfigId() != null) {
+		if (tc.getTestStoryConfigId() != null) {
 			testStoryConfigId = tc.getTestStoryConfigId();
-		}else{
+		} else {
 			testStoryConfigId = tp.getGlobalTestCaseConfigId();
 		}
-		
+
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
-		
+
 		this.generateTestStoryRB(out, tc.getTestStoryContent(), testStoryConfiguration, tcPath, tp, "ng-tab-html");
 		this.generateTestStoryRB(out, tc.getTestStoryContent(), testStoryConfiguration, tcPath, tp, "plain");
-		
-		for(int i=0; i < tc.getTeststeps().size(); i++){
+
+		for (int i = 0; i < tc.getTeststeps().size(); i++) {
 			TestStep child = tc.getTeststeps().get(i);
 			generateTestPlanRBTestStep(out, child, tcPath, tp, testStoryConfigurationService, i + 1);
 		}
 	}
 
-	private void generateTestPlanRBTestStep(ZipOutputStream out, TestStep ts, String path, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, int index) throws Exception {
+	private void generateTestPlanRBTestStep(ZipOutputStream out, TestStep ts, String path, TestPlan tp,
+			TestStoryConfigurationService testStoryConfigurationService, int index) throws Exception {
 		String stepPath = path + File.separator + "TestStep_" + index;
-		
+
 		String testStoryConfigId = null;
-		if(ts.getTestStoryConfigId() != null) {
+		if (ts.getTestStoryConfigId() != null) {
 			testStoryConfigId = ts.getTestStoryConfigId();
-		}else{
-			if(ts.isManualTS()){
+		} else {
+			if (ts.isManualTS()) {
 				testStoryConfigId = tp.getGlobalManualTestStepConfigId();
-			}else{
+			} else {
 				testStoryConfigId = tp.getGlobalAutoTestStepConfigId();
 			}
 		}
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
-		
-		
+
 		this.generateTestStoryRB(out, ts.getTestStoryContent(), testStoryConfiguration, stepPath, tp, "ng-tab-html");
 		this.generateTestStoryRB(out, ts.getTestStoryContent(), testStoryConfiguration, stepPath, tp, "plain");
-		
+
 		this.generateTestStepJsonRB(out, ts, stepPath, index);
 
 		if (ts.getConformanceProfileId() != null && !ts.getConformanceProfileId().equals("")) {
@@ -503,24 +552,25 @@ public class ExportUtil {
 				}
 			}
 		}
-		
+
 	}
 
-	private void generateTestPlanRB(ZipOutputStream out, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+	private void generateTestPlanRB(ZipOutputStream out, TestPlan tp,
+			TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		this.generateTestPlanJsonRB(out, tp, 1);
-		
+
 		String testStoryConfigId = null;
-		if(tp.getTestStoryConfigId() != null) {
+		if (tp.getTestStoryConfigId() != null) {
 			testStoryConfigId = tp.getTestStoryConfigId();
 		}
-		
+
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
 		this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, null, tp, "ng-tab-html");
 		this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, null, tp, "plain");
@@ -535,19 +585,21 @@ public class ExportUtil {
 		}
 	}
 
-	private void generateJurorDocument(ZipOutputStream out, TestStep ts, String teststepPath, String option) throws IOException {
+	private void generateJurorDocument(ZipOutputStream out, TestStep ts, String teststepPath, String option)
+			throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		InputStream is = classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl");
 		String mcXSL = null;
-		if(is != null){
+		if (is != null) {
 			byte[] buf = new byte[1024];
-			
-			if(option.equals("ng-tab-html")){
+
+			if (option.equals("ng-tab-html")) {
 				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "JurorDocument.html"));
 				mcXSL = IOUtils.toString(is);
-			}else {
+			} else {
 				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "JurorDocumentPDF.html"));
-				mcXSL = IOUtils.toString(is).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>","<xsl:param name=\"output\" select=\"'plain-html'\"/>");
+				mcXSL = IOUtils.toString(is).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
+						"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
 			}
 
 			InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
@@ -573,18 +625,18 @@ public class ExportUtil {
 		ClassLoader classLoader = getClass().getClassLoader();
 		InputStream is = classLoader.getResourceAsStream("xsl" + File.separator + ts.getTdsXSL() + ".xsl");
 		String mcXSL = null;
-		if(is != null){
+		if (is != null) {
 			byte[] buf = new byte[1024];
-			
-			if(option.equals("ng-tab-html")){
+
+			if (option.equals("ng-tab-html")) {
 				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestDataSpecification.html"));
 				mcXSL = IOUtils.toString(is);
-			}else {
+			} else {
 				out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestDataSpecificationPDF.html"));
-				mcXSL = IOUtils.toString(is).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>","<xsl:param name=\"output\" select=\"'plain-html'\"/>");
+				mcXSL = IOUtils.toString(is).replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
+						"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
 			}
-			
-			
+
 			InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
 			InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
 			Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
@@ -617,21 +669,21 @@ public class ExportUtil {
 		inTP.close();
 	}
 
-	private void generateMessageContent(ZipOutputStream out, String messageContentsXMLCode, String teststepPath, String option)
-			throws IOException {
+	private void generateMessageContent(ZipOutputStream out, String messageContentsXMLCode, String teststepPath,
+			String option) throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		byte[] buf = new byte[1024];
 		String mcXSL = null;
-		if(option.equals("ng-tab-html")){
+		if (option.equals("ng-tab-html")) {
 			out.putNextEntry(new ZipEntry(teststepPath + File.separator + "MessageContent.html"));
 			mcXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"));
-		}else {
+		} else {
 			out.putNextEntry(new ZipEntry(teststepPath + File.separator + "MessageContentPDF.html"));
 			mcXSL = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"))
 					.replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
 							"<xsl:param name=\"output\" select=\"'plain-html'\"/>");
 		}
-		
+
 		InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
 		InputStream sourceInputStream = new ByteArrayInputStream(messageContentsXMLCode.getBytes());
 		Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
@@ -647,7 +699,7 @@ public class ExportUtil {
 		}
 		out.closeEntry();
 		inTP.close();
-		
+
 	}
 
 	private void generateEr7Message(ZipOutputStream out, String er7Message, String teststepPath) throws IOException {
@@ -665,13 +717,15 @@ public class ExportUtil {
 
 	}
 
-	private void generateTestStepJsonRB(ZipOutputStream out, TestStep ts, String teststepPath, int index) throws IOException {
+	private void generateTestStepJsonRB(ZipOutputStream out, TestStep ts, String teststepPath, int index)
+			throws IOException {
 		byte[] buf = new byte[1024];
 		out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestStep.json"));
 
 		InputStream inTP = null;
 
 		JSONObject obj = new JSONObject();
+		obj.put("id", ts.getLongId());
 		obj.put("name", ts.getName());
 		obj.put("description", ts.getDescription());
 		obj.put("type", ts.getType());
@@ -693,19 +747,20 @@ public class ExportUtil {
 
 	}
 
-	private void generateTestStoryRB(ZipOutputStream out, HashMap<String,String> testStoryContent, TestStoryConfiguration testStoryConfiguration, String path, TestPlan tp, String option) throws Exception {
+	private void generateTestStoryRB(ZipOutputStream out, HashMap<String, String> testStoryContent,
+			TestStoryConfiguration testStoryConfiguration, String path, TestPlan tp, String option) throws Exception {
 		byte[] buf = new byte[1024];
-		if(path == null){
-			if(option.equals("ng-tab-html")){
+		if (path == null) {
+			if (option.equals("ng-tab-html")) {
 				out.putNextEntry(new ZipEntry("TestStory.html"));
-			}else{
-				out.putNextEntry(new ZipEntry("TestStoryPDF.html"));	
+			} else {
+				out.putNextEntry(new ZipEntry("TestStoryPDF.html"));
 			}
-		}else {
-			if(option.equals("ng-tab-html")){
-				out.putNextEntry(new ZipEntry(path + File.separator + "TestStory.html"));	
-			}else{
-				out.putNextEntry(new ZipEntry(path + File.separator + "TestStoryPDF.html"));	
+		} else {
+			if (option.equals("ng-tab-html")) {
+				out.putNextEntry(new ZipEntry(path + File.separator + "TestStory.html"));
+			} else {
+				out.putNextEntry(new ZipEntry(path + File.separator + "TestStoryPDF.html"));
 			}
 		}
 
@@ -719,11 +774,13 @@ public class ExportUtil {
 		out.closeEntry();
 	}
 
-	private void generateTestCaseJsonRB(ZipOutputStream out, TestCase tc, String testcasePath, int index) throws IOException {
+	private void generateTestCaseJsonRB(ZipOutputStream out, TestCase tc, String testcasePath, int index)
+			throws IOException {
 		byte[] buf = new byte[1024];
 		out.putNextEntry(new ZipEntry(testcasePath + File.separator + "TestCase.json"));
 
 		JSONObject obj = new JSONObject();
+		obj.put("id", tc.getLongId());
 		obj.put("name", tc.getName());
 		obj.put("description", tc.getDescription());
 		obj.put("position", index);
@@ -738,11 +795,13 @@ public class ExportUtil {
 		inTP.close();
 	}
 
-	private void generateTestGroupJsonRB(ZipOutputStream out, TestCaseGroup tg, String groupPath, int index) throws IOException {
+	private void generateTestGroupJsonRB(ZipOutputStream out, TestCaseGroup tg, String groupPath, int index)
+			throws IOException {
 		byte[] buf = new byte[1024];
 		out.putNextEntry(new ZipEntry(groupPath + File.separator + "TestCaseGroup.json"));
 
 		JSONObject obj = new JSONObject();
+		obj.put("id", tg.getLongId());
 		obj.put("name", tg.getName());
 		obj.put("description", tg.getDescription());
 		obj.put("position", index);
@@ -758,6 +817,7 @@ public class ExportUtil {
 
 	private void generateTestPlanJsonRB(ZipOutputStream out, TestPlan tp, int index) throws IOException {
 		JSONObject obj = new JSONObject();
+		obj.put("id", tp.getLongId());
 		obj.put("name", tp.getName());
 		obj.put("description", tp.getDescription());
 		obj.put("position", index);
@@ -776,68 +836,73 @@ public class ExportUtil {
 		out.closeEntry();
 		inTP.close();
 	}
-	
-	private String generateTestPlanSummaryForTestGroup(String contentsHTML, TestCaseGroup group, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService){
-		contentsHTML = contentsHTML + "<h2>Test Case Group: " + group.getName() + "</h2>" + System.getProperty("line.separator");
-		
+
+	private String generateTestPlanSummaryForTestGroup(String contentsHTML, TestCaseGroup group, TestPlan tp,
+			TestStoryConfigurationService testStoryConfigurationService) {
+		contentsHTML = contentsHTML + "<h2>Test Case Group: " + group.getName() + "</h2>"
+				+ System.getProperty("line.separator");
+
 		String testStoryConfigId = null;
-		if(group.getTestStoryConfigId() != null) {
+		if (group.getTestStoryConfigId() != null) {
 			testStoryConfigId = group.getTestStoryConfigId();
-		}else{
+		} else {
 			testStoryConfigId = tp.getGlobalTestGroupConfigId();
 		}
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
 		HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
-		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+		for (TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()) {
 			testStroyEntryMap.put(tse.getPosition(), tse);
 		}
-		
+
 		String summaryContent = "";
-		
-		for(int i=0;i<testStroyEntryMap.size();i++){
-			TestStroyEntry tse = testStroyEntryMap.get(i+1);
-			
-			if(tse.isSummaryEntry()){
+
+		for (int i = 0; i < testStroyEntryMap.size(); i++) {
+			TestStroyEntry tse = testStroyEntryMap.get(i + 1);
+
+			if (tse.isSummaryEntry()) {
 				String title = tse.getTitle();
 				String content = group.getTestStoryContent().get(tse.getId());
-				
-				if(tp.isEmptyStoryContentIgnored()){
-					if(content != null && !"".equals(content)) summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
-				}else {
-					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+
+				if (tp.isEmptyStoryContentIgnored()) {
+					if (content != null && !"".equals(content))
+						summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>";
+				} else {
+					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>";
 				}
 			}
 		}
-		
-		if(!summaryContent.equals("")){
+
+		if (!summaryContent.equals("")) {
 			contentsHTML = contentsHTML + summaryContent + System.getProperty("line.separator");
 		}
-		
-		
+
 		contentsHTML = contentsHTML + group.getDescription() + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "<br/>" + System.getProperty("line.separator");
-		
+
 		for (int i = 0; i < group.getChildren().size(); i++) {
 			Object child = group.getChildren().get(i);
-			
+
 			if (child instanceof TestCaseGroup) {
-				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, (TestCaseGroup)child, tp, testStoryConfigurationService);
-			}else if (child instanceof TestCase) {
-				contentsHTML = generateTestPlanSummaryForTestCase(contentsHTML, (TestCase)child, tp, testStoryConfigurationService);
+				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, (TestCaseGroup) child, tp,
+						testStoryConfigurationService);
+			} else if (child instanceof TestCase) {
+				contentsHTML = generateTestPlanSummaryForTestCase(contentsHTML, (TestCase) child, tp,
+						testStoryConfigurationService);
 			}
 		}
-		
+
 		return contentsHTML;
 	}
 
-	private String generateTestPlanSummaryForTestCase(String contentsHTML, TestCase tc, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) {
+	private String generateTestPlanSummaryForTestCase(String contentsHTML, TestCase tc, TestPlan tp,
+			TestStoryConfigurationService testStoryConfigurationService) {
 		contentsHTML = contentsHTML + "<table>" + System.getProperty("line.separator");
 
 		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
@@ -846,50 +911,52 @@ public class ExportUtil {
 		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
 
 		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
-		
+
 		String testStoryConfigId = null;
-		if(tc.getTestStoryConfigId() != null) {
+		if (tc.getTestStoryConfigId() != null) {
 			testStoryConfigId = tc.getTestStoryConfigId();
-		}else{
+		} else {
 			testStoryConfigId = tp.getGlobalTestCaseConfigId();
 		}
-		
+
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
-		
+
 		HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
-		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+		for (TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()) {
 			testStroyEntryMap.put(tse.getPosition(), tse);
 		}
-		
+
 		String summaryContent = "";
-		
-		for(int i=0;i<testStroyEntryMap.size();i++){
-			TestStroyEntry tse = testStroyEntryMap.get(i+1);
-			
-			if(tse.isSummaryEntry()){
+
+		for (int i = 0; i < testStroyEntryMap.size(); i++) {
+			TestStroyEntry tse = testStroyEntryMap.get(i + 1);
+
+			if (tse.isSummaryEntry()) {
 				String title = tse.getTitle();
 				String content = tc.getTestStoryContent().get(tse.getId());
-				
-				if(tp.isEmptyStoryContentIgnored()){
-					if(content != null && !"".equals(content)) summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
-				}else {
-					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+
+				if (tp.isEmptyStoryContentIgnored()) {
+					if (content != null && !"".equals(content))
+						summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>";
+				} else {
+					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>";
 				}
 			}
 		}
-		
-		if(!summaryContent.equals("")){
-			contentsHTML = contentsHTML + "<td colspan='2'>" + summaryContent + "</td>" + System.getProperty("line.separator");
+
+		if (!summaryContent.equals("")) {
+			contentsHTML = contentsHTML + "<td colspan='2'>" + summaryContent + "</td>"
+					+ System.getProperty("line.separator");
 		}
 		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-		
+
 		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "<th colspan='2'>Test Steps</th>" + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
@@ -897,121 +964,126 @@ public class ExportUtil {
 		for (int i = 0; i < tc.getTeststeps().size(); i++) {
 			TestStep ts = tc.getTeststeps().get(i);
 			contentsHTML = generateTestPlanSummaryForTestStep(contentsHTML, ts, tp, testStoryConfigurationService);
-			
+
 		}
-		
+
 		contentsHTML = contentsHTML + "</table>" + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "<br/>" + System.getProperty("line.separator");
-		
+
 		return contentsHTML;
 	}
 
-	private String generateTestPlanSummaryForTestStep(String contentsHTML, TestStep ts, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) {
+	private String generateTestPlanSummaryForTestStep(String contentsHTML, TestStep ts, TestPlan tp,
+			TestStoryConfigurationService testStoryConfigurationService) {
 		contentsHTML = contentsHTML + "<tr>" + System.getProperty("line.separator");
 		contentsHTML = contentsHTML + "<th>" + ts.getName() + "</th>" + System.getProperty("line.separator");
-		
+
 		String testStoryConfigId = null;
-		if(ts.getTestStoryConfigId() != null) {
+		if (ts.getTestStoryConfigId() != null) {
 			testStoryConfigId = ts.getTestStoryConfigId();
-		}else{
-			if(ts.isManualTS()){
+		} else {
+			if (ts.isManualTS()) {
 				testStoryConfigId = tp.getGlobalManualTestStepConfigId();
-			}else{
+			} else {
 				testStoryConfigId = tp.getGlobalAutoTestStepConfigId();
 			}
 		}
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
 		HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
-		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+		for (TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()) {
 			testStroyEntryMap.put(tse.getPosition(), tse);
 		}
-		
+
 		String summaryContent = "";
-		
-		for(int i=0;i<testStroyEntryMap.size();i++){
-			TestStroyEntry tse = testStroyEntryMap.get(i+1);
-			
-			if(tse.isSummaryEntry()){
+
+		for (int i = 0; i < testStroyEntryMap.size(); i++) {
+			TestStroyEntry tse = testStroyEntryMap.get(i + 1);
+
+			if (tse.isSummaryEntry()) {
 				String title = tse.getTitle();
 				String content = ts.getTestStoryContent().get(tse.getId());
-				
-				if(tp.isEmptyStoryContentIgnored()){
-					if(content != null && !"".equals(content)) summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
-				}else {
-					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+
+				if (tp.isEmptyStoryContentIgnored()) {
+					if (content != null && !"".equals(content))
+						summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>";
+				} else {
+					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>";
 				}
 			}
 		}
-		
-		if(!summaryContent.equals("")){
+
+		if (!summaryContent.equals("")) {
 			contentsHTML = contentsHTML + "<td>" + summaryContent + "</td>" + System.getProperty("line.separator");
 		}
-		
+
 		contentsHTML = contentsHTML + "</tr>" + System.getProperty("line.separator");
-		
+
 		return contentsHTML;
 	}
 
-	private void generateTestPlanSummary(ZipOutputStream out, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws IOException {
+	private void generateTestPlanSummary(ZipOutputStream out, TestPlan tp,
+			TestStoryConfigurationService testStoryConfigurationService) throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		String testPlanSummaryStr = IOUtils
 				.toString(classLoader.getResourceAsStream("rb" + File.separator + "TestPlanSummary.html"));
 		testPlanSummaryStr = testPlanSummaryStr.replace("?TestPlanName?", tp.getName());
 
 		String contentsHTML = "";
-		
+
 		String testStoryConfigId = null;
-		if(tp.getTestStoryConfigId() != null) {
+		if (tp.getTestStoryConfigId() != null) {
 			testStoryConfigId = tp.getTestStoryConfigId();
 		}
 		TestStoryConfiguration testStoryConfiguration = null;
-		if(testStoryConfigId != null){
+		if (testStoryConfigId != null) {
 			testStoryConfiguration = testStoryConfigurationService.findById(testStoryConfigId);
 		}
-		
-		if(testStoryConfiguration == null){
-			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long)0).get(0);	
+
+		if (testStoryConfiguration == null) {
+			testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
 		}
 		HashMap<Integer, TestStroyEntry> testStroyEntryMap = new HashMap<Integer, TestStroyEntry>();
-		for(TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()){
+		for (TestStroyEntry tse : testStoryConfiguration.getTestStoryConfig()) {
 			testStroyEntryMap.put(tse.getPosition(), tse);
 		}
-		
+
 		String summaryContent = "";
-		
-		for(int i=0;i<testStroyEntryMap.size();i++){
-			TestStroyEntry tse = testStroyEntryMap.get(i+1);
-			
-			if(tse.isSummaryEntry()){
+
+		for (int i = 0; i < testStroyEntryMap.size(); i++) {
+			TestStroyEntry tse = testStroyEntryMap.get(i + 1);
+
+			if (tse.isSummaryEntry()) {
 				String title = tse.getTitle();
 				String content = tp.getTestStoryContent().get(tse.getId());
-				if(tp.isEmptyStoryContentIgnored()){
-					if(content != null && !"".equals(content)) summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
-				}else {
-					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>" ;
+				if (tp.isEmptyStoryContentIgnored()) {
+					if (content != null && !"".equals(content))
+						summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>";
+				} else {
+					summaryContent = summaryContent + "<h3>" + title + "</h3>" + content + "<br/>";
 				}
 			}
 		}
-		
-		if(!summaryContent.equals("")){
+
+		if (!summaryContent.equals("")) {
 			contentsHTML = contentsHTML + summaryContent + System.getProperty("line.separator");
 		}
-		
+
 		for (int i = 0; i < tp.getChildren().size(); i++) {
 			Object child = tp.getChildren().get(i);
 			if (child instanceof TestCaseGroup) {
 				TestCaseGroup group = (TestCaseGroup) child;
-				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, group, tp, testStoryConfigurationService);
+				contentsHTML = generateTestPlanSummaryForTestGroup(contentsHTML, group, tp,
+						testStoryConfigurationService);
 			} else if (child instanceof TestCase) {
 				TestCase tc = (TestCase) child;
-				contentsHTML = generateTestPlanSummaryForTestCase(contentsHTML,  tc, tp, testStoryConfigurationService);
+				contentsHTML = generateTestPlanSummaryForTestCase(contentsHTML, tc, tp, testStoryConfigurationService);
 			}
 		}
 		testPlanSummaryStr = testPlanSummaryStr.replace("?contentsHTML?", contentsHTML);
@@ -1027,15 +1099,15 @@ public class ExportUtil {
 		inTestPlanSummary.close();
 	}
 
-	public InputStream exportProfileXMLZip(String[] ipid, ProfileService profileService) throws IOException {
+	public InputStream exportProfileXMLZip(Set<String> keySet, ProfileService profileService) throws IOException {
 
 		ByteArrayOutputStream outputStream = null;
 		byte[] bytes;
 		outputStream = new ByteArrayOutputStream();
 		ZipOutputStream out = new ZipOutputStream(outputStream);
 
-		for (String id : ipid) {
-			if(id != null && !id.isEmpty()){
+		for (String id : keySet) {
+			if (id != null && !id.isEmpty()) {
 				this.generateProfileXML(out, id, profileService);
 			}
 		}
@@ -1044,18 +1116,297 @@ public class ExportUtil {
 		return new ByteArrayInputStream(bytes);
 	}
 
-	private void generateProfileXML(ZipOutputStream out, String id, ProfileService profileService) throws IOException {
-		Profile tcamtProfile = profileService.findOne(id);
+	public InputStream[] exportProfileXMLArrayZip(Set<String> keySet, ProfileService profileService) throws IOException {
+		ByteArrayOutputStream outputStream0 = null;
+		ByteArrayOutputStream outputStream1 = null;
+		ByteArrayOutputStream outputStream2 = null;
+
+		byte[] bytes0;
+		byte[] bytes1;
+		byte[] bytes2;
+
+		outputStream0 = new ByteArrayOutputStream();
+		outputStream1 = new ByteArrayOutputStream();
+		outputStream2 = new ByteArrayOutputStream();
+
+		ZipOutputStream out0 = new ZipOutputStream(outputStream0);
+		ZipOutputStream out1 = new ZipOutputStream(outputStream1);
+		ZipOutputStream out2 = new ZipOutputStream(outputStream2);
+
+		for (String id : keySet) {
+			if (id != null && !id.isEmpty()) {
+				this.generateProfileXML(out0, out1, out2, id, profileService);
+			}
+		}
+		out0.close();
+		out1.close();
+		out2.close();
 		
-		if(tcamtProfile != null) {
-			String profileXML = this.serializeProfileToDoc(tcamtProfile).toXML();
-			String valueSetXML = this.serializeTableLibraryToElement(tcamtProfile).toXML();
-			String constraintsXML = this.serializeConstraintsToDoc(tcamtProfile).toXML();
+		bytes0 = outputStream0.toByteArray();
+		bytes1 = outputStream1.toByteArray();
+		bytes2 = outputStream2.toByteArray();
+		
+		InputStream[] results = new InputStream[3];
+		results[0] = new ByteArrayInputStream(bytes0);
+		results[1] = new ByteArrayInputStream(bytes1);
+		results[2] = new ByteArrayInputStream(bytes2);
+
+		return results;
+	}
+
+	private void addDatatype(Datatype d, Map<String, Datatype> datatypesMap, IGAMTDBConn igamtDB) {
+		if (d != null) {
+			datatypesMap.put(d.getId(), d);
+			for (Component c : d.getComponents()) {
+				this.addDatatype(igamtDB.findDatatypeById(c.getDatatype().getId()), datatypesMap, igamtDB);
+			}
+		}
+	}
+
+	private void visit(SegmentRefOrGroup seog, Map<String, Segment> segmentsMap, Map<String, Datatype> datatypesMap,
+			Map<String, Table> tablesMap, gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile,
+			IGAMTDBConn igamtDB) {
+		if (seog instanceof SegmentRef) {
+			SegmentRef sr = (SegmentRef) seog;
+			Segment s = segmentsMap.get(sr.getRef().getId());
+
+			if (s.getName().equals("OBX") || s.getName().equals("MFA") || s.getName().equals("MFE")) {
+				String reference = null;
+				String referenceTableId = null;
+
+				if (s.getName().equals("OBX")) {
+					reference = "2";
+				}
+
+				if (s.getName().equals("MFA")) {
+					reference = "6";
+				}
+
+				if (s.getName().equals("MFE")) {
+					reference = "5";
+				}
+
+				referenceTableId = this.findValueSetID(s.getValueSetBindings(), reference);
+
+				if (referenceTableId != null) {
+					Table table = tablesMap.get(referenceTableId);
+					if (table != null) {
+						for (Code c : table.getCodes()) {
+							if (c.getValue() != null && table.getHl7Version() != null) {
+								// TODO
+								Datatype d = igamtDB.findByNameAndVesionAndScope(c.getValue(), table.getHl7Version(),
+										"HL7STANDARD");
+
+								if (d != null) {
+									this.addDatatype(d, datatypesMap, igamtDB);
+								}
+							}
+						}
+					}
+				}
+			}
+
+		} else {
+			Group g = (Group) seog;
+			for (SegmentRefOrGroup child : g.getChildren()) {
+				this.visit(child, segmentsMap, datatypesMap, tablesMap, profile, igamtDB);
+			}
+		}
+	}
+
+	private String findValueSetID(List<ValueSetOrSingleCodeBinding> valueSetBindings, String referenceLocation) {
+		for (ValueSetOrSingleCodeBinding vsb : valueSetBindings) {
+			if (vsb.getLocation().equals(referenceLocation))
+				return vsb.getTableId();
+		}
+		return null;
+	}
+
+	public String[] generateProfileXML(String id, ProfileService profileService) {
+		Profile tcamtProfile = profileService.findOne(id);
+
+		if (tcamtProfile != null) {
+			IGAMTDBConn igamtDB = new IGAMTDBConn();
+			gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile = new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
+			profile.setAccountId(tcamtProfile.getAccountId());
+			profile.setMetaData(tcamtProfile.getMetaData());
+			profile.setMessages(new Messages());
+			DocumentMetaData metadata = new DocumentMetaData();
+			Map<String, Segment> segmentsMap = new HashMap<String, Segment>();
+			Map<String, Datatype> datatypesMap = new HashMap<String, Datatype>();
+			Map<String, Table> tablesMap = new HashMap<String, Table>();
+
+			for (Segment s : tcamtProfile.getSegments().getChildren()) {
+				if (s != null) {
+					segmentsMap.put(s.getId(), s);
+				}
+			}
+
+			for (Datatype d : tcamtProfile.getDatatypes().getChildren()) {
+				if (d != null) {
+					datatypesMap.put(d.getId(), d);
+				}
+
+			}
+
+			for (Table t : tcamtProfile.getTables().getChildren()) {
+				if (t != null) {
+					tablesMap.put(t.getId(), t);
+				}
+
+			}
+
+			for (Message m : tcamtProfile.getMessages().getChildren()) {
+				if (m.getMessageID() == null)
+					m.setMessageID(UUID.randomUUID().toString());
+
+				profile.getMessages().addMessage(m);
+
+				for (SegmentRefOrGroup seog : m.getChildren()) {
+					this.visit(seog, segmentsMap, datatypesMap, tablesMap, profile, igamtDB);
+				}
+			}
+
+			String[] result = new String[3];
+			result[0] = new ExportTool().serializeProfileToDoc(profile, metadata, segmentsMap, datatypesMap, tablesMap)
+					.toXML();
+			result[1] = new ExportTool().serializeTableXML(profile, metadata, tablesMap);
+			result[2] = new ExportTool().serializeConstraintsXML(profile, metadata, segmentsMap, datatypesMap,
+					tablesMap);
+
+			return result;
+		}
+
+		return null;
+	}
+
+	private void generateProfileXML(ZipOutputStream out0, ZipOutputStream out1, ZipOutputStream out2, String id,
+			ProfileService profileService) throws IOException {
+		Profile tcamtProfile = profileService.findOne(id);
+
+		if (tcamtProfile != null) {
+
+			IGAMTDBConn igamtDB = new IGAMTDBConn();
+			gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile = new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
+			profile.setAccountId(tcamtProfile.getAccountId());
+			profile.setMetaData(tcamtProfile.getMetaData());
+			profile.setMessages(new Messages());
+			DocumentMetaData metadata = new DocumentMetaData();
+			Map<String, Segment> segmentsMap = new HashMap<String, Segment>();
+			Map<String, Datatype> datatypesMap = new HashMap<String, Datatype>();
+			Map<String, Table> tablesMap = new HashMap<String, Table>();
+
+			for (Segment s : tcamtProfile.getSegments().getChildren()) {
+				if (s != null)
+					segmentsMap.put(s.getId(), s);
+			}
+
+			for (Datatype d : tcamtProfile.getDatatypes().getChildren()) {
+				if (d != null)
+					datatypesMap.put(d.getId(), d);
+			}
+
+			for (Table t : tcamtProfile.getTables().getChildren()) {
+				if (t != null) {
+					tablesMap.put(t.getId(), t);
+				}
+			}
+
+			for (Message m : tcamtProfile.getMessages().getChildren()) {
+				if (m.getMessageID() == null)
+					m.setMessageID(UUID.randomUUID().toString());
+
+				profile.getMessages().addMessage(m);
+
+				for (SegmentRefOrGroup seog : m.getChildren()) {
+					this.visit(seog, segmentsMap, datatypesMap, tablesMap, profile, igamtDB);
+				}
+			}
 
 			byte[] buf = new byte[1024];
-			out.putNextEntry(new ZipEntry(id + "_Profile.xml"));
+			out0.putNextEntry(new ZipEntry("Profile.xml"));
 			InputStream inTP = null;
-			inTP = IOUtils.toInputStream(profileXML);
+			inTP = IOUtils.toInputStream(new ExportTool()
+					.serializeProfileToDoc(profile, metadata, segmentsMap, datatypesMap, tablesMap).toXML());
+			int lenTP;
+			while ((lenTP = inTP.read(buf)) > 0) {
+				out0.write(buf, 0, lenTP);
+			}
+			out0.closeEntry();
+			inTP.close();
+
+			out1.putNextEntry(new ZipEntry("ValueSet.xml"));
+			inTP = null;
+			inTP = IOUtils.toInputStream(new ExportTool().serializeTableXML(profile, metadata, tablesMap));
+			lenTP = 0;
+			while ((lenTP = inTP.read(buf)) > 0) {
+				out1.write(buf, 0, lenTP);
+			}
+			out1.closeEntry();
+			inTP.close();
+
+			out2.putNextEntry(new ZipEntry("Constraints.xml"));
+			inTP = null;
+			inTP = IOUtils.toInputStream(
+					new ExportTool().serializeConstraintsXML(profile, metadata, segmentsMap, datatypesMap, tablesMap));
+			lenTP = 0;
+			while ((lenTP = inTP.read(buf)) > 0) {
+				out2.write(buf, 0, lenTP);
+			}
+			out2.closeEntry();
+			inTP.close();
+		}
+
+	}
+
+	private void generateProfileXML(ZipOutputStream out, String id, ProfileService profileService) throws IOException {
+		Profile tcamtProfile = profileService.findOne(id);
+
+		if (tcamtProfile != null) {
+
+			IGAMTDBConn igamtDB = new IGAMTDBConn();
+			gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile = new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
+			profile.setAccountId(tcamtProfile.getAccountId());
+			profile.setMetaData(tcamtProfile.getMetaData());
+			profile.setMessages(new Messages());
+			DocumentMetaData metadata = new DocumentMetaData();
+			Map<String, Segment> segmentsMap = new HashMap<String, Segment>();
+			Map<String, Datatype> datatypesMap = new HashMap<String, Datatype>();
+			Map<String, Table> tablesMap = new HashMap<String, Table>();
+
+			for (Segment s : tcamtProfile.getSegments().getChildren()) {
+				if (s != null)
+					segmentsMap.put(s.getId(), s);
+			}
+
+			for (Datatype d : tcamtProfile.getDatatypes().getChildren()) {
+				if (d != null)
+					datatypesMap.put(d.getId(), d);
+			}
+
+			for (Table t : tcamtProfile.getTables().getChildren()) {
+				if (t != null) {
+					tablesMap.put(t.getId(), t);
+				}
+			}
+
+			for (Message m : tcamtProfile.getMessages().getChildren()) {
+				if (m.getMessageID() == null)
+					m.setMessageID(UUID.randomUUID().toString());
+
+				profile.getMessages().addMessage(m);
+
+				for (SegmentRefOrGroup seog : m.getChildren()) {
+					this.visit(seog, segmentsMap, datatypesMap, tablesMap, profile, igamtDB);
+				}
+			}
+
+			byte[] buf = new byte[1024];
+			out.putNextEntry(
+					new ZipEntry("Global" + File.separator + "Profiles" + File.separator + id + "_Profile.xml"));
+			InputStream inTP = null;
+			inTP = IOUtils.toInputStream(new ExportTool()
+					.serializeProfileToDoc(profile, metadata, segmentsMap, datatypesMap, tablesMap).toXML());
 			int lenTP;
 			while ((lenTP = inTP.read(buf)) > 0) {
 				out.write(buf, 0, lenTP);
@@ -1063,36 +1414,39 @@ public class ExportUtil {
 			out.closeEntry();
 			inTP.close();
 
-			out.putNextEntry(new ZipEntry(id + "_ValueSet.xml"));
+			out.putNextEntry(
+					new ZipEntry("Global" + File.separator + "Tables" + File.separator + id + "_ValueSet.xml"));
 			inTP = null;
-			inTP = IOUtils.toInputStream(valueSetXML);
+			inTP = IOUtils.toInputStream(new ExportTool().serializeTableXML(profile, metadata, tablesMap));
 			lenTP = 0;
 			while ((lenTP = inTP.read(buf)) > 0) {
 				out.write(buf, 0, lenTP);
 			}
 			out.closeEntry();
 			inTP.close();
-			
-			out.putNextEntry(new ZipEntry(id + "_Constraints.xml"));
+
+			out.putNextEntry(
+					new ZipEntry("Global" + File.separator + "Constraints" + File.separator + id + "_Constraints.xml"));
 			inTP = null;
-			inTP = IOUtils.toInputStream(constraintsXML);
+			inTP = IOUtils.toInputStream(
+					new ExportTool().serializeConstraintsXML(profile, metadata, segmentsMap, datatypesMap, tablesMap));
 			lenTP = 0;
 			while ((lenTP = inTP.read(buf)) > 0) {
 				out.write(buf, 0, lenTP);
 			}
 			out.closeEntry();
-			inTP.close();	
+			inTP.close();
 		}
-		
-		
+
 	}
 
 	public nu.xom.Document serializeProfileToDoc(Profile profile) {
 		nu.xom.Element e = new nu.xom.Element("ConformanceProfile");
-		Attribute schemaLocation = new Attribute("xsi:noNamespaceSchemaLocation", "http://www.w3.org/2001/XMLSchema-instance", "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/Profile.xsd");
+		Attribute schemaLocation = new Attribute("xsi:noNamespaceSchemaLocation",
+				"http://www.w3.org/2001/XMLSchema-instance",
+				"https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/Profile.xsd");
 		e.addAttribute(schemaLocation);
-		
-		
+
 		this.serializeProfileMetaData(e, profile.getMetaData(), profile.getId());
 
 		nu.xom.Element ms = new nu.xom.Element("Messages");
@@ -1129,10 +1483,14 @@ public class ExportUtil {
 			e.addAttribute(new Attribute("SchemaVersion", ExportUtil.str(metaData.getSchemaVersion())));
 
 		nu.xom.Element elmMetaData = new nu.xom.Element("MetaData");
-		elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(metaData.getName()).equals("") ? ExportUtil.str(metaData.getName()) : "No Title Info"));
-		elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metaData.getOrgName()).equals("") ? ExportUtil.str(metaData.getOrgName()) : "No Org Info"));
-		elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metaData.getVersion()).equals("") ? ExportUtil.str(metaData.getVersion()) : "No Version Info"));
-		elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(metaData.getDate()).equals("") ? ExportUtil.str(metaData.getDate()) : "No Date Info"));
+		elmMetaData.addAttribute(new Attribute("Name",
+				!ExportUtil.str(metaData.getName()).equals("") ? ExportUtil.str(metaData.getName()) : "No Title Info"));
+		elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metaData.getOrgName()).equals("")
+				? ExportUtil.str(metaData.getOrgName()) : "No Org Info"));
+		elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metaData.getVersion()).equals("")
+				? ExportUtil.str(metaData.getVersion()) : "No Version Info"));
+		elmMetaData.addAttribute(new Attribute("Date",
+				!ExportUtil.str(metaData.getDate()).equals("") ? ExportUtil.str(metaData.getDate()) : "No Date Info"));
 
 		if (metaData.getSpecificationName() != null && !metaData.getSpecificationName().equals(""))
 			elmMetaData
@@ -1149,13 +1507,16 @@ public class ExportUtil {
 		nu.xom.Element elmMessage = new nu.xom.Element("Message");
 
 		elmMessage.addAttribute(new Attribute("ID", m.getId()));
-		
-		if (m.getIdentifier() != null && !m.getIdentifier().equals("")) elmMessage.addAttribute(new Attribute("Identifier", ExportUtil.str(m.getIdentifier())));
-		if (m.getName() != null && !m.getName().equals("")) elmMessage.addAttribute(new Attribute("Name", ExportUtil.str(m.getName())));
+
+		if (m.getIdentifier() != null && !m.getIdentifier().equals(""))
+			elmMessage.addAttribute(new Attribute("Identifier", ExportUtil.str(m.getIdentifier())));
+		if (m.getName() != null && !m.getName().equals(""))
+			elmMessage.addAttribute(new Attribute("Name", ExportUtil.str(m.getName())));
 		elmMessage.addAttribute(new Attribute("Type", ExportUtil.str(m.getMessageType())));
 		elmMessage.addAttribute(new Attribute("Event", ExportUtil.str(m.getEvent())));
 		elmMessage.addAttribute(new Attribute("StructID", ExportUtil.str(m.getStructID())));
-		if (m.getDescription() != null && !m.getDescription().equals("")) elmMessage.addAttribute(new Attribute("Description", ExportUtil.str(m.getDescription())));
+		if (m.getDescription() != null && !m.getDescription().equals(""))
+			elmMessage.addAttribute(new Attribute("Description", ExportUtil.str(m.getDescription())));
 
 		Map<Integer, SegmentRefOrGroup> segmentRefOrGroups = new HashMap<Integer, SegmentRefOrGroup>();
 
@@ -1271,17 +1632,17 @@ public class ExportUtil {
 				for (int k = 0; k < f.getTables().size(); k++) {
 					TableLink tl = f.getTables().get(k);
 					Table t = tables.findOneTableById(tl.getId());
-					if(t != null){
+					if (t != null) {
 						if (bindingIdentifier.equals("")) {
 							bindingIdentifier = t.getBindingIdentifier();
 						} else {
 							bindingIdentifier = bindingIdentifier + ":" + t.getBindingIdentifier();
 						}
 						bindingStrength = tl.getBindingStrength();
-						bindingLocation = tl.getBindingLocation();	
+						bindingLocation = tl.getBindingLocation();
 					}
 				}
-				if (bindingIdentifier != null && !bindingIdentifier.equals("")) 
+				if (bindingIdentifier != null && !bindingIdentifier.equals(""))
 					elmField.addAttribute(new Attribute("Binding", bindingIdentifier));
 				if (bindingStrength != null && !bindingStrength.equals(""))
 					elmField.addAttribute(new Attribute("BindingStrength", ExportUtil.str(bindingStrength)));
@@ -1321,7 +1682,8 @@ public class ExportUtil {
 				nu.xom.Element elmComponent = new nu.xom.Element("Component");
 				elmComponent.addAttribute(new Attribute("Name", ExportUtil.str(c.getName())));
 				elmComponent.addAttribute(new Attribute("Usage", ExportUtil.str(c.getUsage().toString())));
-				elmComponent.addAttribute(new Attribute("Datatype", ExportUtil.str(datatypes.findOne(c.getDatatype().getId()).getLabel())));
+				elmComponent.addAttribute(new Attribute("Datatype",
+						ExportUtil.str(datatypes.findOne(c.getDatatype().getId()).getLabel())));
 				elmComponent.addAttribute(new Attribute("MinLength", "" + c.getMinLength()));
 				if (c.getMaxLength() != null && !c.getMaxLength().equals(""))
 					elmComponent.addAttribute(new Attribute("MaxLength", ExportUtil.str(c.getMaxLength())));
@@ -1335,17 +1697,17 @@ public class ExportUtil {
 					for (int k = 0; k < c.getTables().size(); k++) {
 						TableLink tl = c.getTables().get(k);
 						Table t = tables.findOneTableById(tl.getId());
-						if(t != null){
+						if (t != null) {
 							if (bindingIdentifier.equals("")) {
 								bindingIdentifier = t.getBindingIdentifier();
 							} else {
 								bindingIdentifier = bindingIdentifier + ":" + t.getBindingIdentifier();
 							}
 							bindingStrength = tl.getBindingStrength();
-							bindingLocation = tl.getBindingLocation();	
+							bindingLocation = tl.getBindingLocation();
 						}
 					}
-					if (bindingIdentifier != null && !bindingIdentifier.equals("")) 
+					if (bindingIdentifier != null && !bindingIdentifier.equals(""))
 						elmComponent.addAttribute(new Attribute("Binding", bindingIdentifier));
 					if (bindingStrength != null && !bindingStrength.equals(""))
 						elmComponent.addAttribute(new Attribute("BindingStrength", ExportUtil.str(bindingStrength)));
@@ -1364,9 +1726,11 @@ public class ExportUtil {
 	public nu.xom.Element serializeTableLibraryToElement(Profile profile) {
 		Tables tableLibrary = profile.getTables();
 		nu.xom.Element elmTableLibrary = new nu.xom.Element("ValueSetLibrary");
-		Attribute schemaLocation = new Attribute("xsi:noNamespaceSchemaLocation", "http://www.w3.org/2001/XMLSchema-instance", "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ValueSets.xsd");
+		Attribute schemaLocation = new Attribute("xsi:noNamespaceSchemaLocation",
+				"http://www.w3.org/2001/XMLSchema-instance",
+				"https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ValueSets.xsd");
 		elmTableLibrary.addAttribute(schemaLocation);
-		
+
 		elmTableLibrary.addAttribute(new Attribute("ValueSetLibraryIdentifier", profile.getId()));
 
 		nu.xom.Element elmMetaData = new nu.xom.Element("MetaData");
@@ -1377,20 +1741,25 @@ public class ExportUtil {
 			elmMetaData.addAttribute(new Attribute("Version", "1.0.0"));
 			elmMetaData.addAttribute(new Attribute("Date", ""));
 		} else {
-			elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(metadata.getName()).equals("") ? ExportUtil.str(metadata.getName()) : "No Title Info"));
-			elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metadata.getOrgName()).equals("") ? ExportUtil.str(metadata.getOrgName()) : "No Org Info"));
-			elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metadata.getVersion()).equals("") ? ExportUtil.str(metadata.getVersion()) : "No Version Info"));
-			elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(metadata.getDate()).equals("") ? ExportUtil.str(metadata.getDate()) : "No Date Info"));
+			elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(metadata.getName()).equals("")
+					? ExportUtil.str(metadata.getName()) : "No Title Info"));
+			elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metadata.getOrgName()).equals("")
+					? ExportUtil.str(metadata.getOrgName()) : "No Org Info"));
+			elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metadata.getVersion()).equals("")
+					? ExportUtil.str(metadata.getVersion()) : "No Version Info"));
+			elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(metadata.getDate()).equals("")
+					? ExportUtil.str(metadata.getDate()) : "No Date Info"));
 
-			if (profile.getMetaData().getSpecificationName() != null && !profile.getMetaData().getSpecificationName().equals(""))
-				elmMetaData.addAttribute(new Attribute("SpecificationName", ExportUtil.str(profile.getMetaData().getSpecificationName())));
+			if (profile.getMetaData().getSpecificationName() != null
+					&& !profile.getMetaData().getSpecificationName().equals(""))
+				elmMetaData.addAttribute(new Attribute("SpecificationName",
+						ExportUtil.str(profile.getMetaData().getSpecificationName())));
 			if (profile.getMetaData().getStatus() != null && !profile.getMetaData().getStatus().equals(""))
 				elmMetaData.addAttribute(new Attribute("Status", ExportUtil.str(profile.getMetaData().getStatus())));
 			if (profile.getMetaData().getTopics() != null && !profile.getMetaData().getTopics().equals(""))
 				elmMetaData.addAttribute(new Attribute("Topics", ExportUtil.str(profile.getMetaData().getTopics())));
 		}
-		
-		
+
 		nu.xom.Element elmNoValidation = new nu.xom.Element("NoValidation");
 
 		HashMap<String, nu.xom.Element> valueSetDefinitionsMap = new HashMap<String, nu.xom.Element>();
@@ -1398,14 +1767,13 @@ public class ExportUtil {
 		for (Table t : tableLibrary.getChildren()) {
 
 			if (t != null) {
-				
-				if(t.getCodes() == null || t.getCodes().size() == 0){
+
+				if (t.getCodes() == null || t.getCodes().size() == 0) {
 					nu.xom.Element elmBindingIdentifier = new nu.xom.Element("BindingIdentifier");
 					elmBindingIdentifier.appendChild(t.getBindingIdentifier());
 					elmNoValidation.appendChild(elmBindingIdentifier);
 				}
-				
-				
+
 				nu.xom.Element elmValueSetDefinition = new nu.xom.Element("ValueSetDefinition");
 				elmValueSetDefinition
 						.addAttribute(new Attribute("BindingIdentifier", ExportUtil.str(t.getBindingIdentifier())));
@@ -1484,7 +1852,9 @@ public class ExportUtil {
 		Constraints predicates = findAllPredicates(profile);
 		Constraints conformanceStatements = findAllConformanceStatement(profile);
 		nu.xom.Element e = new nu.xom.Element("ConformanceContext");
-		Attribute schemaLocation = new Attribute("xsi:noNamespaceSchemaLocation", "http://www.w3.org/2001/XMLSchema-instance", "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ConformanceContext.xsd");
+		Attribute schemaLocation = new Attribute("xsi:noNamespaceSchemaLocation",
+				"http://www.w3.org/2001/XMLSchema-instance",
+				"https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ConformanceContext.xsd");
 		e.addAttribute(schemaLocation);
 		e.addAttribute(new Attribute("UUID", profile.getId()));
 
@@ -1496,13 +1866,19 @@ public class ExportUtil {
 			elmMetaData.addAttribute(new Attribute("Version", "1.0.0"));
 			elmMetaData.addAttribute(new Attribute("Date", ""));
 		} else {
-			elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(metadata.getName()).equals("") ? ExportUtil.str(metadata.getName()) : "No Title Info"));
-			elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metadata.getOrgName()).equals("") ? ExportUtil.str(metadata.getOrgName()) : "No Org Info"));
-			elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metadata.getVersion()).equals("") ? ExportUtil.str(metadata.getVersion()) : "No Version Info"));
-			elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(metadata.getDate()).equals("") ? ExportUtil.str(metadata.getDate()) : "No Date Info"));
+			elmMetaData.addAttribute(new Attribute("Name", !ExportUtil.str(metadata.getName()).equals("")
+					? ExportUtil.str(metadata.getName()) : "No Title Info"));
+			elmMetaData.addAttribute(new Attribute("OrgName", !ExportUtil.str(metadata.getOrgName()).equals("")
+					? ExportUtil.str(metadata.getOrgName()) : "No Org Info"));
+			elmMetaData.addAttribute(new Attribute("Version", !ExportUtil.str(metadata.getVersion()).equals("")
+					? ExportUtil.str(metadata.getVersion()) : "No Version Info"));
+			elmMetaData.addAttribute(new Attribute("Date", !ExportUtil.str(metadata.getDate()).equals("")
+					? ExportUtil.str(metadata.getDate()) : "No Date Info"));
 
-			if (profile.getMetaData().getSpecificationName() != null && !profile.getMetaData().getSpecificationName().equals(""))
-				elmMetaData.addAttribute(new Attribute("SpecificationName", ExportUtil.str(profile.getMetaData().getSpecificationName())));
+			if (profile.getMetaData().getSpecificationName() != null
+					&& !profile.getMetaData().getSpecificationName().equals(""))
+				elmMetaData.addAttribute(new Attribute("SpecificationName",
+						ExportUtil.str(profile.getMetaData().getSpecificationName())));
 			if (profile.getMetaData().getStatus() != null && !profile.getMetaData().getStatus().equals(""))
 				elmMetaData.addAttribute(new Attribute("Status", ExportUtil.str(profile.getMetaData().getStatus())));
 			if (profile.getMetaData().getTopics() != null && !profile.getMetaData().getTopics().equals(""))
@@ -1809,13 +2185,14 @@ public class ExportUtil {
 							if (value != null && !value.equals("")) {
 								if (type.equals("vs")) {
 									Table t = profile.getTables().findOneTableById(value);
-									if(t != null){
+									if (t != null) {
 										nu.xom.Element elmValueSetCheck = new nu.xom.Element("ValueSet");
 										elmValueSetCheck.addAttribute(new Attribute("Path", path));
-										elmValueSetCheck.addAttribute(new Attribute("ValueSetID", profile.getTables().findOneTableById(value).getBindingIdentifier()));
+										elmValueSetCheck.addAttribute(new Attribute("ValueSetID",
+												profile.getTables().findOneTableById(value).getBindingIdentifier()));
 										elmValueSetCheck.addAttribute(new Attribute("BindingStrength", "R"));
 										elmValueSetCheck.addAttribute(new Attribute("BindingLocation", "1"));
-										elmPlainCoConstraint.appendChild(elmValueSetCheck);	
+										elmPlainCoConstraint.appendChild(elmValueSetCheck);
 									}
 								} else {
 									nu.xom.Element elmValueCheck = new nu.xom.Element("PlainText");
@@ -1838,6 +2215,7 @@ public class ExportUtil {
 
 		if (coConstraints_segment_Elm.getChildCount() > 0)
 			coConstraints_Elm.appendChild(coConstraints_segment_Elm);
-		if (coConstraints_Elm.getChildCount() > 0) e.appendChild(coConstraints_Elm);
+		if (coConstraints_Elm.getChildCount() > 0)
+			e.appendChild(coConstraints_Elm);
 	}
 }
