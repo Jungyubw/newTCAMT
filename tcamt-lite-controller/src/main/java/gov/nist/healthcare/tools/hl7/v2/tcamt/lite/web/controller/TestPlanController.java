@@ -381,6 +381,8 @@ public class TestPlanController extends CommonController {
 	@RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST, produces = "application/json")
 	public void pushRB(@PathVariable("testplanId") String testplanId, @RequestBody String host,
 			@RequestHeader("gvt-auth") String authorization, HttpServletRequest request) throws Exception {
+		host="http://localhost:8080/gvt/";
+		
 		ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
 		TestPlan tp = findTestPlan(testplanId);
 		InputStream testPlanIO = null;
@@ -473,6 +475,7 @@ public class TestPlanController extends CommonController {
 
 	@RequestMapping(value = "/createSession", method = RequestMethod.POST, produces = "application/json")
 	public boolean createSession(@RequestBody String host, @RequestHeader("gvt-auth") String authorization) {
+		host="http://localhost:8080/gvt/";
 		try {
 			ResourceClient client = ResourceClientFactory.createResourceClientWithDefault(host, authorization);
 			return client.validCredentials();

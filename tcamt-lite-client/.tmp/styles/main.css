@@ -9372,6 +9372,7 @@ ul.dropdown-menu, ul.dropdown-menu > li {
 
 /* line 1775, ../../app/styles/main.scss */
 .navbar-collapse {
+  -webkit-filter: none;
   filter: none;
   border: 0px;
   border-radius: 0px;
