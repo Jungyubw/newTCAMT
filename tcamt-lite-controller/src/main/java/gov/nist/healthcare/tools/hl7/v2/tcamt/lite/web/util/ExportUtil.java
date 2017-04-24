@@ -1168,7 +1168,12 @@ public class ExportUtil {
 		if (d != null) {
 			datatypesMap.put(d.getId(), d);
 			for (Component c : d.getComponents()) {
-				this.addDatatype(igamtDB.findDatatypeById(c.getDatatype().getId()), datatypesMap, igamtDB);
+				Datatype child = datatypesMap.get(c.getDatatype().getId());
+				if(child == null) {
+					child = igamtDB.findDatatypeById(c.getDatatype().getId());
+					child.setExt(child.getExt() + "IGAMT");
+				}
+				this.addDatatype(child, datatypesMap, igamtDB);
 			}
 		}
 	}
@@ -1203,11 +1208,9 @@ public class ExportUtil {
 					if (table != null) {
 						for (Code c : table.getCodes()) {
 							if (c.getValue() != null && table.getHl7Version() != null) {
-								// TODO
-								Datatype d = igamtDB.findByNameAndVesionAndScope(c.getValue(), table.getHl7Version(),
-										"HL7STANDARD");
-
+								Datatype d = igamtDB.findByNameAndVesionAndScope(c.getValue(), table.getHl7Version(), "HL7STANDARD");
 								if (d != null) {
+									d.setExt(d.getExt() + "IGAMT");
 									this.addDatatype(d, datatypesMap, igamtDB);
 								}
 							}
@@ -1298,6 +1301,7 @@ public class ExportUtil {
 
 			IGAMTDBConn igamtDB = new IGAMTDBConn();
 			gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile = new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
+			profile.setId(tcamtProfile.getId());
 			profile.setAccountId(tcamtProfile.getAccountId());
 			profile.setMetaData(tcamtProfile.getMetaData());
 			profile.setMessages(new Messages());
@@ -1376,6 +1380,7 @@ public class ExportUtil {
 
 			IGAMTDBConn igamtDB = new IGAMTDBConn();
 			gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile = new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
+			profile.setId(id);
 			profile.setAccountId(tcamtProfile.getAccountId());
 			profile.setMetaData(tcamtProfile.getMetaData());
 			profile.setMessages(new Messages());

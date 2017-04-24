@@ -502,6 +502,7 @@ public class TestPlanController extends CommonController {
 		String absoluteDiskPath = request.getServletContext().getRealPath(relativeWebPath);
 		System.out.println(absoluteDiskPath);
 
+
 		String dir = "pushResourceBundles";
 		File directory = new File(absoluteDiskPath + testplanId + File.separator);
 		directory.mkdirs();
