@@ -387,9 +387,7 @@ public class TestPlanController extends CommonController {
 		testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
 		
 		String relativeWebPath = "pushResourceBundles/";
-		String absoluteDiskPath = request.getServletContext().getRealPath(relativeWebPath);
-		System.out.println(absoluteDiskPath);
-		
+		String absoluteDiskPath = request.getServletContext().getRealPath(relativeWebPath);	
 		
 		String dir = "pushResourceBundles";
 		File directory = new File(absoluteDiskPath + testplanId + File.separator);

@@ -55,17 +55,16 @@ import org.xml.sax.SAXException;
 
 import com.mongodb.MongoException;
 
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Case;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ContentDefinition;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DatatypeLink;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DynamicMapping;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DynamicMappingDefinition;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DynamicMappingItem;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Extensibility;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Field;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Group;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Mapping;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ProfileMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
@@ -74,8 +73,9 @@ import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRef;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRefOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Stability;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.TableLink;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Usage;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ValueSetBinding;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.VariesMapItem;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByID;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByName;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByNameOrByID;
@@ -182,7 +182,7 @@ public class ProfileServiceImpl implements ProfileService {
 		profile.setSegments(new Segments());
 		profile.setDatatypes(new Datatypes());
 
-		profile.setTables(this.deserializeXMLToTableLibrary(xmlValueSet));
+		profile.setTables(this.deserializeXMLToTableLibrary(xmlValueSet, profile.getMetaData().getHl7Version()));
 
 		this.conformanceStatements = this.deserializeXMLToConformanceStatements(xmlConstraints);
 		this.predicates = this.deserializeXMLToPredicates(xmlConstraints);
@@ -243,15 +243,14 @@ public class ProfileServiceImpl implements ProfileService {
 		List<SegmentRefOrGroup> segmentRefOrGroups = new ArrayList<SegmentRefOrGroup>();
 		NodeList nodes = elmMessage.getChildNodes();
 
+		int index = 0;
 		for (int i = 0; i < nodes.getLength(); i++) {
 			if (nodes.item(i).getNodeName().equals("Segment")) {
-				this.deserializeSegmentRef(elmConformanceProfile,
-						segmentRefOrGroups, (Element) nodes.item(i), segments,
-						datatypes);
+				index = index + 1;
+				this.deserializeSegmentRef(elmConformanceProfile, segmentRefOrGroups, (Element) nodes.item(i), segments, datatypes, index);
 			} else if (nodes.item(i).getNodeName().equals("Group")) {
-				this.deserializeGroup(elmConformanceProfile,
-						segmentRefOrGroups, (Element) nodes.item(i), segments,
-						datatypes);
+				index = index + 1;
+				this.deserializeGroup(elmConformanceProfile, segmentRefOrGroups, (Element) nodes.item(i), segments, datatypes, index);
 			}
 		}
 
@@ -259,7 +258,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 	}
 	
-	private void deserializeGroup(Element elmConformanceProfile, List<SegmentRefOrGroup> segmentRefOrGroups, Element groupElm, Segments segments, Datatypes datatypes) {
+	private void deserializeGroup(Element elmConformanceProfile, List<SegmentRefOrGroup> segmentRefOrGroups, Element groupElm, Segments segments, Datatypes datatypes, int position) {
 		Group groupObj = new Group();
 		groupObj.setId(ObjectId.get().toString());
 		groupObj.setMax(groupElm.getAttribute("Max"));
@@ -268,19 +267,23 @@ public class ProfileServiceImpl implements ProfileService {
 		groupObj.setUsage(Usage.fromValue(groupElm.getAttribute("Usage")));
 		groupObj.setPredicates(this.findPredicates(this.predicates.getGroups(), groupElm.getAttribute("ID"), groupElm.getAttribute("Name")));
 		groupObj.setConformanceStatements(this.findConformanceStatement(this.conformanceStatements.getGroups(), groupElm.getAttribute("ID"), groupElm.getAttribute("Name")));
+		groupObj.setPosition(position);
 
 		List<SegmentRefOrGroup> childSegmentRefOrGroups = new ArrayList<SegmentRefOrGroup>();
 
 		NodeList nodes = groupElm.getChildNodes();
+		int index = 0;
 		for (int i = 0; i < nodes.getLength(); i++) {
 			if (nodes.item(i).getNodeName().equals("Segment")) {
+				index = index + 1;
 				this.deserializeSegmentRef(elmConformanceProfile,
 						childSegmentRefOrGroups, (Element) nodes.item(i),
-						segments, datatypes);
+						segments, datatypes, index);
 			} else if (nodes.item(i).getNodeName().equals("Group")) {
+				index = index + 1;
 				this.deserializeGroup(elmConformanceProfile,
 						childSegmentRefOrGroups, (Element) nodes.item(i),
-						segments, datatypes);
+						segments, datatypes, index);
 			}
 		}
 
@@ -291,12 +294,13 @@ public class ProfileServiceImpl implements ProfileService {
 	
 	private void deserializeSegmentRef(Element elmConformanceProfile,
 			List<SegmentRefOrGroup> segmentRefOrGroups, Element segmentElm,
-			Segments segments, Datatypes datatypes) {
+			Segments segments, Datatypes datatypes, int position) {
 		SegmentRef segmentRefObj = new SegmentRef();
 		segmentRefObj.setId(ObjectId.get().toString());
 		segmentRefObj.setMax(segmentElm.getAttribute("Max"));
 		segmentRefObj.setMin(new Integer(segmentElm.getAttribute("Min")));
 		segmentRefObj.setUsage(Usage.fromValue(segmentElm.getAttribute("Usage")));
+		segmentRefObj.setPosition(position);
 		Segment s = this.segmentsMap.get(segmentElm.getAttribute("Ref"));
 		SegmentLink sl = new SegmentLink();
 		sl.setExt(s.getExt());
@@ -333,45 +337,41 @@ public class ProfileServiceImpl implements ProfileService {
 		segmentObj.setName(segmentElm.getAttribute("Name"));
 		segmentObj.setPredicates(this.findPredicates(this.predicates.getSegments(), segmentElm.getAttribute("ID"), segmentElm.getAttribute("Name")));
 		segmentObj.setConformanceStatements(this.findConformanceStatement(this.conformanceStatements.getSegments(), segmentElm.getAttribute("ID"), segmentElm.getAttribute("Name")));
-
+		segmentObj.setHl7Version(profile.getMetaData().getHl7Version());
 		
 		NodeList dynamicMapping = segmentElm.getElementsByTagName("Mapping");
-		DynamicMapping dynamicMappingObj = null;
+		DynamicMappingDefinition dynamicMappingObj = null;
 		if(dynamicMapping.getLength() > 0){
-			dynamicMappingObj = new DynamicMapping();
-			dynamicMappingObj.setId(ObjectId.get().toString());
+			dynamicMappingObj = new DynamicMappingDefinition();
 		}
 		
 		for (int i = 0; i < dynamicMapping.getLength(); i++) {
 			Element mappingElm = (Element)dynamicMapping.item(i);
-			Mapping mappingObj = new Mapping();
-			mappingObj.setId(ObjectId.get().toString());
-			mappingObj.setPosition(Integer.parseInt(mappingElm.getAttribute("Position")));
-			mappingObj.setReference(Integer.parseInt(mappingElm.getAttribute("Reference")));
-			NodeList cases = mappingElm.getElementsByTagName("Case");
+			VariesMapItem mappingStructure = new VariesMapItem();
+			mappingStructure.setHl7Version(segmentObj.getHl7Version());
+			mappingStructure.setReferenceLocation(mappingElm.getAttribute("Reference"));
+			mappingStructure.setSegmentName(segmentObj.getName());
+			mappingStructure.setTargetLocation(mappingElm.getAttribute("Position"));
+			dynamicMappingObj.setMappingStructure(mappingStructure);
 			
+			NodeList cases = mappingElm.getElementsByTagName("Case");
+			List<DynamicMappingItem> dynamicMappingItems = new ArrayList<DynamicMappingItem>();
 			for(int j = 0; j < cases.getLength(); j++) {
 				Element caseElm = (Element)cases.item(j);
-				Case caseObj = new Case();
-				caseObj.setId(ObjectId.get().toString());
-				caseObj.setValue(caseElm.getAttribute("Value"));
-				caseObj.setDatatype(this.findDatatype(caseElm.getAttribute("Datatype"), profile).getId());
-				
-				mappingObj.addCase(caseObj);
+				DynamicMappingItem dynamicMappingItem = new DynamicMappingItem();
+				dynamicMappingItem.setDatatypeId(this.findDatatype(caseElm.getAttribute("Datatype"), profile).getId());
+				dynamicMappingItem.setFirstReferenceValue(caseElm.getAttribute("Value"));
+				dynamicMappingItems.add(dynamicMappingItem);
 				
 			}
-			
-			
-			dynamicMappingObj.addMapping(mappingObj);
-			
+			dynamicMappingObj.setDynamicMappingItems(dynamicMappingItems);
 		}
-		
-		if(dynamicMappingObj != null) segmentObj.setDynamicMapping(dynamicMappingObj);
+		if(dynamicMappingObj != null) segmentObj.setDynamicMappingDefinition(dynamicMappingObj);
 		
 		NodeList fields = segmentElm.getElementsByTagName("Field");
 		for (int i = 0; i < fields.getLength(); i++) {
 			Element fieldElm = (Element) fields.item(i);
-			segmentObj.addField(this.deserializeField(fieldElm, segmentObj, profile, segmentElm.getAttribute("ID"), i));
+			segmentObj.addField(this.deserializeField(fieldElm, segmentObj, profile, segmentElm.getAttribute("ID"), (i + 1)));
 		}
 		return segmentObj;
 	}
@@ -388,6 +388,7 @@ public class ProfileServiceImpl implements ProfileService {
 		dl.setExt(d.getExt());
 		dl.setId(d.getId());
 		dl.setName(d.getName());
+		fieldObj.setPosition(position);
 		
 		fieldObj.setDatatype(dl);
 		fieldObj.setMinLength(new Integer(fieldElm.getAttribute("MinLength")));
@@ -397,18 +398,31 @@ public class ProfileServiceImpl implements ProfileService {
 		if(fieldElm.getAttribute("ConfLength") != null){
 			fieldObj.setConfLength(fieldElm.getAttribute("ConfLength"));
 		}
+		
 		if (fieldElm.getAttribute("Binding") != null) {
-			TableLink tl = new TableLink();
-			tl.setId(findTableIdByMappingId(fieldElm.getAttribute("Binding"), profile.getTables()));
-			tl.setBindingIdentifier(fieldElm.getAttribute("Binding"));
-			if (fieldElm.getAttribute("BindingStrength") != null) {
-				tl.setBindingStrength(fieldElm.getAttribute("BindingStrength"));
+			ValueSetBinding vsb = new ValueSetBinding();
+			String id = findTableIdByMappingId(fieldElm.getAttribute("Binding"), profile.getTables());
+
+			if(id != null){
+				vsb.setTableId(id);
+				vsb.setId(ObjectId.get().toString());
+				vsb.setLocation(fieldObj.getPosition() + "");
+				
+				if (fieldElm.getAttribute("BindingStrength") != null) {
+					vsb.setBindingStrength(fieldElm.getAttribute("BindingStrength"));
+				}
+				if (fieldElm.getAttribute("BindingLocation") != null) {
+					String bindingLocation = fieldElm.getAttribute("BindingLocation");
+					bindingLocation = bindingLocation.replaceAll(":", " or ");
+					vsb.setBindingLocation(bindingLocation);
+				}
+				vsb.setUsage(fieldObj.getUsage());
+				
+				segment.addValueSetBinding(vsb);
 			}
-			if (fieldElm.getAttribute("BindingLocation") != null) {
-				tl.setBindingLocation(fieldElm.getAttribute("BindingLocation"));
-			}
-			fieldObj.getTables().add(tl);
 		}
+		
+		
 		if(fieldElm.getAttribute("Hide") != null && fieldElm.getAttribute("Hide").equals("true") ){
 			fieldObj.setHide(true);
 		}else{
@@ -445,6 +459,7 @@ public class ProfileServiceImpl implements ProfileService {
 		if (!datatypesMap.keySet().contains(ID)) {
 			Datatype datatypeObj = new Datatype();
 			datatypeObj.setId(ObjectId.get().toString());
+			datatypeObj.setHl7Version(profile.getMetaData().getHl7Version());
 			datatypeObj.setDescription(elmDatatype.getAttribute("Description"));
 			if(elmDatatype.getAttribute("Label") != null &&  !elmDatatype.getAttribute("Label").equals("")){
 				datatypeObj.setLabel(elmDatatype.getAttribute("Label"));
@@ -457,8 +472,10 @@ public class ProfileServiceImpl implements ProfileService {
 			datatypeObj.setConformanceStatements(this.findConformanceStatement(this.conformanceStatements.getDatatypes(), ID, elmDatatype.getAttribute("Name")));
 
 			NodeList nodes = elmDatatype.getChildNodes();
+			int componentPosition = 0;
 			for (int i = 0; i < nodes.getLength(); i++) {
 				if (nodes.item(i).getNodeName().equals("Component")) {
+					componentPosition = componentPosition + 1;
 					Element elmComponent = (Element) nodes.item(i);
 					Component componentObj = new Component();
 					componentObj.setId(ObjectId.get().toString());
@@ -471,6 +488,7 @@ public class ProfileServiceImpl implements ProfileService {
 					dl.setName(datatype.getName());
 					dl.setExt(datatype.getExt());
 					componentObj.setDatatype(dl);
+					componentObj.setPosition(componentPosition);
 					componentObj.setMinLength(new Integer(elmComponent.getAttribute("MinLength")));
 					if (elmComponent.getAttribute("MaxLength") != null) {
 						componentObj.setMaxLength(elmComponent.getAttribute("MaxLength"));
@@ -480,34 +498,37 @@ public class ProfileServiceImpl implements ProfileService {
 					}
 
 					if (elmComponent.getAttribute("Binding") != null) {
-						TableLink tl = new TableLink();
-						tl.setId(findTableIdByMappingId(elmComponent.getAttribute("Binding"), profile.getTables()));
-						tl.setBindingIdentifier(elmComponent.getAttribute("Binding"));
-						if (elmComponent.getAttribute("BindingStrength") != null) {
-							tl.setBindingStrength(elmComponent.getAttribute("BindingStrength"));
+						ValueSetBinding vsb = new ValueSetBinding();
+						String id = findTableIdByMappingId(elmComponent.getAttribute("Binding"), profile.getTables());
+	
+						if(id != null){
+							vsb.setTableId(id);
+							vsb.setId(ObjectId.get().toString());
+							vsb.setLocation(componentObj.getPosition() + "");
+							
+							if (elmComponent.getAttribute("BindingStrength") != null) {
+								vsb.setBindingStrength(elmComponent.getAttribute("BindingStrength"));
+							}
+							if (elmComponent.getAttribute("BindingLocation") != null) {
+								String bindingLocation = elmComponent.getAttribute("BindingLocation");
+								bindingLocation = bindingLocation.replaceAll(":", " or ");
+								vsb.setBindingLocation(bindingLocation);
+							}
+							vsb.setUsage(componentObj.getUsage());
+							
+							datatypeObj.addValueSetBinding(vsb);
 						}
-						if (elmComponent.getAttribute("BindingLocation") != null) {
-							tl.setBindingLocation(elmComponent.getAttribute("BindingLocation"));
-						}
-						componentObj.getTables().add(tl);
 					}
-
 					if(elmComponent.getAttribute("Hide") != null && elmComponent.getAttribute("Hide").equals("true") ){
 						componentObj.setHide(true);
 					}else{
 						componentObj.setHide(false);
 					}
-					
 					datatypeObj.addComponent(componentObj);
 				}
 			}
-
-			// datatypeObj = this.deserializeDatatype(elmDatatype, profile,
-			// elmDatatypes);
 			datatypesMap.put(ID, datatypeObj);
-
 			return datatypeObj;
-
 		} else {
 			return datatypesMap.get(ID);
 		}
@@ -629,17 +650,17 @@ public class ProfileServiceImpl implements ProfileService {
 		}
 	}
 
-	public Tables deserializeXMLToTableLibrary(String xmlContents) {
+	public Tables deserializeXMLToTableLibrary(String xmlContents, String hl7Version) {
 		Document tableLibraryDoc = this.stringToDom(xmlContents);
 		Tables tableLibrary = new Tables();
 		Element elmTableLibrary = (Element) tableLibraryDoc.getElementsByTagName("ValueSetLibrary").item(0);
 		tableLibrary.setValueSetLibraryIdentifier(elmTableLibrary.getAttribute("ValueSetLibraryIdentifier"));
-		this.deserializeXMLToTable(elmTableLibrary, tableLibrary);
+		this.deserializeXMLToTable(elmTableLibrary, tableLibrary, hl7Version);
 
 		return tableLibrary;
 	}
 
-	private void deserializeXMLToTable(Element elmTableLibrary, Tables tableLibrary) {
+	private void deserializeXMLToTable(Element elmTableLibrary, Tables tableLibrary, String hl7Version) {
 		NodeList valueSetDefinitionsNode = elmTableLibrary.getElementsByTagName("ValueSetDefinitions");
 		for (int i = 0; i < valueSetDefinitionsNode.getLength(); i++) {
 			Element valueSetDefinitionsElement = (Element) valueSetDefinitionsNode.item(i);
@@ -649,6 +670,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 				Table tableObj = new Table();
 				tableObj.setId(ObjectId.get().toString());
+				tableObj.setHl7Version(hl7Version);
 				tableObj.setBindingIdentifier(elmTable.getAttribute("BindingIdentifier"));
 				tableObj.setName(elmTable.getAttribute("Name"));
 
