@@ -435,7 +435,7 @@ public class ExportUtil {
 			TestStoryConfigurationService testStoryConfigurationService, int index) throws Exception {
 		String groupPath = "";
 		if (path == null) {
-			groupPath = "TestGroup_" + index;
+			groupPath = tp.getId() + File.separator + "TestGroup_" + index;
 		} else {
 			groupPath = path + File.separator + "TestGroup_" + index;
 		}
@@ -476,7 +476,7 @@ public class ExportUtil {
 			TestStoryConfigurationService testStoryConfigurationService, int index) throws Exception {
 		String tcPath = "";
 		if (path == null) {
-			tcPath = "TestCase_" + index;
+			tcPath = tp.getId() + File.separator + "TestCase_" + index;
 		} else {
 			tcPath = path + File.separator + "TestCase_" + index;
 		}
@@ -762,9 +762,9 @@ public class ExportUtil {
 		byte[] buf = new byte[1024];
 		if (path == null) {
 			if (option.equals("ng-tab-html")) {
-				out.putNextEntry(new ZipEntry("TestStory.html"));
+				out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "TestStory.html"));
 			} else {
-				out.putNextEntry(new ZipEntry("TestStoryPDF.html"));
+				out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "TestStoryPDF.html"));
 			}
 		} else {
 			if (option.equals("ng-tab-html")) {
@@ -837,7 +837,7 @@ public class ExportUtil {
 		obj.put("skip", false);
 
 		byte[] buf = new byte[1024];
-		out.putNextEntry(new ZipEntry("TestPlan.json"));
+		out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "TestPlan.json"));
 		InputStream inTP = IOUtils.toInputStream(obj.toString());
 		int lenTP;
 		while ((lenTP = inTP.read(buf)) > 0) {
@@ -1099,7 +1099,7 @@ public class ExportUtil {
 		testPlanSummaryStr = testPlanSummaryStr.replace("?contentsHTML?", contentsHTML);
 
 		byte[] buf = new byte[1024];
-		out.putNextEntry(new ZipEntry("TestPlanSummary.html"));
+		out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "TestPlanSummary.html"));
 		InputStream inTestPlanSummary = IOUtils.toInputStream(testPlanSummaryStr);
 		int lenTestPlanSummary;
 		while ((lenTestPlanSummary = inTestPlanSummary.read(buf)) > 0) {

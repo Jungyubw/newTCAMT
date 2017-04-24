@@ -80,6 +80,42 @@ angular.module('tcl').controller('loginTestingTool', ['$scope','$rootScope', '$m
         });
         return delay.promise;
     };
+
+
+    $scope.deleteFromGVT = function(username, password,id) {
+        var delay = $q.defer();
+        var httpHeaders = {};
+        httpHeaders['Accept'] = 'application/json';
+        var auth =  base64.encode(username + ':' + password);
+        httpHeaders['gvt-auth'] =auth;
+        $http.post('api/testplans/' +  $rootScope.selectedTestPlan.longId+'/deleteFromGVT' ,$scope.testingUrl,{headers:httpHeaders}).then(function (re) {
+
+
+            if(response){
+
+                console.log("SUCCESS")
+                $mdDialog.hide();
+
+                $scope.alert=false;
+
+            }else{
+                $scope.alertText = "ERROR: Cannot access server. Please verify you Credentials";
+                $scope.alert=true;
+            }
+
+            delay.resolve(response);
+
+        }, function(er){
+            delay.reject(er);
+        });
+        return delay.promise;
+    };
+
+
+
+
+
+
     $scope.initAlert=function(){
         $scope.alert=false;
     }

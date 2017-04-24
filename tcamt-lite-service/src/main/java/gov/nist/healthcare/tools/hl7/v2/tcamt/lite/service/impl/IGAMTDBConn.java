@@ -170,7 +170,7 @@ public class IGAMTDBConn {
 	}
 
 	public Datatype findByNameAndVesionAndScope(String name, String hl7Version, String scope) {
-		BasicQuery query1 = new BasicQuery("{ name : '" + name + "', hl7Version : '" + hl7Version + "', scope : '", scope + "'}");
+		BasicQuery query1 = new BasicQuery("{ name : '" + name + "', hl7Version : '" + hl7Version + "', scope : '" + scope + "'}");
 	    return mongoOps.findOne(query1, Datatype.class);
 	}
 }
