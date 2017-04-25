@@ -533,7 +533,7 @@ public class ExportUtil {
 		this.generateTestStoryRB(out, ts.getTestStoryContent(), testStoryConfiguration, stepPath, tp, "ng-tab-html");
 		this.generateTestStoryRB(out, ts.getTestStoryContent(), testStoryConfiguration, stepPath, tp, "plain");
 
-		this.generateTestStepJsonRB(out, ts, stepPath, index);
+		this.generateTestStepJsonRB(out, ts, tp, stepPath, index);
 
 		if (ts.getConformanceProfileId() != null && !ts.getConformanceProfileId().equals("")) {
 			this.generateEr7Message(out, ts.getEr7Message(), stepPath);
@@ -718,7 +718,7 @@ public class ExportUtil {
 
 	}
 
-	private void generateTestStepJsonRB(ZipOutputStream out, TestStep ts, String teststepPath, int index)
+	private void generateTestStepJsonRB(ZipOutputStream out, TestStep ts, TestPlan tp, String teststepPath, int index)
 			throws IOException {
 		byte[] buf = new byte[1024];
 		out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestStep.json"));
@@ -729,7 +729,25 @@ public class ExportUtil {
 		obj.put("id", ts.getLongId());
 		obj.put("name", ts.getName());
 		obj.put("description", ts.getDescription());
-		obj.put("type", ts.getType());
+		if(ts.getType() == null){
+			if(tp.getType() != null && tp.getType().equals("Isolated")){
+				obj.put("type", "SUT_INITIATOR");	
+			}else {
+				obj.put("type", "DATAINSTANCE");	
+			}
+		}else {
+			if(ts.getType().equals("teststep")){
+				if(tp.getType() != null && tp.getType().equals("Isolated")){
+					obj.put("type", "SUT_INITIATOR");	
+				}else {
+					obj.put("type", "DATAINSTANCE");	
+				}
+			}else{
+				obj.put("type", ts.getType());	
+			}
+				
+		}
+		
 		obj.put("position", index);
 		
 		if(ts.getIntegrationProfileId() != null){
@@ -833,7 +851,11 @@ public class ExportUtil {
 		obj.put("position", index);
 		obj.put("type", tp.getType());
 		obj.put("transport", tp.isTransport());
-		obj.put("domain", tp.getDomain());
+		if(tp.getDomain() == null){
+			obj.put("domain", "NoDomain");
+		}else {
+			obj.put("domain", tp.getDomain());			
+		}
 		obj.put("skip", false);
 
 		byte[] buf = new byte[1024];

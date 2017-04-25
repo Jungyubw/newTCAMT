@@ -3980,7 +3980,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             var newTestStep = {
                 id: stepId,
                 longId: Math.random() * 1000000000,
-                type : "teststep",
                 name : "New Test Step",
 				isChanged : true,
                 position : $itemScope.$nodeScope.$modelValue.teststeps.length+1,
