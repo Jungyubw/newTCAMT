@@ -12,7 +12,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$rootScope.sr={
 			name:""
 	};
-
+	$scope.debugTp=function(tp){
+		console.log(tp);
+	};
 	$('#segmentTable').treetable({expandable:true});
 
 	$scope.currentNavItem="CfMetaData";

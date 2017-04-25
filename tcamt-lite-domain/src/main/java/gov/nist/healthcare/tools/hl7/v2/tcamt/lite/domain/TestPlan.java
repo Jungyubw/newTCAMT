@@ -53,15 +53,15 @@ public class TestPlan implements Serializable, Cloneable {
 	private String globalManualTestStepConfigId;
 	private boolean emptyStoryContentIgnored;
 
-	private boolean GvtPresence = false;
-	private String GvtDate = null;
+	private boolean gvtPresence = false;
+	private String gvtDate = null;
 
 	public boolean isGvtPresence() {
-		return GvtPresence;
+		return gvtPresence;
 	}
 
 	public void setGvtPresence(boolean gvtPresence) {
-		GvtPresence = gvtPresence;
+		this.gvtPresence = gvtPresence;
 	}
 
 	public TestPlan() {
@@ -291,11 +291,11 @@ public class TestPlan implements Serializable, Cloneable {
 	}
 
 	public String getGvtDate() {
-		return GvtDate;
+		return this.gvtDate;
 	}
 
 	public void setGvtDate(String gvtDate) {
-		GvtDate = gvtDate;
+		this.gvtDate = gvtDate;
 	}
 
 	public Long getLongId() {

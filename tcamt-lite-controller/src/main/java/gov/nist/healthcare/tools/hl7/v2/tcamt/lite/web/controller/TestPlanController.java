@@ -84,10 +84,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAll
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 import gov.nist.healthcare.tools.hl7.v2.xml.ExportTool;
-import gov.nist.hit.resources.deploy.client.RequestModel;
-import gov.nist.hit.resources.deploy.client.ResourceClient;
 import gov.nist.hit.resources.deploy.client.SSLHL7v2ResourceClient;
-import gov.nist.hit.resources.deploy.factory.ResourceClientFactory;
 import gov.nist.hit.resources.deploy.model.Payload;
 import gov.nist.hit.resources.deploy.model.ResourceType;
 
@@ -103,7 +100,7 @@ public class TestPlanController extends CommonController {
 
 	@Autowired
 	private ResourceBundleService resourceBundleService;
-
+	@Autowired
 	private TestPlanRepository testPlanRepository;
 
 	@Autowired
@@ -240,6 +237,8 @@ public class TestPlanController extends CommonController {
 
 		System.out.println("SAVE REQ");
 		try {
+			
+			
 			User u = userService.getCurrentUser();
 			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 			if (account == null)
@@ -491,9 +490,8 @@ public class TestPlanController extends CommonController {
 	@RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST, produces = "application/json")
 	public void pushRB(@PathVariable("testplanId") String testplanId, @RequestBody String host,
 			@RequestHeader("gvt-auth") String authorization, HttpServletRequest request) throws Exception {
-		host = "http://129.6.225.48:8080/iztool/";
 
-		SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, "");
+		SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
 		TestPlan tp = findTestPlan(testplanId);
 		InputStream testPlanIO = null;
 		testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
@@ -572,10 +570,10 @@ public class TestPlanController extends CommonController {
 			 client.addOrUpdate(new Payload(xmlArrayIO[2]),
 			 ResourceType.CONSTRAINTS);
 			 client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN);
-
-//			 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//			 tp.setGvtDate(dateFormat.format(Calendar.getInstance().getTime()));
-//			 testPlanRepository.save(tp);
+			 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			 tp.setGvtDate(dateFormat.format(Calendar.getInstance().getTime()));
+			 tp.setGvtPresence(true);
+			 testPlanRepository.save(tp);
 			 User u = userService.getCurrentUser();
 
 			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
@@ -597,25 +595,25 @@ public class TestPlanController extends CommonController {
 
 	@RequestMapping(value = "/createSession", method = RequestMethod.POST, produces = "application/json")
 	public boolean createSession(@RequestBody String host, @RequestHeader("gvt-auth") String authorization) {
-		host = "http://129.6.225.48:8080/iztool/";
+//		host = "http://129.6.225.48:8080/gvt/";
 		try {
-			// ResourceClient client =
-			// ResourceClientFactory.createResourceClientWithDefault(host,
-			// authorization);
-			return true;
+			SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
+
+			return client.validCredentials();
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
 	@RequestMapping(value = "{persistantId}/deleteFromGVT", method = RequestMethod.POST, produces = "application/json")
-	public boolean createSession(@PathVariable("persistantId") Long persistantId, @RequestBody String host,
+	public boolean deleteFromGvt(@PathVariable("persistantId") Long persistantId, @RequestBody String host,
 			@RequestHeader("gvt-auth") String authorization) {
-		host = "http://129.6.225.48:8080/iztool/";
 		try {
-			SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, "");
+			SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
+			if(client.validCredentials()){
+				client.delete(persistantId,ResourceType.TEST_PLAN);
 
-			client.delete(persistantId,ResourceType.TEST_PLAN);
+			}
 			return client.validCredentials();
 		} catch (Exception e) {
 			return false;

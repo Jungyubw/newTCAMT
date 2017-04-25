@@ -22,7 +22,7 @@ angular.module('tcl').factory('loginTestingToolSvc',
             $http.post('api/testplans/pushRB/'+testplanId,host,{headers:httpHeaders}).then(function (re) {
 
 
-
+                delay.resolve(re);
 
                 console.log("SUCCESS")
 
@@ -58,6 +58,60 @@ angular.module('tcl').factory('loginTestingToolSvc',
             httpHeaders['gvt-auth'] = auth;
             return
         };
+
+
+        svc.deleteFromGVT = function(username, password,testingUrl) {
+            var delay = $q.defer();
+            var httpHeaders = {};
+            httpHeaders['Accept'] = 'application/json';
+            var auth =  base64.encode(username + ':' + password);
+            httpHeaders['gvt-auth'] =auth;
+            $http.post('api/testplans/' +  $rootScope.selectedTestPlan.longId+'/deleteFromGVT' ,testingUrl,{headers:httpHeaders}).then(function (re) {
+
+
+
+                delay.resolve(re);
+                console.log(re);
+
+            }, function(er){
+                delay.reject(er);
+            });
+            return delay.promise;
+        };
+
+
+        //
+        // $svc.deleteFromGVT = function(username, password) {
+        //     var delay = $q.defer();
+        //     var httpHeaders = {};
+        //     httpHeaders['Accept'] = 'application/json';
+        //     var auth =  base64.encode(username + ':' + password);
+        //     httpHeaders['gvt-auth'] =auth;
+        //     $http.post('api/testplans/' +  $rootScope.selectedTestPlan.longId+'/deleteFromGVT' ,$scope.testingUrl,{headers:httpHeaders}).then(function (re) {
+        //
+        //
+        //         if(response){
+        //             $rootScope.selectedTestPlan.gvtPresence=false;
+        //
+        //             $mdDialog.hide();
+        //
+        //             $scope.alert=false;
+        //
+        //         }else{
+        //             $scope.alertText = "ERROR: Cannot access server. Please verify you Credentials";
+        //             $scope.alert=true;
+        //         }
+        //
+        //         delay.resolve(response);
+        //
+        //     }, function(er){
+        //         delay.reject(er);
+        //     });
+        //     return delay.promise;
+        // };
+
+
+
 
         return svc;
     }]);

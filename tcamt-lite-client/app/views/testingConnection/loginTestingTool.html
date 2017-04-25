@@ -56,12 +56,10 @@
                     ng-disabled='!testingLoginForm.$valid' ng-if="mode!=='Deleting'">
                 <i class="fa fa-sign-in"></i>   Confirm
             </md-button>
-                <md-button  ng-if="mode=='Deleting'"flex ng-click="deleteFromGVT(user.username,user.password,testplan.longId)" class="btn btn-raised btn-primary" type="submit"
+                <md-button  ng-if="mode=='Deleting'"flex ng-click="deleteFromGVT(user.username,user.password)" class="btn btn-raised btn-primary" type="submit"
                            ng-disabled='!testingLoginForm.$valid'>
                     <i class="fa fa-sign-in"></i>   Confirm
                 </md-button>
-                193745134
-
             <md-button flex class="btn btn-raised btn-warning" ng-click="cancel()">
                 <i class="fa fa-times"></i>  <span msg key="login.button.cancel"></span>
             </md-button>
