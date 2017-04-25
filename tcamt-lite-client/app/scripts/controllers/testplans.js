@@ -1163,6 +1163,35 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	};
 
+
+
+    $scope.editTestPlan = function (testplan) {
+            waitingDialog.show('Opening Test Plan...', {dialogSize: 'xs', progressType: 'info'});
+                $rootScope.selectedTestPlan = testplan;
+
+
+                $timeout(function () {
+                    $scope.updateCurrentTitle("Test Plan", $rootScope.selectedTestPlan.name);
+                    $scope.subview = "EditTestPlanMetadata.html";
+                }, 0);
+                $timeout(function () {
+                    $rootScope.selectedTemplate=null;
+                    $rootScope.selectedSegmentNode =null;
+                    $rootScope.selectedTestStep=null;
+                    $rootScope.selectedTestCaseGroup = null;
+                    $rootScope.selectedTestCase = null;
+                    $scope.editor = null;
+                    $scope.editorValidation = null;
+
+
+
+
+                    waitingDialog.hide();
+                }, 100);
+
+
+    };
+
 	$scope.updateTestGroupTestStoryConfig = function (group) {
         if(group.testStoryConfigId){
             group.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == group.testStoryConfigId; });
