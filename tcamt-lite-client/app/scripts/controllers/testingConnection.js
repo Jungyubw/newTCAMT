@@ -90,9 +90,10 @@ angular.module('tcl').controller('loginTestingTool', ['$scope','$rootScope', '$m
 
         loginTestingToolSvc.deleteFromGVT(username, password,$rootScope.testingUrl).then(function (response) {
 
-
+            var response=angular.fromJson(response.data);
             if(response){
                 $rootScope.selectedTestPlan.gvtPresence=false;
+
 
 
 

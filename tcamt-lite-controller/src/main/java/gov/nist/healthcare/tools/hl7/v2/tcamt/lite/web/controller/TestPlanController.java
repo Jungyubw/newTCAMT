@@ -605,16 +605,23 @@ public class TestPlanController extends CommonController {
 		}
 	}
 
-	@RequestMapping(value = "{persistantId}/deleteFromGVT", method = RequestMethod.POST, produces = "application/json")
-	public boolean deleteFromGvt(@PathVariable("persistantId") Long persistantId, @RequestBody String host,
+	@RequestMapping(value = "{id}/deleteFromGVT", method = RequestMethod.POST, produces = "application/json")
+	public boolean deleteFromGvt(@PathVariable("id") String id, @RequestBody String host,
 			@RequestHeader("gvt-auth") String authorization) {
 		try {
 			SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
 			if(client.validCredentials()){
-				client.delete(persistantId,ResourceType.TEST_PLAN);
-
+				TestPlan tp = findTestPlan(id);
+				client.delete(tp.getLongId(),ResourceType.TEST_PLAN);
+				
+				tp.setGvtPresence(false);
+				tp.setGvtDate(null);
+				testPlanRepository.save(tp);
+				return true;
+			}else{
+				return false;
 			}
-			return client.validCredentials();
+			
 		} catch (Exception e) {
 			return false;
 		}
