@@ -1,10 +1,7 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,9 +17,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,7 +80,6 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config.TestPlanChangeComm
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAllowException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
-import gov.nist.healthcare.tools.hl7.v2.xml.ExportTool;
 import gov.nist.hit.resources.deploy.client.SSLHL7v2ResourceClient;
 import gov.nist.hit.resources.deploy.model.Payload;
 import gov.nist.hit.resources.deploy.model.ResourceType;
@@ -237,8 +233,7 @@ public class TestPlanController extends CommonController {
 
 		System.out.println("SAVE REQ");
 		try {
-			
-			
+
 			User u = userService.getCurrentUser();
 			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 			if (account == null)
@@ -379,14 +374,6 @@ public class TestPlanController extends CommonController {
 		this.downloadResourceBundleZip(id, request, response);
 	}
 
-	private static String getBaseUrl(HttpServletRequest request) {
-		String scheme = request.getScheme() + "://";
-		String serverName = request.getServerName();
-		String serverPort = (request.getServerPort() == 80) ? "" : ":" + request.getServerPort();
-		String contextPath = request.getContextPath();
-		return scheme + serverName + serverPort + contextPath;
-	}
-
 	// ------_ABDEL ----
 	public static String getResourcesFromZip(InputStream stream) throws Exception {
 		// Create TEMP directory
@@ -425,67 +412,6 @@ public class TestPlanController extends CommonController {
 		}
 	}
 
-	public InputStream refactor(InputStream zip) throws Exception {
-		String toZip = this.getResourcesFromZip(zip);
-		File directory = new File(toZip);
-		List<String> fileList = getFileList(new File(toZip));
-		File tmpDir = Files.createTempDir();
-		tmpDir.mkdir();
-
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ZipOutputStream zos = new ZipOutputStream(out);
-
-		for (String filePath : fileList) {
-			System.out.println("Compressing: " + filePath);
-
-			//
-			// Creates a zip entry.
-			//
-			String name = filePath.substring(directory.getAbsolutePath().length() + 1, filePath.length());
-			ZipEntry zipEntry = new ZipEntry(name);
-			zos.putNextEntry(zipEntry);
-
-			//
-			// Read file content and write to zip output stream.
-			//
-			FileInputStream fis = new FileInputStream(filePath);
-			byte[] buffer = new byte[1024];
-			int length;
-			while ((length = fis.read(buffer)) > 0) {
-				zos.write(buffer, 0, length);
-			}
-
-			//
-			// Close the zip entry and the file input stream.
-			//
-			zos.closeEntry();
-			fis.close();
-		}
-
-		//
-		// Close zip output stream and file output stream. This will
-		// complete the compression process.
-		//
-		zos.close();
-		return new ByteArrayInputStream(out.toByteArray());
-
-	}
-
-	private List<String> getFileList(File directory) {
-		List<String> fileList = new ArrayList<>();
-		File[] files = directory.listFiles();
-		if (files != null && files.length > 0) {
-			for (File file : files) {
-				if (file.isFile()) {
-					fileList.add(file.getAbsolutePath());
-				} else {
-					getFileList(file);
-				}
-			}
-		}
-		return fileList;
-	}
-
 	// ----
 	@RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST, produces = "application/json")
 	public void pushRB(@PathVariable("testplanId") String testplanId, @RequestBody String host,
@@ -495,26 +421,6 @@ public class TestPlanController extends CommonController {
 		TestPlan tp = findTestPlan(testplanId);
 		InputStream testPlanIO = null;
 		testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService);
-
-		String relativeWebPath = "pushResourceBundles/";
-		String absoluteDiskPath = request.getServletContext().getRealPath(relativeWebPath);
-		System.out.println(absoluteDiskPath);
-
-
-		String dir = "pushResourceBundles";
-		File directory = new File(absoluteDiskPath + testplanId + File.separator);
-		directory.mkdirs();
-		OutputStream testPlanOS = new FileOutputStream(
-				absoluteDiskPath + testplanId + File.separator + "Contextbasedtemp.zip");
-		this.generateFileFromInputStream(testPlanOS, testPlanIO);
-
-		// new ExportTool().unZipIt(absoluteDiskPath + testplanId +
-		// File.separator + "Contextbasedtemp.zip", absoluteDiskPath +
-		// testplanId + File.separator + "Contextbased");
-		// new ExportTool().zipIt(absoluteDiskPath + testplanId + File.separator
-		// + "Contextbased.zip", absoluteDiskPath + testplanId + File.separator
-		// + "Contextbased");
-		//
 
 		Map<String, String> ipidMap = new HashMap<String, String>();
 
@@ -533,48 +439,22 @@ public class TestPlanController extends CommonController {
 		InputStream[] xmlArrayIO = new InputStream[3];
 		xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(ipidMap.keySet(), profileService);
 
-		OutputStream profileOS = new FileOutputStream(absoluteDiskPath + testplanId + File.separator + "Profile.zip");
-		OutputStream valueSetOS = new FileOutputStream(absoluteDiskPath + testplanId + File.separator + "ValueSet.zip");
-		OutputStream constraintsOS = new FileOutputStream(
-				absoluteDiskPath + testplanId + File.separator + "Constraints.zip");
-
-		this.generateFileFromInputStream(profileOS, xmlArrayIO[0]);
-		this.generateFileFromInputStream(valueSetOS, xmlArrayIO[1]);
-		this.generateFileFromInputStream(constraintsOS, xmlArrayIO[2]);
-
 		try {
-
-			String baseURL = TestPlanController.getBaseUrl(request);
-
-			String url = baseURL + File.separator + "pushResourceBundles" + File.separator + testplanId + File.separator
-					+ "Contextbased.zip";
-			String profileUrl = baseURL + File.separator + "pushResourceBundles" + File.separator + testplanId
-					+ File.separator + "Profile.zip";
-			String ValueSetUrl = baseURL + File.separator + "pushResourceBundles" + File.separator + testplanId
-					+ File.separator + "ValueSet.zip";
-			String ConstraintsUrl = baseURL + File.separator + "pushResourceBundles" + File.separator + testplanId
-					+ File.separator + "Constraints.zip";
-
-			System.out.println(profileUrl);
-
 			testPlanIO.reset();
 			// String xx = TestPlanController.getResourcesFromZip(testPlanIO);
 			// System.out.println("DEBUG-HT "+xx);
 			xmlArrayIO[0].reset();
 			xmlArrayIO[1].reset();
 			xmlArrayIO[2].reset();
-			 client.addOrUpdate(new Payload(xmlArrayIO[0]),
-			 ResourceType.PROFILE);
-			 client.addOrUpdate(new Payload(xmlArrayIO[1]),
-			 ResourceType.VALUE_SET);
-			 client.addOrUpdate(new Payload(xmlArrayIO[2]),
-			 ResourceType.CONSTRAINTS);
-			 client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN);
-			 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-			 tp.setGvtDate(dateFormat.format(Calendar.getInstance().getTime()));
-			 tp.setGvtPresence(true);
-			 testPlanRepository.save(tp);
-			 User u = userService.getCurrentUser();
+			client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE);
+			client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET);
+			client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS);
+			client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN);
+			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			tp.setGvtDate(dateFormat.format(Calendar.getInstance().getTime()));
+			tp.setGvtPresence(true);
+			testPlanRepository.save(tp);
+			User u = userService.getCurrentUser();
 
 			Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 
@@ -595,7 +475,7 @@ public class TestPlanController extends CommonController {
 
 	@RequestMapping(value = "/createSession", method = RequestMethod.POST, produces = "application/json")
 	public boolean createSession(@RequestBody String host, @RequestHeader("gvt-auth") String authorization) {
-//		host = "http://129.6.225.48:8080/gvt/";
+		// host = "http://129.6.225.48:8080/gvt/";
 		try {
 			SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
 
@@ -610,8 +490,8 @@ public class TestPlanController extends CommonController {
 			@RequestHeader("gvt-auth") String authorization) {
 		try {
 			SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
-			if(client.validCredentials()){
-				client.delete(persistantId,ResourceType.TEST_PLAN);
+			if (client.validCredentials()) {
+				client.delete(persistantId, ResourceType.TEST_PLAN);
 
 			}
 			return client.validCredentials();
@@ -769,6 +649,9 @@ public class TestPlanController extends CommonController {
 		}
 		TestPlan tp = new TestPlan();
 		JSONObject obj = new JSONObject(tpds.getJsonTestPlanFileStr());
+		long range = Long.MAX_VALUE;
+		Random r = new Random();
+		tp.setLongId((long) (r.nextDouble() * range));
 		tp.setName((String) obj.get("name"));
 		tp.setAccountId(account.getId());
 		tp.setCoverPageDate((String) obj.get("coverPageDate"));
@@ -787,6 +670,7 @@ public class TestPlanController extends CommonController {
 			JSONObject g = groups.getJSONObject(i);
 
 			TestCaseGroup tcg = new TestCaseGroup();
+			tcg.setLongId((long) (r.nextDouble() * range));
 			tcg.setDescription(Jsoup.parse((String) g.get("description")).text());
 			tcg.setName((String) g.get("name"));
 			tcg.setType("testcasegroup");
@@ -796,6 +680,7 @@ public class TestPlanController extends CommonController {
 				JSONObject c = testcases.getJSONObject(j);
 
 				TestCase tc = new TestCase();
+				tc.setLongId((long) (r.nextDouble() * range));
 				tc.setDescription(Jsoup.parse((String) c.get("description")).text());
 				tc.setName((String) c.get("name"));
 				tc.setProtocol("soap");
@@ -816,6 +701,7 @@ public class TestPlanController extends CommonController {
 					JSONObject s = teststeps.getJSONObject(k);
 
 					TestStep ts = new TestStep();
+					ts.setLongId((long) (r.nextDouble() * range));
 					ts.setDescription(Jsoup.parse((String) s.get("description")).text());
 
 					JSONObject message = (JSONObject) s.get("message");
@@ -941,6 +827,5 @@ public class TestPlanController extends CommonController {
 			log.error(ex.getMessage(), ex);
 		}
 	}
-
 
 }

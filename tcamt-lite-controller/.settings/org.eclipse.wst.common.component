@@ -10,13 +10,13 @@
         <dependent-module archiveName="igamt-lite-domain-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/igamt-lite-domain/igamt-lite-domain">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="tcamt-lite-domain-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/tcamt-lite-domain/tcamt-lite-domain">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="tcamt-lite-service-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/tcamt-lite-service/tcamt-lite-service">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="tcamt-lite-repo-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/tcamt-lite-repo/tcamt-lite-repo">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="tcamt-lite-domain-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/tcamt-lite-domain/tcamt-lite-domain">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="igamt-lite-acmgt-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/igamt-lite-acmgt/igamt-lite-acmgt">
