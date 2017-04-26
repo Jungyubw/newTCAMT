@@ -66,7 +66,7 @@ angular.module('tcl').factory('loginTestingToolSvc',
             httpHeaders['Accept'] = 'application/json';
             var auth =  base64.encode(username + ':' + password);
             httpHeaders['gvt-auth'] =auth;
-            $http.post('api/testplans/' +  $rootScope.selectedTestPlan.longId+'/deleteFromGVT' ,testingUrl,{headers:httpHeaders}).then(function (re) {
+            $http.post('api/testplans/' +  $rootScope.selectedTestPlan.id+'/deleteFromGVT' ,testingUrl,{headers:httpHeaders}).then(function (re) {
 
 
 
