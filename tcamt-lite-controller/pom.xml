@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>gov.nist.healthcare.tools.hl7.v2.xml</groupId>
 			<artifactId>xml-tool</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.9.1</version>
 		</dependency>
 
 		<dependency>

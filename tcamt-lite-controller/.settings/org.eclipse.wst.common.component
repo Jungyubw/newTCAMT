@@ -4,7 +4,7 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <dependent-module archiveName="xml-tool-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/NIST_IGAMT_TCAMT_XML_Tool/NIST_IGAMT_TCAMT_XML_Tool">
+        <dependent-module archiveName="xml-tool-0.9.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/NIST_IGAMT_TCAMT_XML_Tool/NIST_IGAMT_TCAMT_XML_Tool">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="igamt-lite-domain-1.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/igamt-lite-domain/igamt-lite-domain">
