@@ -63,9 +63,9 @@ public class Bootstrap implements InitializingBean {
 //		updateDefaultConfig();
 //		
 //		
-		updateHL7Version();
+//		updateHL7Version();
 //		
-		updateLongIDforTestPlan();
+//		updateLongIDforTestPlan();
 	}
 
 	private void updateLongIDforTestPlan() throws TestPlanException{

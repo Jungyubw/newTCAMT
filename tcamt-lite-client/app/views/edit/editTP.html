@@ -13,23 +13,23 @@
 <ng-include src="'views/edit/editTestCaseGroup.html'"></ng-include>
 <ng-include src="'views/edit/editTestCase.html'"></ng-include>
 <ng-include src="'views/edit/editTestStep.html'"></ng-include>
-<div class="row" ng-show="!selectedTestPlan">
+<div class="row" ng-if="!selectedTestPlan">
     <div class="col-md-12">
         <p>No Test Plan Selected.</p>
     </div>
 </div>
-<div ng-show="selectedTestPlan">
+<div ng-if="selectedTestPlan">
 	<div class="row">
-    	<div class="col-md-1 col-1-percent" ng-show="hideToc" style="margin-right:6px">
-        	<button title="Show Table of Contents" class="btn btn-xs btn-primary" ng-click="hideToc = !hideToc" style="background-color:#293856;">
+    	<div class="col-md-1 col-1-percent" ng-if="hideToc" style="margin-right:6px">
+        	<button title="Show Table of Contents" class="btn btn-xs btn-primary" ng-click="hideOrShowToc();" style="background-color:#293856;">
             	<i class="fa fa-caret-right"></i>
         	</button>
    		</div>
-    	<div ng-show="!hideToc" class="col-md-3">
+    	<div ng-if="!hideToc" class="col-md-3">
         	<div class="panel panel-primary">
             	<div class="panel-heading panel-heading-collapsable" style="background-color:#293856;">
                 	<i class="glyphicon glyphicon-list"></i> <strong>TestPlan Navigation Tree</strong>
-                	<button title="Hide Table of Contents" class="btn btn-xs btn-default pull-right" style="margin:0px;background-color:#eeeeee;" ng-click="hideToc = !hideToc">
+                	<button title="Hide Table of Contents" class="btn btn-xs btn-default pull-right" style="margin:0px;background-color:#eeeeee;" ng-click="hideOrShowToc();">
                     	<i class="fa fa-caret-left"></i>
                 	</button>
             	</div>
@@ -106,11 +106,11 @@
         	<div class="panel panel-primary" style="margin-bottom:5px;">
             	<div class="panel-heading" style="background-color:#293856"><strong>{{CurrentTitle}}</strong></div>
             	<div class="panel-body" style="padding-bottom:100px;height:{{igHeigh+templateHeigh+tocHeigh+158}}px;">
-            		<div class="col-md-12" ng-show="subview === null||subview===undefined|| !subview">
+            		<div class="col-md-12" ng-if="subview === null||subview===undefined|| !subview">
             			<p> No Element Selected </p>
             		</div>
 
-                	<div id="edit" ng-show="subview !== undefined" style="width:100%">
+                	<div id="edit" ng-if="subview !== undefined" style="width:100%">
                     	<ng-include src="subview"></ng-include>
                 	</div>
             	</div>

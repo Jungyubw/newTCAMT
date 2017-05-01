@@ -99,8 +99,8 @@ body {
 								<md-input-container style="width: 100%;">
 									<label>Empty Content in TestStory</label>
 									<md-switch ng-model="selectedTestPlan.emptyStoryContentIgnored" ng-change="recordChanged(selectedTestPlan);">
-										<div ng-show="selectedTestPlan.emptyStoryContentIgnored">will be ignored</div>
-										<div ng-show="!selectedTestPlan.emptyStoryContentIgnored">will be contained</div>
+										<div ng-if="selectedTestPlan.emptyStoryContentIgnored">will be ignored</div>
+										<div ng-if="!selectedTestPlan.emptyStoryContentIgnored">will be contained</div>
 									</md-switch>
 								</md-input-container>
 							</div>

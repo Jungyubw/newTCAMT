@@ -416,19 +416,44 @@ public class ExportUtil {
 		return coverpageStr;
 	}
 
-	public InputStream exportResourceBundleAsZip(TestPlan tp,
-			TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+	public InputStream exportResourceBundleAsZip(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		ByteArrayOutputStream outputStream = null;
 		byte[] bytes;
 		outputStream = new ByteArrayOutputStream();
 		ZipOutputStream out = new ZipOutputStream(outputStream);
-
+		this.genCoverAsHtml(out, tp);
+		this.genPackagePages(out, tp, testStoryConfigurationService);
 		this.generateTestPlanSummary(out, tp, testStoryConfigurationService);
 		this.generateTestPlanRB(out, tp, testStoryConfigurationService);
 
 		out.close();
 		bytes = outputStream.toByteArray();
 		return new ByteArrayInputStream(bytes);
+	}
+
+	private void genCoverAsHtml(ZipOutputStream out, TestPlan tp) throws Exception {
+		byte[] buf = new byte[1024];
+		out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "CoverPage.html"));
+		InputStream inCoverPager = this.exportCoverAsHtml(tp);
+		int lenTestPlanSummary;
+		while ((lenTestPlanSummary = inCoverPager.read(buf)) > 0) {
+			out.write(buf, 0, lenTestPlanSummary);
+		}
+		out.closeEntry();
+		inCoverPager.close();
+	}
+
+	private void genPackagePages(ZipOutputStream out, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+		
+		byte[] buf = new byte[1024];
+		out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "TestPackage.html"));
+		InputStream inTestPackage = this.exportTestPackageAsHtml(tp, testStoryConfigurationService);
+		int lenTestPlanSummary;
+		while ((lenTestPlanSummary = inTestPackage.read(buf)) > 0) {
+			out.write(buf, 0, lenTestPlanSummary);
+		}
+		out.closeEntry();
+		inTestPackage.close();
 	}
 
 	private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path, TestPlan tp,
@@ -559,7 +584,6 @@ public class ExportUtil {
 	private void generateTestPlanRB(ZipOutputStream out, TestPlan tp,
 			TestStoryConfigurationService testStoryConfigurationService) throws Exception {
 		this.generateTestPlanJsonRB(out, tp, 1);
-
 		String testStoryConfigId = null;
 		if (tp.getTestStoryConfigId() != null) {
 			testStoryConfigId = tp.getTestStoryConfigId();
