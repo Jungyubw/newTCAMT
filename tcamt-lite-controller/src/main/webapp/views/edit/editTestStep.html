@@ -5,7 +5,7 @@
 		antiClickjack.parentNode.removeChild(antiClickjack);
 	} else {
 		top.location = self.location;
-	}</script> <script type="text/ng-template" id="EditTestStepMetadata.html"><div ng-show="selectedTestStep">
+	}</script> <script type="text/ng-template" id="EditTestStepMetadata.html"><div ng-if="selectedTestStep">
 		<div ng-cloak>
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom md-selected="selectedTestStepTab.tabNum">
@@ -29,7 +29,7 @@
 								</div>
 							</div>
 
-							<div class="row" ng-show="selectedTestPlan.transport">
+							<div class="row" ng-if="selectedTestPlan.transport">
 								<div class="col-md-12">
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
@@ -46,7 +46,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="row" ng-show="!selectedTestPlan.transport">
+							<div class="row" ng-if="!selectedTestPlan.transport">
 								<div class="col-md-12">
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
@@ -59,7 +59,7 @@
 								</div>
 							</div>
 
-							<div class="row" ng-show="selectedIntegrationProfile">
+							<div class="row" ng-if="selectedIntegrationProfile">
 								<div class="col-md-12">
 									<button title="Delete Profile" type="button" class="btn btn-danger btn-xs" ng-click="deleteProfile();">
 										<span><i class="fa fa-cross fa-fw"></i> Delete Profile (Make Manual TestStep)</span>
@@ -114,15 +114,15 @@
 								<md-input-container style="width: 100%;">
 									<label>TestStep Test Story Configuration</label>
 									<md-select ng-model="selectedTestStep.testStoryConfigId" ng-change="recordChanged(selectedTestStep);updateTestStoryConfigForTestStep();">
-										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>
+										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs track by config.id">{{::config.name}}</md-option>
 									</md-select>
 								</md-input-container>
 								<uib-accordion close-others="true">
-									<uib-accordion-group  ng-repeat ="entry in selectedTestStep.testStoryConfig.testStoryConfig" ng-init="status = {isOpen: false}" is-open="status.isOpen" ng-if="entry.present" >
+									<uib-accordion-group  ng-repeat ="entry in selectedTestStep.testStoryConfig.testStoryConfig track by entry.id" ng-init="status = {isOpen: false}" is-open="status.isOpen" ng-if="entry.present" >
 										<uib-accordion-heading>
 											<span style="color: white !important;">
 												<i class="fa" ng-class="{'fa-caret-down': status.isOpen, 'fa-caret-right': !status.isOpen}"></i>
-											{{entry.title}}
+											{{::entry.title}}
 											</span>
 										</uib-accordion-heading>
 										<div class="col-md-12">
@@ -182,7 +182,7 @@
 												<i class="fa fa-file-text-o fa-fw"></i> Segments List
 											</span>
 										</uib-accordion-heading>
-										<div class="col-md-12">
+										<div ng-if="testDataAccordi.segmentList" class="col-md-12">
 											<div class="table-responsive">
 												<table class="table table-striped table-bordered">
 													<thead>
@@ -196,13 +196,13 @@
 													<tbody>
 													<tr ng-repeat="segment in segmentList | filter:filterForSegmentList">
 														<td class="col-md-2">
-															{{segment.iPath}}
+															{{::segment.iPath}}
 														</td>
 														<td class="col-md-7">
-															<textarea disabled class="form-control">{{segment.segmentStr}}</textarea>
+															<textarea disabled class="form-control">{{::segment.segmentStr}}</textarea>
 														</td>
 														<td class="col-md-2">
-															{{segment.usagePath}}
+															{{::segment.usagePath}}
 														</td>
 														<td class="col-md-1">
 															<button title="Select Segment"
@@ -224,9 +224,9 @@
 												<i class="fa fa-pencil fa-fw"></i> Selected Segment
 											</span>
 										</uib-accordion-heading>
-										<div class="col-md-12" ng-if="!selectedSegmentNode.segment"><p style ="color:red;"> No Segment Selected</p></div>
+										<div class="col-md-12" ng-if="!selectedSegmentNode.segment || !testDataAccordi.selectedSegment"><p style ="color:red;"> No Segment Selected</p></div>
 
-										<div class="col-md-12" ng-if="selectedSegmentNode.segment">
+										<div class="col-md-12" ng-if="selectedSegmentNode.segment && testDataAccordi.selectedSegment">
 											<div class="row">
 												<span class="pull-left">
 													<button type="button" class="btn btn-info btn-sm" ng-click="openCreateSegmentTemplateModal()"><i class="fa fa-plus"></i>
@@ -277,13 +277,13 @@
 														<tr class="tbl-header">
 															<th class="col-md-1">Path</th>
 															<th class="col-md-1">Name</th>
-															<th class="col-md-1" ng-show="isShow(1)">DT</th>
-															<th class="col-md-1" ng-show="isShow(2)">Usage</th>
-															<th class="col-md-1" ng-show="isShow(3)">Cardi.</th>
-															<th class="col-md-1" ng-show="isShow(4)">Length</th>
-															<th class="col-md-1" ng-show="isShow(5)">ValueSet</th>
-															<th class="col-md-1" ng-show="isShow(6)">Predicate</th>
-															<th class="col-md-1" ng-show="isShow(7)">Conf.Statement</th>
+															<th class="col-md-1" ng-if="isShow(1)">DT</th>
+															<th class="col-md-1" ng-if="isShow(2)">Usage</th>
+															<th class="col-md-1" ng-if="isShow(3)">Cardi.</th>
+															<th class="col-md-1" ng-if="isShow(4)">Length</th>
+															<th class="col-md-1" ng-if="isShow(5)">ValueSet</th>
+															<th class="col-md-1" ng-if="isShow(6)">Predicate</th>
+															<th class="col-md-1" ng-if="isShow(7)">Conf.Statement</th>
 															<th class="col-md-1">Value</th>
 															<th class="col-md-1">Test Data Cate.</th>
 															<th class="col-md-1">Action</th>
@@ -291,8 +291,6 @@
 														</thead>
 														<tbody></tbody>
 													</table>
-
-
 												</div>
 											</div>
 										</div>
@@ -305,7 +303,7 @@
 												<i class="fa fa-file-text-o fa-fw"></i> TestData Categorization List
 											</span>
 										</uib-accordion-heading>
-										<div class="col-md-12">
+										<div ng-if="testDataAccordi.constraintList" class="col-md-12">
 											<div class="table-responsive">
 												<table st-table="displayedCollection" st-safe-src="listOfTDC"  class="table table-striped table-bordered">
 													<thead>
@@ -320,20 +318,20 @@
 													<tbody>
 													<tr ng-repeat="cate in displayedCollection">
 														<td class="col-md-2">
-															{{cate.iPath}}
+															{{::cate.iPath}}
 														</td>
 														<td class="col-md-2">
-															{{cate.name}}
+															{{::cate.name}}
 														</td>
 														<td class="col-md-2">
-															{{cate.testDataCategorization}}
+															{{::cate.testDataCategorization}}
 														</td>
 														<td class="col-md-2">
-															<span ng-show="cate.testDataCategorization != 'Value-Test Case Fixed List'">{{cate.data}}</span>
-															<span ng-show="cate.testDataCategorization == 'Value-Test Case Fixed List'">{{cate.listData}}</span>
+															<span ng-if="cate.testDataCategorization != 'Value-Test Case Fixed List'">{{::cate.data}}</span>
+															<span ng-if="cate.testDataCategorization == 'Value-Test Case Fixed List'">{{::cate.listData}}</span>
 														</td>
 														<td class="col-md-4">
-															<li ng-repeat="c in cate.constraints">{{c}}</li>
+															<li ng-repeat="c in cate.constraints">{{::c}}</li>
 														</td>
 													</tr>
 													</tbody>
@@ -388,7 +386,7 @@
 									<div class="panel-heading panel-heading-collapsable" style="background-color:#395286;">
 										<span>
 											<strong>Validation Result
-												<span ng-if="context=='free'||context=='based'" style="font-style:italic;">: Context-{{context}}</span>
+												<span ng-if="context=='free'||context=='based'" style="font-style:italic;">: Context-{{::context}}</span>
 											</strong>
 											<a style="color:white !important">
 												<span class="pull-right" title="View Result Categories" ng-click="showValidationInfo()">
@@ -401,7 +399,7 @@
 										<div ng-if="validationError" class="alert alert-danger ng-binding" role="validationError">
 											<strong>Cannot validate this message:</strong>
 											<br/>
-											Reason :{{validationError}}
+											Reason :{{::validationError}}
 										</div>
 										<div ng-if="!loadingv&&!validationError">
 											<button ng-if="report" class="pull-right" title="View Result Categories" ng-click="showReport()">
@@ -410,7 +408,7 @@
 											<ng-include src="validationView"></ng-include>
 										</div>
 										<div ng-if="loadingv">
-											Performing <span style="font-style:italic;">Context-{{context}}</span> Validation ...
+											Performing <span style="font-style:italic;">Context-{{::context}}</span> Validation ...
 										</div>
 									</div>
 								</div>
@@ -506,46 +504,46 @@
 				</md-tabs>
 			</md-content>
 		</div>
-	</div></script> <script type="text/ng-template" id="FieldTree.html"><tr tt-node is-branch="hasChildren(node)"  data-tt-branch='true' data-tt-id="{{node.ID}}" data-tt-parent-id="{{node.parentID}}"  >
+	</div></script> <script type="text/ng-template" id="FieldTree.html"><tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
-			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
+			{{::selectedSegmentNode.segment.obj.name}}-{{::minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
-			{{node.field.name}}
+			{{::node.field.name}}
         </td>
-		<td class="col-md-1" ng-show="isShow(1)">
-			<div ng-show="!node.dt.ext">
-				{{node.dt.name}}
+		<td class="col-md-1" ng-if="isShow(1)">
+			<div ng-if="!node.dt.ext">
+				{{::node.dt.name}}
 			</div>
-			<div ng-show="node.dt.ext">
-				{{node.dt.name}}_{{node.dt.ext}}
-			</div>
-        </td>
-		<td class="col-md-1" ng-show="isShow(2)">
-			<div ng-show="!node.predicate">
-				{{node.field.usage}}
-			</div>
-			<div ng-show="node.predicate">
-				{{node.field.usage}} ({{node.predicate.trueUsage}}/{{node.predicate.falseUsage}})
+			<div ng-if="node.dt.ext">
+				{{::node.dt.name}}_{{::node.dt.ext}}
 			</div>
         </td>
-		<td class="col-md-1" ng-show="isShow(3)">
-			[{{node.field.min}}..{{node.field.max}}]
-        </td>
-		<td class="col-md-1" ng-show="isShow(4)">
-			[{{node.field.minLength}}..{{node.field.maxLength}}]
-        </td>
-		<td class="col-md-1" ng-show="isShow(5)">
-			<div ng-repeat="t in node.field.tables">
-				<li>{{findTable(t).bindingIdentifier}}</li>
+		<td class="col-md-1" ng-if="isShow(2)">
+			<div ng-if="!node.predicate">
+				{{::node.field.usage}}
+			</div>
+			<div ng-if="node.predicate">
+				{{::node.field.usage}} ({{::node.predicate.trueUsage}}/{{::node.predicate.falseUsage}})
 			</div>
         </td>
-		<td class="col-md-1" ng-show="isShow(6)">
-			<span>{{node.predicate.description}}</span>
+		<td class="col-md-1" ng-if="isShow(3)">
+			[{{::node.field.min}}..{{::node.field.max}}]
         </td>
-		<td class="col-md-1" ng-show="isShow(7)">
-			<div ng-repeat="cs in node.conformanceStatments">
-				<span>{{cs.constraintId}} : {{cs.description}}</span>
+		<td class="col-md-1" ng-if="isShow(4)">
+			[{{::node.field.minLength}}..{{::node.field.maxLength}}]
+        </td>
+		<td class="col-md-1" ng-if="isShow(5)">
+			<!--<div ng-repeat="t in node.field.tables">-->
+				<!--<li>{{findTable(t).bindingIdentifier}}</li>-->
+			<!--</div>-->
+        </td>
+		<td class="col-md-1" ng-if="isShow(6)">
+			<span>{{::node.predicate.description}}</span>
+        </td>
+		<td class="col-md-1" ng-if="isShow(7)">
+			<div ng-repeat="cs in node.conformanceStatments track by cs.id">
+				<span>{{::cs.constraintId}} : {{::cs.description}}</span>
 			</div>
         </td>
 		<td class="col-md-1">
@@ -558,59 +556,59 @@
 				<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
 					<option value="">No test data Cate.</option>
 				</select>
-				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
+				<div ng-if="node.testDataCategorization === 'Value-Test Case Fixed List'">
 					<input ng-model="node.testDataCategorizationListData" class="form-control"  ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);">
 				</div>
 			</div>
 		</td>
 		<td class="col-md-1">
-			<button ng-show="!minimizePath(node.iPath).includes('[') && node.field.max != '0' && node.field.max != '1'" title="Delete Repeated Field" type="button" class="btn btn-info btn-xxs" ng-click="addRepeatedField(node)">
+			<button ng-if="!minimizePath(node.iPath).includes('[') && node.field.max != '0' && node.field.max != '1'" title="Delete Repeated Field" type="button" class="btn btn-info btn-xxs" ng-click="addRepeatedField(node)">
 				<span><i class="fa fa-plus fa-fw"></i> Add Field</span>
 			</button>
-			<button ng-show="minimizePath(node.iPath).includes('[')" title="Delete Repeated Field" type="button" class="btn btn-danger btn-xxs" ng-click="deleteRepeatedField(node)">
+			<button ng-if="minimizePath(node.iPath).includes('[')" title="Delete Repeated Field" type="button" class="btn btn-danger btn-xxs" ng-click="deleteRepeatedField(node)">
 				<span><i class="fa fa-times fa-fw"></i> Del Field</span>
 			</button>
         </td>
-    </tr></script> <script type="text/ng-template" id="ComponentTree.html"><tr tt-node is-branch="hasChildren(node)"  data-tt-branch='true' data-tt-id="{{node.ID}}" data-tt-parent-id="{{node.parentID}}">
+    </tr></script> <script type="text/ng-template" id="ComponentTree.html"><tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
-			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
+			{{::selectedSegmentNode.segment.obj.name}}-{{::minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
-			{{node.component.name}}
+			{{::node.component.name}}
         </td>
-		<td class="col-md-1" ng-show="isShow(1)">
-			<div ng-show="!node.dt.ext">
-				{{node.dt.name}}
+		<td class="col-md-1" ng-if="isShow(1)">
+			<div ng-if="!node.dt.ext">
+				{{::node.dt.name}}
 			</div>
-			<div ng-show="node.dt.ext">
-				{{node.dt.name}}_{{node.dt.ext}}
-			</div>
-        </td>
-		<td class="col-md-1" ng-show="isShow(2)">
-			<div ng-show="!node.predicate">
-				{{node.component.usage}}
-			</div>
-			<div ng-show="node.predicate">
-				{{node.component.usage}} ({{node.predicate.trueUsage}}/{{node.predicate.falseUsage}})
+			<div ng-if="node.dt.ext">
+				{{::node.dt.name}}_{{::node.dt.ext}}
 			</div>
         </td>
-		<td class="col-md-1" ng-show="isShow(3)">
-			[{{node.component.min}}..{{node.component.max}}]
-        </td>
-		<td class="col-md-1" ng-show="isShow(4)">
-			[{{node.component.minLength}}..{{node.component.maxLength}}]
-        </td>
-		<td class="col-md-1" ng-show="isShow(5)">
-			<div ng-repeat="t in node.component.tables">
-				<li>{{findTable(t).bindingIdentifier}}</li>
+		<td class="col-md-1" ng-if="isShow(2)">
+			<div ng-if="!node.predicate">
+				{{::node.component.usage}}
+			</div>
+			<div ng-if="node.predicate">
+				{{::node.component.usage}} ({{::node.predicate.trueUsage}}/{{::node.predicate.falseUsage}})
 			</div>
         </td>
-		<td class="col-md-1" ng-show="isShow(6)">
-			<span>{{node.predicate.description}}</span>
+		<td class="col-md-1" ng-if="isShow(3)">
+			[{{::node.component.min}}..{{::node.component.max}}]
+        </td>
+		<td class="col-md-1" ng-if="isShow(4)">
+			[{{::node.component.minLength}}..{{::node.component.maxLength}}]
+        </td>
+		<td class="col-md-1" ng-if="isShow(5)">
+			<!--<div ng-repeat="t in node.component.tables">-->
+				<!--<li>{{findTable(t).bindingIdentifier}}</li>-->
+			<!--</div>-->
+        </td>
+		<td class="col-md-1" ng-if="isShow(6)">
+			<span>{{::node.predicate.description}}</span>
 		</td>
-		<td class="col-md-1" ng-show="isShow(7)">
-			<div ng-repeat="cs in node.conformanceStatments">
-				<span>{{cs.constraintId}} : {{cs.description}}</span>
+		<td class="col-md-1" ng-if="isShow(7)">
+			<div ng-repeat="cs in node.conformanceStatments track by cs.id">
+				<span>{{::cs.constraintId}} : {{::cs.description}}</span>
 			</div>
 		</td>
 		<td class="col-md-1">
@@ -623,7 +621,7 @@
 				<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
 					<option value="">No test data Cate.</option>
 				</select>
-				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
+				<div ng-if="node.testDataCategorization === 'Value-Test Case Fixed List'">
 					<input ng-model="node.testDataCategorizationListData" class="form-control"  ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);">
 				</div>
 			</div>
@@ -631,46 +629,46 @@
 		<td class="col-md-1">
 			-
         </td>
-    </tr></script> <script type="text/ng-template" id="SubComponentTree.html"><tr tt-node is-branch="hasChildren(node)"  data-tt-id="{{node.ID}}" data-tt-branch='true' data-tt-parent-id="{{node.parentID}}">
+    </tr></script> <script type="text/ng-template" id="SubComponentTree.html"><tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
-			{{selectedSegmentNode.segment.obj.name}}-{{minimizePath(node.iPath)}}
+			{{::selectedSegmentNode.segment.obj.name}}-{{::minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
-			{{node.component.name}}
+			{{::node.component.name}}
         </td>
-		<td class="col-md-1" ng-show="isShow(1)">
-			<div ng-show="!node.dt.ext">
-				{{node.dt.name}}
+		<td class="col-md-1" ng-if="isShow(1)">
+			<div ng-if="!node.dt.ext">
+				{{::node.dt.name}}
 			</div>
-			<div ng-show="node.dt.ext">
-				{{node.dt.name}}_{{node.dt.ext}}
-			</div>
-        </td>
-		<td class="col-md-1" ng-show="isShow(2)">
-			<div ng-show="!node.predicate">
-				{{node.component.usage}}
-			</div>
-			<div ng-show="node.predicate">
-				{{node.component.usage}} ({{node.predicate.trueUsage}}/{{node.predicate.falseUsage}})
+			<div ng-if="node.dt.ext">
+				{{::node.dt.name}}_{{::node.dt.ext}}
 			</div>
         </td>
-		<td class="col-md-1" ng-show="isShow(3)">
-			[{{node.component.min}}..{{node.component.max}}]
-        </td>
-		<td class="col-md-1" ng-show="isShow(4)">
-			[{{node.component.minLength}}..{{node.component.maxLength}}]
-        </td>
-		<td class="col-md-1" ng-show="isShow(5)">
-			<div ng-repeat="t in node.component.tables">
-				<li>{{findTable(t).bindingIdentifier}}</li>
+		<td class="col-md-1" ng-if="isShow(2)">
+			<div ng-if="!node.predicate">
+				{{::node.component.usage}}
+			</div>
+			<div ng-if="node.predicate">
+				{{::node.component.usage}} ({{::node.predicate.trueUsage}}/{{::node.predicate.falseUsage}})
 			</div>
         </td>
-		<td class="col-md-1" ng-show="isShow(6)">
-			<span>{{node.predicate.description}}</span>
+		<td class="col-md-1" ng-if="isShow(3)">
+			[{{::node.component.min}}..{{::node.component.max}}]
+        </td>
+		<td class="col-md-1" ng-if="isShow(4)">
+			[{{::node.component.minLength}}..{{::node.component.maxLength}}]
+        </td>
+		<td class="col-md-1" ng-if="isShow(5)">
+			<!--<div ng-repeat="t in node.component.tables">-->
+				<!--<li>{{findTable(t).bindingIdentifier}}</li>-->
+			<!--</div>-->
+        </td>
+		<td class="col-md-1" ng-if="isShow(6)">
+			<span>{{::node.predicate.description}}</span>
 		</td>
-		<td class="col-md-1" ng-show="isShow(7)">
-			<div ng-repeat="cs in node.conformanceStatments">
-				<span>{{cs.constraintId}} : {{cs.description}}</span>
+		<td class="col-md-1" ng-if="isShow(7)">
+			<div ng-repeat="cs in node.conformanceStatments track by cs.id">
+				<span>{{::cs.constraintId}} : {{::cs.description}}</span>
 			</div>
 		</td>
 		<td class="col-md-1">
@@ -683,7 +681,7 @@
 				<select class="form-control" ng-model="node.testDataCategorization" ng-change="recordChanged(selectedTestStep); updateTestDataCategorization(node);" ng-options="testDataCategorization for testDataCategorization in testDataCategorizations">
 					<option value="">No test data Cate.</option>
 				</select>
-				<div ng-show="node.testDataCategorization === 'Value-Test Case Fixed List'">
+				<div ng-if="node.testDataCategorization === 'Value-Test Case Fixed List'">
 					<input ng-model="node.testDataCategorizationListData" class="form-control"  ng-list ng-change="recordChanged(selectedTestStep); updateTestDataCategorizationListData(node);">
 				</div>
 			</div>

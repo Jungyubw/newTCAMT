@@ -5,7 +5,7 @@
 		antiClickjack.parentNode.removeChild(antiClickjack);
 	} else {
 		top.location = self.location;
-	}</script> <script type="text/ng-template" id="EditTestCaseMetadata.html"><div ng-show="selectedTestCase">
+	}</script> <script type="text/ng-template" id="EditTestCaseMetadata.html"><div ng-if="selectedTestCase">
 		<div ng-cloak>
 			<md-content>
 				<md-tabs md-dynamic-height md-border-bottom md-selected="selectedTestCaseTab">
@@ -27,7 +27,7 @@
 										</md-input-container>
 									</div>
 								</div>
-								<div ng-show="selectedTestPlan.transport" class="col-md-12">
+								<div ng-if="selectedTestPlan.transport" class="col-md-12">
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
 											<label>Protocol</label>
