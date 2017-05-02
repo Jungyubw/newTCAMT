@@ -391,7 +391,7 @@ public class ProfileServiceImpl implements ProfileService {
 		fieldObj.setPosition(position);
 		
 		fieldObj.setDatatype(dl);
-		fieldObj.setMinLength(new Integer(fieldElm.getAttribute("MinLength")));
+		fieldObj.setMinLength(fieldElm.getAttribute("MinLength"));
 		if(fieldElm.getAttribute("MaxLength") != null){
 			fieldObj.setMaxLength(fieldElm.getAttribute("MaxLength"));
 		}
@@ -489,7 +489,7 @@ public class ProfileServiceImpl implements ProfileService {
 					dl.setExt(datatype.getExt());
 					componentObj.setDatatype(dl);
 					componentObj.setPosition(componentPosition);
-					componentObj.setMinLength(new Integer(elmComponent.getAttribute("MinLength")));
+					componentObj.setMinLength(elmComponent.getAttribute("MinLength"));
 					if (elmComponent.getAttribute("MaxLength") != null) {
 						componentObj.setMaxLength(elmComponent.getAttribute("MaxLength"));
 					}
