@@ -59,10 +59,10 @@ public class Bootstrap implements InitializingBean {
    */
   @Override
   public void afterPropertiesSet() throws Exception {
-    updateHL7Version();
-    updateLongIDforTestPlan();
-
-    resetIGAMTProfile();
+//    updateHL7Version();
+//    updateLongIDforTestPlan();
+//
+//    resetIGAMTProfile();
 
 
   }
