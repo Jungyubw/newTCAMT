@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -586,7 +585,11 @@ public class ExportUtil {
       this.generateEr7Message(out, ts.getEr7Message(), stepPath);
       this.generateMessageContent(out, ts.getMessageContentsXMLCode(), stepPath, "ng-tab-html");
       this.generateMessageContent(out, ts.getMessageContentsXMLCode(), stepPath, "plain");
-      this.generateConstraintsXML(out, ts.getConstraintsXML(), stepPath);
+      String constraintsXML = ts.getConstraintsXML();
+      constraintsXML = constraintsXML.replaceAll(ts.getConformanceProfileId(), ts.getConformanceProfileId() + rand);
+      System.out.println("[TESTSTEP Constraints]");
+      System.out.println(constraintsXML);
+      this.generateConstraintsXML(out, constraintsXML, stepPath);
 
       if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
         if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
@@ -820,11 +823,11 @@ public class ExportUtil {
 
     JSONObject hl7v2Obj = new JSONObject();
     hl7v2Obj.put("messageId", ts.getConformanceProfileId() + rand);
-    
-   
-    System.out.println("NEED CHEKC::::"  + ts.getConformanceProfileId() + rand);
-    hl7v2Obj.put("constraintId", ts.getIntegrationProfileId());
-    hl7v2Obj.put("valueSetLibraryId", ts.getIntegrationProfileId());
+
+
+    System.out.println("NEED CHEKC::::" + ts.getConformanceProfileId() + rand);
+    hl7v2Obj.put("constraintId", ts.getIntegrationProfileId() + rand);
+    hl7v2Obj.put("valueSetLibraryId", ts.getIntegrationProfileId() + rand);
     obj.put("hl7v2", hl7v2Obj);
 
     inTP = IOUtils.toInputStream(obj.toString());
@@ -1202,8 +1205,8 @@ public class ExportUtil {
     inTestPlanSummary.close();
   }
 
-  public InputStream exportProfileXMLZip(Set<String> keySet, ProfileService profileService)
-      throws IOException {
+  public InputStream exportProfileXMLZip(Set<String> keySet, ProfileService profileService,
+      Long rand) throws IOException {
 
     ByteArrayOutputStream outputStream = null;
     byte[] bytes;
@@ -1212,7 +1215,7 @@ public class ExportUtil {
 
     for (String id : keySet) {
       if (id != null && !id.isEmpty()) {
-        this.generateProfileXML(out, id, profileService);
+        this.generateProfileXML(out, id, profileService, rand);
       }
     }
     out.close();
@@ -1220,7 +1223,7 @@ public class ExportUtil {
     return new ByteArrayInputStream(bytes);
   }
 
-  public InputStream[] exportProfileXMLArrayZip(Set<String> keySet, ProfileService profileService,
+  public InputStream[] exportProfileXMLArrayZip(String id, ProfileService profileService,
       Long rand) throws IOException {
     ByteArrayOutputStream outputStream0 = null;
     ByteArrayOutputStream outputStream1 = null;
@@ -1238,11 +1241,8 @@ public class ExportUtil {
     ZipOutputStream out1 = new ZipOutputStream(outputStream1);
     ZipOutputStream out2 = new ZipOutputStream(outputStream2);
 
-    for (String id : keySet) {
-      if (id != null && !id.isEmpty()) {
-        this.generateProfileXML(out0, out1, out2, id, profileService, rand);
-      }
-    }
+    this.generateProfileXML(out0, out1, out2, id, profileService, rand);
+    
     out0.close();
     out1.close();
     out2.close();
@@ -1368,9 +1368,6 @@ public class ExportUtil {
       }
 
       for (Message m : tcamtProfile.getMessages().getChildren()) {
-        if (m.getMessageID() == null)
-          m.setMessageID(UUID.randomUUID().toString());
-
         profile.getMessages().addMessage(m);
 
         for (SegmentRefOrGroup seog : m.getChildren()) {
@@ -1476,8 +1473,8 @@ public class ExportUtil {
 
   }
 
-  private void generateProfileXML(ZipOutputStream out, String id, ProfileService profileService)
-      throws IOException {
+  private void generateProfileXML(ZipOutputStream out, String id, ProfileService profileService,
+      Long rand) throws IOException {
     Profile tcamtProfile = profileService.findOne(id);
 
     if (tcamtProfile != null) {
@@ -1485,7 +1482,7 @@ public class ExportUtil {
       IGAMTDBConn igamtDB = new IGAMTDBConn();
       gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile =
           new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
-      profile.setId(id);
+      profile.setId(tcamtProfile.getId() + rand);
       profile.setAccountId(tcamtProfile.getAccountId());
       profile.setMetaData(tcamtProfile.getMetaData());
       profile.setMessages(new Messages());
@@ -1511,9 +1508,7 @@ public class ExportUtil {
       }
 
       for (Message m : tcamtProfile.getMessages().getChildren()) {
-        if (m.getMessageID() == null)
-          m.setMessageID(UUID.randomUUID().toString());
-
+        m.setId(m.getId() + rand);
         profile.getMessages().addMessage(m);
 
         for (SegmentRefOrGroup seog : m.getChildren()) {

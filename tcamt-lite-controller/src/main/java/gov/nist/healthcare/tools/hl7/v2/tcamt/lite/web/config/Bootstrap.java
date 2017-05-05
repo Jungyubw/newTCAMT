@@ -62,7 +62,7 @@ public class Bootstrap implements InitializingBean {
 //    updateHL7Version();
 //    updateLongIDforTestPlan();
 //
-//    resetIGAMTProfile();
+    resetIGAMTProfile();
 
 
   }

@@ -2,11 +2,8 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.text.DateFormat;
@@ -18,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,14 +44,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Files;
 
 import gov.nist.healthcare.nht.acmgt.dto.ResponseMessage;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ResourceBundle;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
@@ -67,7 +60,6 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.repo.TestPlanRepository;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ResourceBundleService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanListException;
@@ -94,8 +86,6 @@ public class TestPlanController extends CommonController {
   @Autowired
   private TestPlanService testPlanService;
 
-  @Autowired
-  private ResourceBundleService resourceBundleService;
   @Autowired
   private TestPlanRepository testPlanRepository;
 
@@ -324,109 +314,28 @@ public class TestPlanController extends CommonController {
 
   }
 
-  private void generateFileFromInputStream(OutputStream outputStream, InputStream content)
-      throws IOException {
-    int read = 0;
-    byte[] bytes = new byte[1024];
-
-    while ((read = content.read(bytes)) != -1) {
-      outputStream.write(bytes, 0, read);
-    }
-    outputStream.close();
-  }
-
   @RequestMapping(value = "/{id}/exportRBZip", method = RequestMethod.POST, produces = "text/xml",
       consumes = "application/x-www-form-urlencoded; charset=UTF-8")
   public void exportResourceBundleZip(@PathVariable("id") String id, HttpServletRequest request,
       HttpServletResponse response) throws Exception {
     log.info("Exporting as zip file RB with id=" + id);
-    User u = userService.getCurrentUser();
-    Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
     TestPlan tp = findTestPlan(id);
     InputStream content = null;
-    content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, null);
+    content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, 1234L);
+    response.setContentType("application/zip");
+    response.setHeader("Content-disposition", "attachment;filename=" + "Contextbased.zip");
+    FileCopyUtils.copy(content, response.getOutputStream());
 
-    ResourceBundle rb = resourceBundleService.findById(id);
-    if (rb == null) {
-      rb = new ResourceBundle();
-      rb.setId(id);
-      rb.setDate(new Date());
-      rb.setHasPDF(false);
-      rb.setHasResourceBundle(true);
-      rb.setHasXML(false);
-      rb.setName(tp.getName());
-      rb.setAccountId(account.getId());
-    }
-
-    rb.setDate(new Date());
-    rb.setHasResourceBundle(true);
-    rb.setName(tp.getName());
-    rb.setAccountId(account.getId());
-
-    resourceBundleService.save(rb);
-    ClassLoader classLoader = getClass().getClassLoader();
-    String dir = classLoader.getResource(File.separator).getFile();
-    File directory = new File(dir + id + File.separator);
-    directory.mkdirs();
-    OutputStream outputStream =
-        new FileOutputStream(dir + id + File.separator + "Contextbased.zip");
-    this.generateFileFromInputStream(outputStream, content);
-
-    // new PDFGeneratorTool().unZipIt(dir + id + File.separator +
-    // "Contextbased.zip", dir + id + File.separator);
-    // new PDFGeneratorTool().gen(dir + id + File.separator +
-    // "Contextbased");
-    // new PDFGeneratorTool().zipIt(dir + id + File.separator +
-    // "Contextbased",
-    // dir + id + File.separator + "ContextbasedPDF.zip");
-
-    this.downloadResourceBundleZip(id, request, response);
   }
 
-  // ------_ABDEL ----
-  public static String getResourcesFromZip(InputStream stream) throws Exception {
-    // Create TEMP directory
-    File tmpDir = Files.createTempDir();
-    tmpDir.mkdir();
-    String DIR_PATH = tmpDir.getAbsolutePath();
-    byte[] buffer = new byte[1024];
-
-    if (tmpDir.isDirectory()) {
-
-      // Extract ZIP
-      ZipInputStream zip = new ZipInputStream(stream);
-      ZipEntry ze = zip.getNextEntry();
-      while (ze != null) {
-        String fileName = ze.getName();
-        File newFile = new File(DIR_PATH + File.separator + fileName);
-        System.out.println("file unzip : " + newFile.getAbsoluteFile());
-        new File(newFile.getParent()).mkdirs();
-
-        FileOutputStream fos = new FileOutputStream(newFile);
-
-        int len;
-        while ((len = zip.read(buffer)) > 0) {
-          fos.write(buffer, 0, len);
-        }
-
-        fos.close();
-        ze = zip.getNextEntry();
-      }
-      zip.closeEntry();
-      zip.close();
-      System.out.println("Done");
-      return DIR_PATH;
-    } else {
-      throw new Exception("Could not create TMP directory");
-    }
-  }
-
-  // ----
   @RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST,
       produces = "application/json")
   public void pushRB(@PathVariable("testplanId") String testplanId, @RequestBody String host,
       @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
       throws Exception {
+
+    User u = userService.getCurrentUser();
+    Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 
     SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
     TestPlan tp = findTestPlan(testplanId);
@@ -445,29 +354,35 @@ public class TestPlanController extends CommonController {
       }
     }
 
-    InputStream[] xmlArrayIO = new InputStream[3];
-
-    long range = 1234567L;
-    Random r = new Random();
-    Long rand = (long) (r.nextDouble() * range);
-
-    xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(ipidMap.keySet(), profileService, rand);
-    testPlanIO =
-        new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, rand);
-    User u = userService.getCurrentUser();
-    Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-
     try {
+      long range = 1234567L;
+      Random r = new Random();
+      Long rand = (long) (r.nextDouble() * range);
+
+      for (String id : ipidMap.keySet()) {
+        if (id != null && !id.isEmpty()) {
+          InputStream[] xmlArrayIO = new InputStream[3];
+          xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(id, profileService, rand);
+
+          xmlArrayIO[0].reset();
+          xmlArrayIO[1].reset();
+          xmlArrayIO[2].reset();
+
+          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE);
+          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET);
+          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS);
+        }
+      }
+
+
+      testPlanIO =
+          new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, rand);
       testPlanIO.reset();
-      xmlArrayIO[0].reset();
-      xmlArrayIO[1].reset();
-      xmlArrayIO[2].reset();
-      client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE);
-      client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET);
-      client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS);
       client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN);
       DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-      tp.setGvtDate("This TestPlan was published on GVT at "+ dateFormat.format(Calendar.getInstance().getTime()));
+
+      tp.setGvtDate("This TestPlan was published on GVT at "
+          + dateFormat.format(Calendar.getInstance().getTime()));
       tp.setGvtPresence(true);
       testPlanRepository.save(tp);
 
@@ -508,6 +423,7 @@ public class TestPlanController extends CommonController {
       if (client.validCredentials()) {
         TestPlan tp = findTestPlan(id);
         client.delete(tp.getLongId(), ResourceType.TEST_PLAN);
+        // TODO neeed to delete
         tp.setGvtPresence(false);
         tp.setGvtDate("This TestPlan is not published on GVT.");
         testPlanRepository.save(tp);
@@ -521,27 +437,11 @@ public class TestPlanController extends CommonController {
     }
   }
 
-  @RequestMapping(value = "/{id}/downloadRBZip", method = RequestMethod.POST, produces = "text/xml",
-      consumes = "application/x-www-form-urlencoded; charset=UTF-8")
-  public void downloadResourceBundleZip(@PathVariable("id") String id, HttpServletRequest request,
-      HttpServletResponse response) throws Exception {
-    ClassLoader classLoader = getClass().getClassLoader();
-    InputStream io = classLoader.getResourceAsStream(id + File.separator + "Contextbased.zip");
-
-    response.setContentType("application/zip");
-    response.setHeader("Content-disposition", "attachment;filename=" + "Contextbased.zip");
-    FileCopyUtils.copy(io, response.getOutputStream());
-
-  }
-
   @RequestMapping(value = "/{tpid}/exportProfileXMLs", method = RequestMethod.POST,
       produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
   public void exportProfileXMLs(@PathVariable("tpid") String tpid, HttpServletRequest request,
       HttpServletResponse response) throws Exception {
     log.info("Exporting as zip files for TestPlan with id=" + tpid);
-    User u = userService.getCurrentUser();
-    Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-
     TestPlan tp = findTestPlan(tpid);
 
     Map<String, String> ipidMap = new HashMap<String, String>();
@@ -559,33 +459,10 @@ public class TestPlanController extends CommonController {
     }
 
     InputStream content = null;
-    content = new ExportUtil().exportProfileXMLZip(ipidMap.keySet(), profileService);
-    ResourceBundle rb = resourceBundleService.findById(tpid);
-    if (rb == null) {
-      rb = new ResourceBundle();
-      rb.setId(tpid);
-      rb.setDate(new Date());
-      rb.setHasPDF(false);
-      rb.setHasResourceBundle(false);
-      rb.setHasXML(true);
-      rb.setName(tp.getName());
-      rb.setAccountId(account.getId());
-    }
-
-    rb.setDate(new Date());
-    rb.setHasXML(true);
-    rb.setName(tp.getName());
-    rb.setAccountId(account.getId());
-
-    ClassLoader classLoader = getClass().getClassLoader();
-    String dir = classLoader.getResource(File.separator).getFile();
-    File directory = new File(dir + tpid + File.separator);
-    directory.mkdirs();
-    OutputStream outputStream = new FileOutputStream(dir + tpid + File.separator + "Global.zip");
-    this.generateFileFromInputStream(outputStream, content);
-    resourceBundleService.save(rb);
-
-    this.downloadProfileXMLs(tpid, request, response);
+    content = new ExportUtil().exportProfileXMLZip(ipidMap.keySet(), profileService, 1234L);
+    response.setContentType("application/zip");
+    response.setHeader("Content-disposition", "attachment;filename=" + "Global.zip");
+    FileCopyUtils.copy(content, response.getOutputStream());
   }
 
   private void addProfileId(TestStep ts, Map<String, String> ipidMap) {
@@ -607,19 +484,6 @@ public class TestPlanController extends CommonController {
         }
       }
     }
-
-  }
-
-  @RequestMapping(value = "/{id}/downloadProfileXMLs", method = RequestMethod.POST,
-      produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
-  public void downloadProfileXMLs(@PathVariable("id") String id, HttpServletRequest request,
-      HttpServletResponse response) throws Exception {
-    ClassLoader classLoader = getClass().getClassLoader();
-    InputStream io = classLoader.getResourceAsStream(id + File.separator + "Global.zip");
-
-    response.setContentType("application/zip");
-    response.setHeader("Content-disposition", "attachment;filename=" + "Global.zip");
-    FileCopyUtils.copy(io, response.getOutputStream());
 
   }
 
@@ -829,10 +693,10 @@ public class TestPlanController extends CommonController {
 
     SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
 
-    msg.setSubject("Your Test Plan is Pushed to the testing tool");
+    msg.setSubject("Your Test Plan is pushed to the GVT");
     msg.setTo(target.getEmail());
     msg.setText("Dear " + target.getUsername() + ", \n\n"
-        + "your Test Plan has been successfully pusshed to " + host);
+        + "your Test Plan has been successfully pushed to GVT. Now you can test it at " + host);
     try {
       this.mailSender.send(msg);
 
@@ -849,7 +713,9 @@ public class TestPlanController extends CommonController {
     msg.setTo(target.getEmail());
     msg.setCc("jungyub.woo@nist.gov");
     msg.setText("Dear " + target.getUsername() + ", \n\n"
-        + "We are sorry but we couldn't push your testplan to the " + host + ". TCAMT team will contact you soon. \n\n" + "[Error]" + e.getMessage() + "\n\n" + "[TestPlan ID]" + doc.getId());
+        + "We are sorry but we couldn't push your testplan to the " + host
+        + ". TCAMT team will contact you soon. \n\n" + "[Error]" + e.getMessage() + "\n\n"
+        + "[TestPlan ID]" + doc.getId());
     try {
       this.mailSender.send(msg);
 
