@@ -1478,6 +1478,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		for(var i in listLineOfMessage){
 			currentPosition = $scope.getSegment($rootScope.segmentList, nodeList, currentPosition, listLineOfMessage[i]);
 		};
+
 		var testcaseName = $scope.findTestCaseNameOfTestStep();
 
 		$rootScope.selectedTestStep.nistXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,false));
