@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +46,7 @@ import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Constraint
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Context;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Predicate;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Reference;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.xml.serialization.XMLExportTool;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
@@ -59,7 +61,6 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
-import gov.nist.healthcare.tools.hl7.v2.xml.ExportTool;
 import nu.xom.Attribute;
 import nu.xom.Builder;
 import nu.xom.NodeFactory;
@@ -586,7 +587,8 @@ public class ExportUtil {
       this.generateMessageContent(out, ts.getMessageContentsXMLCode(), stepPath, "ng-tab-html");
       this.generateMessageContent(out, ts.getMessageContentsXMLCode(), stepPath, "plain");
       String constraintsXML = ts.getConstraintsXML();
-      constraintsXML = constraintsXML.replaceAll(ts.getConformanceProfileId(), ts.getConformanceProfileId() + rand);
+      constraintsXML = constraintsXML.replaceAll(ts.getConformanceProfileId(),
+          ts.getConformanceProfileId() + rand);
       System.out.println("[TESTSTEP Constraints]");
       System.out.println(constraintsXML);
       this.generateConstraintsXML(out, constraintsXML, stepPath);
@@ -1223,8 +1225,8 @@ public class ExportUtil {
     return new ByteArrayInputStream(bytes);
   }
 
-  public InputStream[] exportProfileXMLArrayZip(String id, ProfileService profileService,
-      Long rand) throws IOException {
+  public InputStream[] exportProfileXMLArrayZip(String id, ProfileService profileService, Long rand)
+      throws IOException {
     ByteArrayOutputStream outputStream0 = null;
     ByteArrayOutputStream outputStream1 = null;
     ByteArrayOutputStream outputStream2 = null;
@@ -1242,7 +1244,7 @@ public class ExportUtil {
     ZipOutputStream out2 = new ZipOutputStream(outputStream2);
 
     this.generateProfileXML(out0, out1, out2, id, profileService, rand);
-    
+
     out0.close();
     out1.close();
     out2.close();
@@ -1301,13 +1303,17 @@ public class ExportUtil {
         if (referenceTableId != null) {
           Table table = tablesMap.get(referenceTableId);
           if (table != null) {
+            if(table.getHl7Version() == null) table.setHl7Version(s.getHl7Version());
             for (Code c : table.getCodes()) {
               if (c.getValue() != null && table.getHl7Version() != null) {
-                Datatype d = igamtDB.findByNameAndVesionAndScope(c.getValue(),
-                    table.getHl7Version(), "HL7STANDARD");
-                if (d != null) {
-                  d.setExt(d.getExt() + "IGAMT");
-                  this.addDatatype(d, datatypesMap, igamtDB);
+                Datatype d = this.findDatatypeByNameAndVesionAndScope(c.getValue(),
+                    table.getHl7Version(), "HL7STANDARD", datatypesMap);
+                if (d == null) {
+                  d = igamtDB.findByNameAndVesionAndScope(c.getValue(), table.getHl7Version(),
+                      "HL7STANDARD");
+                  if (d != null) {
+                    this.addDatatypeForDM(d, datatypesMap, igamtDB);
+                  }
                 }
               }
             }
@@ -1321,6 +1327,32 @@ public class ExportUtil {
         this.visit(child, segmentsMap, datatypesMap, tablesMap, profile, igamtDB);
       }
     }
+  }
+
+  private void addDatatypeForDM(Datatype d, Map<String, Datatype> datatypesMap,
+      IGAMTDBConn igamtDB) {
+    if (d != null) {
+      int randumNum = new SecureRandom().nextInt(100000);
+      d.setExt("ForDM" + randumNum);
+      datatypesMap.put(d.getId(), d);
+      for (Component c : d.getComponents()) {
+        this.addDatatypeForDM(igamtDB.findDatatypeById(c.getDatatype().getId()), datatypesMap,
+            igamtDB);
+      }
+    }
+  }
+
+  private Datatype findDatatypeByNameAndVesionAndScope(String name, String hl7Version, String scope,
+      Map<String, Datatype> datatypesMap) {
+    for (String key : datatypesMap.keySet()) {
+      Datatype d = datatypesMap.get(key);
+      if (d != null) {
+        if (d.getName().equals(name) && d.getHl7Version().equals(hl7Version)
+            && d.getScope().toString().equals(scope))
+          return d;
+      }
+    }
+    return null;
   }
 
   private String findValueSetID(List<ValueSetOrSingleCodeBinding> valueSetBindings,
@@ -1376,10 +1408,10 @@ public class ExportUtil {
       }
 
       String[] result = new String[3];
-      result[0] = new ExportTool()
+      result[0] = new XMLExportTool()
           .serializeProfileToDoc(profile, metadata, segmentsMap, datatypesMap, tablesMap).toXML();
-      result[1] = new ExportTool().serializeTableXML(profile, metadata, tablesMap);
-      result[2] = new ExportTool().serializeConstraintsXML(profile, metadata, segmentsMap,
+      result[1] = new XMLExportTool().serializeTableXML(profile, metadata, tablesMap);
+      result[2] = new XMLExportTool().serializeConstraintsXML(profile, metadata, segmentsMap,
           datatypesMap, tablesMap);
 
       return result;
@@ -1434,7 +1466,7 @@ public class ExportUtil {
       byte[] buf = new byte[1024];
       out0.putNextEntry(new ZipEntry("Profile.xml"));
       InputStream inTP = null;
-      String profileStr = new ExportTool()
+      String profileStr = new XMLExportTool()
           .serializeProfileToDoc(profile, metadata, segmentsMap, datatypesMap, tablesMap).toXML();
       System.out.println(profileStr);
       inTP = IOUtils.toInputStream(profileStr);
@@ -1447,7 +1479,7 @@ public class ExportUtil {
 
       out1.putNextEntry(new ZipEntry("ValueSet.xml"));
       inTP = null;
-      String tableStr = new ExportTool().serializeTableXML(profile, metadata, tablesMap);
+      String tableStr = new XMLExportTool().serializeTableXML(profile, metadata, tablesMap);
       System.out.println(tableStr);
       inTP = IOUtils.toInputStream(tableStr);
       lenTP = 0;
@@ -1459,7 +1491,7 @@ public class ExportUtil {
 
       out2.putNextEntry(new ZipEntry("Constraints.xml"));
       inTP = null;
-      String constraintStr = new ExportTool().serializeConstraintsXML(profile, metadata,
+      String constraintStr = new XMLExportTool().serializeConstraintsXML(profile, metadata,
           segmentsMap, datatypesMap, tablesMap);
       System.out.println(constraintStr);
       inTP = IOUtils.toInputStream(constraintStr);
@@ -1520,7 +1552,7 @@ public class ExportUtil {
       out.putNextEntry(new ZipEntry(
           "Global" + File.separator + "Profiles" + File.separator + id + "_Profile.xml"));
       InputStream inTP = null;
-      inTP = IOUtils.toInputStream(new ExportTool()
+      inTP = IOUtils.toInputStream(new XMLExportTool()
           .serializeProfileToDoc(profile, metadata, segmentsMap, datatypesMap, tablesMap).toXML());
       int lenTP;
       while ((lenTP = inTP.read(buf)) > 0) {
@@ -1533,7 +1565,7 @@ public class ExportUtil {
           "Global" + File.separator + "Tables" + File.separator + id + "_ValueSet.xml"));
       inTP = null;
       inTP =
-          IOUtils.toInputStream(new ExportTool().serializeTableXML(profile, metadata, tablesMap));
+          IOUtils.toInputStream(new XMLExportTool().serializeTableXML(profile, metadata, tablesMap));
       lenTP = 0;
       while ((lenTP = inTP.read(buf)) > 0) {
         out.write(buf, 0, lenTP);
@@ -1544,7 +1576,7 @@ public class ExportUtil {
       out.putNextEntry(new ZipEntry(
           "Global" + File.separator + "Constraints" + File.separator + id + "_Constraints.xml"));
       inTP = null;
-      inTP = IOUtils.toInputStream(new ExportTool().serializeConstraintsXML(profile, metadata,
+      inTP = IOUtils.toInputStream(new XMLExportTool().serializeConstraintsXML(profile, metadata,
           segmentsMap, datatypesMap, tablesMap));
       lenTP = 0;
       while ((lenTP = inTP.read(buf)) > 0) {
