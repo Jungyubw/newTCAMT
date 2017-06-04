@@ -5,63 +5,57 @@
     <ol ui-tree-nodes="" ng-model="templatesToc">
         <li ng-repeat="template in templatesToc" ui-tree-node data-nodrag>
                 <div ui-tree-handle>
-                    Test Data Categorization templates
+                    Test Data Categorization Templates
                 </div>
             <div ui-tree-handle style="margin-left: 20px;">
-                     <i data-nodrag ng-click="switchermsg(messagetempCollapsed)" class="fa" ng-class="{'fa-caret-right': messagetempCollapsed, 'fa-caret-down': !messagetempCollapsed}">
-					</i>       
-                Messages Template
+                <i data-nodrag ng-click="switchermsg()" class="fa" ng-class="{'fa-caret-right': messagetempCollapsed, 'fa-caret-down': !messagetempCollapsed}"></i> Message Templates
             </div>
             <ol ui-tree-nodes="" ng-model="template.messageTemplates" ng-if="!messagetempCollapsed">
                 <li ng-repeat="msgTmp in template.messageTemplates" ui-tree-node>
                     <div ui-tree-handle ng-click="Activate(this);OpenMsgTemplateMetadata(msgTmp)" ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[msgTmp.id]}">
-                        <span class="MenuEnabled" ng-if="messageTemplateApplicable(msgTmp)" context-menu="MessageOptions"><span class="label label-success label-icon">MT</span>{{msgTmp.name}}</span>
-                        <span class="MenuDisabled" ng-if="!messageTemplateApplicable(msgTmp)" context-menu="MessageOptionsDisabled"><span class="label label-success label-icon">MT</span>{{msgTmp.name}}</span>
+                        <span class="MenuEnabled" ng-show="messageTemplateApplicable(msgTmp)" context-menu="MessageOptions"><span class="label label-success label-icon">MT</span>[{{msgTmp.structID}}]{{msgTmp.name}}</span>
+                        <span class="MenuDisabled" ng-show="!messageTemplateApplicable(msgTmp)" context-menu="MessageOptionsDisabled"><span class="label label-success label-icon">MT</span>[{{msgTmp.structID}}]{{msgTmp.name}}</span>
                     </div>
                 </li>
             </ol>
             <div ui-tree-handle style="margin-left: 20px;">
-                    <i data-nodrag ng-click="switcherseg(segmenttempCollapsed)" class="fa" ng-class="{'fa-caret-right': segmenttempCollapsed, 'fa-caret-down': !segmenttempCollapsed}">
-					</i>   
-				Segment Templates
+                <i data-nodrag ng-click="switcherseg()" class="fa" ng-class="{'fa-caret-right': segmenttempCollapsed, 'fa-caret-down': !segmenttempCollapsed}"></i> Segment Templates
             </div>
             <ol ui-tree-nodes="" ng-model="template.segmentTemplates" ng-if="!segmenttempCollapsed">
                 <li ng-repeat="segTmp in template.segmentTemplates" ui-tree-node ng-if="selectedSegmentNode===null ||selectedSegmentNode.segment.obj.name===segTmp.segmentName">
                     <div ui-tree-handle ng-click="Activate(this);OpenSegmentTemplateMetadata(segTmp)" ng-class="{selected : this.$modelValue===activeModel,'unsaved':changesMap[segTmp.id]}">
-                        <span class="MenuEnabled" ng-if="segmentTemplateApplicable(segTmp)" context-menu="SegmentOptions"><span class=" label label-success label-icon">ST</span>{{segTmp.name}}</span>
-                        <span  class="MenuDisabled" ng-if="!segmentTemplateApplicable(segTmp)"  context-menu="SegmentOptionsDisabled" ><span class=" label label-success label-icon">ST</span>{{segTmp.name}}</span>
+                        <span class="MenuEnabled" ng-show="segmentTemplateApplicable(segTmp)" context-menu="SegmentOptions"><span class=" label label-success label-icon">ST</span>[{{segTmp.segmentName}}]{{segTmp.name}}</span>
+                        <span class="MenuDisabled" ng-show="!segmentTemplateApplicable(segTmp)"  context-menu="SegmentOptionsDisabled" ><span class=" label label-success label-icon">ST</span>[{{segTmp.segmentName}}]{{segTmp.name}}</span>
                     </div>
                 </li>
             </ol>
 
+            <br/>
 
             <div ui-tree-handle>
                 ER7 Templates
             </div>
 
             <div ui-tree-handle style="margin-left: 20px;">
-                     <i data-nodrag ng-click="switcherEr7(Er7Collapsed)" class="fa" ng-class="{'fa-caret-right': Er7Collapsed, 'fa-caret-down': !Er7Collapsed}">
-					</i>   Er7 Templates
-                <span ng-show="selectedIntegrationProfile">for {{selectedIntegrationProfile.sectionTitle}}-{{selectedConformanceProfile.name}}</span>
+                <i data-nodrag ng-click="switcherEr7Message()" class="fa" ng-class="{'fa-caret-right': Er7MessageCollapsed, 'fa-caret-down': !Er7MessageCollapsed}"></i> Er7 Message Templates
             </div>
-            <ol ui-tree-nodes="" ng-model="template.er7Templates" ng-if="!Er7Collapsed">
+            <ol ui-tree-nodes="" ng-model="template.er7Templates" ng-if="!Er7MessageCollapsed">
                 <li ng-repeat="er7Tmp in template.er7Templates" ui-tree-node>
                     <div ui-tree-handle ng-click="Activate(this);OpenEr7TemplatesMetadata(er7Tmp)" ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[er7Tmp.id]}">
-                        <span  ng-if="messageTemplateApplicable(er7Tmp)" class="MenuEnabled"  context-menu="Er7Options" ng-if="selectedTestStep"><span class="label label-success label-icon">ET</span>{{er7Tmp.segmentName}}-{{er7Tmp.name}}</span>
-                        <span  ng-if="!messageTemplateApplicable(er7Tmp)" class="MenuDisabled" context-menu="Er7OptionsDisabled" ><span class=" label label-success label-icon">ET</span>{{er7Tmp.segmentName}}-{{er7Tmp.name}}</span>
+                        <span ng-show="messageTemplateApplicable(er7Tmp)" class="MenuEnabled"  context-menu="Er7Options"><span class="label label-success label-icon">ET</span>[{{er7Tmp.structID}}]{{er7Tmp.name}}</span>
+                        <span ng-show="!messageTemplateApplicable(er7Tmp)" class="MenuDisabled" context-menu="Er7OptionsDisabled" ><span class=" label label-success label-icon">ET</span>[{{er7Tmp.structID}}]{{er7Tmp.name}}</span>
                     </div>
                 </li>
             </ol>
 
             <div ui-tree-handle style="margin-left: 20px;">
-                     <i data-nodrag ng-click="switcherEr7(Er7Collapsed)" class="fa" ng-class="{'fa-caret-right': Er7Collapsed, 'fa-caret-down': !Er7Collapsed}">
-					</i>   Segment Line Templates
+                <i data-nodrag ng-click="switcherEr7Segment()" class="fa" ng-class="{'fa-caret-right': Er7SegmentCollapsed, 'fa-caret-down': !Er7SegmentCollapsed}"></i> Segment Line Templates
             </div>
-            <ol ui-tree-nodes="" ng-model="template.er7segmentTemplates" data-nodrag>
+            <ol ui-tree-nodes="" ng-model="template.er7segmentTemplates" data-nodrag ng-if="!Er7SegmentCollapsed">
                 <li ng-repeat="er7Tmp in template.er7segmentTemplates" ui-tree-node data-nodrag>
                     <div ui-tree-handle ng-click="Activate(this);OpenEr7SegmentTemplatesMetadata(er7Tmp)" ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[er7Tmp.id]}">
-                        <span ng-if="segmentTemplateApplicable(er7Tmp)" class="MenuEnabled" context-menu="Er7SegmentOptions" ng-if="selectedTestStep"><span class="label label-success label-icon">SL</span> {{er7Tmp.segmentName}}-{{er7Tmp.name}}</span>
-                        <span ng-if="!segmentTemplateApplicable(er7Tmp)" class="MenuDisabled" context-menu="Er7SegmentOptionsDisabled"><span class=" label label-success label-icon">SL</span>{{er7Tmp.segmentName}}-{{er7Tmp.name}}</span>
+                        <span ng-show="segmentTemplateApplicable(er7Tmp)" class="MenuEnabled" context-menu="Er7SegmentOptions"><span class="label label-success label-icon">SL</span>[{{er7Tmp.segmentName}}]{{er7Tmp.name}}</span>
+                        <span ng-show="!segmentTemplateApplicable(er7Tmp)" class="MenuDisabled" context-menu="Er7SegmentOptionsDisabled"><span class=" label label-success label-icon">SL</span>[{{er7Tmp.segmentName}}]{{er7Tmp.name}}</span>
                     </div>
                 </li>
             </ol>
@@ -283,9 +277,8 @@
     <div class="col-md-12">
        <label>Segment Line</label>
        <md-input-container style="width: 100%;">
-        <input style="width:100%" disabled ng-model="er7SegmentTemplate.content"></input>
+        <input style="width:100%" ng-model="er7SegmentTemplate.content"/>
         </md-input-container>
-
     </div>
 </script>
 <script type="text/ng-template" id="SegmentTemplateMetadata.html">

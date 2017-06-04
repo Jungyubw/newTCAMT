@@ -555,9 +555,16 @@ public class TestPlanController extends CommonController {
     tp.setVersion((int) obj.get("version") + "");
 
     JSONArray groups = (JSONArray) obj.get("testcasegroups");
-
+    
+    HashMap <Integer, JSONObject> groupMap= new HashMap<Integer, JSONObject>();
     for (int i = 0; i < groups.length(); i++) {
       JSONObject g = groups.getJSONObject(i);
+      groupMap.put((Integer)g.get("position"), g);
+    }
+    
+
+    for (int i = 0; i < groups.length(); i++) {
+      JSONObject g = groupMap.get(i+1);
 
       TestCaseGroup tcg = new TestCaseGroup();
       tcg.setLongId((long) (r.nextDouble() * range));
@@ -566,8 +573,16 @@ public class TestPlanController extends CommonController {
       tcg.setType("testcasegroup");
 
       JSONArray testcases = (JSONArray) g.get("testcases");
+      
+      
+      HashMap <Integer, JSONObject> testcaseMap= new HashMap<Integer, JSONObject>();
       for (int j = 0; j < testcases.length(); j++) {
         JSONObject c = testcases.getJSONObject(j);
+        testcaseMap.put((Integer)c.get("position"), c);
+      }
+      
+      for (int j = 0; j < testcases.length(); j++) {
+        JSONObject c = testcaseMap.get(j + 1);
 
         TestCase tc = new TestCase();
         tc.setLongId((long) (r.nextDouble() * range));
@@ -588,8 +603,14 @@ public class TestPlanController extends CommonController {
         tc.setType("testcase");
 
         JSONArray teststeps = (JSONArray) c.get("teststeps");
+        
+        HashMap <Integer, JSONObject> teststepMap= new HashMap<Integer, JSONObject>();
         for (int k = 0; k < teststeps.length(); k++) {
           JSONObject s = teststeps.getJSONObject(k);
+          teststepMap.put((Integer)s.get("position"), s);
+        }
+        for (int k = 0; k < teststeps.length(); k++) {
+          JSONObject s = teststepMap.get(k + 1);
 
           TestStep ts = new TestStep();
           ts.setLongId((long) (r.nextDouble() * range));

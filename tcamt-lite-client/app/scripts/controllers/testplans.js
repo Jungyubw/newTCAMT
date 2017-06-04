@@ -287,7 +287,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.TestPlanImportModalCtrl = function($scope,$mdDialog,$http) {
 		$scope.jsonFilesData = {};
-		$scope.type = 'new';
+		$scope.type = 'old';
 		$scope.cancel = function() {
 			$mdDialog.hide();
 		};
@@ -593,8 +593,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if(!$rootScope.selectedTestStep){
 			return false
 		} else{
-			if($rootScope.selectedTestStep.integrationProfileId&&$rootScope.selectedTestStep.conformanceProfileId){
-				return $rootScope.selectedTestStep.integrationProfileId===er7Tmp.integrationProfileId &&$rootScope.selectedTestStep.conformanceProfileId;
+			if($rootScope.selectedConformanceProfile){
+				return $rootScope.selectedConformanceProfile.structID === er7Tmp.structID;
 			}
 		}
 	};
@@ -940,9 +940,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}
 		});
 		modalInstance.result.then(function(option) {
-			if(option=="Apply"){
+			if(option==="Apply"){
                 $scope.applyMessageTemplate(msgTemp);
-			}else if(option=="Override") {
+			}else if(option==="Override") {
 				$scope.overwriteMessageTemplate(msgTemp);
 			}
 			$scope.recordChanged();
@@ -960,9 +960,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}
 		});
 		modalInstance.result.then(function(option) {
-		if(option=="Apply"){
+		if(option==="Apply"){
             $scope.applySegmentTemplate(temp);
-		}else if(option=="Override"){
+		}else if(option==="Override"){
             $scope.overwriteSegmentTemplate(temp);
 		}		
 		$scope.recordChanged();
@@ -1470,8 +1470,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var listLineOfMessage = $rootScope.selectedTestStep.er7Message.split("\n");
 
 		var nodeList = [];
-		$scope.travelConformanceProfile(conformanceProfile, "", "", "", "" , "",  nodeList, 10, $rootScope.selectedIntegrationProfile);
-
+		$scope.travelConformanceProfile(conformanceProfile, "", "", "", "" , "",  nodeList, 100, $rootScope.selectedIntegrationProfile);
 		$rootScope.segmentList = [];
 		var currentPosition = 0;
 
@@ -1651,47 +1650,58 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 					children : []
 				};
 
+				if(segment.obj.dynamicMappingDefinition
+					&& segment.obj.dynamicMappingDefinition.dynamicMappingItems
+					&& segment.obj.dynamicMappingDefinition.dynamicMappingItems.length > 0
+					&& segment.obj.dynamicMappingDefinition.mappingStructure){
 
-				if(segment.obj.dynamicMapping.mappings.length > 0) {
-					for(var z = 0; z < segment.obj.dynamicMapping.mappings.length ; z++){
-						var mapping = segment.obj.dynamicMapping.mappings[z];
+                    var targetLocation         = segment.obj.dynamicMappingDefinition.mappingStructure.targetLocation;
+                    var firstReferenceLocation = segment.obj.dynamicMappingDefinition.mappingStructure.referenceLocation;
+                    var secondRefereceLocation = segment.obj.dynamicMappingDefinition.mappingStructure.secondRefereceLocation;
 
-						if(mapping.position){
-							if(mapping.position === i + 1){
-								var referenceValue = null;
-								var secondReferenceValue = null;
+                    if(targetLocation && targetLocation === i + 1 + "") {
+						var firstReferenceValue = null;
+						var secondReferenceValue = null;
 
-								if(mapping.reference){
-									referenceValue =  fieldValues[mapping.reference - 1];
-									if(mapping.secondReference) {
-										secondReferenceValue =  fieldValues[mapping.secondReference - 1];
-									}
-
-									if(secondReferenceValue == null){
-										var caseFound = _.find(mapping.cases, function(c){ return referenceValue.split("^")[0] == c.value; });
-										if(caseFound){
-											fieldNode.dt = $scope.findDatatypeById(caseFound.datatype, $rootScope.selectedIntegrationProfile);
-										}
-
-									}else{
-										var caseFound = _.find(mapping.cases, function(c){
-											return referenceValue.split("^")[0] == c.value && secondReferenceValue.split("^")[0] == c.secondValue;
-										});
-
-										if(!caseFound){
-											caseFound = _.find(mapping.cases, function(c){
-												return referenceValue.split("^")[0] == c.value && (c.secondValue == '' || c.secondValue == undefined);
-											});
-										}
-										if(caseFound){
-											fieldNode.dt = $scope.findDatatypeById(caseFound.datatype, $rootScope.selectedIntegrationProfile);
-										}
-									}
-
+						if(firstReferenceLocation){
+                            firstReferenceValue = fieldValues[firstReferenceLocation - 1].split("^")[0];
+							if(secondRefereceLocation){
+								if(secondRefereceLocation.includes(".")){
+                                    secondReferenceValue = fieldValues[secondRefereceLocation.split(".")[0] - 1];
+                                    secondReferenceValue = secondReferenceValue.split("^")[secondRefereceLocation.split(".")[1] - 1];
+								}else {
+                                    secondReferenceValue = fieldValues[secondRefereceLocation - 1].split("^")[0];
 								}
+
 							}
 						}
-					}
+
+                        if(firstReferenceValue){
+                        	if(secondReferenceValue){
+                                var itemFound = _.find(segment.obj.dynamicMappingDefinition.dynamicMappingItems, function(item){
+                                    return firstReferenceValue === item.firstReferenceValue && secondReferenceValue === item.secondReferenceValue;
+                                });
+                                if(!itemFound){
+                                    itemFound = _.find(segment.obj.dynamicMappingDefinition.dynamicMappingItems, function(item){
+                                        return firstReferenceValue === item.firstReferenceValue && (item.secondReferenceValue === '' || item.secondReferenceValue == undefined);
+                                    });
+								}
+
+                                if(itemFound){
+                                    fieldNode.dt = $scope.findDatatypeById(itemFound.datatypeId, $rootScope.selectedIntegrationProfile);
+                                }
+
+							}else {
+                                var itemFound = _.find(segment.obj.dynamicMappingDefinition.dynamicMappingItems, function(item){
+                                	return firstReferenceValue === item.firstReferenceValue && (item.secondReferenceValue === '' || item.secondReferenceValue == undefined);
+                                });
+
+                                if(itemFound){
+                                    fieldNode.dt = $scope.findDatatypeById(itemFound.datatypeId, $rootScope.selectedIntegrationProfile);
+                                }
+							}
+						}
+                    }
 				}
 
                 var fieldTestDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(fieldNode.iPath)];
@@ -2060,47 +2070,59 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 					fieldRepeatIndex = fieldRepeatIndex + 1;
 					var fieldiPath = "." + field.position + "[" + fieldRepeatIndex + "]";
 
-					if(segment.dynamicMapping.mappings.length > 0) {
-						for(var z = 0; z < segment.dynamicMapping.mappings.length ; z++){
-							var mapping = segment.dynamicMapping.mappings[z];
+                    if(segment.dynamicMappingDefinition
+                        && segment.dynamicMappingDefinition.dynamicMappingItems
+                        && segment.dynamicMappingDefinition.dynamicMappingItems.length > 0
+                        && segment.dynamicMappingDefinition.mappingStructure){
 
-							if(mapping.position){
-								if(mapping.position === field.position){
-									var referenceValue = null;
-									var secondReferenceValue = null;
+                        var targetLocation         = segment.dynamicMappingDefinition.mappingStructure.targetLocation;
+                        var firstReferenceLocation = segment.dynamicMappingDefinition.mappingStructure.referenceLocation;
+                        var secondRefereceLocation = segment.dynamicMappingDefinition.mappingStructure.secondRefereceLocation;
 
-									if(mapping.reference){
-										referenceValue =  $scope.getFieldStrFromSegment(segName, instanceSegment, mapping.reference);
-										if(mapping.secondReference) {
-											secondReferenceValue =  $scope.getFieldStrFromSegment(segName, instanceSegment, mapping.secondReference);
-										}
+                        if(targetLocation && targetLocation === i + 1 + "") {
+                            var firstReferenceValue = null;
+                            var secondReferenceValue = null;
 
-										if(secondReferenceValue == null){
-											var caseFound = _.find(mapping.cases, function(c){ return referenceValue.split("^")[0] == c.value; });
-											if(caseFound){
-												fieldDT = $scope.findDatatypeById(caseFound.datatype, selectedIntegrationProfile);
-											}
+                            if(firstReferenceLocation){
+                                firstReferenceValue =  $scope.getFieldStrFromSegment(segName, instanceSegment, firstReferenceLocation);
+                                if(secondRefereceLocation){
+                                    if(secondRefereceLocation.includes(".")){
+                                        secondReferenceValue = $scope.getFieldStrFromSegment(segName, instanceSegment, secondRefereceLocation.split(".")[0]);
+                                        secondReferenceValue = $scope.getComponentStrFromField(secondReferenceValue, secondRefereceLocation.split(".")[1]);
+                                    }else {
+                                        secondReferenceValue = $scope.getFieldStrFromSegment(segName, instanceSegment, secondRefereceLocation);
+                                    }
 
-										}else{
-											var caseFound = _.find(mapping.cases, function(c){
-												return referenceValue.split("^")[0] == c.value && secondReferenceValue.split("^")[0] == c.secondValue;
-											});
+                                }
+                            }
 
-											if(!caseFound){
-												caseFound = _.find(mapping.cases, function(c){
-													return referenceValue.split("^")[0] == c.value && (c.secondValue == '' || c.secondValue == undefined);
-												});
-											}
-											if(caseFound){
-												fieldDT = $scope.findDatatypeById(caseFound.datatype, selectedIntegrationProfile);
-											}
-										}
+                            if(firstReferenceValue){
+                                if(secondReferenceValue){
+                                    var itemFound = _.find(segment.dynamicMappingDefinition.dynamicMappingItems, function(item){
+                                        return firstReferenceValue === item.firstReferenceValue && secondReferenceValue === item.secondReferenceValue;
+                                    });
+                                    if(!itemFound){
+                                        itemFound = _.find(segment.dynamicMappingDefinition.dynamicMappingItems, function(item){
+                                            return firstReferenceValue === item.firstReferenceValue && (item.secondReferenceValue === '' || item.secondReferenceValue == undefined);
+                                        });
+                                    }
 
-									}
-								}
-							}
-						}
-					}
+                                    if(itemFound){
+                                        fieldDT = $scope.findDatatypeById(itemFound.datatypeId, $rootScope.selectedIntegrationProfile);
+                                    }
+
+                                }else {
+                                    var itemFound = _.find(segment.dynamicMappingDefinition.dynamicMappingItems, function(item){
+                                        return firstReferenceValue === item.firstReferenceValue && (item.secondReferenceValue === '' || item.secondReferenceValue == undefined);
+                                    });
+
+                                    if(itemFound){
+                                        fieldDT = $scope.findDatatypeById(itemFound.datatypeId, $rootScope.selectedIntegrationProfile);
+                                    }
+                                }
+                            }
+                        }
+                    }
 
 					if (fieldDT == null || fieldDT.components == null || fieldDT.components.length == 0) {
 						var cateOfField = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath)];
@@ -2171,7 +2193,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	};
 
-
 	$scope.createStringListCheck = function (iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, value, byIDElm) {
 		var values = cate.listData.toString();
 		var elmConstraint = xmlDoc.createElement("Constraint");
@@ -2196,9 +2217,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		byIDElm.appendChild(elmConstraint);
 
 	};
-	
-	
+
 	$scope.createPlainTextCheck = function(iPositionPath, cate, usagePath, xmlDoc, selectedConformanceProfile, selectedIntegrationProfile, value, byIDElm) {
+		value = value.replace(/(\r\n|\n|\r)/gm,"");
 		var elmConstraint = xmlDoc.createElement("Constraint");
 		var elmReference = xmlDoc.createElement("Reference");
 		elmReference.setAttribute("Source", "testcase");
@@ -2437,49 +2458,60 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 						fieldRepeatIndex = fieldRepeatIndex + 1;
 						var fieldiPath = "." + field.position + "[" + fieldRepeatIndex + "]";
 
+                        if(segment.dynamicMappingDefinition
+                            && segment.dynamicMappingDefinition.dynamicMappingItems
+                            && segment.dynamicMappingDefinition.dynamicMappingItems.length > 0
+                            && segment.dynamicMappingDefinition.mappingStructure){
 
+                            var targetLocation         = segment.dynamicMappingDefinition.mappingStructure.targetLocation;
+                            var firstReferenceLocation = segment.dynamicMappingDefinition.mappingStructure.referenceLocation;
+                            var secondRefereceLocation = segment.dynamicMappingDefinition.mappingStructure.secondRefereceLocation;
 
-						if(segment.dynamicMapping.mappings.length > 0) {
-							for(var z = 0; z < segment.dynamicMapping.mappings.length ; z++){
-								var mapping = segment.dynamicMapping.mappings[z];
+                            if(targetLocation && targetLocation === i + 1 + "") {
+                                var firstReferenceValue = null;
+                                var secondReferenceValue = null;
 
-								if(mapping.position){
-									if(mapping.position === field.position){
-										var referenceValue = null;
-										var secondReferenceValue = null;
+                                if(firstReferenceLocation){
+                                    firstReferenceValue =  $scope.getFieldStrFromSegment(segName, instanceSegment, firstReferenceLocation);
+                                    if(secondRefereceLocation){
+                                        if(secondRefereceLocation.includes(".")){
+                                            secondReferenceValue = $scope.getFieldStrFromSegment(segName, instanceSegment, secondRefereceLocation.split(".")[0]);
+                                            secondReferenceValue = $scope.getComponentStrFromField(secondReferenceValue, secondRefereceLocation.split(".")[1]);
+                                        }else {
+                                            secondReferenceValue = $scope.getFieldStrFromSegment(segName, instanceSegment, secondRefereceLocation);
+                                        }
 
-										if(mapping.reference){
-											referenceValue =  $scope.getFieldStrFromSegment(segName, instanceSegment, mapping.reference);
-											if(mapping.secondReference) {
-												secondReferenceValue =  $scope.getFieldStrFromSegment(segName, instanceSegment, mapping.secondReference);
-											}
+                                    }
+                                }
 
-											if(secondReferenceValue == null){
-												var caseFound = _.find(mapping.cases, function(c){ return referenceValue.split("^")[0] == c.value; });
-												if(caseFound){
-													fieldDT = $scope.findDatatypeById(caseFound.datatype, selectedIntegrationProfile);
-												}
+                                if(firstReferenceValue){
+                                    if(secondReferenceValue){
+                                        var itemFound = _.find(segment.dynamicMappingDefinition.dynamicMappingItems, function(item){
+                                            return firstReferenceValue === item.firstReferenceValue && secondReferenceValue === item.secondReferenceValue;
+                                        });
+                                        if(!itemFound){
+                                            itemFound = _.find(segment.dynamicMappingDefinition.dynamicMappingItems, function(item){
+                                                return firstReferenceValue === item.firstReferenceValue && (item.secondReferenceValue === '' || item.secondReferenceValue == undefined);
+                                            });
+                                        }
 
-											}else{
-												var caseFound = _.find(mapping.cases, function(c){
-													return referenceValue.split("^")[0] == c.value && secondReferenceValue.split("^")[0] == c.secondValue;
-												});
+                                        if(itemFound){
+                                            fieldDT = $scope.findDatatypeById(itemFound.datatypeId, $rootScope.selectedIntegrationProfile);
+                                        }
 
-												if(!caseFound){
-													caseFound = _.find(mapping.cases, function(c){
-														return referenceValue.split("^")[0] == c.value && (c.secondValue == '' || c.secondValue == undefined);
-													});
-												}
-												if(caseFound){
-													fieldDT = $scope.findDatatypeById(caseFound.datatype, selectedIntegrationProfile);
-												}
-											}
+                                    }else {
+                                        var itemFound = _.find(segment.dynamicMappingDefinition.dynamicMappingItems, function(item){
+                                            return firstReferenceValue === item.firstReferenceValue && (item.secondReferenceValue === '' || item.secondReferenceValue == undefined);
+                                        });
 
-										}
-									}
-								}
-							}
-						}
+                                        if(itemFound){
+                                            fieldDT = $scope.findDatatypeById(itemFound.datatypeId, $rootScope.selectedIntegrationProfile);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
 						if (fieldDT == null || fieldDT.components == null || fieldDT.components.length == 0) {
 							var tdcstrOfField = "";
 							var cateOfField = testStep.testDataCategorizationMap[$scope.replaceDot2Dash(segmentiPath + fieldiPath, fieldStr)];
@@ -3758,10 +3790,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                 $rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
                 $scope.recordChanged();
             }else {
-                console.log
-                console.log($scope.sourceDrag);
-                console.log($scope.parentDrag);
-                console.log(destNodes.$modelValue);
                 if($scope.checkIfChanged($scope.sourceDrag,$scope.parentDrag,destNodes.$modelValue)){
                     $rootScope.changesMap[sourceNode.$parent.$nodeScope.$modelValue.id]=true;
                     $rootScope.changesMap[destNodes.$nodeScope.$modelValue.id]=true;
@@ -3788,7 +3816,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	}
 	for(i=0; i<destination.length; i++){
 		if(destination[i].id===element.id){
-			console.log(destination[i]);
 			return temp[i].id!==element.id;
 
 		}
@@ -4290,22 +4317,22 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.messagetempCollapsed=false;
 	$scope.segmenttempCollapsed=false;
-	$scope.Er7Collapsed=false;
+	$scope.Er7MessageCollapsed=false;
+    $scope.Er7SegmentCollapsed=false;
 
-    $scope.switchermsg= function(bool){
+    $scope.switchermsg= function(){
 		$scope.messagetempCollapsed = !$scope.messagetempCollapsed;
 	};
-
-    $scope.switcherseg= function(bool){
+    $scope.switcherseg= function(){
 	    $scope.segmenttempCollapsed = !$scope.segmenttempCollapsed;
 	};
+	 $scope.switcherEr7Message= function(){
+	    $scope.Er7MessageCollapsed = !$scope.Er7MessageCollapsed;
+	};
 
-	$scope.switcherIg= function(bool){
-	    $scope.segmenttempCollapsed = !$scope.segmenttempCollapsed;
-	};
-	 $scope.switcherEr7= function(bool){
-	    $scope.Er7Collapsed = !$scope.Er7Collapsed;
-	};
+    $scope.switcherEr7Segment= function(){
+        $scope.Er7SegmentCollapsed = !$scope.Er7SegmentCollapsed;
+    };
 	$scope.ChildVisible=function(ig){
 		if($rootScope.selectedTestStep===null || ig.id===$rootScope.selectedTestStep.integrationProfileId){
 			return true;
@@ -4647,11 +4674,12 @@ angular.module('tcl').controller('MessageTemplateCreationModalCtrl', function($s
 	$scope.newMessageTemplate = {};
 	$scope.newMessageTemplate.id = new ObjectId().toString();
 	$rootScope.changesMap[$scope.newMessageTemplate.id]=true;
-	$scope.newMessageTemplate.name = 'new Template for ' + $rootScope.selectedConformanceProfile.name;
+	$scope.newMessageTemplate.name = 'new Template for ' + $rootScope.selectedConformanceProfile.structID;
 	$scope.newMessageTemplate.descrption = 'No Desc';
 	$scope.newMessageTemplate.date = new Date();
 	$scope.newMessageTemplate.integrationProfileId = $rootScope.selectedIntegrationProfile.id;
 	$scope.newMessageTemplate.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
+    $scope.newMessageTemplate.structID = $rootScope.selectedConformanceProfile.structID;
 
 	$scope.newMessageTemplate.categorizations = [];
 	keys.forEach(function(key){
@@ -4723,12 +4751,13 @@ angular.module('tcl').controller('Er7TemplateCreationModalCtrl', function($scope
 	$scope.newEr7Template = {};
 	$scope.newEr7Template.id = new ObjectId().toString();
 	$rootScope.changesMap[$scope.newEr7Template.id]=true;
-	$scope.newEr7Template.name = 'new Er7 Template for ' + $rootScope.selectedConformanceProfile.name;
+	$scope.newEr7Template.name = 'new Er7 Template for ' + $rootScope.selectedConformanceProfile.structID;
 	$scope.newEr7Template.descrption = 'No Desc';
 	$scope.newEr7Template.date = new Date();
 	$scope.newEr7Template.integrationProfileId = $rootScope.selectedIntegrationProfile.id;
 	$scope.newEr7Template.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
 	$scope.newEr7Template.er7Message = $rootScope.selectedTestStep.er7Message;
+    $scope.newEr7Template.structID = $rootScope.selectedConformanceProfile.structID
 
 	$scope.createEr7Template = function() {
 		$rootScope.template.er7Templates.push($scope.newEr7Template);
@@ -4801,9 +4830,7 @@ angular.module('tcl').controller('MessageViewCtrl', function($scope, $rootScope)
     };
 });
 angular.module('tcl').controller('OpenApplySegmentTemplate', function($scope, $modalInstance, $rootScope) {
-
-	$scope.option="apply";
-	$scope.options=["apply", "overrite"];
+	$scope.option="Apply";
 	$scope.apply = function() {
 		$modalInstance.close($scope.option);
 
@@ -4814,8 +4841,7 @@ angular.module('tcl').controller('OpenApplySegmentTemplate', function($scope, $m
 	};
 });
 angular.module('tcl').controller('OpenApplyMessageTemplate', function($scope, $modalInstance, $rootScope) {
-	$scope.option="apply";
-	$scope.options=["apply", "overrite"]
+	$scope.option="Apply";
 	$scope.apply = function() {
 		$modalInstance.close($scope.option);
 

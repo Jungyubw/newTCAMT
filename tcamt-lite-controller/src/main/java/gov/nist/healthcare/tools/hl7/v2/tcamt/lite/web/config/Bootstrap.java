@@ -22,18 +22,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ER7Template;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.MessageTemplate;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Template;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStoryConfiguration;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStroyEntry;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TemplateService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
@@ -50,6 +53,9 @@ public class Bootstrap implements InitializingBean {
   ProfileService profileService;
 
   @Autowired
+  TemplateService templateService;
+
+  @Autowired
   TestStoryConfigurationService testStoryConfigurationService;
 
   /*
@@ -59,11 +65,46 @@ public class Bootstrap implements InitializingBean {
    */
   @Override
   public void afterPropertiesSet() throws Exception {
-//    updateHL7Version();
-//    updateLongIDforTestPlan();
-//
+    // updateHL7Version();
+    // updateLongIDforTestPlan();
+    //
+    
+    updateMessageTemplates();
+    
     resetIGAMTProfile();
 
+   
+
+
+  }
+
+  private void updateMessageTemplates() {
+    List<Template> templates = templateService.findAll();
+    for (Template t : templates) {
+      for (ER7Template et : t.getEr7Templates()) {
+        Profile p = profileService.findOne(et.getIntegrationProfileId());
+        if(p!= null){
+          for (Message m : p.getMessages().getChildren()) {
+            if (m.getId().equals(et.getConformanceProfileId())) {
+              et.setStructID(m.getStructID());
+            }
+          }  
+        }
+      }
+
+      for (MessageTemplate mt : t.getMessageTemplates()) {
+        Profile p = profileService.findOne(mt.getIntegrationProfileId());
+        if(p!= null){
+          for (Message m : p.getMessages().getChildren()) {
+            if (m.getId().equals(mt.getConformanceProfileId())) {
+              mt.setStructID(m.getStructID());
+            }
+          } 
+        }
+      }
+      templateService.save(t);
+    }
+    
 
   }
 
@@ -74,8 +115,6 @@ public class Bootstrap implements InitializingBean {
         profileService.delete(p.getId());
       }
     }
-
-
   }
 
   private void updateLongIDforTestPlan() throws TestPlanException {

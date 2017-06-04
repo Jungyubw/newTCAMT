@@ -330,9 +330,13 @@ public class ProfileServiceImpl implements ProfileService {
 		segmentObj.setDescription(segmentElm.getAttribute("Description"));
 		if(segmentElm.getAttribute("Label") != null && !segmentElm.getAttribute("Label").equals("")){
 			segmentObj.setLabel(segmentElm.getAttribute("Label"));
-			segmentObj.setExt(segmentElm.getAttribute("Label").replace(segmentElm.getAttribute("Name") + "_", ""));
+			if(segmentElm.getAttribute("Label").equals(segmentElm.getAttribute("Name"))){
+			  segmentObj.setExt(null);
+			}else{
+			  segmentObj.setExt(segmentElm.getAttribute("Label").replace(segmentElm.getAttribute("Name") + "_", "")); 
+			}
 		}else{
-			segmentObj.setLabel(segmentElm.getAttribute("Name"));
+			segmentObj.setExt(null);
 		}
 		segmentObj.setName(segmentElm.getAttribute("Name"));
 		segmentObj.setPredicates(this.findPredicates(this.predicates.getSegments(), segmentElm.getAttribute("ID"), segmentElm.getAttribute("Name")));
@@ -350,6 +354,7 @@ public class ProfileServiceImpl implements ProfileService {
 			VariesMapItem mappingStructure = new VariesMapItem();
 			mappingStructure.setHl7Version(segmentObj.getHl7Version());
 			mappingStructure.setReferenceLocation(mappingElm.getAttribute("Reference"));
+			if(mappingElm.getAttribute("SecondReference") != null && !mappingElm.getAttribute("SecondReference").equals("")) mappingStructure.setSecondRefereceLocation(mappingElm.getAttribute("SecondReference"));
 			mappingStructure.setSegmentName(segmentObj.getName());
 			mappingStructure.setTargetLocation(mappingElm.getAttribute("Position"));
 			dynamicMappingObj.setMappingStructure(mappingStructure);
@@ -361,6 +366,9 @@ public class ProfileServiceImpl implements ProfileService {
 				DynamicMappingItem dynamicMappingItem = new DynamicMappingItem();
 				dynamicMappingItem.setDatatypeId(this.findDatatype(caseElm.getAttribute("Datatype"), profile).getId());
 				dynamicMappingItem.setFirstReferenceValue(caseElm.getAttribute("Value"));
+				if(caseElm.getAttribute("SecondValue") != null && !caseElm.getAttribute("SecondValue").equals("")){
+				  dynamicMappingItem.setSecondReferenceValue(caseElm.getAttribute("SecondValue"));
+				}
 				dynamicMappingItems.add(dynamicMappingItem);
 				
 			}
@@ -464,8 +472,13 @@ public class ProfileServiceImpl implements ProfileService {
 			if(elmDatatype.getAttribute("Label") != null &&  !elmDatatype.getAttribute("Label").equals("")){
 				datatypeObj.setLabel(elmDatatype.getAttribute("Label"));
 				datatypeObj.setExt(elmDatatype.getAttribute("Label").replace(elmDatatype.getAttribute("Name")+ "_", ""));
+				if(elmDatatype.getAttribute("Label").equals(elmDatatype.getAttribute("Name"))){
+				  datatypeObj.setExt(null);
+	            }else{
+	              datatypeObj.setExt(elmDatatype.getAttribute("Label").replace(elmDatatype.getAttribute("Name") + "_", "")); 
+	            }
 			}else{
-				datatypeObj.setLabel(elmDatatype.getAttribute("Name"));
+				datatypeObj.setExt(null);
 			}
 			datatypeObj.setName(elmDatatype.getAttribute("Name"));
 			datatypeObj.setPredicates(this.findPredicates(this.predicates.getDatatypes(), ID, elmDatatype.getAttribute("Name")));

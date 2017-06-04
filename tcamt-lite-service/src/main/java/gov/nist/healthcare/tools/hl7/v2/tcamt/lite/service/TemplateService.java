@@ -17,6 +17,8 @@
 
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Template;
@@ -27,4 +29,6 @@ public interface TemplateService {
 	public Template save(Template t);
 
 	public Template findByAccountId(Long accountId);
+	
+	public List<Template> findAll();
 }

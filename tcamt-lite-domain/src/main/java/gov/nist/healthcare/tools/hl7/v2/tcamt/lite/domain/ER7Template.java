@@ -3,74 +3,85 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 import javax.persistence.Id;
 
 public class ER7Template {
-	@Id
-	private String id;
+  @Id
+  private String id;
 
-	private String name;
-	private String description;
-	private String date;
-	
-	private String integrationProfileId;
-	private String conformanceProfileId;
-	
-	private String er7Message;
+  private String name;
+  private String description;
+  private String date;
 
-	public String getId() {
-		return id;
-	}
+  private String integrationProfileId;
+  private String conformanceProfileId;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+  private String structID;
 
-	public String getName() {
-		return name;
-	}
+  private String er7Message;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getId() {
+    return id;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public void setId(String id) {
+    this.id = id;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public String getDate() {
-		return date;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setDate(String date) {
-		this.date = date;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public String getIntegrationProfileId() {
-		return integrationProfileId;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public void setIntegrationProfileId(String integrationProfileId) {
-		this.integrationProfileId = integrationProfileId;
-	}
+  public String getDate() {
+    return date;
+  }
 
-	public String getConformanceProfileId() {
-		return conformanceProfileId;
-	}
+  public void setDate(String date) {
+    this.date = date;
+  }
 
-	public void setConformanceProfileId(String conformanceProfileId) {
-		this.conformanceProfileId = conformanceProfileId;
-	}
+  public String getIntegrationProfileId() {
+    return integrationProfileId;
+  }
 
-	public String getEr7Message() {
-		return er7Message;
-	}
+  public void setIntegrationProfileId(String integrationProfileId) {
+    this.integrationProfileId = integrationProfileId;
+  }
 
-	public void setEr7Message(String er7Message) {
-		this.er7Message = er7Message;
-	}
-	
-	
-	
+  public String getConformanceProfileId() {
+    return conformanceProfileId;
+  }
+
+  public void setConformanceProfileId(String conformanceProfileId) {
+    this.conformanceProfileId = conformanceProfileId;
+  }
+
+  public String getEr7Message() {
+    return er7Message;
+  }
+
+  public void setEr7Message(String er7Message) {
+    this.er7Message = er7Message;
+  }
+
+
+  public String getStructID() {
+    return structID;
+  }
+
+  public void setStructID(String structID) {
+    this.structID = structID;
+  }
+
+
+
 }
