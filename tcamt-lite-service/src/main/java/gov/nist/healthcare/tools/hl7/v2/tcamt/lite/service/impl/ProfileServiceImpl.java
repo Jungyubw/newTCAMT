@@ -57,6 +57,7 @@ import com.mongodb.MongoException;
 
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Constant.SCOPE;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ContentDefinition;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DatatypeLink;
@@ -332,11 +333,14 @@ public class ProfileServiceImpl implements ProfileService {
 			segmentObj.setLabel(segmentElm.getAttribute("Label"));
 			if(segmentElm.getAttribute("Label").equals(segmentElm.getAttribute("Name"))){
 			  segmentObj.setExt(null);
+			  segmentObj.setScope(SCOPE.HL7STANDARD);
 			}else{
 			  segmentObj.setExt(segmentElm.getAttribute("Label").replace(segmentElm.getAttribute("Name") + "_", "")); 
+			  segmentObj.setScope(SCOPE.USER);
 			}
 		}else{
 			segmentObj.setExt(null);
+			segmentObj.setScope(SCOPE.HL7STANDARD);
 		}
 		segmentObj.setName(segmentElm.getAttribute("Name"));
 		segmentObj.setPredicates(this.findPredicates(this.predicates.getSegments(), segmentElm.getAttribute("ID"), segmentElm.getAttribute("Name")));
@@ -474,11 +478,14 @@ public class ProfileServiceImpl implements ProfileService {
 				datatypeObj.setExt(elmDatatype.getAttribute("Label").replace(elmDatatype.getAttribute("Name")+ "_", ""));
 				if(elmDatatype.getAttribute("Label").equals(elmDatatype.getAttribute("Name"))){
 				  datatypeObj.setExt(null);
+				  datatypeObj.setScope(SCOPE.HL7STANDARD);
 	            }else{
 	              datatypeObj.setExt(elmDatatype.getAttribute("Label").replace(elmDatatype.getAttribute("Name") + "_", "")); 
+	              datatypeObj.setScope(SCOPE.USER);
 	            }
 			}else{
 				datatypeObj.setExt(null);
+				datatypeObj.setScope(SCOPE.HL7STANDARD);
 			}
 			datatypeObj.setName(elmDatatype.getAttribute("Name"));
 			datatypeObj.setPredicates(this.findPredicates(this.predicates.getDatatypes(), ID, elmDatatype.getAttribute("Name")));

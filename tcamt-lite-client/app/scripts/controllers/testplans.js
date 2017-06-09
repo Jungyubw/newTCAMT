@@ -524,8 +524,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$scope.error = error.data;
 				delay.reject(false);
 
-			});}
-		else{
+			});
+		} else{
 			delay.reject(false);
 		}
     };
@@ -534,7 +534,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         waitingDialog.show('Apply Conformance Profile...', {dialogSize: 'xs', progressType: 'info'});
 		$rootScope.selectedTestStep.integrationProfileId = igid;
 		$rootScope.selectedTestStep.conformanceProfileId = mid;
-		$scope.loadIntegrationProfile(function (){
+		$scope.loadIntegrationProfile(function(){
             waitingDialog.hide();
 		});
 	};
@@ -1142,7 +1142,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                 $scope.updateListOfIntegrationAbstractProfiles();
                 $timeout(function () {
                     $scope.updateCurrentTitle("Test Plan", $rootScope.selectedTestPlan.name);
-                    $scope.subview = "EditTestPlanMetadata.html";
                 }, 0);
                 $timeout(function () {
                     $rootScope.selectedTemplate=null;
@@ -1169,6 +1168,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                     }
 
                     waitingDialog.hide();
+                    $scope.subview = "EditTestPlanMetadata.html";
                 }, 100);
             }, function (error) {
                 $scope.error = error.data;
@@ -1275,17 +1275,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.subview = "EditDocumentMetadata.html";
 
 	};
-	
-//	$scope.OpenMessageMetadata= function(msg){
-//		console.log("Openning message");
-//
-//		$rootScope.selectedTemplate=null;
-//		$rootScope.selectedSegmentNode =null;
-//		$rootScope.selectedTestStep=null;
-//		$rootScope.message=msg;
-//		$scope.subview = "MessageMetadata.html";
-//
-//	};
 
 	$scope.selectTestCaseGroup = function (testCaseGroup) {
 		if (testCaseGroup != null) {
@@ -1469,13 +1458,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 		var listLineOfMessage = $rootScope.selectedTestStep.er7Message.split("\n");
 
-		var nodeList = [];
-		$scope.travelConformanceProfile(conformanceProfile, "", "", "", "" , "",  nodeList, 100, $rootScope.selectedIntegrationProfile);
+        $scope.nodeList = [];
+		$scope.travelConformanceProfile(conformanceProfile, "", "", "", "" , "", $rootScope.selectedIntegrationProfile, false, 0);
 		$rootScope.segmentList = [];
 		var currentPosition = 0;
 
+		$scope.countSGH = 0;
 		for(var i in listLineOfMessage){
-			currentPosition = $scope.getSegment($rootScope.segmentList, nodeList, currentPosition, listLineOfMessage[i]);
+			currentPosition = $scope.getSegment($rootScope.segmentList, currentPosition, listLineOfMessage[i]);
 		};
 
 		var testcaseName = $scope.findTestCaseNameOfTestStep();
@@ -1525,17 +1515,102 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		return defaultEr7Message;
 	};
 
-	$scope.getSegment = function (segmentList, nodeList, currentPosition, segmentStr) {
+	$scope.getSegment = function (segmentList, currentPosition, segmentStr) {
 		var segmentName = segmentStr.substring(0,3);
+		if(segmentName === "SGH") $scope.countSGH = $scope.countSGH + 1;
 
-		for(var index = currentPosition; index < nodeList.length; index++){
-			if(nodeList[index].obj.name === segmentName){
-				nodeList[index].segmentStr = segmentStr;
-				segmentList.push(nodeList[index]);
+		for(var index = currentPosition; index < $scope.nodeList.length; index++){
+			if($scope.nodeList[index].key === $scope.countSGH + segmentName){
+				if($scope.nodeList[index].anchor) {
+                    $scope.popNodeList(index);
+				}
+				if($scope.nodeList[index].repeatable){
+                    $scope.addRepeatedSegment(index);
+				}
+
+                $scope.nodeList[index].segmentStr = segmentStr;
+				segmentList.push($scope.nodeList[index]);
 				return index + 1;
 			}
 		}
+
+        if(segmentName === "SGT") $scope.countSGH = $scope.countSGH - 1;
 		return currentPosition;
+	};
+
+	$scope.addRepeatedSegment = function (position){
+        var repeatedNode = $scope.nodeList[position];
+        var instanceNum = Number(repeatedNode.iPath.substring(repeatedNode.iPath.lastIndexOf("[") + 1, repeatedNode.iPath.lastIndexOf("]"))) + 1;
+        var newiPath = repeatedNode.iPath.substring(0 , repeatedNode.iPath.lastIndexOf("[")) + "[" + instanceNum + "]";
+        var newPositioniPath = repeatedNode.positioniPath.substring(0 , repeatedNode.positioniPath.lastIndexOf("[")) + "[" + instanceNum + "]";
+
+        var newNode = {
+            key: repeatedNode.key,
+            repeatable:  repeatedNode.repeatable,
+            type: 'segment',
+            path: repeatedNode.path,
+            iPath: newiPath,
+            positionPath: repeatedNode.positionPath,
+            positioniPath: newPositioniPath,
+            usagePath: repeatedNode.usagePath,
+            obj : repeatedNode.obj,
+            anchor : false
+        };
+
+        var result = [];
+        for(var i = 0; i < $scope.nodeList.length; i++){
+            result.push($scope.nodeList[i]);
+            if(i === position) result.push(newNode);
+        }
+        $scope.nodeList = result;
+	};
+
+
+    $scope.popNodeList = function (position){
+        var anchor = $scope.nodeList[position];
+
+        var addList = [];
+
+        var endPostion = $scope.nodeList.length;
+
+        var oldGroupiPath = anchor.iPath.substring(0 , anchor.iPath.lastIndexOf("."));
+        var oldGroupiPositionPath = anchor.positioniPath.substring(0 , anchor.positioniPath.lastIndexOf("."));
+        var instanceNum = Number(oldGroupiPath.substring(oldGroupiPath.lastIndexOf("[") + 1, oldGroupiPath.lastIndexOf("]"))) + 1;
+        var newGroupiPath = oldGroupiPath.substring(0 , oldGroupiPath.lastIndexOf("[") + 1) + instanceNum + "]";
+        var newGroupiPositionPath = oldGroupiPositionPath.substring(0 , oldGroupiPositionPath.lastIndexOf("[") + 1) + instanceNum + "]";
+
+        for(var index = position; index < $scope.nodeList.length; index++){
+        	if($scope.nodeList[index].iPath.startsWith(oldGroupiPath)){
+                var node = {
+                    key: $scope.nodeList[index].key,
+                    repeatable:  $scope.nodeList[index].repeatable,
+                    type: 'segment',
+                    path: $scope.nodeList[index].path,
+                    iPath: $scope.nodeList[index].iPath.replace(oldGroupiPath, newGroupiPath),
+                    positionPath: $scope.nodeList[index].positionPath,
+                    positioniPath: $scope.nodeList[index].positioniPath.replace(oldGroupiPositionPath, newGroupiPositionPath),
+                    usagePath: $scope.nodeList[index].usagePath,
+                    obj : $scope.nodeList[index].obj,
+                    anchor : $scope.nodeList[index].anchor
+                };
+
+                addList.push(node);
+			}else {
+                endPostion = index;
+                index = $scope.nodeList.length;
+			}
+        }
+        var result = [];
+        for(var i = 0; i < $scope.nodeList.length; i++){
+            result.push($scope.nodeList[i]);
+        	if(i === endPostion - 1) {
+                for (var j = 0; j < addList.length; j++) {
+                    result.push(addList[j]);
+                }
+            }
+        }
+
+        $scope.nodeList = result;
 	};
 
 	$scope.getInstanceValue = function (str) {
@@ -3022,9 +3097,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.testDataAccordi.constraintList = false;
 		}
 	};
-	// $scope.documentAccordionClicked= function () {
 
-	// }
 	$scope.constraintAccordionClicked = function () {
 		if($scope.testDataAccordi.constraintList === false){
 			$scope.testDataAccordi = {};
@@ -3103,133 +3176,91 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		});
 	};
 
-	$scope.travelConformanceProfile = function (parent, path, ipath, positionPath, positioniPath, usagePath, nodeList, maxSize, selectedIntegrationProfile) {
+	$scope.travelConformanceProfile = function (parent, path, ipath, positionPath, positioniPath, usagePath, selectedIntegrationProfile, anchor, countSGH) {
 		for(var i in parent.children){
 			var child = parent.children[i];
 			if(child.type === 'segmentRef'){
 				var obj = $scope.findSegment(child.ref, selectedIntegrationProfile);
+				if (obj.name === "SGH") countSGH = countSGH + 1;
 
-				if(child.max === '1'){
-					var segmentPath = null;
-					var segmentiPath = null;
-					var segmentPositionPath = null;
-					var segmentiPositionPath = null;
-					var segmentUsagePath = null;
+                var segmentPath = null;
+                var segmentiPath = null;
+                var segmentPositionPath = null;
+                var segmentiPositionPath = null;
+                var segmentUsagePath = null;
 
-					if(path===""){
-						segmentPath = obj.name;
-						segmentiPath = obj.name + "[1]";
-						segmentPositionPath = child.position;
-						segmentiPositionPath = child.position + "[1]";
-						segmentUsagePath = child.usage;
-					}else {
-						segmentPath = path + "." + obj.name;
-						segmentiPath = ipath + "." + obj.name + "[1]";
-						segmentPositionPath = positionPath + "." + child.position;
-						segmentiPositionPath = positioniPath + "." + child.position + "[1]";
-						segmentUsagePath = usagePath + "-" + child.usage;
-					}
-					var node = {
-						type: 'segment',
-						path: segmentPath,
-						iPath: segmentiPath,
-						positionPath: segmentPositionPath,
-						positioniPath: segmentiPositionPath,
-						usagePath: segmentUsagePath,
-						obj : obj
-					};
-					nodeList.push(node);
-				}else {
-					for (var index = 1; index < maxSize + 1; index++) {
-						var segmentPath = null;
-						var segmentiPath = null;
-						var segmentPositionPath = null;
-						var segmentiPositionPath = null;
-						var segmentUsagePath = null;
+                if(path===""){
+                    segmentPath = obj.name;
+                    segmentiPath = obj.name + "[1]";
+                    segmentPositionPath = child.position;
+                    segmentiPositionPath = child.position + "[1]";
+                    segmentUsagePath = child.usage;
+                }else {
+                    segmentPath = path + "." + obj.name;
+                    segmentiPath = ipath + "." + obj.name + "[1]";
+                    segmentPositionPath = positionPath + "." + child.position;
+                    segmentiPositionPath = positioniPath + "." + child.position + "[1]";
+                    segmentUsagePath = usagePath + "-" + child.usage;
+                }
+                var node = {
+                	key: countSGH + obj.name,
+                    type: 'segment',
+                    path: segmentPath,
+                    iPath: segmentiPath,
+                    positionPath: segmentPositionPath,
+                    positioniPath: segmentiPositionPath,
+                    usagePath: segmentUsagePath,
+                    obj : obj,
+					anchor : anchor
+                };
 
-						if(path===""){
-							segmentPath = obj.name;
-							segmentiPath = obj.name + "[" + index + "]";
-							segmentPositionPath = child.position;
-							segmentiPositionPath = child.position + "[" + index + "]";
-							segmentUsagePath = child.usage;
-						}else {
-							segmentPath = path + "." + obj.name;
-							segmentiPath = ipath + "." + obj.name + "[" + index + "]";
-							segmentPositionPath = positionPath + "." + child.position;
-							segmentiPositionPath = positioniPath + "." + child.position + "[" + index + "]";
-							segmentUsagePath = usagePath + "-" + child.usage;
-						}
+                if(child.max === '0'){
 
-						var node = {
-							type: 'segment',
-							path: segmentPath,
-							iPath: segmentiPath,
-							positionPath: segmentPositionPath,
-							positioniPath: segmentiPositionPath,
-							usagePath: segmentUsagePath,
-							obj : obj
-						};
-						nodeList.push(node);
-					}
+				}else if(child.max === '1'){
+                    $scope.nodeList.push(node);
+                }else {
+                    node.repeatable = true;
+                    $scope.nodeList.push(node);
 				}
+                anchor = false;
 
+                if (obj.name === "SGT") countSGH = countSGH - 1;
 			}else if(child.type === 'group'){
 				var groupName = child.name;
 				if(groupName.indexOf(".") >= 0) {
 					groupName = groupName.substr(groupName.lastIndexOf(".") + 1);
 				}
+                var groupPath = null;
+                var groupiPath = null;
+                var groupPositionPath = null;
+                var groupiPositionPath = null;
+                var groupUsagePath = null;
+
+                if(path===""){
+                    groupPath = groupName;
+                    groupiPath = groupName + "[1]";
+                    groupPositionPath = child.position;
+                    groupiPositionPath = child.position + "[1]";
+                    groupUsagePath = child.usage;
+                }else {
+                    groupPath = path + "." + groupName;
+                    groupiPath = ipath + "." + groupName + "[1]";
+                    groupPositionPath = positionPath + "." + child.position;
+                    groupiPositionPath = positioniPath + "." + child.position + "[1]";
+                    groupUsagePath = usagePath + "-" + child.usage;
+                }
+
+                if(child.max === '0'){
+
+                }else if(child.max === '1'){
+                    $scope.travelConformanceProfile(child, groupPath, groupiPath, groupPositionPath, groupiPositionPath, groupUsagePath, selectedIntegrationProfile, false, countSGH);
+                }else {
+                    $scope.travelConformanceProfile(child, groupPath, groupiPath, groupPositionPath, groupiPositionPath, groupUsagePath, selectedIntegrationProfile, true, countSGH);
+                }
 
 
-				if(child.max === '1'){
-					var groupPath = null;
-					var groupiPath = null;
-					var groupPositionPath = null;
-					var groupiPositionPath = null;
-					var groupUsagePath = null;
-
-					if(path===""){
-						groupPath = groupName;
-						groupiPath = groupName + "[1]";
-						groupPositionPath = child.position;
-						groupiPositionPath = child.position + "[1]";
-						groupUsagePath = child.usage;
-					}else {
-						groupPath = path + "." + groupName;
-						groupiPath = ipath + "." + groupName + "[1]";
-						groupPositionPath = positionPath + "." + child.position;
-						groupiPositionPath = positioniPath + "." + child.position + "[1]";
-						groupUsagePath = usagePath + "-" + child.usage;
-					}
-
-					$scope.travelConformanceProfile(child, groupPath, groupiPath, groupPositionPath, groupiPositionPath, groupUsagePath, nodeList, maxSize, selectedIntegrationProfile);
-				}else {
-					for (var index = 1; index < maxSize + 1; index++) {
-						var groupPath = null;
-						var groupiPath = null;
-						var groupPositionPath = null;
-						var groupiPositionPath = null;
-						var groupUsagePath = null;
-
-						if(path===""){
-							groupPath = groupName;
-							groupiPath = groupName + "[" + index + "]";
-							groupPositionPath = child.position;
-							groupiPositionPath = child.position + "[" + index + "]";
-							groupUsagePath = child.usage;
-						}else {
-							groupPath = path + "." + groupName;
-							groupiPath = ipath + "." + groupName + "[" + index + "]";
-							groupPositionPath = positionPath + "." + child.position;
-							groupiPositionPath = positioniPath + "." + child.position + "[" + index + "]";
-							groupUsagePath = usagePath + "-" + child.usage;
-						}
-
-						$scope.travelConformanceProfile(child, groupPath, groupiPath, groupPositionPath, groupiPositionPath, groupUsagePath, nodeList,  maxSize, selectedIntegrationProfile);
-					}
-				}
 			}
-		};
+		}
 	};
 
 
@@ -3345,6 +3376,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.filterForSegmentList = function(segment)
 	{
+		if($rootScope.usageViewFilter === "All") return true;
 		if(segment.usagePath.indexOf('O') > -1 || segment.usagePath.indexOf('X') > -1){
 			return false;
 		}
@@ -3682,10 +3714,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 
 	};
-//	$scope.resetValidation=function(){
-//		console.log("called");
-//		$scope.contextValidation=false;
-//	}
 	$scope.report=false;
 	$scope.validationError=false;
 	$scope.validate = function (mode) {
@@ -4128,18 +4156,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
         }]
-
-
-
-
-
-
-        // ['Overwrite', function($itemScope) {
-        // 	$scope.overwriteMessageTemplate($itemScope.msgTmp);
-        // 	Notification.success("Template "+$itemScope.$modelValue.name+" Applied");
-
-        // }]
-
     ];
 
     $scope.SegmentOptions=[
