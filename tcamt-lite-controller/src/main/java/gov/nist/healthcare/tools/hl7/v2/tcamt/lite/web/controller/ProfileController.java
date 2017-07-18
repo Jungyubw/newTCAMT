@@ -20,7 +20,6 @@ import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileDataStr;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.MessageAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.MessagesAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
@@ -28,7 +27,6 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileAbstrac
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileDeleteException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanListException;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanNotFoundException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 
@@ -66,6 +64,9 @@ public class ProfileController extends CommonController {
 					p.getMetaData().setDate(igd.getMetaData().getDate());
 					p.setSourceType("igamt");
 					p.setAccountId(igd.getAccountId());
+					p.setSegments(null);
+					p.setDatatypes(null);
+					p.setTables(null);
 					profileService.save(p);
 					result.add(p);
 				}else{
@@ -114,7 +115,22 @@ public class ProfileController extends CommonController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public Profile get(@PathVariable("id") String id) throws Exception {
 		try {
-			return profileService.findOne(id);
+			Profile p =  profileService.findOne(id);
+			
+			if(p.getSourceType().equals("igamt")){
+			  IGAMTDBConn con = new IGAMTDBConn();
+			  IGDocument igd = new IGAMTDBConn().findIGDocument(p.getId());
+			  p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
+              p.getMetaData().setName(igd.getMetaData().getTitle());
+              p.getMetaData().setDescription(igd.getMetaData().getDescription());
+              p.getMetaData().setDate(igd.getMetaData().getDate());
+              p.setSourceType("igamt");
+              p.setAccountId(igd.getAccountId());
+			  
+			}
+			
+			return p;
+			
 		} catch (Exception e) {
 			throw new Exception(e);
 		}

@@ -24,6 +24,7 @@ import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DocumentMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Group;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Messages;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
@@ -1332,6 +1333,18 @@ public class ExportUtil {
 
     if (tcamtProfile != null) {
       IGAMTDBConn igamtDB = new IGAMTDBConn();
+      
+      if(tcamtProfile.getSourceType().equals("igamt")){
+        IGDocument igd = new IGAMTDBConn().findIGDocument(tcamtProfile.getId());
+        tcamtProfile = igamtDB.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
+        tcamtProfile.getMetaData().setName(igd.getMetaData().getTitle());
+        tcamtProfile.getMetaData().setDescription(igd.getMetaData().getDescription());
+        tcamtProfile.getMetaData().setDate(igd.getMetaData().getDate());
+        tcamtProfile.setSourceType("igamt");
+        tcamtProfile.setAccountId(igd.getAccountId());
+      }
+      
+      
       gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile =
           new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
       profile.setAccountId(tcamtProfile.getAccountId());
@@ -1388,6 +1401,18 @@ public class ExportUtil {
     if (tcamtProfile != null) {
 
       IGAMTDBConn igamtDB = new IGAMTDBConn();
+      
+      if(tcamtProfile.getSourceType().equals("igamt")){
+        IGDocument igd = new IGAMTDBConn().findIGDocument(tcamtProfile.getId());
+        tcamtProfile = igamtDB.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
+        tcamtProfile.getMetaData().setName(igd.getMetaData().getTitle());
+        tcamtProfile.getMetaData().setDescription(igd.getMetaData().getDescription());
+        tcamtProfile.getMetaData().setDate(igd.getMetaData().getDate());
+        tcamtProfile.setSourceType("igamt");
+        tcamtProfile.setAccountId(igd.getAccountId());
+      }
+      
+      
       gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile =
           new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
       profile.setId(tcamtProfile.getId() + rand);
@@ -1470,10 +1495,20 @@ public class ExportUtil {
     Profile tcamtProfile = profileService.findOne(id);
 
     if (tcamtProfile != null) {
-
       IGAMTDBConn igamtDB = new IGAMTDBConn();
-      gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile =
-          new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
+      
+      if(tcamtProfile.getSourceType().equals("igamt")){
+        IGDocument igd = new IGAMTDBConn().findIGDocument(tcamtProfile.getId());
+        tcamtProfile = igamtDB.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
+        tcamtProfile.getMetaData().setName(igd.getMetaData().getTitle());
+        tcamtProfile.getMetaData().setDescription(igd.getMetaData().getDescription());
+        tcamtProfile.getMetaData().setDate(igd.getMetaData().getDate());
+        tcamtProfile.setSourceType("igamt");
+        tcamtProfile.setAccountId(igd.getAccountId());
+      }
+
+      
+      gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile profile = new gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Profile();
       profile.setId(tcamtProfile.getId() + rand);
       profile.setAccountId(tcamtProfile.getAccountId());
       profile.setMetaData(tcamtProfile.getMetaData());
