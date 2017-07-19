@@ -17,6 +17,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.hideOrShowToc = function (){
         $scope.hideToc = !$scope.hideToc;
 	};
+    $scope.closeSelectBox = function(){
+        $("md-backdrop").trigger ("click")
+    }
 
 	$scope.debugTp=function(tp){
 		console.log(tp);
@@ -1138,7 +1141,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                 $rootScope.testplans = [];
                 $rootScope.testplans.push($rootScope.selectedTestPlan);
                 console.log("SELECTED");
+
+                $rootScope.CpIds=angular.copy(JSON.stringify($rootScope.selectedTestPlan.listOfIntegrationProfileIds));
                 console.log(JSON.stringify($rootScope.selectedTestPlan.listOfIntegrationProfileIds));
+
 
                 $scope.updateListOfIntegrationAbstractProfiles();
 
@@ -1433,8 +1439,21 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $rootScope.changesMap[obj.id] = true;
 		}
 	};
+    $scope.recordChangeForGroup = function (ids,obj) {
+        var changed=angular.copy(JSON.stringify(ids));
 
-	$scope.updateTransport = function () {
+        if(ids&&changed!==$rootScope.CpIds){
+
+       //     $rootScope.CpIds=angular.copy(JSON.stringify($rootScope.selectedTestPlan.listOfIntegrationProfileIds));
+
+        	$rootScope.isChanged = true;
+
+            $rootScope.changesMap[obj.id] = true;
+        }
+    };
+
+
+    $scope.updateTransport = function () {
 		if($rootScope.selectedTestPlan.type == 'DataInstance'){
 			$rootScope.selectedTestPlan.transport = false;
 		}else {

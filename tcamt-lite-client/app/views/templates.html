@@ -105,20 +105,20 @@
                             <md-option value="Isolated">Isolated</md-option>
                         </md-select>
                     </md-input-container>
-                    <md-input-container style="width: 100%;">
-                        <label>Integration Profiles</label>
-                        <md-select ng-model="newTestPlan.listOfIntegrationProfileIds" multiple>
-                            <md-optgroup label="IGAMT Profiles">
-                                <md-option ng-value="p.id" ng-repeat="p in igamtProfiles">{{p.metaData.name}}</md-option>
-                            </md-optgroup>
-                            <md-optgroup label="Private Profiles">
-                                <md-option ng-value="p.id" ng-repeat="p in privateProfiles">{{p.metaData.name}}</md-option>
-                            </md-optgroup>
-                            <md-optgroup label="Public Profiles">
-                                <md-option ng-value="p.id" ng-repeat="p in publicProfiles">{{p.metaData.name}}</md-option>
-                            </md-optgroup>
-                        </md-select>
-                    </md-input-container>
+                    <!--<md-input-container style="width: 100%;">-->
+                        <!--<label>Integration Profiles</label>-->
+                        <!--<md-select ng-model="newTestPlan.listOfIntegrationProfileIds" multiple>-->
+                            <!--<md-optgroup label="IGAMT Profiles">-->
+                                <!--<md-option ng-value="p.id" ng-repeat="p in igamtProfiles">{{p.metaData.name}}</md-option>-->
+                            <!--</md-optgroup>-->
+                            <!--<md-optgroup label="Private Profiles">-->
+                                <!--<md-option ng-value="p.id" ng-repeat="p in privateProfiles">{{p.metaData.name}}</md-option>-->
+                            <!--</md-optgroup>-->
+                            <!--<md-optgroup label="Public Profiles">-->
+                                <!--<md-option ng-value="p.id" ng-repeat="p in publicProfiles">{{p.metaData.name}}</md-option>-->
+                            <!--</md-optgroup>-->
+                        <!--</md-select>-->
+                    <!--</md-input-container>-->
                 </div>
             </md-dialog-content>
             <md-dialog-actions layout="row">
