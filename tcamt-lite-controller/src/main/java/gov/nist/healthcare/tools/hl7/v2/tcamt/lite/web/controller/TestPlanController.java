@@ -727,12 +727,11 @@ public class TestPlanController extends CommonController {
   }
 
   private void sendPushFailConfirmation(TestPlan doc, Account target, String host, Exception e) {
-
     SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
-
     msg.setSubject("Push Test Plan Faild");
     msg.setTo(target.getEmail());
-    msg.setCc("jungyub.woo@nist.gov");
+    String[] ccEmails = {"jungyub.woo@nist.gov", "abdelghani.elouakili@nist.gov"}; 
+    msg.setCc(ccEmails);
     msg.setText("Dear " + target.getUsername() + ", \n\n"
         + "We are sorry but we couldn't push your testplan to the " + host
         + ". TCAMT team will contact you soon. \n\n" + "[Error]" + e.getMessage() + "\n\n"
