@@ -1137,9 +1137,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                 $rootScope.selectedTestPlan = angular.fromJson(response.data);
                 $rootScope.testplans = [];
                 $rootScope.testplans.push($rootScope.selectedTestPlan);
-
+                console.log("SELECTED");
+                console.log(JSON.stringify($rootScope.selectedTestPlan.listOfIntegrationProfileIds));
 
                 $scope.updateListOfIntegrationAbstractProfiles();
+
+                console.log("UPDATE");
+                console.log(JSON.stringify($rootScope.selectedTestPlan.listOfIntegrationProfileIds));
+
                 $timeout(function () {
                     $scope.updateCurrentTitle("Test Plan", $rootScope.selectedTestPlan.name);
                 }, 0);
@@ -1169,6 +1174,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
                     waitingDialog.hide();
                     $scope.subview = "EditTestPlanMetadata.html";
+                    console.log("=======");
+                    $rootScope.isChanged=false;
+
+
+                    console.log(JSON.stringify($rootScope.selectedTestPlan.listOfIntegrationProfileIds));
                 }, 100);
             }, function (error) {
                 $scope.error = error.data;
@@ -1177,6 +1187,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	};
 
+	$scope.print = function (x) {
+		console.log(JSON.stringify(x));
+    };
 
 
     $scope.editTestPlan = function (testplan) {
@@ -1413,10 +1426,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.recordChanged = function (obj) {
-		$rootScope.selectedTestPlan.isChanged = true;
-		$rootScope.isChanged = true;
+
 		if(obj){
-			$rootScope.changesMap[obj.id] = true;
+            $rootScope.isChanged = true;
+
+            $rootScope.changesMap[obj.id] = true;
 		}
 	};
 

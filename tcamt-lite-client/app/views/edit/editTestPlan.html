@@ -74,15 +74,15 @@ body {
 							<div class="col-md-6">
 								<md-input-container style="width: 100%;">
 									<label>Integration Profiles</label>
-									<md-select ng-model="selectedTestPlan.listOfIntegrationProfileIds" ng-change="recordChanged(selectedTestPlan);updateListOfIntegrationAbstractProfiles();" multiple>
+									<md-select multiple ng-init="print('INIT'); print(selectedTestPlan.listOfIntegrationProfileIds)" ng-model="selectedTestPlan.listOfIntegrationProfileIds" ng-change="print('CHANGED'); print(selectedTestPlan.listOfIntegrationProfileIds);recordChanged(selectedTestPlan);updateListOfIntegrationAbstractProfiles();">
 										<md-optgroup label="IGAMT Profiles">
-											<md-option ng-value="p.id" ng-repeat="p in igamtProfiles">{{p.metaData.name}}</md-option>
+											<md-option  ng-value="p.id" ng-repeat="p in igamtProfiles track by $index">{{p.metaData.name}}</md-option>
 										</md-optgroup>
 										<md-optgroup label="Private Profiles">
-											<md-option ng-value="p.id" ng-repeat="p in privateProfiles">{{p.metaData.name}}</md-option>
+											<md-option  ng-value="p.id" ng-repeat="p in privateProfiles track by $index">{{p.metaData.name}}</md-option>
 										</md-optgroup>
 										<md-optgroup label="Public Profiles">
-											<md-option ng-value="p.id" ng-repeat="p in publicProfiles">{{p.metaData.name}}</md-option>
+											<md-option ng-value="p.id" ng-repeat="p in publicProfiles track by $index">{{p.metaData.name}}</md-option>
 										</md-optgroup>
 									</md-select>
 								</md-input-container>
