@@ -4,23 +4,15 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
     function ($scope, $rootScope, i18n, $location, userInfoService, $modal, Restangular, $filter, base64, $http, Idle,notifications,IdleService,AutoSaveService,StorageService) {
         userInfoService.loadFromServer();
         $rootScope.loginDialog = null;
-
-
         $rootScope.loadProfiles = function () {
             if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-                waitingDialog.show('Loading Profiles...', {dialogSize: 'xs', progressType: 'info'});
+                waitingDialog.show('Loading ...', {dialogSize: 'xs', progressType: 'info'});
                 $rootScope.igamtProfiles = [];
                 $http.get('api/profiles').then(function(response) {
                     $rootScope.profiles = angular.fromJson(response.data);
-
                     $rootScope.igamtProfiles = _.filter($rootScope.profiles , function(p){ return p.sourceType == 'igamt'; });
                     $rootScope.privateProfiles = _.filter($rootScope.profiles , function(p){ return p.sourceType == 'private'; })
                     $rootScope.publicProfiles = _.filter($rootScope.profiles , function(p){ return p.sourceType == 'public'; });
-                    console.log($rootScope.profiles);
-                    console.log($rootScope.igamtProfiles);
-                    console.log($rootScope.privateProfiles);
-                    console.log($rootScope.publicProfiles);
-
                     waitingDialog.hide();
                 }, function(error) {
                     delay.reject(false);

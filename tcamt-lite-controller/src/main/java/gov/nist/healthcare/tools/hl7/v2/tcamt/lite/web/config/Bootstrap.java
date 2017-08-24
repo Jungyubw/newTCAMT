@@ -12,6 +12,7 @@
 
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -19,9 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
@@ -40,6 +44,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TemplateService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl.IGAMTDBConn;
 
 @Service
 public class Bootstrap implements InitializingBean {
@@ -68,14 +73,8 @@ public class Bootstrap implements InitializingBean {
     // updateHL7Version();
     // updateLongIDforTestPlan();
     //
-    
     updateMessageTemplates();
-    
     resetIGAMTProfile();
-
-   
-
-
   }
 
   private void updateMessageTemplates() {
@@ -107,13 +106,32 @@ public class Bootstrap implements InitializingBean {
     
 
   }
-
-  private void resetIGAMTProfile() {
+ 
+  private void resetIGAMTProfile() throws ProfileException {
     List<Profile> profiles = profileService.findAll();
+    
+    List<String> ids = new ArrayList<String>(); 
+    
     for (Profile p : profiles) {
       if (p.getSourceType().equals("igamt")) {
+        ids.add(p.getId());
         profileService.delete(p.getId());
       }
+    }
+    IGAMTDBConn con = new IGAMTDBConn();
+    for(String id:ids){
+      IGDocument igd = con.findIGDocument(id);
+      
+      Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
+      p.getMetaData().setName(igd.getMetaData().getTitle());
+      p.getMetaData().setDescription(igd.getMetaData().getDescription());
+      p.getMetaData().setDate(igd.getMetaData().getDate());
+      p.setSourceType("igamt");
+      p.setSegments(null);
+      p.setDatatypes(null);
+      p.setTables(null);
+      p.setAccountId(igd.getAccountId());
+      profileService.save(p);
     }
   }
 
