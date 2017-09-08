@@ -15,7 +15,6 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
                     $rootScope.publicProfiles = _.filter($rootScope.profiles , function(p){ return p.sourceType == 'public'; });
                     waitingDialog.hide();
                 }, function(error) {
-                    delay.reject(false);
                     waitingDialog.hide();
                 });
             }else{

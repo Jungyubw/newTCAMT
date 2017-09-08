@@ -33,18 +33,15 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Messages;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segments;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
-import nu.xom.Attribute;
 
 public class IGAMTDBConn {
   private MongoOperations mongoOps;
 
   public IGAMTDBConn() {
-
     super();
     try {
       mongoOps = new MongoTemplate(new SimpleMongoDbFactory(new MongoClient(), "igamt"));
     } catch (UnknownHostException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
@@ -52,37 +49,27 @@ public class IGAMTDBConn {
   public List<IGDocument> getUserDocument(long id) {
     try {
       return mongoOps.find(Query.query(Criteria.where("accountId").is(id)), IGDocument.class);
-
     } catch (Exception e) {
       e.printStackTrace();
     }
-
     return null;
   }
-  
-  
 
   public IGDocument findIGDocument(String id) {
     try {
       return mongoOps.findOne(Query.query(Criteria.where("_id").is(id)), IGDocument.class);
-
     } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
       e.printStackTrace();
     }
-
     return null;
   }
 
   public Table findTableById(String id) {
     try {
       return mongoOps.findOne(Query.query(Criteria.where("_id").is(id)), Table.class);
-
     } catch (Exception e) {
       e.printStackTrace();
     }
-
     return null;
   }
 
@@ -183,7 +170,6 @@ public class IGAMTDBConn {
 
   private Segment generateDynamicMappingDefinition(Segment s, Datatypes datatypes, Tables tables) {
     if (s.getName().equals("OBX") || s.getName().equals("MFA") || s.getName().equals("MFE")) {
-      String targetPosition = null;
       String reference = null;
       String secondReference = null;
       String referenceTableId = null;
@@ -191,17 +177,14 @@ public class IGAMTDBConn {
       HashMap<String, Datatype> dm2nd = new HashMap<String, Datatype>();
 
       if (s.getName().equals("OBX")) {
-        targetPosition = "5";
         reference = "2";
       }
 
       if (s.getName().equals("MFA")) {
-        targetPosition = "5";
         reference = "6";
       }
 
       if (s.getName().equals("MFE")) {
-        targetPosition = "4";
         reference = "5";
       }
 
