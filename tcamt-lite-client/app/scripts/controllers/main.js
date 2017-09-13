@@ -53,8 +53,10 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
         };
 
         $scope.login = function () {
-//        console.log("in login");
+              console.log("in login======");
             $scope.$emit('event:loginRequest', $scope.username, $scope.password);
+
+
         };
 
         $scope.loginReq = function () {
