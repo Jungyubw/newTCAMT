@@ -4,10 +4,10 @@
             <div ui-tree-handle ng-class="{selected : this.$modelValue===activeModel,used:selectedTestStep&&selectedTestStep.integrationProfileId===this.$modelValue.id}" title="{{ip.metaData.name}}">
      <i data-nodrag ng-click="toggle(this)" class="fa" ng-class="{'fa-caret-right': collapsed, 'fa-caret-down': !collapsed}">
 					</i>
-                  </span> <span ng-click="Activate(this);OpenIgMetadata(ip);"> <span class="label label-info label-icon">IP</span> {{ip.metaData.name}}</span>
+                  </span> <span ng-click="Activate(this);OpenIgMetadata(ip);"> <span class="label label-info label-icon">IP</span> {{ip.metaData.title}}</span>
             </div>
-            <ol ui-tree-nodes="" ng-model="ip.messages.children" ng-if="!collapsed">
-                <li ng-repeat="msg in ip.messages.children |filter:sr" ui-tree-node>
+            <ol ui-tree-nodes="" ng-model="ip.profile.messages.children" ng-if="!collapsed">
+                <li ng-repeat="msg in ip.profile.messages.children |filter:sr" ui-tree-node>
                     <div ui-tree-handle ng-click="selectIg(msg, ip);Activate(this);" ng-class="{selected : this.$modelValue===activeModel ,used:selectedTestStep&& selectedTestStep.conformanceProfileId===this.$modelValue.id || selectedTemplate.conformanceProfileId===this.$modelValue.id}" title="{{msg.name}}">
                         <span ng-hide="selectedTestStep"><span class="label label-success label-icon">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>
                         <span context-menu="ApplyProfile" ng-hide="!selectedTestStep"><span class="label label-success label-icon">CP</span>{{msg.structID}}-{{msg.name}}-{{msg.identifier}}</span>

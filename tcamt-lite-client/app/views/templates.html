@@ -470,3 +470,23 @@
         </form>
     </md-dialog>
 </script>
+
+
+
+<script type="text/ng-template" id="lazyMessage.html">
+   <table class="table table-bordered table-stripped">
+
+       <thead>
+       <tr ng-repeat="atribute in igamtAtributes">{{attribute.name}}</tr>
+       </thead>
+       <tbody>
+       <ng-include src="segmentRef.html"></ng-include>
+       </tbody>
+
+   </table>
+</script>
+<script type="text/ng-template" id="segmentRef.html">
+<tr>
+    <td ng-repeat=""></td>
+</tr>
+</script>

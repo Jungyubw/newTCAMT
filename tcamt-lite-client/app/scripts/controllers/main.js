@@ -1,22 +1,36 @@
 'use strict';
 
-angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$location', 'userInfoService', '$modal', 'Restangular', '$filter', 'base64', '$http', 'Idle', 'notifications', 'IdleService','AutoSaveService','StorageService',
-    function ($scope, $rootScope, i18n, $location, userInfoService, $modal, Restangular, $filter, base64, $http, Idle,notifications,IdleService,AutoSaveService,StorageService) {
+angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$location', 'userInfoService', '$modal', 'Restangular', '$filter', 'base64', '$http', 'Idle', 'notifications', 'IdleService','AutoSaveService','StorageService','IgamtResourceGetter',
+    function ($scope, $rootScope, i18n, $location, userInfoService, $modal, Restangular, $filter, base64, $http, Idle,notifications,IdleService,AutoSaveService,StorageService,IgamtResourceGetter) {
         userInfoService.loadFromServer();
         $rootScope.loginDialog = null;
         $rootScope.loadProfiles = function () {
             if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
                 waitingDialog.show('Loading ...', {dialogSize: 'xs', progressType: 'info'});
                 $rootScope.igamtProfiles = [];
-                $http.get('api/profiles').then(function(response) {
-                    $rootScope.profiles = angular.fromJson(response.data);
-                    $rootScope.igamtProfiles = _.filter($rootScope.profiles , function(p){ return p.sourceType == 'igamt'; });
-                    $rootScope.privateProfiles = _.filter($rootScope.profiles , function(p){ return p.sourceType == 'private'; })
-                    $rootScope.publicProfiles = _.filter($rootScope.profiles , function(p){ return p.sourceType == 'public'; });
+
+                IgamtResourceGetter.findUserIG().then(function (result) {
+                    $rootScope.profiles = result;
+                    $rootScope.igamtProfiles = result;
                     waitingDialog.hide();
-                }, function(error) {
-                    waitingDialog.hide();
+
+                },function (error) {
+                      waitingDialog.hide();
+
                 });
+
+                // $http.get('api/profiles').then(function(response) {
+                //     // $rootScope.profiles = angular.fromJson(response.data);
+                //     // $rootScope.igamtProfiles = _.filter($rootScope.profiles , function(p){ return p.sourceType == 'igamt'; });
+                //     //
+                //     //
+                //     //
+                //     // $rootScope.privateProfiles = _.filter($rootScope.profiles , function(p){ return p.sourceType == 'private'; })
+                //     // $rootScope.publicProfiles = _.filter($rootScope.profiles , function(p){ return p.sourceType == 'public'; });
+                //     waitingDialog.hide();
+                // }, function(error) {
+                //     waitingDialog.hide();
+                // });
             }else{
             }
         };

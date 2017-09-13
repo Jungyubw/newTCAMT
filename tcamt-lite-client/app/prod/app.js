@@ -433,6 +433,7 @@ app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, u
                 if (result.data && result.data != null) {
                     var rs = angular.fromJson(result.data);
                     userInfoService.setCurrentUser(rs);
+                    $rootScope.IgamtLogin(username, password);
                     $rootScope.$broadcast('event:loginConfirmed');
                 } else {
                     userInfoService.setCurrentUser(null);
@@ -442,6 +443,30 @@ app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, u
             });
         });
     });
+
+
+    $rootScope.IgamtLogin = function(username, password) {
+        httpHeaders.common['Accept'] = 'application/json';
+        httpHeaders.common['Authorization'] = 'Basic ' + base64.encode(username + ':' + password);
+        $http.get($rootScope.appInfo.igamtLogin,{headers:httpHeaders}).then(function (re) {
+            var response=angular.fromJson(re.data);
+
+            if(response){
+
+                console.log("Igamt login SUCCESS")
+                $scope.alert=false;
+            }else{
+                $scope.alertText = "ERROR: Cannot access server. Please verify you Credentials";
+                $scope.alert=true;
+            }
+
+            delay.resolve(response);
+
+        }, function(er){
+            delay.reject(er);
+        });
+        return delay.promise;
+    };
 
     /**
      * On 'logoutRequest' invoke logout on the server.

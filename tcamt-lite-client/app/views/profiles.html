@@ -23,7 +23,7 @@
                                             <thead>
                                             <tr class="tbl-header">
                                                 <th st-ratio="5">#</th>
-                                                <th st-ratio="10" st-sort="metaData.name">Name</th>
+                                                <th st-ratio="10" st-sort="metaData.title">Title</th>
                                                 <th st-ratio="10">Description</th>
                                                 <th st-ratio="10" st-sort="metaData.hl7Version">HL7Version</th>
                                                 <th st-ratio="10" st-sort="metaData.date">Date</th>
@@ -33,12 +33,12 @@
                                             <tbody>
                                             <tr ng-repeat="row in tmpIgamtProfiles | orderBy:'row.metaData.date'">
                                                 <td st-ratio="5">{{$index + 1}}</td>
-                                                <td st-ratio="10" ng-bind="row.metaData.name"></td>
+                                                <td st-ratio="10" ng-bind="row.metaData.title"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.description"></td>
                                                 <td st-ratio="10" ng-bind="row.metaData.hl7Version"></td>
-                                                <td st-ratio="10">{{row.lastUpdatedDate | date:dateFormat}}</td>
+                                                <td st-ratio="10">{{row.dateUpdated | date:dateFormat}}</td>
                                                 <td st-ratio="50">
-                                                    <li ng-repeat="m in row.messages.children">{{m.name}} [{{m.messageType}}^{{m.event}}^{{m.structID}}, {{m.identifier}}]</li>
+                                                    <li ng-repeat="m in row.profile.messages.children">{{m.name}} [{{m.messageType}}^{{m.event}}^{{m.structID}}, {{m.identifier}}]</li>
                                                 </td>
                                             </tr>
                                             </tbody>

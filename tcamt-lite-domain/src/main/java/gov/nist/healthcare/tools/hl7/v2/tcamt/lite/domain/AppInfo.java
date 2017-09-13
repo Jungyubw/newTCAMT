@@ -33,6 +33,40 @@ public class AppInfo implements Serializable {
 
 	@Value("${app.date}")
 	private String date;
+	
+	@Value("${app.igamtLogin}")
+	private String igamtLogin;
+
+	/**
+	 * @return the igamtLogin
+	 */
+	public String getIgamtLogin() {
+		return igamtLogin;
+	}
+
+	/**
+	 * @param igamtLogin the igamtLogin to set
+	 */
+	public void setIgamtLogin(String igamtLogin) {
+		this.igamtLogin = igamtLogin;
+	}
+
+	@Value("${app.igamtBaseUrl}")
+	private String igamtBaseUrl;
+
+	/**
+	 * @return the igamtBaseUrl
+	 */
+	public String getIgamtBaseUrl() {
+		return igamtBaseUrl;
+	}
+
+	/**
+	 * @param igamtBaseUrl the igamtBaseUrl to set
+	 */
+	public void setIgamtBaseUrl(String igamtBaseUrl) {
+		this.igamtBaseUrl = igamtBaseUrl;
+	}
 
 	private String uploadedImagesUrl;
 
