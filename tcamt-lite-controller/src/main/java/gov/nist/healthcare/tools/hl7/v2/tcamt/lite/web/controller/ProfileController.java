@@ -18,6 +18,7 @@ import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocumentScope;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileDataStr;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.MessageAbstract;
@@ -56,22 +57,25 @@ public class ProfileController extends CommonController {
 			List<ProfileAbstract> abstractResult = new ArrayList<ProfileAbstract>();
 			List<IGDocument> igdocs = this.userIGDocuments();
 			for(IGDocument igd: igdocs){
-				Profile tcamtP = profileService.findOne(igd.getId());
-				if(tcamtP == null || !tcamtP.getLastUpdatedDate().equals(igd.getDateUpdated())){
-					Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
-					p.getMetaData().setName(igd.getMetaData().getTitle());
-					p.getMetaData().setDescription(igd.getMetaData().getDescription());
-					p.getMetaData().setDate(igd.getMetaData().getDate());
-					p.setSourceType("igamt");
-					p.setAccountId(igd.getAccountId());
-					p.setSegments(null);
-					p.setDatatypes(null);
-					p.setTables(null);
-					profileService.save(p);
-					result.add(p);
-				}else{
-					result.add(tcamtP);
-				}
+			  if(igd.getScope().equals(IGDocumentScope.USER)){
+			    Profile tcamtP = profileService.findOne(igd.getId());
+                if(tcamtP == null || !tcamtP.getLastUpdatedDate().equals(igd.getDateUpdated())){
+                    Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
+                    p.getMetaData().setName(igd.getMetaData().getTitle());
+                    p.getMetaData().setDescription(igd.getMetaData().getDescription());
+                    p.getMetaData().setDate(igd.getMetaData().getDate());
+                    p.setSourceType("igamt");
+                    p.setAccountId(igd.getAccountId());
+                    p.setSegments(null);
+                    p.setDatatypes(null);
+                    p.setTables(null);
+                    profileService.save(p);
+                    result.add(p);
+                }else{
+                    result.add(tcamtP);
+                }
+			  }
+				
 			}
 			List<Profile> privateProfiles = getAllPrivateProfiles(account); 
 			List<Profile> publicProfiles = getAllPublicProfiles(); 

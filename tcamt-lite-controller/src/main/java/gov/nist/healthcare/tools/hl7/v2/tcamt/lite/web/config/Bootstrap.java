@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocumentScope;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
@@ -121,17 +122,19 @@ public class Bootstrap implements InitializingBean {
     IGAMTDBConn con = new IGAMTDBConn();
     for(String id:ids){
       IGDocument igd = con.findIGDocument(id);
-      
-      Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
-      p.getMetaData().setName(igd.getMetaData().getTitle());
-      p.getMetaData().setDescription(igd.getMetaData().getDescription());
-      p.getMetaData().setDate(igd.getMetaData().getDate());
-      p.setSourceType("igamt");
-      p.setSegments(null);
-      p.setDatatypes(null);
-      p.setTables(null);
-      p.setAccountId(igd.getAccountId());
-      profileService.save(p);
+      System.out.println(igd.getScope());
+      if(igd.getScope().equals(IGDocumentScope.USER)){
+        Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
+        p.getMetaData().setName(igd.getMetaData().getTitle());
+        p.getMetaData().setDescription(igd.getMetaData().getDescription());
+        p.getMetaData().setDate(igd.getMetaData().getDate());
+        p.setSourceType("igamt");
+        p.setSegments(null);
+        p.setDatatypes(null);
+        p.setTables(null);
+        p.setAccountId(igd.getAccountId());
+        profileService.save(p); 
+      }
     }
   }
 
