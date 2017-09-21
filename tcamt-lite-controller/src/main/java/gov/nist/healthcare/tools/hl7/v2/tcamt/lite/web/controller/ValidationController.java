@@ -80,8 +80,8 @@ public class ValidationController {
 					report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Free);
 				} else if (context.equals("based")) {
 					InputStream contextTCAMTXML = new ByteArrayInputStream(testStepConstraintXML.getBytes(StandardCharsets.UTF_8));
-					InputStream contextIGAMTXML = new ByteArrayInputStream(constraintsXML.getBytes(StandardCharsets.UTF_8));
-					List<InputStream> confContexts = Arrays.asList(contextIGAMTXML,contextTCAMTXML);
+//					InputStream contextIGAMTXML = new ByteArrayInputStream(constraintsXML.getBytes(StandardCharsets.UTF_8));
+					List<InputStream> confContexts = Arrays.asList(contextTCAMTXML);
 					ConformanceContext cc = DefaultConformanceContext.apply(confContexts).get();
 					report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId, Context.Based);
 				}

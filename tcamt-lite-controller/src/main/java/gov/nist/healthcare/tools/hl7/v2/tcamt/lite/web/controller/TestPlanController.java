@@ -375,8 +375,7 @@ public class TestPlanController extends CommonController {
       }
 
 
-      testPlanIO =
-          new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, rand);
+      testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, rand);
       testPlanIO.reset();
       client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN);
       DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -457,6 +456,7 @@ public class TestPlanController extends CommonController {
         }
       }
     }
+    
 
     InputStream content = null;
     content = new ExportUtil().exportProfileXMLZip(ipidMap.keySet(), profileService, 1234L);
