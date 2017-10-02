@@ -688,68 +688,310 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
         };
 
 
-        $rootScope.processMessageTree = function (element, parent) {
+
+        $rootScope.getLabel = function(name, ext) {
+            var label = name;
+            if (ext && ext !== null && ext !== "") {
+                label = label + "_" + ext;
+            }
+            return label;
+        };
+
+        $rootScope.getDynamicWidth = function(a, b, otherColumsWidth) {
+            var tableWidth = $rootScope.getTableWidth();
+            if (tableWidth > 0) {
+                var left = tableWidth - otherColumsWidth;
+                return { "width": a * parseInt(left / b) + "px" };
+            }
+            return "";
+        };
+
+
+        $rootScope.getTableWidth = function() {
+            if ($rootScope.tableWidth === null || $scope.tableWidth == 0) {
+                $rootScope.tableWidth = $("#nodeDetailsPanel").width();
+            }
+            return $rootScope.tableWidth;
+        };
+
+
+        $rootScope.getConstraintAsString = function(constraint) {
+            return constraint.constraintId + " - " + constraint.description;
+        };
+
+        $rootScope.getConformanceStatementAsString = function(constraint) {
+            return "[" + constraint.constraintId + "]" + constraint.description;
+        };
+        $rootScope.getConstraintAsId = function(constraint) {
+            return "[" + constraint.constraintId + "]";
+        };
+
+        $rootScope.getPredicateAsString = function(constraint) {
+            if (constraint) return constraint.description;
+            return null;
+        };
+
+        $rootScope.getConstraintAsTruncatedString = function(constraint, num) {
+            if (constraint) return constraint.description.substring(0, num) + "...";
+            return null;
+        };
+
+        $rootScope.getTextAsTruncatedString = function(value, num) {
+            if(value && num){
+                if (value.length > num) return value.substring(0, num) + "...";
+                return value;
+            }
+            return null;
+
+        };
+
+        $rootScope.getTextValue = function(value) {
+            return value;
+        };
+
+        $rootScope.getConstraintsAsString = function(constraints) {
+            var str = '';
+            for (var index in constraints) {
+                str = str + "<p style=\"text-align: left\">" + constraints[index].id + " - " + constraints[index].description + "</p>";
+            }
+            return str;
+        };
+
+        $rootScope.getPredicatesAsMultipleLinesString = function(node) {
+            var html = "";
+            angular.forEach(node.predicates, function(predicate) {
+                html = html + "<p>" + predicate.description + "</p>";
+            });
+            return html;
+        };
+
+        $rootScope.getPredicatesAsOneLineString = function(node) {
+            var html = "";
+            angular.forEach(node.predicates, function(predicate) {
+                html = html + predicate.description;
+            });
+            return $sce.trustAsHtml(html);
+        };
+
+
+        $rootScope.getConfStatementsAsMultipleLinesString = function(node) {
+            var html = "";
+            angular.forEach(node.conformanceStatements, function(conStatement) {
+                html = html + "<p>" + conStatement.id + " : " + conStatement.description + "</p>";
+            });
+            return html;
+        };
+
+        $rootScope.getConfStatementsAsOneLineString = function(node) {
+            var html = "";
+            angular.forEach(node.conformanceStatements, function(conStatement) {
+                html = html + conStatement.id + " : " + conStatement.description;
+            });
+            return $sce.trustAsHtml(html);
+        };
+
+        $rootScope.getSegmentRefNodeName = function(node) {
+            var seg = $rootScope.segmentsMap[node.ref.id];
+            return node.position + "." + $rootScope.getSegmentLabel(seg) + ":" + seg.description;
+        };
+
+        $rootScope.getSegmentLabel = function(seg) {
+            // var ext = $rootScope.getSegmentExtension(seg);
+            return seg != null ? $rootScope.getLabel(seg.name, seg.ext) : "";
+        };
+
+        $rootScope.getSegmentExtension = function(seg) {
+            return $rootScope.getExtensionInLibrary(seg.id, $rootScope.igdocument.profile.segmentLibrary, "ext");
+        };
+
+        $rootScope.getDatatypeExtension = function(datatype) {
+            return $rootScope.getExtensionInLibrary(datatype.id, $rootScope.datatypeLibrary, "ext");
+        };
+
+        $rootScope.getTableBindingIdentifier = function(table) {
+            return $rootScope.getExtensionInLibrary(table.id, $rootScope.tableLibrary, "bindingIdentifier");
+        };
+
+
+        $rootScope.getDatatypeLabel = function(datatype) {
+            if (datatype && datatype != null) {
+                // var ext = $rootScope.getDatatypeExtension(datatype);
+                return $rootScope.getLabel(datatype.name, datatype.ext);
+            }
+            return "";
+        };
+
+
+        $rootScope.processMessageTree = function(element, parent) {
+
 
             try {
-                if(element != undefined && element != null) {
+                if (element != undefined && element != null) {
                     if (element.type === "message") {
-                        var m = new Object();
+                        $rootScope.selectedMessage = element;
+                        $rootScope.filteredSegmentsList = [];
+                        $rootScope.filteredTablesList = [];
+                        $rootScope.filteredDatatypesList = [];
+                        var m = {};
                         m.children = [];
                         $rootScope.messageTree = m;
 
-                        element.children = $filter('orderBy')(element.children, 'position');
-                        angular.forEach(element.children, function (segmentRefOrGroup) {
+                        angular.forEach(element.children, function(segmentRefOrGroup) {
                             $rootScope.processMessageTree(segmentRefOrGroup, m);
                         });
 
                     } else if (element.type === "group" && element.children) {
-                        var g = new Object();
+                        var g = {};
                         g.path = element.position + "[1]";
+                        g.locationPath = element.name.substr(element.name.lastIndexOf('.') + 1) + '[1]';
                         g.obj = element;
                         g.children = [];
                         if (parent.path) {
-                            g.path = parent.path + "." + element.position + "[1]";
+                            g.path = parent.path + "." + g.path;
+                            g.locationPath = parent.locationPath + "." + g.locationPath;
                         }
                         parent.children.push(g);
-                        element.children = $filter('orderBy')(element.children, 'position');
-                        angular.forEach(element.children, function (segmentRefOrGroup) {
+                        angular.forEach(element.children, function(segmentRefOrGroup) {
                             $rootScope.processMessageTree(segmentRefOrGroup, g);
                         });
                     } else if (element.type === "segmentRef") {
-                        var s = new Object();
+                        var s = {};
                         s.path = element.position + "[1]";
+                        s.locationPath = $rootScope.segmentsMap[element.ref.id].name + '[1]';
                         s.obj = element;
                         s.children = [];
                         if (parent.path) {
                             s.path = parent.path + "." + element.position + "[1]";
+                            s.locationPath = parent.locationPath + "." + s.locationPath;
                         }
+
+                        if ($rootScope.segmentsMap[s.obj.ref.id] == undefined) {
+                            throw new Error("Cannot find Segment[id=" + s.obj.ref.id + ", name= " + s.obj.ref.name + "]");
+                        }
+                        s.obj.ref.ext = $rootScope.segmentsMap[s.obj.ref.id].ext;
+                        s.obj.ref.label = $rootScope.getLabel(s.obj.ref.name, s.obj.ref.ext);
                         parent.children.push(s);
 
-                        var ref = $rootScope.segmentsMap[element.ref];
+                        var ref = $rootScope.segmentsMap[element.ref.id];
                         $rootScope.processMessageTree(ref, s);
 
                     } else if (element.type === "segment") {
-                        element.fields = $filter('orderBy')(element.fields, 'position');
-                        angular.forEach(element.fields, function (field) {
+                        if (!parent) {
+                            var s = {};
+                            s.obj = element;
+                            s.path = element.name;
+                            s.locationPath = element.name;
+                            s.children = [];
+                            parent = s;
+                        }
+
+                        $rootScope.filteredSegmentsList.push(element);
+                        $rootScope.filteredSegmentsList = _.uniq($rootScope.filteredSegmentsList);
+
+                        angular.forEach(element.fields, function(field) {
                             $rootScope.processMessageTree(field, parent);
                         });
                     } else if (element.type === "field") {
-                        var f = new Object();
+                        var f = {};
                         f.obj = element;
                         f.path = parent.path + "." + element.position + "[1]";
+                        f.segmentPath = '' + element.position;
+                        f.segment = parent.obj.ref.id;
+                        f.locationPath = parent.locationPath + "." + element.position + "[1]";
+
+                        if ($rootScope.message) {
+                            f.sev = _.find($rootScope.message.singleElementValues, function(sev) { return sev.location == $rootScope.refinePath(f.path); });
+                            if (f.sev) {
+                                f.sev.from = 'message';
+                            } else {
+                                f.sev = _.find($rootScope.segmentsMap[f.segment].singleElementValues, function(sev) { return sev.location == f.segmentPath; });
+                                if (f.sev) f.sev.from = 'segment';
+                            }
+                        }
+
                         f.children = [];
+                        var d = $rootScope.datatypesMap[f.obj.datatype.id];
+                        if (d === undefined) {
+                            throw new Error("Cannot find Data Type[id=" + f.obj.datatype.id + ", name= " + f.obj.datatype.name + "]");
+                        }
+                        f.obj.datatype.ext = $rootScope.datatypesMap[f.obj.datatype.id].ext;
+                        f.obj.datatype.label = $rootScope.getLabel(f.obj.datatype.name, f.obj.datatype.ext);
                         parent.children.push(f);
-                        $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype], f);
+                        $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype.id], f);
                     } else if (element.type === "component") {
-                        var c = new Object();
+                        var c = {};
+
                         c.obj = element;
                         c.path = parent.path + "." + element.position + "[1]";
+                        c.segmentPath = parent.segmentPath + "." + element.position;
+                        c.segment = parent.segment;
+                        if (c.segmentPath.split(".").length - 1 <=2) {
+                            c.fieldDT = parent.obj.datatype.id;
+                            if ($rootScope.message) {
+                                c.sev = _.find($rootScope.message.singleElementValues, function(sev) { return sev.location == $rootScope.refinePath(c.path); });
+                                if (c.sev) {
+                                    c.sev.from = 'message';
+                                } else {
+                                    c.sev = _.find($rootScope.segmentsMap[c.segment].singleElementValues, function(sev) { return sev.location == c.segmentPath; });
+                                    if (c.sev) {
+                                        c.sev.from = 'segment';
+                                    } else {
+                                        var fieldPath = c.segmentPath.substr(c.segmentPath.indexOf('.') + 1);
+                                        c.sev = _.find($rootScope.datatypesMap[c.fieldDT].singleElementValues, function(sev) { return sev.location == fieldPath; });
+                                        if (c.sev) {
+                                            c.sev.from = 'field';
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (c.segmentPath.split(".").length - 1 == 2) {
+                            c.fieldDT = parent.fieldDT;
+                            c.componentDT = parent.obj.datatype.id;
+                            if ($rootScope.message) {
+                                c.sev = _.find($rootScope.message.singleElementValues, function(sev) { return sev.location == $rootScope.refinePath(c.path); });
+                                if (c.sev) {
+                                    c.sev.from = 'message';
+                                } else {
+                                    c.sev = _.find($rootScope.segmentsMap[c.segment].singleElementValues, function(sev) { return sev.location == c.segmentPath; });
+                                    if (c.sev) {
+                                        c.sev.from = 'segment';
+                                    } else {
+                                        var fieldPath = c.segmentPath.substr(c.segmentPath.indexOf('.') + 1);
+                                        c.sev = _.find($rootScope.datatypesMap[c.fieldDT].singleElementValues, function(sev) { return sev.location == fieldPath; });
+                                        if (c.sev) {
+                                            c.sev.from = 'field';
+                                        } else {
+                                            var componentPath = c.segmentPath.substr(c.segmentPath.split('.', 2).join('.').length + 1);
+                                            c.sev = _.find($rootScope.datatypesMap[c.componentDT].singleElementValues, function(sev) { return sev.location == componentPath; });
+                                            if (c.sev) {
+                                                c.sev.from = 'component';
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        c.locationPath = parent.locationPath + "." + element.position + "[1]";
                         c.children = [];
+                        var d = $rootScope.datatypesMap[element.datatype.id];
+                        if (d === undefined) {
+                            throw new Error("Cannot find Data Type[id=" + c.obj.datatype.id + ", name= " + c.obj.datatype.name + "]");
+                        }
+                        c.obj.datatype.ext = d.ext;
+                        c.obj.datatype.label = $rootScope.getLabel(c.obj.datatype.name, c.obj.datatype.ext);
                         parent.children.push(c);
-                        $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype], c);
+                        $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype.id], c);
                     } else if (element.type === "datatype") {
-                        element.components = $filter('orderBy')(element.components, 'position');
-                        angular.forEach(element.components, function (component) {
+                        if (!parent) {
+                            var d = {};
+                            d.obj = element;
+                            d.path = element.name;
+                            d.locationPath = element.name;
+                            d.children = [];
+                            parent = d;
+                        }
+                        angular.forEach(element.components, function(component) {
                             $rootScope.processMessageTree(component, parent);
                         });
                     }
@@ -757,6 +999,25 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
             } catch (e) {
                 throw e;
             }
+        };
+
+        $rootScope.printNode=function(node){
+            console.log(node);
+        }
+
+        $rootScope.getLabelOfObject=function(obj){
+          return  $rootScope.getLabel(obj.name,obj.ext);
+        };
+        $rootScope.getLabel=function(name, ext){
+			if(ext){
+				return name+"_"+ext;
+			}else{
+				return name;
+			}
+		};
+
+        $rootScope.hasChildren=function (obj) {
+            return obj.children&&obj.children.length>0;
         };
 
         $rootScope.createNewFlavorName = function (label) {
@@ -1696,3 +1957,70 @@ angular.module('tcl').controller('ConfirmLogoutCtrl', ["$scope", "$modalInstance
     };
 }]);
 
+angular.module('tcl').controller('labelController', function($scope) {
+    $scope.getLabel = function(element) {
+        if(element){
+            if (element.type === 'table') {
+                if (!element.ext || element.ext == "") {
+                    return element.bindingIdentifier;
+                } else {
+                    return element.bindingIdentifier + "_" + element.ext;
+                }
+            }
+            if (!element.ext || element.ext == "") {
+                return element.name;
+            } else {
+                return element.name + "_" + element.ext;
+            }
+
+        }
+
+
+    };
+    $scope.hasHl7Version = function(element) {
+        if (element&&element.hl7Version) {
+            return element.hl7Version;
+        }
+    };
+
+    $scope.getDescriptionLabel = function(element) {
+        if(!element){
+            return "UNFOUND";
+        }
+        if (element.type === 'table') {
+
+            if (element.name && element.name !== '') {
+                return "-" + element.name;
+            } else {
+                return "";
+            }
+
+        } else {
+            return "-" + element.description;
+        }
+
+    }
+
+    $scope.getScopeLabel = function(leaf) {
+        if (leaf) {
+            if (leaf.scope === 'HL7STANDARD') {
+                return 'HL7';
+            } else if (leaf.scope === 'USER') {
+                return 'USR';
+            } else if (leaf.scope === 'INTERMASTER') {
+                return 'DRV';
+            } else if (leaf.scope === 'MASTER') {
+                return 'MAS';
+            } else if (leaf.scope === 'PRELOADED') {
+                return 'PRL';
+            } else if (leaf.scope === 'PHINVADS') {
+                return 'PVS';
+            } else {
+                return "";
+            }
+
+        }
+    };
+
+
+});

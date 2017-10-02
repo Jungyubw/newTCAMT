@@ -1,0 +1,1766 @@
+<style id="antiClickjack">
+    body {
+        display: none !important;
+    }
+</style>
+<script type="text/javascript">
+    if (self === top) {
+        var antiClickjack = document.getElementById("antiClickjack");
+        antiClickjack.parentNode.removeChild(antiClickjack);
+    } else {
+        top.location = self.location;
+    }
+</script>
+<script type="text/ng-template" id="EditMessages.html">
+    <div ng-controller="MessageListCtrl" ng-init="init()" ng-cloak>
+        <div ng-show="loadingSelection" style="text-align: center;">
+            <div layout="row" layout-sm="column" layout-align="space-around">
+                <md-progress-circular class="md-hue-2" md-diameter="40px"></md-progress-circular>
+            </div>
+        </div>
+        <div ng-show="!loadingSelection">
+            <div ng-show="message !== null" id="executionPanel">
+                <div class="container">
+                    <div class="page-header">
+                        <span class="header4">Conformance Profile: {{message.name}} </span>
+                        <span class="pull-right">
+                            <md-button title="Save Changes" type="button" class="btn btn-raised btn-sm btn-success"
+                                    ng-disabled="editForm.$invalid ||!editForm.$dirty"
+                                    ng-hide="viewSettings.tableReadonly" ng-click="save()">
+                                <span><i class="fa fa-check fa-fw"></i> Save</span>
+                        </md-button>
+                        <md-button title="Cancel Changes" type="button" class="btn btn-raised btn-sm btn-warning" ng-hide="viewSettings.tableReadonly" ng-disabled="!editForm.$dirty" ng-click="reset()">
+                            <span><i class="fa fa-times fa-fw"></i> Reset</span>
+                        </md-button>
+                        </span>
+                    </div>
+                 <div class="static_info">
+                 <i class="fa fa-calendar" aria-hidden="true"></i>
+					Updated {{message.dateUpdated | date:dateFormat}}
+                     <span ng-if="message.owner" style="font-style: italic;">
+                         <i class="fa fa-user" aria-hidden="true"></i> 
+                         ,{{datatype.owner}}
+                    </span>
+                    <span ng-if="message.hl7Version">,HL7 Version: {{message.hl7Version}}</span>
+                    <span ng-if="message.publicationVersion">,Version: {{message.publicationVersion}}</span>
+
+                </div>
+                    <div class="" ng-controller="cmpMessageCtrl as cmpMsg">
+                        <md-tabs md-dynamic-height md-border-bottom md-selected="tabStatus.active">
+                            <md-tab md-on-select="setDeltaToF()">
+                                <md-tab-label>
+                                    <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>MetaData
+                                </md-tab-label>
+                                <md-tab-body class="metadata-scroll">
+                                    <div style="margin-top: 20px" ng-cloak class="md-inline-form metadata-scroll" layout="column">
+                                        <md-content layout-padding>
+                                            <label class="input-left igamt-label">Name*</label>
+
+                                            <md-input-container class="md-block igamt-input-block" flex-gt-sm>
+                                                <input type="text"  name="name" ng-change="setDirty()" ng-model="message.name" ng-disabled="viewSettings.tableReadonly" required>
+                                                <div ng-messages="editForm.name.$error">
+                                                    <div ng-message="required">Name is required.</div>
+                                                </div>
+                                            </md-input-container>
+
+                                            <label class="input-left igamt-label">Identifier</label>
+
+                                            <md-input-container class="md-block igamt-input-block" flex-gt-sm>
+                                                <input  type="text"  name="identifier" ng-change="setDirty()" ng-model="message.identifier" ng-disabled="viewSettings.tableReadonly" required>
+                                                <div ng-messages="editForm.identifier.$error">
+                                                    <div ng-message="required">Identifier is required.</div>
+                                                </div>
+                                            </md-input-container>
+
+                                            <label class="input-left igamt-label">Description</label>
+
+
+                                            <md-input-container class="md-block igamt-input-block" flex-gt-sm>
+                                                <input  type="text"  name="description" ng-change="setDirty()" ng-model="message.description" ng-disabled="viewSettings.tableReadonly" required>
+
+                                            </md-input-container>
+
+                                            <label class="input-left igamt-label">Message Type</label>
+
+                                            <md-input-container class="md-block igamt-input-block" flex-gt-sm>
+                                                <input  type="text"  name="messageType" ng-change="setDirty()" ng-model="message.messageType" disabled required>
+                                                <div ng-messages="editForm.messageType.$error">
+                                                    <div ng-message="required">Message Type is required.</div>
+                                                </div>
+                                            </md-input-container>
+
+
+                                            <label class="input-left igamt-label">Message Event</label>
+
+                                            <md-input-container class="md-block igamt-input-block" flex-gt-sm>
+                                                <input  type="text"  name="messageType" ng-change="setDirty()" ng-model="message.event"  required>
+                                                <div ng-messages="editForm.event.$error">
+                                                    <div ng-message="required">Message Event is required.</div>
+                                                </div>
+                                            </md-input-container>
+
+                                            <label class="input-left igamt-label">Message Structure ID</label>
+
+                                            <md-input-container class="md-block igamt-input-block" flex-gt-sm>
+                                                <input  type="text"  name="structID" ng-change="setDirty()" ng-model="message.structID"  required>
+                                                <div ng-messages="editForm.structID.$error">
+                                                    <div ng-message="required">Message Event is required.</div>
+                                                </div>
+                                            </md-input-container>
+
+                                            <label class="input-left igamt-label" ng-show="!viewSettings.tableReadonly">Author Notes</label>
+
+                                            <div ng-if="!viewSettings.tableReadonly">
+                                                <textarea froala="froalaEditorOptions" ng-model="message.authorNotes" name="text" id="authorNotes"></textarea>
+                                            </div>
+                                            <div ng-if="viewSettings.tableReadonly">
+                                                <div class="fr-view">
+                                                    <div froala-view="message.authorNotes"></div>
+                                                </div>
+                                            </div>
+
+                                            <label class="input-left igamt-label">Usage Note </label>
+
+                                            <md-input-container class="md-block igamt-input-block" flex-gt-sm style="margin-top:20px" >
+                                                <div  ng-show="!viewSettings.tableReadonly">
+                                                         <textarea froala="froalaEditorOptions" md-select-on-focus
+                                                                   ng-model="message.usageNote" name="usageNote"
+                                                                   id="usageNote" ng-change="setDirty()"></textarea>
+                                                </div>
+                                                <div class="fr-view" ng-show="viewSettings.tableReadonly">
+                                                    <div froala-view="message.usageNote"></div>
+                                                </div>
+                                            </md-input-container>
+
+                                            <label class="input-left igamt-label" ng-show="message.hl7Section != null && message.hl7Section != ''">HL7 Section</label>
+
+                                            <md-input-container class="md-block igamt-input-block" flex-gt-sm
+                                                                ng-show="message.hl7Section != null && message.hl7Section != ''">
+                                                <input type="text" disabled
+                                                       name="hl7Section"
+                                                       id="hl7Section"
+                                                       ng-model="message.hl7Section"
+                                                >
+                                            </md-input-container>
+
+                                        </md-content>
+                                    </div>
+                                </md-tab-body>
+                            </md-tab>
+
+                            <md-tab md-on-select="setDeltaToF()">
+                                <md-tab-label>
+                                    <i class="fa fa-table fa-fw" aria-hidden="true"></i>Definition
+                                </md-tab-label>
+                                <md-tab-body>
+                                <div class="el-def" style="margin-top: 5px">
+
+                                    <md-tabs md-dynamic-height md-border-bottom md-selected="defTabStatus.active">
+                                        <md-tab>
+                                            <md-tab-label>
+                                                Pre-Text
+                                             </md-tab-label>
+                                            <md-tab-body>
+                                         <div class="panel-primary">
+                                             <div class="panel-body">
+                                                <div ng-show="!viewSettings.tableReadonly">
+                                                    <textarea froala="froalaEditorOptions" ng-model="message.defPreText" name="text" id="defPreText" ng-change="setDirty()"></textarea>
+                                                </div>
+                                                <div ng-show="viewSettings.tableReadonly">
+                                                    <div class="fr-view">
+                                                        <div froala-view="message.defPreText"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                         </div>
+                                            </md-tab-body>
+                                        </md-tab>
+
+                                        <md-tab>
+                                            <md-tab-label>
+                                                Structure
+                                            </md-tab-label>
+                                            <md-tab-body>
+                                                <div layout="column">
+                                                    <div flex layout="row" layout-align="start start">
+                                                        <div class="table-context">
+                                                            <strong> Context :</strong>
+                                                            <span class="label-message-icon"><i class="fa fa-circle fa-fw"/></span>
+                                                            message
+                                                            <span class="label-field-icon"><i class="fa fa-circle fa-fw"/></span>
+                                                            segment
+                                                            <span class="label-component-icon"><i class="fa fa-circle fa-fw"/></span>
+                                                            Field
+                                                            <span class="label-sub-component-icon"><i class="fa fa-circle fa-fw"/></span>
+                                                            Component
+                                                        </div>
+                                                        <div flex class="pull-right">
+                                                            <md-menu class="pull-right">
+                                                                <button ng-click="$mdMenu.open()" class="btn btn-raised btn-sm menu-table menu-table-add">
+                                                                    <i class="fa fa-plus fa-fw"></i> ADD
+                                                                </button>
+                                                                <md-menu-content>
+                                                                    <md-menu-item>
+                                                                        <md-button   ng-click="addGroupModal(message)">
+                                                                            Add Group
+                                                                        </md-button>
+                                                                    </md-menu-item>
+                                                                    <md-menu-item>
+                                                                        <md-button ng-click="addSegmentModal(message)" >
+                                                                            Add Segment
+                                                                        </md-button>
+                                                                    </md-menu-item>
+                                                                </md-menu-content>
+
+                                                            </md-menu>
+                                                                <!--<md-button ng-click="close()" md-colors="{background:'orange'}">-->
+                                                                <button ng-if="message.scope!=='HL7STANDARD'" title="Verify Message" type="button" ng-click="validateMessage()" class="btn btn-raised btn-sm pull-right menu-table menu-table-verify"><i class="fa fa-check fa-fw"></i> Verify</button>
+
+
+
+                                                                <!--<md-button ng-click="close()" md-colors="{background:'orange'}">-->
+                                                            <md-select class="pull-right"  ng-model="viewSettings.visibleColumns"  md-selected-text="viewSettings.getPlaceHolder()" multiple ng-model-options="{trackBy: '$value.id'}" no-dirty-check>
+                                                                <md-optgroup label="Columns">
+                                                                    <md-option ng-repeat="opt in  viewSettings.columnOptions track by $index" ng-value="opt">{{opt.label}}</md-option>
+                                                                </md-optgroup>
+                                                            </md-select>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                            <div class="igl-def-table-container">
+
+                                                <div style="margin:5px 5px 5px 5px">
+                                                    <div class="row" ng-show="showErrorCount(message.id)  && showMsgErrorNotification" style="margin-right: 15px;margin-left: 5px;">
+                                                        <div class="alert has-error" ng-show="errorCount(message.id)>0">
+                                                            <button type="button" ng-click="setErrorNotification();" class="close" aria-label="Close"><span>&times;</span></button>{{errorCount(message.id)}} Errors
+
+                                                        </div>
+                                                        <div class="alert alert-success" ng-show="errorCount(message.id)===0">
+                                                            <button type="button" ng-click="setErrorNotification();" class="close" aria-label="Close"><span>&times;</span></button>{{errorCount(message.id)}} Errors
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel-primary" style="overflow-y: auto">
+                                                <table id="treeTable" tt-table tt-params="messagesParams" class="table table-bordered table-fix-header table-condensed profile-table">
+                                                    <thead>
+                                                    <tr class="tbl-header" style="">
+                                                        <th class="col-fixed-name">Name</th>
+                                                        <th class="col-fixed-usage" style="text-align:center">Usage
+                                                            <button type="button" ng-show="(message.scope === 'USER') && !viewSettings.tableReadonly && (message.children.length>0)" class="btn btn-raised btn-info btn-xs" ng-click="OtoX(message)">O to X</button>
+                                                        </th>
+                                                        <th class="col-fixed-cardinality" style="text-align:center">Cardinality</th>
+                                                        <th class="col-fixed-length" style="text-align:center" ng-show="viewSettings.isVisibleColumn('length')">Length</th>
+                                                        <th class="col-fixed-confLength" ng-show="showConfLength() && viewSettings.isVisibleColumn('confLength')" style="text-align:center">ConfLength</th>
+                                                        <th class="col-fixed-dataType" ng-show="viewSettings.isVisibleColumn('datatype')" style="text-align:center">Data Type</th>
+                                                        <th class="col-fixed-valueSet" ng-show="viewSettings.isVisibleColumn('valueSet')" style="text-align:center">Value Set/Single Code</th>
+                                                        <th class="col-fixed-constantValue" ng-show="viewSettings.isVisibleColumn('singleElm')" style="text-align:center">Constant Value</th>
+                                                        <th class="col-fixed-predicate" ng-show="viewSettings.isVisibleColumn('predicate')" style="text-align:center">Predicate</th>
+                                                        <th class="col-fixed-definitionText" ng-show="viewSettings.isVisibleColumn('defText')" style="text-align:center">Definition Text</th>
+                                                        <th class="col-fixed-comment" ng-show="viewSettings.isVisibleColumn('comment')" style="text-align:center">Comment</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                                </div>
+                                             </div>
+                                            </md-tab-body>
+                                        </md-tab>
+
+                                        <md-tab>
+                                            <md-tab-label>
+                                                Post-Text
+                                            </md-tab-label>
+                                            <md-tab-body>
+
+                                    <div class="panel-primary" >
+                                        <div class="panel-body">
+                                            <div ng-show="!viewSettings.tableReadonly">
+                                                <textarea froala="froalaEditorOptions" ng-model="message.defPostText" name="text" id="defPostText" ng-change="setDirty()"></textarea>
+                                            </div>
+                                                <div ng-show="viewSettings.tableReadonly">
+                                            <div class="fr-view">
+                                                <div froala-view="message.defPostText"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                            </md-tab-body>
+                                        </md-tab>
+
+                                        <md-tab>
+                                            <md-tab-label>
+                                                Conf. Statements
+                                            </md-tab-label>
+                                            <md-tab-body>
+
+                                <div  class="panel-primary">
+                                    <div class="panel-body">
+                                        <span class="pull-right" class="margin-right:5px">
+                                                    <button title="Conformance Statements" type="button" class="btn btn-raised btn-sm btn-success" ng-hide="viewSettings.tableReadonly" ng-click="openAddGlobalConformanceStatementDialog(message)">
+                                                        <span>Conformance Statements</span>
+                                        </button>
+                                        </span>
+                                        <div class="col-md-12">
+                                            <span ng-hide="listGlobalConformanceStatements.length > 0">No Conformance statement</span>
+                                            <div ng-repeat="node in listGlobalConformanceStatements">
+                                                <span ng-show="node.type =='group'">Group : {{node.name}}</span>
+                                                <span ng-show="node.type =='message'">Message : {{node.name}}</span>
+                                                <table st-table="displayedCS" st-safe-src="node.conformanceStatements" class="table table-striped table-bordered">
+                                                    <thead>
+                                                        <tr class="tbl-header">
+                                                            <th st-sort="constraintId" class="col-md-2">ID</th>
+                                                            <th class="col-md-10">Description</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="c in displayedCS">
+                                                            <td class="col-md-2">{{c.constraintId}}</td>
+                                                            <td class="col-md-10">{{c.description}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                            </md-tab-body>
+                                        </md-tab>
+
+                                        <md-tab>
+                                            <md-tab-label>
+                                                Predicates                                            </md-tab-label>
+                                            <md-tab-body>
+
+
+                                <div  class="panel-primary">
+                                    <div class="panel-body">
+                                        <div class="col-md-12">
+                                            <span ng-hide="listGlobalPredicates.length > 0">No Predicate</span>
+                                            <div ng-repeat="node in listGlobalPredicates">
+                                                <span ng-show="node.type =='group'">Group : {{node.name}}</span>
+                                                <span ng-show="node.type =='message'">Message : {{node.name}}</span>
+                                                <table st-table="displayedCP" st-safe-src="node.predicates" class="table table-striped table-bordered">
+                                                    <thead>
+                                                        <tr class="tbl-header">
+                                                            <th st-sort="constraintTarget" class="col-md-2">Target</th>
+                                                            <th class="col-md-8">Description</th>
+                                                            <th class="col-md-1">True Usage</th>
+                                                            <th class="col-md-1">False Usage</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="c in displayedCP">
+                                                            <td class="col-md-2">{{c.constraintTarget}}</td>
+                                                            <td class="col-md-8">{{c.description}}</td>
+                                                            <td class="col-md-1">{{c.trueUsage}}</td>
+                                                            <td class="col-md-1">{{c.falseUsage}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                            </md-tab-body>
+                                        </md-tab>
+                                    </md-tabs>
+                                </md-tab-body>
+                            </md-tab>
+                            <md-tab md-on-select="callMsgDelta()">
+                                <md-tab-label>
+                                    <i class="fa fa-table fa-fw" aria-hidden="true"></i>Delta
+                                </md-tab-label>
+                                <md-tab-body class="metadata-scroll">
+
+                                 <div class="panel-body metadata-scroll" style="margin:5px;">
+
+                                 <md-tabs md-dynamic-height md-border-bottom md-selected="deltaTabStatus.active">
+                                   <md-tab>
+                                    <md-tab-label>
+                                        <span><i class="fa fa-cog fa-fw"></i> Configuration </span>
+                                    </md-tab-label>
+                                    <md-tab-body>
+
+                                <div class="panel-primary">
+                                 <div class="panel-body">
+                                    <table class="table table-stripped table-borderless table-condensed">
+                                        <thead>
+                                            <tr class="tbl-header">
+                                                <th class="col-md-1"></th>
+                                                <th class="col-md-2">HL7 Version</th>
+                                                <th class="col-md-2">Scope</th>
+                                                <th class="col-md-3">IG Document</th>
+                                                <th class="col-md-4">Message</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="col-md-1">
+                                                    <span class="badge badge-delta badge-delta-1">1</span>
+                                                </td>
+                                                <td class="col-md-2">
+                                                    <md-select ng-model="version1"  disabled placeholder="{{version1}}">
+                                                    </md-select>
+                                                </td>
+                                                <td class="col-md-2">
+                                                    <md-select ng-model="scope1"  disabled placeholder="{{scope1}}">
+                                                        </md-select>
+                                                </td>
+                                                <td class="col-md-3">
+                                                    <md-select ng-model="ig1"  disabled placeholder="{{ig1}}">
+                                                        </md-select>
+                                                </td>
+                                                <td class="col-md-4">
+                                                    <md-select ng-model="message1"  disabled placeholder="{{message1.name}}">
+                                                        </md-select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="col-md-1">
+                                                    <span class="badge badge-delta badge-delta-2">2</span>
+                                                </td>
+                                                <td class="col-md-2">
+                                                    <md-select ng-model="version2" ng-change="setVersion2(version2)" no-dirty-check>
+                                                            <md-option ng-repeat="vr in versions" value='{{vr}}' ng-selected="vr===version2"> {{::vr}}</md-option>
+                                                        </md-select>
+                                                </td>
+                                                <td class="col-md-2">
+                                                    <md-select ng-model="scope2"  ng-change="setScope2(scope2)" no-dirty-check>
+                                                            <md-option ng-repeat="scope in scopes" value='{{scope.name}}' ng-selected="scope.name===scope2"> {{::scope.alias}}</md-option>
+                                                        </md-select>
+                                                </td>
+                                                <td class="col-md-3">
+                                                    <md-select  ng-model="ig2" ng-click="setIG2(ig2)" ng-disabled="!scope2 || !version2 || igDisabled2" no-dirty-check>
+
+                                                        <md-option ng-repeat="ig in igList2 track by ig.id" ng-value="ig">{{ig.title}}</md-option>
+                                                    </md-select>
+                                                </td>
+
+                                                <td class="col-md-4">
+                                                    <md-select ng-model="cmpMsg.messageId" ng-change="setMsg2(cmpMsg.messageId)" ng-disabled="!ig2" no-dirty-check>
+                                                            <md-option ng-repeat="message in messages2" ng-disabled="disableMsg(message,message1)" ng-hide="hideMsg(message,message1)" value='{{$index}}'> {{::message.name}}</md-option>
+                                                        </md-select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="" align="center" style="margin-bottom:10px">
+                                        <md-button ng-click="cmpMessage(message1,message2)" ng-disabled="!message1 || cmpMsg.messageId===-1||!msgChanged || !message2" class="btn btn-raised btn-info btn-md"><i class="fa fa-check"></i> View Delta</md-button>
+                                    </div>
+                                </div>
+                            </div>
+                                    </md-tab-body>
+                                </md-tab>
+
+                                     <md-tab>
+                                        <md-tab-label>
+                                            <span><i class="fa fa-check fa-fw"></i> Result </span>
+                                        </md-tab-label>
+                                        <md-tab-body>
+
+                                <div class="panel-primary" >
+                                      <div class="panel-body">
+                                        <table tt-table tt-params="dynamicMsg_params" class=" table-marginless table-bordered table-condensed">
+                                            <thead>
+                                                <tr class="tbl-header">
+                                                    <th class="col-md-1" rowspan="2" style="width:14%;">Position</th>
+                                                    <th class="col-md-2" rowspan="2" style="width:37%;">Name</th>
+                                                    <th class="col-md-1" rowspan="2" style="width:2%">Usage</th>
+                                                    <th class="col-md-1" colspan="2" style="width:4%">Cardinality</th>
+                                                    <th class="col-md-1" colspan="2" style="width:4%" ng-show="viewSettings.isVisibleColumn('length')">Length</th>
+                                                    <th class="col-md-1" rowspan="2" style="width:2%" ng-show="showConfLength() && viewSettings.isVisibleColumn('confLength')">Conformance Length</th>
+                                                    <th class="col-md-1" rowspan="2" style="width:21%">Data Type</th>
+                                                    <th class="col-md-1" rowspan="2" style="width:16%">Value Set</th>
+                                                </tr>
+                                                <tr class="tbl-header">
+                                                    <th class="col-md-1 col-fixed-10" style="width:2%">min</th>
+                                                    <th class="col-md-1 col-fixed-10" style="width:2%">max</th>
+                                                    <th class="col-md-1 col-fixed-10" style="width:2%">min</th>
+                                                    <th class="col-md-1 col-fixed-10" style="width:2%">max</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                        </md-tab-body>
+                                     </md-tab>
+                            </md-tabs>
+                        </div>
+                                </md-tab-body>
+                            </md-tab>
+                        </md-tabs>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</script>
+<script type="text/ng-template" id="MessageSegmentRefEditTree.html">
+    <tr tt-node is-branch="hasChildren(node.obj)" ng-show="(isVisible(node.obj) &&( node.obj.usage==='R' ||node.obj.usage==='RE' ||node.obj.usage==='C' )&& $root.usageF) || (isVisible(node.obj) && !$root.usageF)">
+        <td>
+            <span ng-show="hasError(node.obj.id) && validationResult && isMessageValidated()"><i class="fa fa-exclamation-triangle" style="color:red;"></i></span>
+            <span ng-show="!hasError(node.obj.id) && validationResult && isMessageValidated()"><i class="fa fa-check-circle" style="color:green;"></i></span>
+            <a ng-show="editableSeg!==node.obj.id" ng-click="editSgmt(node,message)" class="point">
+                <span><i class="fa fa-pencil fa-fw"></i></span>
+            </a>
+            <a ng-show="editableSeg!==node.obj.id" ng-click="deleteSeg(node)" class="point">
+                <span><i class="fa fa-trash fa-fw"></i></span>
+            </a>
+            <ng-form class="form-inline">
+                <span id="segEditTree" class="label label-segment label-icon">S</span>
+                <a ng-show="editableSeg!==node.obj.id" ng-click="redirectSeg(node.obj.ref)" class="point">{{getSegmentRefNodeName(node.obj)}}</a>
+                <!--<select ng-show="editableSeg===node.obj.id" ng-model="position" ng-change="selectPos(node,position)" style="width:15%" class="form-control input-sm">
+                    <option ng-repeat="child in $root.segParent.children"  ng-selected="node.obj.position===child.position"> {{child.position}}</option>
+                </select>-->
+                <select ng-show="editableSeg===node.obj.id" ng-model="segmentRef" ng-change="selectSeg(node,segmentRef)" style="width:40%" class="form-control input-sm">
+                    <option ng-repeat="segmentRef in tmpResults" value="{{segmentRef}}"  ng-selected="node.obj.ref.id===segmentRef.id"> {{getSegmentLabel(segmentRef)}} {{::segmentRef.hl7Version}}</option>
+                </select>
+
+
+
+
+                <!--<md-select ng-show="editableSeg===node.obj.id" ng-model="position" ng-change="selectPos(node,position)" style="width:15%"">-->
+                    <!--<md-option ng-repeat="child in $root.segParent.children"  ng-selected="node.obj.position===child.position">-->
+                      <!--{{child.position}}-->
+                    <!--</md-option>-->
+                <!--</md-select>-->
+                <!--<md-select ng-show="editableSeg===node.obj.id" ng-model="segmentRef" ng-change="selectSeg(node,segmentRef)" style="width:40%"">-->
+                    <!--<md-option ng-value="segmentRef" ng-repeat="segmentRef in tmpResults">-->
+                        <!--<display-label of="segmentsMap[segmentRef.id]" desc="false"></display-label>-->
+                    <!--</md-option>-->
+                <!--</md-select>-->
+
+                <div align="center">
+                    <a ng-show="editableSeg===node.obj.id" ng-click="backSeg()">
+                        <span><i align="center" class="glyphicon glyphicon-remove"></i></span>
+                    </a>
+                </div>
+            </ng-form>
+        </td>
+        <td ng-class="hasUsageError(node.obj.id)" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'USAGE')}}">
+            <div>
+                <span ng-show="node.obj.usage !=='C' || (node.obj.usage==='C' && countPredicate(node.path)===0 )" ng-controller="FormRowCtrl">
+                    <!--<select class="form-control input-sm" name="usage" ng-change="setCardinalities(node.obj); setDirty(); openPredicateDialog(node);" required-->
+                            <!--ng-model="node.obj.usage" ng-options="usage for usage in config.usages"/>-->
+                    <ng-form name="{{formName}}" class="form-inline">
+                             <md-select placeholder="Select Usage" name="usage" id="usage" class="inside-table"
+                                       ng-change="setCardinalities(node.obj); setDirty(); openPredicateDialog(node);"
+                                        ng-class="{ 'has-error has-feedback' : {{formName}}.usage.$invalid}"
+                                        required ng-model="node.obj.usage" >
+
+                                 <md-option ng-repeat="usage in config.usages" ng-value="usage">
+                                     {{usage}}
+
+                                 </md-option>
+                             </md-select>
+                    </ng-form>
+
+                </span>
+                <div ng-show="node.obj.usage==='C' && countPredicate(node.path) !==0">
+                    <span class="badge label-white">
+                        <span ng-show="findPredicateByPath(node.path)">C({{findPredicateByPath(node.path).trueUsage}}/{{findPredicateByPath(node.path).falseUsage}})</span>
+                        <span title="Delete Predicate and Change Usage" ng-click="deletePredicateByPath(node.path, message)"><i class="fa fa-pencil fa-fw edit-icon"></i></span>
+                    </span>
+                </div>
+            </div>
+        </td>
+        <td ng-class="{'has-validation-error':hasCardinalityError(node.obj.id)}" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'CARDINALITY')}}">
+            <div ng-controller="FormRowCtrl">
+                <ng-form name="{{formName}}" class="form-inline"  ng-controller="FormRowCtrl" ng-init="init(node)" layout="row" layout-align="center center">
+                    <md-input-container flex="50" class="withoutMargin">
+                                                <input
+                                                       name="min"
+                                                        type="text"
+                                                       ng-change="setDirty()"
+                                                       ng-pattern="/^\d+$/"
+                                                       ng-class="{ 'has-error' : {{formName}}.min.$invalid}"
+                                                       ng-model="node.obj.min" required ng-minlength="1"/>
+                    </md-input-container>
+                    <md-input-container flex="50" class="withoutMargin">
+
+                                                <input type="text"
+                                                       name="max"
+                                                       ng-change="setDirty()"
+                                                       ng-class="{ 'has-error' : {{formName}}.max.$invalid}"
+                                                       ng-pattern="/^\d+$|^\*?$/"
+                                                       ng-model="node.obj.max" required>
+                    </md-input-container>
+                </ng-form>
+
+
+            </div>
+        </td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('length')"></td>
+        <td class="emptyCol" ng-show="showConfLength() && viewSettings.isVisibleColumn('confLength')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('datatype')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('valueSet')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('singleElm')"></td>
+        <td ng-class="{'has-error': node.obj.usage === 'C' && countPredicate(node.path) != 1, 'emptyCol':node.obj.usage !== 'C'}" ng-show="viewSettings.isVisibleColumn('predicate')">
+            <div>
+                <div ng-show="countPredicate(node.path)===0 && node.obj.usage==='C'">
+                    <a ng-click="openAddGlobalPredicateDialog(node, message)" class="point">
+                        <span><i class="fa fa-plus fa-fw"></i></span>
+                        <p class="warning" >Need predicate</p>
+                    </a>
+                </div>
+                <div ng-show="countPredicate(node.path) !== 0 && node.obj.usage === 'C'">
+                    <span title="{{getPredicateAsString(findPredicateByPath(node.path))}}" class="badge label-white">
+                            <span class="label-message-icon"><i class="fa fa-circle fa-fw"/></span>
+                            <span ng-click="openAddGlobalPredicateDialog(node, message)">{{getConstraintAsTruncatedString(findPredicateByPath(node.path), 15)}}</span>
+                            <span ng-click="openAddGlobalPredicateDialog(node, message)"><i class="fa fa-pencil fa-fw edit-icon"></i></span>
+                            <span ng-click="deletePredicateByPath(node.path, message)"><i class="fa fa-times fa-fw edit-icon"></i></span>
+                    </span>
+                    <div ng-show="countPredicate(node.path) > 1">
+                        <p class="warning">Multiple predicates</p>
+                    </div>
+                </div>
+
+
+            </div>
+        </td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('defText')"></td>
+        <td ng-show="viewSettings.isVisibleColumn('comment')" style="text-align:center">
+            <div ng-repeat="comment in findingComments(node)">
+                    <span class="badge label-white">
+                        <span class="label-message-icon"><i class="fa fa-circle fa-fw"/></span>
+                        <span title="{{comment.description}}" ng-click="editCommentDlg(node, comment, false, 'message')">{{comment.lastUpdatedDate|date:dateFormat}}</span>
+                        <span title="Delete This Comments" ng-click="deleteComment(comment)"><i class="fa fa-times fa-fw"></i></span>
+                    </span>
+            </div>
+            <a ng-click="editCommentDlg(node, null, false, 'message')" class="point">
+                <span><i class="fa fa-plus fa-fw"></i></span>
+            </a>
+        </td>
+    </tr>
+</script>
+<script type="text/ng-template" id="MessageSegmentRefReadTree.html">
+    <tr tt-node is-branch="hasChildren(node.obj)" ng-show="(isVisible(node.obj) &&( node.obj.usage==='R' ||node.obj.usage==='RE' ||node.obj.usage==='C' )&& $root.usageF) || (isVisible(node.obj) && !$root.usageF)">
+        <td>
+            <span class="label label-segment label-icon">S</span>
+            <span>
+                {{getSegmentLabel(segmentsMap[node.obj.ref.id])}}
+            </span>
+        </td>
+        <td>
+            <span ng-bind="node.obj.usage"></span>
+            <span ng-repeat="p in filteredConstraints  = (message.predicates | filter:{constraintTarget:node.path}:true)">
+                    ({{::p.trueUsage}}/{{::p.falseUsage}})
+            </span>
+        </td>
+        <td>[{{::node.obj.min}}, {{::node.obj.max}}]</td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('length')"></td>
+        <td class="emptyCol" ng-show="showConfLength() && viewSettings.isVisibleColumn('confLength')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('datatype')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('valueSet')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('singleElm')"></td>
+        <td ng-show="viewSettings.isVisibleColumn('predicate')">
+            <div>
+                <p ng-repeat="constraint in filteredConstraints  = (message.predicates | filter:{constraintTarget:node.path}:true)" tooltip-html="getPredicateAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getPredicateAsString(constraint)"
+                   tooltip-trigger tooltip-animation="false" tooltip-placement="left">
+                </p>
+            </div>
+        </td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('defText')"></td>
+        <td ng-show="viewSettings.isVisibleColumn('comment')" style="text-align:center">
+            <div ng-repeat="comment in findingComments(node)">
+                    <span class="badge" ng-class="{'label-MAIN' : comment.from == 'message', 'label-CHILD' : comment.from == 'segment', 'label-SUBCHILD' : comment.from == 'field', 'label-SUBSUBCHILD' : comment.from == 'component'}">
+                        <span title="{{comment.description}}@{{comment.lastUpdatedDate|date:dateFormat}}" ng-show="comment.from == 'message'" ng-click="editCommentDlg(node, comment, true, 'message')">Comments_{{comment.index}}</span>
+                    </span>
+            </div>
+        </td>
+    </tr>
+</script>
+<script type="text/ng-template" id="MessageGroupEditTree.html">
+    <tr tt-node is-branch="hasChildren(node.obj)" ng-show="(isVisible(node.obj) && (node.obj.usage==='R' ||node.obj.usage==='C' ||node.obj.usage==='RE' ) && $root.usageF) || (isVisible(node.obj) && !$root.usageF)">
+        <td context-menu="segOption">
+            <span ng-show="hasError(node.obj.id) && validationResult && isMessageValidated()"><i class="fa fa-exclamation-triangle" style="color:red;"></i></span>
+            <span ng-show="!hasError(node.obj.id) && validationResult && isMessageValidated()"><i class="fa fa-check-circle" style="color:green;"></i></span>
+            <a ng-show="editableGrp!==node.obj.id" ng-click="editGrp(node,message)" class="point">
+                <span><i class="fa fa-pencil fa-fw"></i></span>
+            </a>
+            <a ng-show="editableGrp!==node.obj.id" ng-click="deleteSeg(node)" class="point">
+                <span><i class="fa fa-trash fa-fw"></i></span>
+            </a>
+            <ng-form class="form-inline">
+                <span class="label label-success label-icon">G</span>
+                <span ng-if="editableGrp!==node.obj.id" context-menu="segOption" ng-bind="getGroupNodeName(node.obj)" />
+                <span ng-if="editableGrp===node.obj.id">
+                    <div layout-gt-xs="row">
+                    <md-input-container flex="35">
+                        <md-select placeholder="Select new position"
+                                   ng-change="selectPos()"
+                                   ng-model="position"
+                                    style="margin: 20px 0;">
+                            <md-option ng-repeat="child in $root.segParent.children" ng-value="child.position">
+                                {{child.position}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+
+                    <md-input-container flex="55">
+                        <input type="text"
+                               ng-class="{ 'has-error' : !isGroupNameValid(grpName)}"
+                               ng-model="grpName" />
+                    </md-input-container>
+
+                    <md-input-container flex="10">
+                        <a ng-show="isGroupNameValid(grpName)" ng-click="applyGrp(node,grpName,position)" class="point">
+                            <span><i class="glyphicon glyphicon-ok"></i></span>
+                        </a>
+                        <a ng-click="backGrp()" class="point">
+                            <span><i class="glyphicon glyphicon-remove"></i></span>
+                        </a>
+                    </md-input-container>
+                    </div>
+
+                 </span>
+            </ng-form>
+        </td>
+        <td ng-class="hasUsageError(node.obj.id)" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'USAGE')}}">
+            <div>
+                <span ng-show="node.obj.usage !=='C' || (node.obj.usage==='C' && countPredicate(node.path)===0 )" ng-controller="FormRowCtrl">
+                    <ng-form name="{{formName}}" class="form-inline">
+                                <md-select placeholder="Select Usage" name="usage" id="usage" class="inside-table"
+                                           ng-change="setCardinalities(node.obj); setDirty(); openPredicateDialog(node);"
+                                           ng-class="{ 'has-error has-feedback' : {{formName}}.usage.$invalid}"
+                                           required ng-model="node.obj.usage" >
+
+                                 <md-option ng-repeat="usage in config.usages" ng-value="usage">
+                                     {{usage}}
+
+                                 </md-option>
+                               </md-select>
+                    </ng-form>
+                </span>
+                <div ng-show="node.obj.usage==='C' && countPredicate(node.path) !==0">
+                    <span class="badge label-white">
+                        <span ng-show="findPredicateByPath(node.path)">C({{findPredicateByPath(node.path).trueUsage}}/{{findPredicateByPath(node.path).falseUsage}})</span>
+                        <span title="Delete Predicate and Change Usage" ng-click="deletePredicateByPath(node.path, message)"><i class="fa fa-pencil fa-fw edit-icon"></i></span>
+                    </span>
+                </div>
+            </div>
+        </td>
+        <td ng-class="{'has-validation-error':hasCardinalityError(node.obj.id)}" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'CARDINALITY')}}">
+            <div ng-controller="FormRowCtrl" class="form-inline">
+                <ng-form name="{{formName}}" class="form-inline"  ng-controller="FormRowCtrl" ng-init="init(node)" layout="row" layout-align="center center">
+                    <md-input-container flex="50" class="withoutMargin">
+                        <input
+                                name="min"
+                                type="text"
+                                ng-change="setDirty()"
+                                ng-pattern="/^\d+$/"
+                                ng-class="{ 'has-error' : {{formName}}.min.$invalid}"
+                                ng-model="node.obj.min" required ng-minlength="1"/>
+                    </md-input-container>
+                    <md-input-container flex="50" class="withoutMargin">
+
+                        <input type="text"
+                               name="max"
+                               ng-change="setDirty()"
+                               ng-class="{ 'has-error' : {{formName}}.max.$invalid}"
+                               ng-pattern="/^\d+$|^\*?$/"
+                               ng-model="node.obj.max" required>
+                    </md-input-container>
+                </ng-form>
+            </div>
+        </td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('length')"></td>
+        <td class="emptyCol" ng-show="showConfLength() && viewSettings.isVisibleColumn('confLength')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('datatype')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('valueSet')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('singleElm')"></td>
+        <td ng-class="{'has-error': node.obj.usage === 'C' && countPredicate(node.path) != 1, 'emptyCol':node.obj.usage !== 'C'}" ng-show="viewSettings.isVisibleColumn('predicate')">
+            <div>
+                <div ng-show="countPredicate(node.path)===0 && node.obj.usage==='C'">
+                    <a ng-click="openAddGlobalPredicateDialog(node, message)" class="point">
+                        <span><i class="fa fa-plus fa-fw"></i></span>
+                        <p class="warning">Need predicate</p>
+                    </a>
+                </div>
+                <div ng-show="countPredicate(node.path) !== 0 && node.obj.usage === 'C'">
+                    <span title="{{getPredicateAsString(findPredicateByPath(node.path))}}" class="badge label-white">
+                            <span class="label-message-icon"><i class="fa fa-circle fa-fw"/></span>
+                            <span ng-click="openAddGlobalPredicateDialog(node, message)">{{getConstraintAsTruncatedString(findPredicateByPath(node.path), 15)}}</span>
+                            <span ng-click="openAddGlobalPredicateDialog(node, message)"><i class="fa fa-pencil fa-fw edit-icon"></i></span>
+                            <span ng-click="deletePredicateByPath(node.path, message)"><i class="fa fa-times fa-fw edit-icon"></i></span>
+                    </span>
+                    <div ng-show="countPredicate(node.path) > 1">
+                        <p class="warning">Multiple predicates</p>
+                    </div>
+                </div>
+
+
+            </div>
+        </td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('defText')"></td>
+        <td ng-show="viewSettings.isVisibleColumn('comment')" style="text-align:center">
+            <div ng-repeat="comment in findingComments(node)">
+                    <span class="badge label-white">
+                        <span class="label-message-icon"><i class="fa fa-circle fa-fw"/></span>
+                        <span title="{{comment.description}}" ng-click="editCommentDlg(node, comment, false, 'message')">{{comment.lastUpdatedDate|date:dateFormat}}</span>
+                        <span title="Delete This Comments" ng-click="deleteComment(comment)"><i class="fa fa-times fa-fw"></i></span>
+                    </span>
+            </div>
+            <a ng-click="editCommentDlg(node, null, false, 'message')" class="point">
+                <span><i class="fa fa-plus fa-fw"></i></span>
+            </a>
+        </td>
+    </tr>
+</script>
+<script type="text/ng-template" id="MessageGroupReadTree.html">
+    <tr tt-node is-branch="hasChildren(node.obj)" ng-show="(isVisible(node.obj) &&( node.obj.usage==='R' ||node.obj.usage==='RE' ||node.obj.usage==='C' )&& $root.usageF) || (isVisible(node.obj) && !$root.usageF)">
+        <td>
+            <span>
+                <span class="label label-success label-icon">G</span>
+                <span ng-bind="::getGroupNodeName(node.obj)"></span>
+            </span>
+        </td>
+        <td>
+            <div>
+                <span ng-bind="node.obj.usage"></span>
+                <span ng-repeat="p in filteredConstraints  = (message.predicates | filter:{constraintTarget:node.path}:true)">
+                    ({{::p.trueUsage}}/{{::p.falseUsage}})
+                </span>
+            </div>
+        </td>
+        <td>
+            [{{::node.obj.min}}, {{::node.obj.max}}]
+        </td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('length')"></td>
+        <td class="emptyCol" ng-show="showConfLength() && viewSettings.isVisibleColumn('confLength')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('datatype')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('valueSet')"></td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('singleElm')"></td>
+        <td ng-show="viewSettings.isVisibleColumn('predicate')">
+            <div>
+                <p ng-repeat="constraint in filteredConstraints  = (message.predicates | filter:{constraintTarget:node.path}:true)" tooltip-html="getPredicateAsString(constraint)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getPredicateAsString(constraint)"
+                   tooltip-trigger tooltip-animation="false" tooltip-placement="left">
+                </p>
+            </div>
+        </td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('defText')"></td>
+        <td ng-show="viewSettings.isVisibleColumn('comment')" style="text-align:center">
+            <div ng-repeat="comment in findingComments(node)">
+                    <span class="badge" ng-class="{'label-MAIN' : comment.from == 'message', 'label-CHILD' : comment.from == 'segment', 'label-SUBCHILD' : comment.from == 'field', 'label-SUBSUBCHILD' : comment.from == 'component'}">
+                        <span title="{{comment.description}}@{{comment.lastUpdatedDate|date:dateFormat}}" ng-show="comment.from == 'message'" ng-click="editCommentDlg(node, comment, true, 'message')">Comments_{{comment.index}}</span>
+                    </span>
+            </div>
+        </td>
+    </tr>
+</script>
+<script type="text/ng-template" id="MessageFieldViewTree.html">
+    <tr tt-node is-branch="hasChildren(node.obj)" ng-show="isVisibleInner(node.obj, parentsMap[node.obj.id])">
+        <td>
+            <span ng-show="hasError(node.obj.id) && validationResult && isMessageValidated()"><i class="fa fa-exclamation-triangle" style="color:red;"></i></span>
+            <span ng-show="!hasError(node.obj.id) && validationResult && isMessageValidated()"><i class="fa fa-check-circle" style="color:green;"></i></span>
+            <span class="label label-field label-icon" ng-show="node.obj.type==='field'">F</span>
+            <span class="label label-sub-component label-icon" ng-show="node.obj.type==='subcomponent'">S</span>
+            <span class="label label-component label-icon" ng-show="node.obj.type==='component'">C</span>
+            <span tooltip-html="getFieldNodeName(node.obj)" tooltip-append-to-body="true" tooltip-class="constraints-tooltip" ng-bind-html="getFieldNodeName(node.obj)" tooltip-trigger tooltip-animation="false" tooltip-placement="left"></span>
+        </td>
+        <td ng-class="hasUsageError(node.obj.id)" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'USAGE')}}">
+            <span>{{node.obj.usage}}</span>
+            <span ng-show="findPredicateByPath(node.path)">({{findPredicateByPath(node.path).trueUsage}}/{{findPredicateByPath(node.path).falseUsage}})</span>
+        </td>
+        <td ng-class="{'has-validation-error':hasCardinalityError(node.obj.id)}" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'CARDINALITY')}}">
+            <span>[{{::node.obj.min}},{{::node.obj.max}}]</span>
+        </td>
+        <td ng-show="viewSettings.isVisibleColumn('length')" ng-class="{'emptyCol':datatypesMap[node.obj.datatype.id].components.length >0 || node.obj.minLength === 'NA' || node.obj.maxLength === 'NA','has-validation-error':hasLengthError(node.obj.id)}" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'LENGTH')}}">
+            <span ng-show="datatypesMap[node.obj.datatype.id].components.length  == 0 && node.obj.minLength !== 'NA' && node.obj.maxLength !== 'NA'">[{{::node.obj.minLength}},{{::node.obj.maxLength}}]</span>
+        </td>
+        <td ng-class="{'emptyCol':datatypesMap[node.obj.datatype.id].components.length >0 || node.obj.confLength === 'NA' ,'has-validation-error':hasConfError(node.obj.id) && datatypesMap[node.obj.datatype.id].components.length===0}" ng-show="showConfLength() && viewSettings.isVisibleColumn('confLength')" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'CONFLENGTH')}}">
+            <span ng-show="datatypesMap[node.obj.datatype.id].components.length  == 0 && node.obj.confLength !== 'NA'">{{::node.obj.confLength}}</span>
+        </td>
+        <td ng-show="viewSettings.isVisibleColumn('datatype')" ng-class="{'has-validation-error':hasDatatypeError(node.obj.datatype.id)}" style="text-align:center">
+            <span class="point" ng-click="redirectDT(node.obj.datatype)">
+                 <display-label of="datatypesMap[node.obj.datatype.id]" desc="false"></display-label>
+            </span>
+        </td>
+        <td ng-class="{'emptyCol':!isAvailableForValueSet(node)}" ng-show="viewSettings.isVisibleColumn('valueSet')" style="text-align:center">
+            <div ng-show="isAvailableForValueSet(node)">
+                <div ng-repeat="binding in findingBindings(node)">
+                    <span class="badge label-white">
+                        <span ng-class="{'label-message-icon' : binding.bindingFrom == 'message', 'label-field-icon' : binding.bindingFrom == 'segment', 'label-component-icon' : binding.bindingFrom == 'field', 'label-sub-component-icon' : binding.bindingFrom == 'component'}"><i class="fa fa-circle fa-fw"/></span>
+                        <span title="For this message" ng-show="binding.bindingFrom == 'message' && binding.type == 'valueset'" ng-click="redirectVS(binding)">{{getTableLabel(binding)}}</span>
+                        <span title="For {{getSegmentLabel(segmentsMap[node.segment])}}" ng-show="binding.bindingFrom == 'segment' && binding.type == 'valueset'" ng-click="redirectVS(binding)">{{getTableLabel(binding)}}</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.fieldDT])}}" ng-show="binding.bindingFrom == 'field' && binding.type == 'valueset'" ng-click="redirectVS(binding)">{{getTableLabel(binding)}}</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.componentDT])}}" ng-show="binding.bindingFrom == 'component' && binding.type == 'valueset'" ng-click="redirectVS(binding)">{{getTableLabel(binding)}}</span>
+                        <span title="For this message" ng-show="binding.bindingFrom == 'message' && binding.type == 'singlecode'" ng-click="redirectVS(binding)">{{binding.code.value}}<i class="fa fa-arrow-right" aria-hidden="true"></i>[{{binding.code.codeSystem}}]</span>
+                        <span title="For {{getSegmentLabel(segmentsMap[node.segment])}}" ng-show="binding.bindingFrom == 'segment' && binding.type == 'singlecode'" ng-click="redirectVS(binding)">{{binding.code.value}}<i class="fa fa-arrow-right" aria-hidden="true"></i>[{{binding.code.codeSystem}}]</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.fieldDT])}}" ng-show="binding.bindingFrom == 'field' && binding.type == 'singlecode'" ng-click="redirectVS(binding)">{{binding.code.value}}<i class="fa fa-arrow-right" aria-hidden="true"></i>[{{binding.code.codeSystem}}]</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.componentDT])}}" ng-show="binding.bindingFrom == 'component' && binding.type == 'singlecode'" ng-click="redirectVS(binding)">{{binding.code.value}}<i class="fa fa-arrow-right" aria-hidden="true"></i>[{{binding.code.codeSystem}}]</span>
+                        <span title="Delete ValueSet Binding" ng-show="binding.bindingFrom == 'message'" ng-click="deleteBinding(binding)"><i class="fa fa-times fa-fw edit-icon"></i></span>
+                    </span>
+                </div>
+                <a ng-click="editModalBindingForMsg(node)" class="point">
+                    <span><i class="fa fa-pencil fa-fw"></i></span>
+                </a>
+            </div>
+        </td>
+        <td ng-class="{'emptyCol':!isAvailableConstantValue(node)}" ng-show="viewSettings.isVisibleColumn('singleElm')" style="text-align:center">
+            <div ng-show="isAvailableConstantValue(node)">
+                <span ng-show="node.sev" class="badge label-white">
+                    <span ng-class="{'label-message-icon' : node.sev.from == 'message', 'label-field-icon' : node.sev.from == 'segment', 'label-component-icon' : node.sev.from == 'field', 'label-sub-component-icon' : node.sev.from == 'component'}"><i class="fa fa-circle fa-fw"/></span>
+                    <span>{{node.sev.value}}</span>
+                    <span title="Edit SingleElement" ng-show="node.sev.from == 'message'" ng-click="openDialogForEditSev(node)"><i class="fa fa-pencil fa-fw edit-icon"></i></span>
+                    <span title="Add SingleElement" ng-show="node.sev.from != 'message'" ng-click="confirmDatatypeSingleElementDuplicated(node)"><i class="fa fa-pencil fa-fw edit-icon"></i></span>
+                    <span title="Delete SingleElement" ng-show="node.sev.from == 'message'" ng-click="deleteSev(node)"><i class="fa fa-times fa-fw edit-icon"></i></span>
+                </span>
+                <a ng-show="!node.sev && !hasChildren(node.obj)" class="point" ng-click="openDialogForEditSev(node)">
+                    <span><i class="fa fa-plus fa-fw"></i></span>
+                </a>
+            </div>
+        </td>
+        <td ng-show="viewSettings.isVisibleColumn('predicate')">
+            <div ng-show="viewSettings.tableReadonly && findPredicateByPath(node.path)">
+                <span title="{{getPredicateAsString(findPredicateByPath(node.path))}}" class="badge label-white">
+                    <span class="label-message-icon"><i class="fa fa-circle fa-fw"/></span>
+                    <span>{{getConstraintAsTruncatedString(findPredicateByPath(node.path), 15)}}</span>
+                </span>
+            </div>
+            <div ng-repeat="p in filteredSubConstraints=(parentsMap[node.obj.id].predicates | filter:{constraintTarget:node.obj.position + '[1]'}:true)">
+                <span title="{{getPredicateAsString(p)}}" class="badge label-white">
+                    <span class="label-field-icon"><i class="fa fa-circle fa-fw"/></span>
+                    <span>{{getConstraintAsTruncatedString(p, 15)}}</span>
+                </span>
+            </div>
+            <div ng-show="!viewSettings.tableReadonly">
+                <div ng-show="findPredicateByPath(node.path)">
+                    <span title="{{getPredicateAsString(findPredicateByPath(node.path))}}" class="badge label-white">
+                        <span class="label-message-icon"><i class="fa fa-circle fa-fw"/></span>
+                        <span>{{getConstraintAsTruncatedString(findPredicateByPath(node.path), 15)}}</span>
+                        <span ng-click="openAddGlobalPredicateDialog(node, message)"><i class="fa fa-pencil fa-fw edit-icon"></i></span>
+                        <span ng-click="deletePredicateByPath(node.path, message)"><i class="fa fa-times fa-fw edit-icon"></i></span>
+                    </span>
+                </div>
+                <div ng-hide="findPredicateByPath(node.path) || filteredSubConstraints.length || viewSettings.tableReadonly || node.obj.usage !=='C'">
+                    <a ng-click="openAddGlobalPredicateDialog(node, message)" class="point">
+                        <span><i class="fa fa-plus fa-fw"></i></span>
+                        <p class="warning" >Need predicate</p>
+                    </a>
+                </div>
+            </div>
+        </td>
+        <td class="emptyCol" ng-show="viewSettings.isVisibleColumn('defText')" style="text-align:center">
+            <a ng-show="node.obj.text !=='' && node.obj.text !==null && node.obj.text !==undefined" ng-click="openRichTextDlg(node.obj, 'text', 'Definition Text', true)" class="point">
+                <i class="fa fa-eye fa-fw"></i>
+            </a>
+        </td>
+        <td ng-show="viewSettings.isVisibleColumn('comment')" style="text-align:center">
+            <div ng-repeat="comment in findingComments(node)">
+                    <span class="badge label-white">
+                        <span ng-class="{'label-message-icon' : comment.from == 'message', 'label-field-icon' : comment.from == 'segment', 'label-component-icon' : comment.from == 'field', 'label-sub-component-icon' : comment.from == 'component'}"><i class="fa fa-circle fa-fw"/></span>
+                        <span title="{{comment.description}}@{{comment.lastUpdatedDate|date:dateFormat}}" ng-show="comment.from == 'message'" ng-click="editCommentDlg(node, comment, false, 'message')">{{comment.lastUpdatedDate|date:dateFormat}}</span>
+                        <span title="For {{getSegmentLabel(segmentsMap[node.segment])}}" ng-show="comment.from == 'segment'" ng-click="editCommentDlg(node, comment, true, 'message')">{{comment.lastUpdatedDate|date:dateFormat}}</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.fieldDT])}}" ng-show="comment.from == 'field'" ng-click="editCommentDlg(node, comment, true, 'message')">{{comment.lastUpdatedDate|date:dateFormat}}</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.componentDT])}}" ng-show="comment.from == 'component'" ng-click="editCommentDlg(node, comment, true, 'message')">{{comment.lastUpdatedDate|date:dateFormat}}</span>
+                        <span title="Delete This Comments" ng-show="comment.from == 'message'" ng-click="deleteComment(comment)"><i class="fa fa-times fa-fw edit-icon"></i></span>
+                    </span>
+            </div>
+            <a ng-click="editCommentDlg(node, null, false, 'message')" class="point">
+                <span><i class="fa fa-plus fa-fw"></i></span>
+            </a>
+        </td>
+    </tr>
+</script>
+<script type="text/ng-template" id="MessageComponentViewTree.html">
+    <tr tt-node is-branch="hasChildren(node.obj)" ng-show="isVisibleInner(node.obj, parentsMap[node.obj.id])">
+        <td>
+            <span ng-show="hasError(node.obj.id) && validationResult && isMessageValidated()"><i class="fa fa-exclamation-triangle" style="color:red;"></i></span>
+            <span ng-show="!hasError(node.obj.id) && validationResult && isMessageValidated()"><i class="fa fa-check-circle" style="color:green;"></i></span>
+            <span>
+                <span class="label label-field label-icon" ng-show="node.obj.type==='field'">F</span>
+                <span class="label label-component label-icon" ng-show="node.obj.type==='component' && node.segmentPath.split('.').length - 1 == 1">C</span>
+                <span class="label label-sub-component label-icon" ng-show="node.obj.type==='component' && node.segmentPath.split('.').length - 1 == 2">S</span>
+                <span ng-bind="getComponentNodeName(node.obj)"/>
+            </span>
+        </td>
+        <td ng-class="hasUsageError(node.obj.id)" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'USAGE')}}">
+            <span>{{node.obj.usage}}</span>
+            <span ng-show="findPredicateByPath(node.path)">({{findPredicateByPath(node.path).trueUsage}}/{{findPredicateByPath(node.path).falseUsage}})</span>
+        </td>
+        <td class="emptyCol">
+        </td>
+        <td ng-show="viewSettings.isVisibleColumn('length')" ng-class="{'emptyCol':datatypesMap[node.obj.datatype.id].components.length >0 || node.obj.minLength === 'NA' || node.obj.maxLength === 'NA','has-validation-error':hasLengthError(node.obj.id)}" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'LENGTH')}}">
+            <div ng-show="datatypesMap[node.obj.datatype.id].components.length  == 0 && node.obj.minLength !== 'NA' && node.obj.maxLength !== 'NA'">
+                [{{::node.obj.minLength}},{{::node.obj.maxLength}}]
+            </div>
+        </td>
+        <td ng-class="{'emptyCol':datatypesMap[node.obj.datatype.id].components.length >0 || node.obj.confLength === 'NA','has-validation-error':hasConfError(node.obj.id) && datatypesMap[node.obj.datatype.id].components.length===0}" ng-show="showConfLength() && viewSettings.isVisibleColumn('confLength')" data-toggle="tooltip" title="{{displayMessageError(node.obj.id,'CONFLENGTH')}}">
+            <div ng-show="datatypesMap[node.obj.datatype.id].components.length  == 0 && node.obj.confLength !== 'NA'" ng-bind="::node.obj.confLength">
+            </div>
+        </td>
+        <td ng-show="viewSettings.isVisibleColumn('datatype')" ng-class="{'has-validation-error':hasDatatypeError(node.obj.datatype.id)}" style="text-align:left">
+            <span class="point" ng-click="redirectDT(node.obj.datatype)">
+                 <display-label of="datatypesMap[node.obj.datatype.id]" desc="false"></display-label>
+            </span>
+        </td>
+        <td ng-class="{'emptyCol':!isAvailableForValueSet(node)}" ng-show="viewSettings.isVisibleColumn('valueSet')" style="text-align:center">
+            <div ng-show="isAvailableForValueSet(node)">
+                <div ng-repeat="binding in findingBindings(node)">
+                    <span class="badge label-white">
+                        <span ng-class="{'label-message-icon' : binding.bindingFrom == 'message', 'label-field-icon' : binding.bindingFrom == 'segment', 'label-component-icon' : binding.bindingFrom == 'field', 'label-sub-component-icon' : binding.bindingFrom == 'component'}"><i class="fa fa-circle fa-fw"/></span>
+                        <span title="For this message" ng-show="binding.bindingFrom == 'message' && binding.type == 'valueset'" ng-click="redirectVS(binding)">{{getTableLabel(binding)}}</span>
+                        <span title="For {{getSegmentLabel(segmentsMap[node.segment])}}" ng-show="binding.bindingFrom == 'segment' && binding.type == 'valueset'" ng-click="redirectVS(binding)">{{getTableLabel(binding)}}</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.fieldDT])}}" ng-show="binding.bindingFrom == 'field' && binding.type == 'valueset'" ng-click="redirectVS(binding)">{{getTableLabel(binding)}}</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.componentDT])}}" ng-show="binding.bindingFrom == 'component' && binding.type == 'valueset'" ng-click="redirectVS(binding)">{{getTableLabel(binding)}}</span>
+                        <span title="For this message" ng-show="binding.bindingFrom == 'message' && binding.type == 'singlecode'" ng-click="redirectVS(binding)">{{binding.code.value}}<i class="fa fa-arrow-right" aria-hidden="true"></i>[{{binding.code.codeSystem}}]</span>
+                        <span title="For {{getSegmentLabel(segmentsMap[node.segment])}}" ng-show="binding.bindingFrom == 'segment' && binding.type == 'singlecode'" ng-click="redirectVS(binding)">{{binding.code.value}}<i class="fa fa-arrow-right" aria-hidden="true"></i>[{{binding.code.codeSystem}}]</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.fieldDT])}}" ng-show="binding.bindingFrom == 'field' && binding.type == 'singlecode'" ng-click="redirectVS(binding)">{{binding.code.value}}<i class="fa fa-arrow-right" aria-hidden="true"></i>[{{binding.code.codeSystem}}]</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.componentDT])}}" ng-show="binding.bindingFrom == 'component' && binding.type == 'singlecode'" ng-click="redirectVS(binding)">{{binding.code.value}}<i class="fa fa-arrow-right" aria-hidden="true"></i>[{{binding.code.codeSystem}}]</span>
+                        <span title="Delete ValueSet Binding" ng-show="binding.bindingFrom == 'message'" ng-click="deleteBinding(binding)"><i class="fa fa-times fa-fw edit-icon"></i></span>
+                    </span>
+                </div>
+                <a ng-click="editModalBindingForMsg(node)" class="point">
+                    <span><i class="fa fa-pencil fa-fw"></i></span>
+                </a>
+            </div>
+        </td>
+        <td ng-class="{'emptyCol':!isAvailableConstantValue(node)}" ng-show="viewSettings.isVisibleColumn('singleElm')" style="text-align:center">
+            <div ng-show="isAvailableConstantValue(node)">
+                <span ng-show="node.sev" class="badge label-white">
+                    <span ng-class="{'label-message-icon' : node.sev.from == 'message', 'label-field-icon' : node.sev.from == 'segment', 'label-component-icon' : node.sev.from == 'field', 'label-sub-component-icon' : node.sev.from == 'component'}"><i class="fa fa-circle fa-fw"/></span>
+                    <span>{{node.sev.value}}</span>
+                    <span title="Edit SingleElement" ng-show="node.sev.from == 'message'" ng-click="openDialogForEditSev(node)"><i class="fa fa-pencil fa-fw edit-icon"></i></span>
+                    <span title="Add SingleElement" ng-show="node.sev.from != 'message'" ng-click="confirmDatatypeSingleElementDuplicated(node)"><i class="fa fa-pencil fa-fw edit-icon"></i></span>
+                    <span title="Delete SingleElement" ng-show="node.sev.from == 'message'" ng-click="deleteSev(node)"><i class="fa fa-times fa-fw edit-icon"></i></span>
+                </span>
+                <a ng-show="!node.sev && !hasChildren(node.obj)" class="point" ng-click="openDialogForEditSev(node)">
+                    <span><i class="fa fa-plus fa-fw"></i></span>
+                </a>
+            </div>
+        </td>
+        <td ng-show="viewSettings.isVisibleColumn('predicate')">
+            <div ng-show="viewSettings.tableReadonly && findPredicateByPath(node.path)">
+                <span title="{{getPredicateAsString(findPredicateByPath(node.path))}}" class="badge label-white">
+                    <span class="label-message-icon"><i class="fa fa-circle fa-fw"/></span>
+                    <span>{{getConstraintAsTruncatedString(findPredicateByPath(node.path), 15)}}</span>
+                </span>
+            </div>
+            <div ng-repeat="p in filteredSubConstraints=(parentsMap[node.obj.id].predicates | filter:{constraintTarget:node.obj.position + '[1]'}:true)">
+                <span title="{{getPredicateAsString(p)}}" class="badge label-white">
+                    <span ng-class="{'label-component-icon' : node.segmentPath.split('.').length - 1 == 1, 'label-sub-component-icon' : node.segmentPath.split('.').length - 1 == 2}"><i class="fa fa-circle fa-fw"/></span>
+                    <span>{{getConstraintAsTruncatedString(p, 15)}}</span>
+                </span>
+            </div>
+            <div ng-show="!viewSettings.tableReadonly">
+                <div ng-show="findPredicateByPath(node.path)">
+                    <span title="{{getPredicateAsString(findPredicateByPath(node.path))}}" class="badge label-white">
+                        <span class="label-message-icon"><i class="fa fa-circle fa-fw"/></span>
+                        <span>{{getConstraintAsTruncatedString(findPredicateByPath(node.path), 15)}}</span>
+                        <span ng-click="openAddGlobalPredicateDialog(node, message)"><i class="fa fa-pencil fa-fw edit-icon"></i></span>
+                        <span ng-click="deletePredicateByPath(node.path, message)"><i class="fa fa-times fa-fw edit-icon"></i></span>
+                    </span>
+                </div>
+                <div ng-hide="findPredicateByPath(node.path) || filteredSubConstraints.length || viewSettings.tableReadonly || node.obj.usage !=='C'">
+                    <a ng-click="openAddGlobalPredicateDialog(node, message)" class="point">
+                        <span><i class="fa fa-plus fa-fw"></i></span>
+                        <p class="warning" >Need predicate</p>
+                    </a>
+                </div>
+            </div>
+        </td>
+        <td ng-show="viewSettings.isVisibleColumn('defText')" style="text-align:center">
+            <a ng-show="node.obj.text !=='' && node.obj.text !==null && node.obj.text !==undefined" ng-click="openRichTextDlg(node.obj, 'text', 'Definition Text', true)" class="point">
+                <i class="fa fa-eye fa-fw"></i>
+            </a>
+        </td>
+        <td ng-show="viewSettings.isVisibleColumn('comment')" style="text-align:center">
+            <div ng-repeat="comment in findingComments(node)">
+                    <span class="badge label-white">
+                        <span ng-class="{'label-message-icon' : comment.from == 'message', 'label-field-icon' : comment.from == 'segment', 'label-component-icon' : comment.from == 'field', 'label-sub-component-icon' : comment.from == 'component'}"><i class="fa fa-circle fa-fw"/></span>
+                        <span title="{{comment.description}}@{{comment.lastUpdatedDate|date:dateFormat}}" ng-show="comment.from == 'message'" ng-click="editCommentDlg(node, comment, false, 'message')">{{comment.lastUpdatedDate|date:dateFormat}}</span>
+                        <span title="For {{getSegmentLabel(segmentsMap[node.segment])}}" ng-show="comment.from == 'segment'" ng-click="editCommentDlg(node, comment, true, 'message')">{{comment.lastUpdatedDate|date:dateFormat}}</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.fieldDT])}}" ng-show="comment.from == 'field'" ng-click="editCommentDlg(node, comment, true, 'message')">{{comment.lastUpdatedDate|date:dateFormat}}</span>
+                        <span title="For {{getDatatypeLabel(datatypesMap[node.componentDT])}}" ng-show="comment.from == 'component'" ng-click="editCommentDlg(node, comment, true, 'message')">{{comment.lastUpdatedDate|date:dateFormat}}</span>
+                        <span title="Delete This Comments" ng-show="comment.from == 'message'" ng-click="deleteComment(comment)"><i class="fa fa-times fa-fw edit-icon"></i></span>
+                    </span>
+            </div>
+            <a ng-click="editCommentDlg(node, null, false, 'message')" class="point">
+                <span><i class="fa fa-plus fa-fw"></i></span>
+            </a>
+        </td>
+    </tr>
+</script>
+<script type="text/ng-template" id="AddSegmentModal.html">
+    <md-dialog aria-label="create  segment">
+        <form ng-cloak name="addSegForm" class="form-horizontal" novalidate id="addSegForm">
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2>Add Segment </h2>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="cancel()">
+                        <i class="material-icons">clear</i>
+                    </md-button>
+                </div>
+            </md-toolbar>
+
+            <md-dialog-content>
+                <div class="md-dialog-content large-dialog">
+                    <div style="margin-top: 20px" ng-cloak class="md-inline-form" layout="column">
+                        <md-content layout-padding>
+                                <label class="input-left igamt-label">  Segment </label>
+                                    <md-autocomplete
+                                            md-selected-item="newSeg"
+
+                                            md-search-text="searchText"
+                                            md-items="item in querySearch(searchText)"
+                                            md-item-text="item.label"
+                                            md-min-length="0"
+                                            placeholder="Search Segment"
+                                            md-autofocus>
+                                        <md-item-template>
+                                            <display-label of="item" desc="true"></display-label>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No Segment found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                <div ng-messages="addSegForm.name.$error">
+                                    <div ng-message="required">Segment is required.</div>
+                                </div>
+                            </md-input-container>
+
+                            <label class="input-left igamt-label"> Position*</label>
+
+                            <md-input-container class="md-block igamt-input-block" flex-gt-sm layout="row" layout-align="center center">
+                                <md-select ng-model="newSegment.position" ng-change="selectPos()" class="point" required  id="inputPosition" name="inputPosition">
+                                    <md-option  ng-repeat="child in segmentParent.children" ng-value="{{$index+1}}"> {{$index+1}}</md-option>
+                                    <!--<md-option ng-show="segmentParent.obj && segmentParent.obj.type==='group'" ng-repeat="child in segmentParent.children" ng-value="{{child.obj.position}}"> {{child.obj.position}}</md-option>-->
+                                    <md-option ng-value="{{segmentParent.children.length+1}}">{{segmentParent.children.length+1}}</md-option>
+                                </md-select>
+                                <div ng-messages="addSegForm.inputPosition.$error">
+                                    <div ng-message="required">Position is required.</div>
+                                </div>
+                            </md-input-container>
+
+                            <label class="input-left igamt-label"> Usage*</label>
+                            <md-input-container class="md-block igamt-input-block" flex-gt-sm layout="row" layout-align="center center">
+                                <md-select name="grUsage" id="grUsage" ng-change="selectUsage(newSegment.usage)" ng-model="newSegment.usage" required>
+                                    <md-option ng-repeat="usage in config.usages" ng-value="usage">{{usage}}
+                                    </md-option>
+                                </md-select>
+
+                                <div ng-messages="addSegForm.usage.$error">
+                                    <div ng-message="required">Usage is required.</div>
+                                </div>
+                            </md-input-container>
+
+                            <label class="input-left igamt-label">Cardinality*</label>
+                            <div class="md-block" layout="row" layout-align="start start" ng-class="{'igl-has-error has-feedback': !addSegForm.segCardMin.$valid ||!addSegForm.segCardMax.$valid }">
+                            <md-input-container flex class="md-block igamt-input-block" flex-gt-sm>
+                                                <input  style=margin-right: 1px;
+                                                        name="segCardMin"
+                                                        id="segCardMin"
+                                                        ng-change="setDirty()"
+                                                        ng-pattern="/^\d+$/"
+
+                                                        ng-model="newSegment.min" ng-disabled="disableMin" required>
+                            </md-input-container>
+
+                                    <md-input-container flex class="md-block igamt-input-block" flex-gt-sm>
+                                        <input type="text"
+                                                        name="segCardMax"
+                                                        id="segCardMax"
+                                                        ng-change="setDirty()"
+                                                        ng-pattern="/^\d+$|^\*?$/"
+                                                        ng-model="newSegment.max" ng-disabled="disableMax" required>
+                                    </md-input-container>
+                            </div>
+
+                            <!--<md-input-container class="md-block" flex-gt-sm>-->
+                                <!--<label class="input-left"> Comment</label>-->
+                                <!--<input type="text" id="comment" name="comment" ng-model="newSegment.comment">-->
+                            <!--</md-input-container>-->
+                        </md-content>
+                    </div>
+                </div>
+            </md-dialog-content>
+            <md-dialog-actions layout="row" layout-align="end end">
+
+                <md-button class="btn btn-raised btn-info btn-md" type="submit" ng-click="addSegment()" ng-disabled="addSegForm.$invalid || !selected()"><span><i
+                        class="fa fa-plus fa-fw">
+                &nbsp; </i>Add</span>
+                </md-button>
+            </md-dialog-actions>
+        </form>
+    </md-dialog>
+</script>
+<script type="text/ng-template" id="AddGroupModal.html">
+    <md-dialog aria-label="create group">
+        <form ng-cloak name="addGrpForm" class="form-horizontal" novalidate id="addGrpForm">
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2>Create Group </h2>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="cancel()">
+                        <i class="material-icons">clear</i>
+                    </md-button>
+                </div>
+            </md-toolbar>
+
+            <md-dialog-content>
+                <div class="md-dialog-content large-dialog">
+                <div style="margin-top: 20px" ng-cloak class="md-inline-form" layout="column">
+                    <md-content layout-padding>
+                        <label class="input-left igamt-label"> Group Name*</label>
+
+                        <md-input-container class="md-block igamt-input-block" flex-gt-sm>
+                            <input type="text" id="name" name="name" ng-model="grpName"
+                                   required>
+                            <div ng-messages="addGrpForm.name.$error">
+                                <div ng-message="required">Name is required.</div>
+                            </div>
+                        </md-input-container>
+                        <label class="input-left igamt-label"> Position*</label>
+
+                        <md-input-container class="md-block igamt-input-block" flex-gt-sm layout="row" layout-align="center center">
+                            <md-select ng-model="position" ng-change="selectPos()" class="point" required  name="grPosition">
+                                <md-option ng-show="groupParent.type==='message'" ng-repeat="child in groupParent.children" ng-value="{{child.position}}"> {{child.position}}</md-option>
+                                <md-option ng-show="groupParent.obj && groupParent.obj.type==='group'" ng-repeat="child in groupParent.children" ng-value="{{child.obj.position}}"> {{child.obj.position}}</md-option>
+                                <md-option ng-value="{{groupParent.children.length+1}}">{{groupParent.children.length+1}}</md-option>
+                            </md-select>
+                            <div ng-messages="addGrpForm.name.$error">
+                                <div ng-message="required">position is required.</div>
+                            </div>
+                        </md-input-container>
+
+                        <label class="input-left igamt-label"> Usage*</label>
+
+
+                        <md-input-container class="md-block igamt-input-block" flex-gt-sm layout="row" layout-align="center center">
+                            <md-select name="grUsage" id="grUsage" ng-change="selectUsage(newGroup.usage)" ng-model="newGroup.usage" required>
+                                <md-option ng-repeat="usage in config.usages" ng-value="usage">{{usage}}
+                                </md-option>
+                            </md-select>
+
+                            <div ng-messages="addGrpForm.usage.$error">
+                                <div ng-message="required">usage is required.</div>
+                            </div>
+                        </md-input-container>
+
+
+                        <label class="input-left igamt-label">Cardinality*</label>
+
+                        <div layout="row igamt-input-block" layout-align="start start" ng-class="{'igl-has-error has-feedback': !addGrpForm.grCardMin.$valid ||!addGrpForm.grCardMax.$valid }">
+
+
+                        <md-input-container flex class="md-block igamt-input-block" flex-gt-sm >
+                                                <input  style="width:49%;margin-right: 1px"
+                                                       name="grCardMin"
+                                                       id="grCardMin"
+                                                       ng-change="setDirty()"
+                                                       ng-pattern="/^\d+$/"
+                                                       ng-model="newGroup.min" ng-disabled="disableMin" required >
+                        </md-input-container>
+                        <md-input-container flex class="md-block igamt-input-block" flex-gt-sm >
+                        <input  style="width:50%"  type="text"
+                                                       name="grCardMax"
+                                                       id="grCardMax"
+                                                       ng-change="setDirty()"
+                                                       ng-pattern="/^\d+$|^\*?$/"
+                                                       ng-model="newGroup.max" ng-disabled="disableMax" required>
+                        </md-input-container>
+
+                    </div>
+                </md-input-container>
+                    </md-content>
+        </div>
+                </div>
+            </md-dialog-content>
+            <md-dialog-actions layout="row" layout-align="end end">
+
+            <md-button class="md-primary md-raised" ng-click="addGroup()" ng-disabled="addGrpForm.$invalid"><span><i
+                    class="fa fa-plus fa-fw">
+                &nbsp; </i>Add</span>
+            </md-button>
+            </md-dialog-actions>
+        </form>
+    </md-dialog>
+</script>
+<script type="text/ng-template" id="SelectSegmentFlavor.html">
+    <div class="modal-header modal-wide">
+        <div class="form-inline">
+            <span class="header4 pull-left">Segment Selection: {{getSegmentLabel(currentSegment)}}</span>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="container-testcase">
+                    <div ng-show="results != null && results.length > 0">
+                        <table st-table="tmpResults" st-safe-src="results" class="table table-striped table-bordered table-condensed igl-list-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="1" st-ratio="100">
+                                        <input st-search placeholder="Search" class="input-sm form-control" type="search" />
+                                    </th>
+                                </tr>
+                                <tr class="tbl-header">
+                                    <th st-ratio="100" st-sort="ext">Label</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="row in tmpResults | orderBy:'row.ext'" ng-class="{'active':selection.selected != null && selection.selected === row.id}">
+                                    <td st-ratio="100">{{$index + 1}}
+                                        <input type="radio" ng-model="selection.selected" ng-value="row.id" ng-click="selectSegment(row)"> {{getSegmentLabel(row)}}
+                                    </td>
+                                    <!--<td st-ratio="60">{{row.hl7Version}}</td>-->
+                                    <!--<td st-ratio="40">{{row.libraryName}}</td>-->
+                                </tr>
+                            </tbody>
+                            <tfoot ng-show="results.length >= 10">
+                                <tr>
+                                    <td colspan="1">
+                                        <div st-pagination="" st-items-by-page="10" st-displayed-pages="7"></div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div ng-show="results == null || results.length == 0">
+                        No Segment Flavor Available
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="pull-right">
+                        <button class="btn btn-raised btn-default btn-sm" ng-click="cancel()"><span><i class="fa fa-times fa-fw">
+                            &nbsp; </i>Cancel</span>
+                        </button>
+                        <button class="btn btn-raised btn-primary btn-sm" ng-click="submit()" ng-disabled="selection.selected === null || selection.selected=== currentSegment.id"><span><i
+                                class="fa fa-play fa-fw">
+                            &nbsp; </i>Bind</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="ConfirmMessageDeleteCtrl.html">
+    <md-dialog aria-label="confirmation">
+        <form ng-cloak>
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2> Delete confirmation</h2>
+                    <span flex></span>
+                    <md-button class="md-icon-button" ng-click="cancel()">
+                        <i class="material-icons">clear</i>
+                    </md-button>
+                </div>
+            </md-toolbar>
+
+            <md-dialog-content>
+                <div class="md-dialog-content">
+        <p>Are you sure you want to delete Message {{::messageToDelete.name}} ? </p>
+                </div>
+            </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <md-button  class="md-primary md-raised" md-autofocus ng-click="delete()">Delete
+            </md-button>
+    </md-dialog-actions>
+    </form>
+    </md-dialog>
+</script>
+<script type="text/ng-template" id="DeleteSegmentRefOrGrp.html">
+    <md-dialog>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Delete Confirmation</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <i class="material-icons">clear</i>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <p ng-show="segOrGrpToDelete.obj.type==='segmentRef'">Are you sure you want to delete Segment Ref: {{::segOrGrpToDelete.obj.ref.name}} ? </p>
+                <p ng-show="segOrGrpToDelete.obj.type==='group'">Are you sure you want to delete Group: {{::segOrGrpToDelete.obj.name}} ? </p>
+            </div>
+        </md-dialog-content>
+                <md-dialog-actions layout="row">
+                    <md-button class="btn btn-raised btn-danger btn-sm" ng-click="delete()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Delete</span></md-button>
+                </md-dialog-actions>
+    </md-dialog>
+</script>
+<script type="text/ng-template" id="OtoX.html">
+    <md-dialog>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Change Usage O to X Confirmation</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <i class="material-icons">clear</i>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <p>Are you sure you want to change Usage from O to X and Cardinality form 0..1(*) to 0..0 ? </p>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <md-button class="md-primary md-raised" ng-click="confirm(message)"><span><i
+                    class="fa fa-times fa-fw">&nbsp; </i>OK</span>
+            </md-button>
+        </md-dialog-actions>
+    </md-dialog>
+</script>
+<script type="text/ng-template" id="redirectCtrl.html">
+    <md-dialog>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Change Usage O to X Confirmation</h2>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <i class="material-icons">clear</i>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+        <p ng-show="destination.type!=='table'">Are you sure you want to leave this page and go to <display-label of="destination" desc="false"></display-label> </p>
+        <p ng-show="destination.type==='table'">Are you sure you want to leave this page and go to the Value Set : <display-label of="destination" desc="false"></display-label></p>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <md-button class="md-primary md-raised" ng-click="confirm()"><span><i
+                    class="fa fa-times fa-fw">&nbsp; </i>Leave</span>
+            </md-button>
+        </md-dialog-actions>
+    </md-dialog>
+</script>
+<script type="text/ng-template" id="DeleteMessagePredicate.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Delete Confirmation</h3>
+    </div>
+    <div class="modal-body">
+        <p>Are you sure you want to delete the predicate? </p>
+    </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-raised btn-default btn-sm" ng-click="cancel()"><span><i class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
+        </button>
+        <button class="btn btn-raised btn-danger btn-sm" ng-click="delete()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Delete</span>
+        </button>
+    </div>
+</script>
+<script type="text/ng-template" id="TableMappingMessageCtrl.html">
+    <md-dialog aria-label="table Mapping">
+                                    <form ng-cloak role="form">
+                                        <md-toolbar>
+                                            <div class="md-toolbar-tools">
+                                                <h2> Bind Value Set to {{::currentNode.locationPath}} of {{::message.name}} </h2>
+                                                <span flex></span>
+                                                <md-button class="md-icon-button" ng-click="ok()">
+                                                    <i class="material-icons">clear</i>
+                                                </md-button>
+                                            </div>
+                                        </md-toolbar>
+                                        <md-dialog-content>
+                                            <div class="md-dialog-content">
+                                                <md-content>
+                                <div ng-show="selectedValueSetBindings.length > 0">
+                                    <div ng-show="selectedValueSetBindings[0].type == 'singlecode'">
+                                        <h4>Single Code selected</h4>
+                                    </div>
+                                    <div ng-show="selectedValueSetBindings[0].type == 'valueset'">
+                                        <h4>{{selectedValueSetBindings.length}} Value Set(s) selected</h4>
+                                    </div>
+                                </div>
+                                <div ng-show="selectedValueSetBindings.length == 0">
+                                    <h4 class="md-display-1">No Value Set or Single Code selected</h4>
+                                </div>
+
+                                <div ng-if="selectedValueSetBindings.length > 0 &&  selectedValueSetBindings[0].type == 'valueset'">
+                                    <table st-table="displayedSelectedValueSetBindings" st-safe-src="selectedValueSetBindings" class="table table-striped table-bordered normal-table" ng-show="selectedValueSetBindings.length > 0">
+                                        <thead>
+                                        <tr class="tbl-header">
+                                            <th class="col-md-1">Scope/Version</th>
+                                            <th class="col-md-2">Mapping Identifier</th>
+                                            <th class="col-md-4">Name</th>
+                                            <th class="col-md-2">Binding Strength</th>
+                                            <th class="col-md-2">Binding Location</th>
+                                            <th class="col-md-1"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="b in displayedSelectedValueSetBindings">
+                                            <td class="col-md-1">
+                                                <span class="badge" ng-class="{'label-HL7' : getScopeLabel(tablesMap[b.tableId])==='HL7', 'label-USE': getScopeLabel(tablesMap[b.tableId])==='USR','label-MASTER':getScopeLabel(tablesMap[b.tableId])==='MAS','label-PRL':getScopeLabel(tablesMap[b.tableId])==='PRL','label-PVS':getScopeLabel(tablesMap[b.tableId])==='PVS'}">{{getScopeLabel(tablesMap[b.tableId])}} {{hasSameVersion(tablesMap[b.tableId])}}</span>
+                                            </td>
+                                            <td class="col-md-2">
+                                                {{tablesMap[b.tableId].bindingIdentifier}}
+                                            </td>
+                                            <td class="col-md-4">
+                                                {{tablesMap[b.tableId].name}}
+                                            </td>
+                                            <td class="col-md-2">
+                                                <md-select ng-model='b.bindingStrength'  ng-change="setChanged()">
+                                                    <md-option value="R">Required</md-option>
+                                                    <md-option value="S">Suggested</md-option>
+                                                    <md-option value="U">Unspecified</md-option>
+                                                </md-select>
+                                            </td>
+                                            <td class="col-md-2">
+                                                <md-select ng-show="listOfBindingLocations" ng-model='b.bindingLocation' ng-change="setChanged()">
+                                                    <md-option ng-repeat="bl in listOfBindingLocations" ng-value="bl">
+                                                        {{bl}}
+                                                    </md-option>
+                                                </md-select>
+                                            </td>
+                                            <td class="col-md-1" align="center">
+                                                <a ng-click="deleteBinding(b)" class="point">
+                                                    <span title="Delete ValueSet Binding"><i class="icon-size-15 fa-times fa"></i></span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div ng-if="selectedValueSetBindings.length > 0 && selectedValueSetBindings[0].type == 'singlecode'">
+                                    <table st-table="displayedSelectedValueSetBindings" st-safe-src="selectedValueSetBindings" class="table table-striped table-bordered normal-table">
+                                        <thead>
+                                        <tr class="tbl-header">
+                                            <th class="col-md-11">Conformance Statement for Single Code</th>
+                                            <th class="col-md-1">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="b in displayedSelectedValueSetBindings">
+                                            <td class="col-md-11">
+                                                {{::currentNode.locationPath}} ({{::currentNode.obj.name}})
+                                                SHALL contain the constant value '
+                                                <md-input-container>
+                                                    <label>Code</label>
+                                                    <input ng-model="b.code.value"/>
+                                                </md-input-container>
+                                                ' drawn from the code system '
+                                                <md-input-container>
+                                                    <label>Code System</label>
+                                                    <input ng-model="b.code.codeSystem"/>
+                                                </md-input-container>
+                                                '.
+                                            </td>
+                                            <td class="col-md-1" align="center">
+                                                <a ng-click="deleteBinding(b)" class="point">
+                                                    <span title="Delete ValueSet Binding"><i class="icon-size-15 fa-times fa"></i></span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <br/>
+
+                                <span ng-show="isSingleValueSetAllowed">
+                                <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+                                Allowed to select a Value Set or a Single Code.
+                            </span>
+
+                                <span ng-show="!isSingleValueSetAllowed">
+                                <i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>
+                                Allowed to select one or more Value Set(s).
+                            </span>
+
+                                <md-tabs md-dynamic-height md-border-bottom>
+                                    <md-tab label="Value Set">
+                                        <md-content class="md-padding">
+                                            <table st-safe-src="tables" st-table="displayCollection" class="table table-striped table-bordered normal-table">
+                                                <thead>
+                                                <tr class="tbl-header">
+                                                    <th st-sort="scope" class="col-md-1">Scope/Version</th>
+                                                    <th st-sort="bindingIdentifier" class="col-md-3">Binding Identifier</th>
+                                                    <th class="col-md-7">Name</th>
+                                                    <th class="col-md-1">Action</th>
+                                                </tr>
+                                                <tr>
+                                                    <th colspan="5">
+                                                        <input st-search="bindingIdentifier" placeholder="search for BindingIdentifier" class="input-sm form-control" type="search"/>
+                                                    </th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                <tr ng-repeat="v in displayCollection">
+                                                    <td class="col-md-1">
+                                                        <span class="badge" ng-class="{'label-HL7' : getScopeLabel(v)==='HL7', 'label-USE': getScopeLabel(v)==='USR','label-MASTER':getScopeLabel(v)==='MAS','label-PRL':getScopeLabel(v)==='PRL','label-PVS':getScopeLabel(v)==='PVS'}">{{getScopeLabel(v)}} {{hasSameVersion(v)}}</span>
+                                                    </td>
+                                                    <td class="col-md-3">
+                                                        {{v.bindingIdentifier}}
+                                                    </td>
+                                                    <td class="col-md-7">
+                                                        {{v.name}}
+                                                    </td>
+                                                    <td class="col-md-1" align="center">
+                                                        <span> <md-checkbox ng-checked="isSelected(v)" ng-click="toggle(v)"></md-checkbox></span>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                                <tr style="float:center !important;" ng-if="tables.length > 10">
+                                                    <td colspan="5" class="text-center" style="float:center !important;">
+                                                        <div st-pagination="" st-items-by-page="10" st-displayed-pages="10" style="float:center !important;"></div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </md-content>
+                                    </md-tab>
+                                    <md-tab label="Single Code" ng-disabled="!isSingleValueSetAllowed" md-on-select="singleCodeInit();">
+                                        <md-content class="md-padding">
+                                            <div ng-if="selectedValueSetBindings.length == 0 || selectedValueSetBindings[0].type == 'valueset'">
+                                                <md-button ng-click="addManualCode();" class="md-primary">
+                                                    <i class="fa-plus fa"> Create Single Code directly</i>
+                                                </md-button>
+                                            </div>
+                                            <div ng-show="!valueSetSelectedForSingleCode">
+                                                <table st-safe-src="tables" st-table="displayTables" class="table table-striped  table-bordered normal-table">
+                                                    <thead>
+                                                    <tr class="tbl-header">
+                                                        <th st-sort="scope" class="col-md-1">Scope/Version</th>
+                                                        <th st-sort="bindingIdentifier" class="col-md-3">Binding Identifier</th>
+                                                        <th class="col-md-7">Name</th>
+                                                        <th class="col-md-1">Action</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th colspan="5">
+                                                            <input st-search="bindingIdentifier" placeholder="search for BindingIdentifier" class="input-sm form-control" type="search"/>
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                    <tr ng-repeat="v in displayTables">
+                                                        <td class="col-md-1">
+                                                            <span class="badge" ng-class="{'label-HL7' : getScopeLabel(v)==='HL7', 'label-USE': getScopeLabel(v)==='USR','label-MASTER':getScopeLabel(v)==='MAS','label-PRL':getScopeLabel(v)==='PRL','label-PVS':getScopeLabel(v)==='PVS'}">{{getScopeLabel(v)}} {{hasSameVersion(v)}}</span>
+                                                        </td>
+                                                        <td class="col-md-3">
+                                                            {{v.bindingIdentifier}}
+                                                        </td>
+                                                        <td class="col-md-7">
+                                                            {{v.name}}
+                                                        </td>
+                                                        <td class="col-md-1" align="center">
+                                                            <md-checkbox ng-checked="valueSetSelectedForSingleCode" ng-click="selectValueSetForSingleCode(v);" class="point">
+                                                            </md-checkbox>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                    <tr style="float:center !important;" ng-if="tables.length > 10">
+                                                        <td colspan="5" class="text-center" style="float:center !important;">
+                                                            <div st-pagination="" st-items-by-page="10" st-displayed-pages="10" style="float:center !important;"></div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div ng-show="valueSetSelectedForSingleCode">
+                                                <table class="table table-striped table-condensed table-bordered normal-table">
+                                                    <thead>
+                                                    <tr class="tbl-header">
+                                                        <th class="col-md-1">Scope/Version</th>
+                                                        <th class="col-md-3">Binding Identifier</th>
+                                                        <th class="col-md-7">name</th>
+                                                        <th class="col-md-1">Action</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tr>
+                                                        <td class="col-md-1">
+                                                            <span class="badge" ng-class="{'label-HL7' : getScopeLabel(valueSetSelectedForSingleCode)==='HL7', 'label-USE': getScopeLabel(valueSetSelectedForSingleCode)==='USR','label-MASTER':getScopeLabel(valueSetSelectedForSingleCode)==='MAS','label-PRL':getScopeLabel(valueSetSelectedForSingleCode)==='PRL','label-PVS':getScopeLabel(valueSetSelectedForSingleCode)==='PVS'}">{{getScopeLabel(valueSetSelectedForSingleCode)}} {{hasSameVersion(valueSetSelectedForSingleCode)}}</span>
+                                                        </td>
+                                                        <td class="col-md-3">
+                                                            {{valueSetSelectedForSingleCode.bindingIdentifier}}
+                                                        </td>
+                                                        <td class="col-md-7">
+                                                            {{valueSetSelectedForSingleCode.name}}
+                                                        </td>
+                                                        <td class="col-md-1" align="center">
+                                                            <md-checkbox ng-click="valueSetSelectedForSingleCode = null;" ng-checked="valueSetSelectedForSingleCode">
+                                                                <i class="icon-size-15 fa-check-circle fa"></i>
+                                                            </md-checkbox>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                <table st-safe-src="valueSetSelectedForSingleCode.codes" st-table="displayCodes" class="table table-striped  table-bordered normal-table">
+                                                    <thead>
+                                                    <tr class="tbl-header">
+                                                        <th st-sort="value" class="col-md-3">Code</th>
+                                                        <th st-sort="label" class="col-md-5">Description</th>
+                                                        <th class="col-md-3">CodeSystem</th>
+                                                        <th class="col-md-1" style="text-align:center">Status</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <div layout="row">
+                                                                <md-input-container flex="100" class="normal">
+                                                                    <label></label>
+                                                                    <input st-search="'value'" placeholder="Search for Code" type="search" />
+                                                                </md-input-container>
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div layout="row">
+                                                                <md-input-container flex="100" class="normal">
+                                                                    <label></label>
+                                                                    <input st-search="'label'" placeholder="Search for description" type="search" />
+                                                                </md-input-container>
+                                                            </div>
+                                                        </th>
+                                                        <th>
+                                                            <div layout="row">
+                                                                <md-input-container flex="100" class="normal">
+                                                                    <label></label>
+                                                                    <input st-search="'codeSystem'" placeholder="Search for CodeSystem" type="search" />
+                                                                </md-input-container>
+                                                            </div>
+                                                        </th>
+                                                        <th/>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr ng-repeat="c in displayCodes">
+                                                        <td class="col-md-3">
+                                                            <span>{{c.value}}</span>
+                                                        </td>
+                                                        <td class="col-md-5">
+                                                            <span>{{c.label}}</span>
+                                                        </td>
+                                                        <td class="col-md-3">
+                                                            <span>{{c.codeSystem}}</span>
+                                                        </td>
+                                                        <td class="col-md-1" style="text-align:center">
+                                                            <span>
+                                                                <md-checkbox ng-checked="isCodeSelected(c)" ng-click="toggleCode(c)"></md-checkbox>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                    <tr style="float:center !important;" ng-if="valueSetSelectedForSingleCode.codes.length > 10">
+                                                        <td colspan="6" class="text-center" style="float:center !important;">
+                                                            <div st-pagination="" st-items-by-page="10" st-displayed-pages="7" style="float:center !important;"></div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </md-content>
+                                    </md-tab>
+                                </md-tabs>
+                            </md-content>
+                        </div>
+                        </md-dialog-content>
+                        <md-dialog-actions layout="row">
+                            <md-button ng-disabled="!changed" type="button" ng-click="saveMapping()" class="md-primary md-raised"><i class="fa fa-plus fa-fw">&nbsp; </i>Save</md-button>
+                        </md-dialog-actions>
+                </form>
+    </md-dialog>
+
+</script>

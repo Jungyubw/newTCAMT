@@ -10,8 +10,9 @@
     }
 </script>
 <div class="row">
+    {{tps[0].id}}
     <div class="col-md-12">
-        <div ng-if="error === null">
+        <div ng-if="tps">
             <table st-table="tmpTps" st-safe-src="tps" class="smart-table table table-striped table-bordered">
                 <thead>
                 <tr class="tbl-header">

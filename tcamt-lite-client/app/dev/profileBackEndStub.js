@@ -137,14 +137,52 @@ angular.module('tcl').run(function ($httpBackend, $q, $http) {
         return [request.status, d, {}];
     });
 
+    $httpBackend.whenGET('api/testplans/getListTestPlanAbstract').respond(function (method, url, data, headers) {
+        var request = new XMLHttpRequest();
+        request.open('GET', '../../resources/abstractTps/abstractTps.json', false);
+        request.send(null);
+        var d = request.response;
+        return [request.status, d, {}];
+    });
 
-       $httpBackend.whenGET('api/config').respond(function (method, url, data, headers) {
+    $httpBackend.whenGET('api/testplans/getListTestPlanAbstract').respond(function (method, url, data, headers) {
+        var request = new XMLHttpRequest();
+        request.open('GET', '../../resources/abstractTps/abstractTps.json', false);
+        request.send(null);
+        var d = request.response;
+        return [request.status, d, {}];
+    });
+    $httpBackend.whenGET('http://localhost:8080/igamt/api/getResource/allUserIgs').respond(function (method, url, data, headers) {
+        var request = new XMLHttpRequest();
+        request.open('GET', '../../resources/igamtProfile/profile1.json', false);
+        request.send(null);
+        var d = angular.fromJson(request.response);
+        return [request.status, d, {}];
+    });
+    $httpBackend.whenGET('http://localhost:8080/igamt/api/getResource/message/57450d2ed4c6f57e6980e820').respond(function (method, url, data, headers) {
+        var request = new XMLHttpRequest();
+        request.open('GET', '../../resources/igamtProfile/message57450d2ed4c6f57e6980e820.json', false);
+        request.send(null);
+        var d = angular.fromJson(request.response);
+        return [request.status, d, {}];
+    });
+    $httpBackend.whenGET('api/testplans/59b9689477c8d5782d2b611b').respond(function (method, url, data, headers) {
+        var request = new XMLHttpRequest();
+        request.open('GET', '../../resources/igamtProfile/59b9689477c8d5782d2b611b.json', false);
+        request.send(null);
+        var d = request.response;
+        return [request.status, d, {}];
+    });
+
+
+
+       $httpBackend.whenGET('api/config/').respond(function (method, url, data, headers) {
            console.log("config")
         var request = new XMLHttpRequest();
         request.open('GET', '../../resources/configuration.json', false);
-        request.send(null);
-        var profile = angular.fromJson(request.response);
-        return [request.status, profile, {}];
+           request.send(null);
+           var d = angular.fromJson(request.response);
+           return [request.status, d, {}];
     });
 
 });

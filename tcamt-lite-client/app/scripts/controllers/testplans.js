@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce,Notification,IgamtResourceGetter) {
+angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce,Notification,IgamtResourceGetter,ViewSettings) {
 	$scope.loading = false;
 	$scope.selectedTestCaseTab = 0;
     $scope.selectedTestStepTab = {};
@@ -13,6 +13,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$rootScope.sr={
 			name:""
 	};
+	$rootScope.viewSettings=ViewSettings;
 
 	$scope.hideOrShowToc = function (){
         $scope.hideToc = !$scope.hideToc;
@@ -500,6 +501,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
 			$http.get('api/testplans/getListTestPlanAbstract').then(function (response) {
 				$rootScope.tps = angular.fromJson(response.data);
+				console.log($rootScope.tps);
 				$rootScope.isChanged=false;
 				delay.resolve(true);
 			}, function (error) {
@@ -602,16 +604,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	};
 	$scope.selectIg=function(msg, ig){
+			console.log(msg);
         IgamtResourceGetter.getMessage(msg.id).then(function(result){
 
             $rootScope.datatypesMap=result["DATATYPE"];
             $rootScope.segmentsMap=result["SEGMENT"];
             $rootScope.messagessMap=result["MESSAGE"];
+            $rootScope.tablesMap=result["TABLES"];
+            console.log($rootScope.datatypesMap);
 
             $scope.OpenMessageMetadata(msg);
 
 
-        })
+        });
 
 
 
@@ -630,175 +635,373 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if($rootScope.selectedTestStep == null || $rootScope.selectedTestStep.integrationProfileId == null) return false;
 		return true;
 	};
-
-	$rootScope.processMessageTree = function(element, parent) {
-		try {
-			if (element != undefined && element != null) {
-				if (element.type === "message") {
-					var m = {};
-					m.children = [];
-					$rootScope.messageTree = m;
-
-					angular.forEach(element.children, function(segmentRefOrGroup) {
-						$rootScope.processMessageTree(segmentRefOrGroup, m);
-					});
-
-				} else if (element.type === "group" && element.children) {
-					var g = {};
-					g.path = element.position + "[1]";
-					g.obj = element;
-					g.children = [];
-					if (parent.path) {
-						g.path = parent.path + "." + element.position + "[1]";
-					}
-					parent.children.push(g);
-					angular.forEach(element.children, function(segmentRefOrGroup) {
-						$rootScope.processMessageTree(segmentRefOrGroup, g);
-					});
-				} else if (element.type === "segmentRef") {
-					var s = {};
-					s.path = element.position + "[1]";
-					s.obj = element;
-					s.children = [];
-					if (parent.path) {
-						s.path = parent.path + "." + element.position + "[1]";
-					}
-					s.obj.ref.ext = s.obj.ref.ext;
-					//s.obj.ref.label=$rootScope.getLabel(s.obj.ref.name,s.obj.ref.ext);
-					parent.children.push(s);
-
-					//$rootScope.processMessageTree(ref, s);
-
-				} else if (element.type === "segment") {
-					if (!parent) {
-						var s = {};
-						s.obj = element;
-						s.path = element.name;
-						s.children = [];
-						parent = s;
-					}
-
-					angular.forEach(element.fields, function(field) {
-						$rootScope.processMessageTree(field, parent);
-					});
-				}
-			}
-		} catch (e) {
-			throw e;
-		}};
-
-		$rootScope.getLabel=function(name, ext){
-			if(ext){
-				return name+"_"+ext;
-			}else{
-				return name;
-			}
-		}
-    //
-		// $rootScope.processMessageTree = function(element, parent) {
-    //     try {
-    //         if (element != undefined && element != null) {
-    //             if (element.type === "message") {
-    //                 $rootScope.selectedMessage = element;
-    //                 var m = {};
-    //                 m.children = [];
-    //                 $rootScope.messageTree = m;
-    //
-    //                 angular.forEach(element.children, function(segmentRefOrGroup) {
-    //                     $rootScope.processMessageTree(segmentRefOrGroup, m);
-    //                 });
-    //
-    //             } else if (element.type === "group" && element.children) {
-    //                 var g = {};
-    //                 g.path = element.position + "[1]";
-    //                 g.locationPath = element.name.substr(element.name.lastIndexOf('.') + 1) + '[1]';
-    //                 g.obj = element;
-    //                 g.children = [];
-    //                 if (parent.path) {
-    //                     g.path = parent.path + "." + g.path;
-    //                     g.locationPath = parent.locationPath + "." + g.locationPath;
-    //                 }
-    //                 parent.children.push(g);
-    //                 angular.forEach(element.children, function(segmentRefOrGroup) {
-    //                     $rootScope.processMessageTree(segmentRefOrGroup, g);
-    //                 });
-    //             } else if (element.type === "segmentRef") {
-    //                 var s = {};
-    //                 s.path = element.position + "[1]";
-    //                 s.locationPath = element.ref.name + '[1]';
-    //                 s.obj = element;
-    //                 s.children = [];
-    //                 if (parent.path) {
-    //                     s.path = parent.path + "." + element.position + "[1]";
-    //                     s.locationPath = parent.locationPath + "." + s.locationPath;
-    //                 }
-    //                 s.obj.ref.ext = s.obj.ref.ext;
-    //                 s.obj.ref.label = $rootScope.getLabel(s.obj.ref.name, s.obj.ref.ext);
-    //                 parent.children.push(s);
-    //
-    //                 var ref = $rootScope.segmentsMap[element.ref.id];
-    //                 $rootScope.processMessageTree(ref, s);
-    //
-    //             } else if (element.type === "segment") {
-    //                 if (!parent) {
-    //                     var s = {};
-    //                     s.obj = element;
-    //                     s.path = element.name;
-    //                     s.locationPath = element.name;
-    //                     s.children = [];
-    //                     parent = s;
-    //                 }
-    //                 angular.forEach(element.fields, function(field) {
-    //                     $rootScope.processMessageTree(field, parent);
-    //                 });
-    //             } else if (element.type === "field") {
-    //                 var f = {};
-    //                 f.obj = element;
-    //                 f.path = parent.path + "." + element.position + "[1]";
-    //                 f.locationPath = parent.locationPath + "." + element.position + "[1]";
-    //                 f.children = [];
-    //                 var d = $rootScope.datatypesMap[f.obj.datatype.id];
-    //                 if (d === undefined) {
-    //                     throw new Error("Cannot find Data Type[id=" + f.obj.datatype.id + ", name= " + f.obj.datatype.name + "]");
-    //                 }
-    //                 f.obj.datatype.ext = $rootScope.datatypesMap[f.obj.datatype.id].ext;
-    //                 f.obj.datatype.label = $rootScope.getLabel(f.obj.datatype.name, f.obj.datatype.ext);
-    //
-    //                 parent.children.push(f);
-    //                 $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype.id], f);
-    //             } else if (element.type === "component") {
-    //                 var c = {};
-    //
-    //                 c.obj = element;
-    //                 c.path = parent.path + "." + element.position + "[1]";
-    //                 c.locationPath = parent.locationPath + "." + element.position + "[1]";
-    //                 c.children = [];
-    //                 var d = $rootScope.datatypesMap[c.obj.datatype.id];
-    //                 if (d === undefined) {
-    //                     throw new Error("Cannot find Data Type[id=" + c.obj.datatype.id + ", name= " + c.obj.datatype.name + "]");
-    //                 }
-    //                 c.obj.datatype.ext = d.ext;
-    //                 c.obj.datatype.label = $rootScope.getLabel(c.obj.datatype.name, c.obj.datatype.ext);
-    //                 parent.children.push(c);
-    //                 $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype.id], c);
-    //             } else if (element.type === "datatype") {
-    //                 if (!parent) {
-    //                     var d = {};
-    //                     d.obj = element;
-    //                     d.path = element.name;
-    //                     d.locationPath = element.name;
-    //                     d.children = [];
-    //                     parent = d;
-    //                 }
-    //                 angular.forEach(element.components, function(component) {
-    //                     $rootScope.processMessageTree(component, parent);
-    //                 });
-    //             }
-    //         }
-    //     } catch (e) {
-    //         throw e;
-    //     }
-    // };
+// //$rootScope.messageTree
+//
+//
+//
+//     $rootScope.processMessageTree = function(element, parent) {
+//
+//
+//         try {
+//             if (element != undefined && element != null) {
+//                 if (element.type === "message") {
+//                     $rootScope.selectedMessage = element;
+//                     $rootScope.filteredSegmentsList = [];
+//                     $rootScope.filteredTablesList = [];
+//                     $rootScope.filteredDatatypesList = [];
+//                     var m = {};
+//                     m.children = [];
+//                     $rootScope.messageTree = m;
+//
+//                     angular.forEach(element.children, function(segmentRefOrGroup) {
+//                         $rootScope.processMessageTree(segmentRefOrGroup, m);
+//                     });
+//
+//                 } else if (element.type === "group" && element.children) {
+//                     var g = {};
+//                     g.path = element.position + "[1]";
+//                     g.locationPath = element.name.substr(element.name.lastIndexOf('.') + 1) + '[1]';
+//                     g.obj = element;
+//                     g.children = [];
+//                     if (parent.path) {
+//                         g.path = parent.path + "." + g.path;
+//                         g.locationPath = parent.locationPath + "." + g.locationPath;
+//                     }
+//                     parent.children.push(g);
+//                     angular.forEach(element.children, function(segmentRefOrGroup) {
+//                         $rootScope.processMessageTree(segmentRefOrGroup, g);
+//                     });
+//                 } else if (element.type === "segmentRef") {
+//                     var s = {};
+//                     s.path = element.position + "[1]";
+//                     s.locationPath = $rootScope.segmentsMap[element.ref.id].name + '[1]';
+//                     s.obj = element;
+//                     s.children = [];
+//                     if (parent.path) {
+//                         s.path = parent.path + "." + element.position + "[1]";
+//                         s.locationPath = parent.locationPath + "." + s.locationPath;
+//                     }
+//
+//                     if ($rootScope.segmentsMap[s.obj.ref.id] == undefined) {
+//                         throw new Error("Cannot find Segment[id=" + s.obj.ref.id + ", name= " + s.obj.ref.name + "]");
+//                     }
+//                     s.obj.ref.ext = $rootScope.segmentsMap[s.obj.ref.id].ext;
+//                     s.obj.ref.label = $rootScope.getLab
+//
+//
+//                     var ref = $rootScope.segmentsMap[element.ref.id];
+//                     $rootScope.processMessageTree(ref, s);
+//
+//                 } else if (element.type === "segment") {
+//                     if (!parent) {
+//                         var s = {};
+//                         s.obj = element;
+//                         s.path = element.name;
+//                         s.locationPath = element.name;
+//                         s.children = [];
+//                         parent = s;
+//                     }
+//
+//                     $rootScope.filteredSegmentsList.push(element);
+//                     $rootScope.filteredSegmentsList = _.uniq($rootScope.filteredSegmentsList);
+//
+//                     angular.forEach(element.fields, function(field) {
+//                         $rootScope.processMessageTree(field, parent);
+//                     });
+//                 } else if (element.type === "field") {
+//                     var f = {};
+//                     f.obj = element;
+//                     f.path = parent.path + "." + element.position + "[1]";
+//                     f.segmentPath = '' + element.position;
+//                     f.segment = parent.obj.ref.id;
+//                     f.locationPath = parent.locationPath + "." + element.position + "[1]";
+//
+//                     if ($rootScope.message) {
+//                         f.sev = _.find($rootScope.message.singleElementValues, function(sev) { return sev.location == $rootScope.refinePath(f.path); });
+//                         if (f.sev) {
+//                             f.sev.from = 'message';
+//                         } else {
+//                             f.sev = _.find($rootScope.segmentsMap[f.segment].singleElementValues, function(sev) { return sev.location == f.segmentPath; });
+//                             if (f.sev) f.sev.from = 'segment';
+//                         }
+//                     }
+//
+//                     f.children = [];
+//                     var d = $rootScope.datatypesMap[f.obj.datatype.id];
+//                     if (d === undefined) {
+//                         throw new Error("Cannot find Data Type[id=" + f.obj.datatype.id + ", name= " + f.obj.datatype.name + "]");
+//                     }
+//                     f.obj.datatype.ext = $rootScope.datatypesMap[f.obj.datatype.id].ext;
+//                     f.obj.datatype.label = $rootScope.getLabel(f.obj.datatype.name, f.obj.datatype.ext);
+//                     parent.children.push(f);
+//
+//                     $rootScope.filteredDatatypesList.push($rootScope.datatypesMap[element.datatype.id]);
+//                     $rootScope.filteredDatatypesList = _.uniq($rootScope.filteredDatatypesList);
+//                     if (element.tables && element.tables.length > 0) {
+//                         angular.forEach(element.tables, function(table) {
+//                             $rootScope.filteredTablesList.push($rootScope.tablesMap[table.id]);
+//                         });
+//                     }
+//                     $rootScope.filteredTablesList = _.uniq($rootScope.filteredTablesList);
+//                     $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype.id], f);
+//                 } else if (element.type === "component") {
+//                     var c = {};
+//
+//                     c.obj = element;
+//                     c.path = parent.path + "." + element.position + "[1]";
+//                     c.segmentPath = parent.segmentPath + "." + element.position;
+//                     c.segment = parent.segment;
+//                     if (c.segmentPath.split(".").length - 1 == 1) {
+//                         c.fieldDT = parent.obj.datatype.id;
+//                         if ($rootScope.message) {
+//                             c.sev = _.find($rootScope.message.singleElementValues, function(sev) { return sev.location == $rootScope.refinePath(c.path); });
+//                             if (c.sev) {
+//                                 c.sev.from = 'message';
+//                             } else {
+//                                 c.sev = _.find($rootScope.segmentsMap[c.segment].singleElementValues, function(sev) { return sev.location == c.segmentPath; });
+//                                 if (c.sev) {
+//                                     c.sev.from = 'segment';
+//                                 } else {
+//                                     var fieldPath = c.segmentPath.substr(c.segmentPath.indexOf('.') + 1);
+//                                     c.sev = _.find($rootScope.datatypesMap[c.fieldDT].singleElementValues, function(sev) { return sev.location == fieldPath; });
+//                                     if (c.sev) {
+//                                         c.sev.from = 'field';
+//                                     }
+//                                 }
+//                             }
+//                         }
+//                     } else if (c.segmentPath.split(".").length - 1 == 2) {
+//                         c.fieldDT = parent.fieldDT;
+//                         c.componentDT = parent.obj.datatype.id;
+//                         if ($rootScope.message) {
+//                             c.sev = _.find($rootScope.message.singleElementValues, function(sev) { return sev.location == $rootScope.refinePath(c.path); });
+//                             if (c.sev) {
+//                                 c.sev.from = 'message';
+//                             } else {
+//                                 c.sev = _.find($rootScope.segmentsMap[c.segment].singleElementValues, function(sev) { return sev.location == c.segmentPath; });
+//                                 if (c.sev) {
+//                                     c.sev.from = 'segment';
+//                                 } else {
+//                                     var fieldPath = c.segmentPath.substr(c.segmentPath.indexOf('.') + 1);
+//                                     c.sev = _.find($rootScope.datatypesMap[c.fieldDT].singleElementValues, function(sev) { return sev.location == fieldPath; });
+//                                     if (c.sev) {
+//                                         c.sev.from = 'field';
+//                                     } else {
+//                                         var componentPath = c.segmentPath.substr(c.segmentPath.split('.', 2).join('.').length + 1);
+//                                         c.sev = _.find($rootScope.datatypesMap[c.componentDT].singleElementValues, function(sev) { return sev.location == componentPath; });
+//                                         if (c.sev) {
+//                                             c.sev.from = 'component';
+//                                         }
+//                                     }
+//                                 }
+//                             }
+//                         }
+//                     }
+//
+//                     c.locationPath = parent.locationPath + "." + element.position + "[1]";
+//                     c.children = [];
+//                     var d = $rootScope.datatypesMap[c.obj.datatype.id];
+//                     if (d === undefined) {
+//                         throw new Error("Cannot find Data Type[id=" + c.obj.datatype.id + ", name= " + c.obj.datatype.name + "]");
+//                     }
+//                     c.obj.datatype.ext = d.ext;
+//                     c.obj.datatype.label = $rootScope.getLabel(c.obj.datatype.name, c.obj.datatype.ext);
+//                     parent.children.push(c);
+//                     $rootScope.filteredDatatypesList.push($rootScope.datatypesMap[element.datatype.id]);
+//                     $rootScope.filteredDatatypesList = _.uniq($rootScope.filteredDatatypesList);
+//                     if (element.tables && element.tables.length > 0) {
+//                         angular.forEach(element.tables, function(table) {
+//                             $rootScope.filteredTablesList.push($rootScope.tablesMap[table.id]);
+//                         });
+//                     }
+//                     $rootScope.filteredTablesList = _.uniq($rootScope.filteredTablesList);
+//                     $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype.id], c);
+//                 } else if (element.type === "datatype") {
+//                     if (!parent) {
+//                         var d = {};
+//                         d.obj = element;
+//                         d.path = element.name;
+//                         d.locationPath = element.name;
+//                         d.children = [];
+//                         parent = d;
+//                     }
+//                     angular.forEach(element.components, function(component) {
+//                         $rootScope.processMessageTree(component, parent);
+//                     });
+//                 }
+//             }
+//         } catch (e) {
+//             throw e;
+//         }
+//     };
+// 	$rootScope.processMessageTree = function(element, parent) {
+// 		try {
+// 			if (element != undefined && element != null) {
+// 				if (element.type === "message") {
+// 					var m = {};
+// 					m.children = [];
+// 					$rootScope.messageTree = m;
+//
+// 					angular.forEach(element.children, function(segmentRefOrGroup) {
+// 						$rootScope.processMessageTree(segmentRefOrGroup, m);
+// 					});
+//
+// 				} else if (element.type === "group" && element.children) {
+// 					var g = {};
+// 					g.path = element.position + "[1]";
+// 					g.obj = element;
+// 					g.children = [];
+// 					if (parent.path) {
+// 						g.path = parent.path + "." + element.position + "[1]";
+// 					}
+// 					parent.children.push(g);
+// 					angular.forEach(element.children, function(segmentRefOrGroup) {
+// 						$rootScope.processMessageTree(segmentRefOrGroup, g);
+// 					});
+// 				} else if (element.type === "segmentRef") {
+// 					var s = {};
+// 					s.path = element.position + "[1]";
+// 					s.obj = element;
+// 					s.children = [];
+// 					if (parent.path) {
+// 						s.path = parent.path + "." + element.position + "[1]";
+// 					}
+// 					s.obj.ref.ext = s.obj.ref.ext;
+// 					//s.obj.ref.label=$rootScope.getLabel(s.obj.ref.name,s.obj.ref.ext);
+// 					parent.children.push(s);
+//
+// 					//$rootScope.processMessageTree(ref, s);
+//
+// 				} else if (element.type === "segment") {
+// 					if (!parent) {
+// 						var s = {};
+// 						s.obj = element;
+// 						s.path = element.name;
+// 						s.children = [];
+// 						parent = s;
+// 					}
+//
+// 					angular.forEach(element.fields, function(field) {
+// 						$rootScope.processMessageTree(field, parent);
+// 					});
+// 				}
+// 			}
+// 		} catch (e) {
+// 			throw e;
+// 		}};
+//
+// 		$rootScope.getLabel=function(name, ext){
+// 			if(ext){
+// 				return name+"_"+ext;
+// 			}else{
+// 				return name;
+// 			}
+// 		}
+//     //
+// 		// $rootScope.processMessageTree = function(element, parent) {
+//     //     try {
+//     //         if (element != undefined && element != null) {
+//     //             if (element.type === "message") {
+//     //                 $rootScope.selectedMessage = element;
+//     //                 var m = {};
+//     //                 m.children = [];
+//     //                 $rootScope.messageTree = m;
+//     //
+//     //                 angular.forEach(element.children, function(segmentRefOrGroup) {
+//     //                     $rootScope.processMessageTree(segmentRefOrGroup, m);
+//     //                 });
+//     //
+//     //             } else if (element.type === "group" && element.children) {
+//     //                 var g = {};
+//     //                 g.path = element.position + "[1]";
+//     //                 g.locationPath = element.name.substr(element.name.lastIndexOf('.') + 1) + '[1]';
+//     //                 g.obj = element;
+//     //                 g.children = [];
+//     //                 if (parent.path) {
+//     //                     g.path = parent.path + "." + g.path;
+//     //                     g.locationPath = parent.locationPath + "." + g.locationPath;
+//     //                 }
+//     //                 parent.children.push(g);
+//     //                 angular.forEach(element.children, function(segmentRefOrGroup) {
+//     //                     $rootScope.processMessageTree(segmentRefOrGroup, g);
+//     //                 });
+//     //             } else if (element.type === "segmentRef") {
+//     //                 var s = {};
+//     //                 s.path = element.position + "[1]";
+//     //                 s.locationPath = element.ref.name + '[1]';
+//     //                 s.obj = element;
+//     //                 s.children = [];
+//     //                 if (parent.path) {
+//     //                     s.path = parent.path + "." + element.position + "[1]";
+//     //                     s.locationPath = parent.locationPath + "." + s.locationPath;
+//     //                 }
+//     //                 s.obj.ref.ext = s.obj.ref.ext;
+//     //                 s.obj.ref.label = $rootScope.getLabel(s.obj.ref.name, s.obj.ref.ext);
+//     //                 parent.children.push(s);
+//     //
+//     //                 var ref = $rootScope.segmentsMap[element.ref.id];
+//     //                 $rootScope.processMessageTree(ref, s);
+//     //
+//     //             } else if (element.type === "segment") {
+//     //                 if (!parent) {
+//     //                     var s = {};
+//     //                     s.obj = element;
+//     //                     s.path = element.name;
+//     //                     s.locationPath = element.name;
+//     //                     s.children = [];
+//     //                     parent = s;
+//     //                 }
+//     //                 angular.forEach(element.fields, function(field) {
+//     //                     $rootScope.processMessageTree(field, parent);
+//     //                 });
+//     //             } else if (element.type === "field") {
+//     //                 var f = {};
+//     //                 f.obj = element;
+//     //                 f.path = parent.path + "." + element.position + "[1]";
+//     //                 f.locationPath = parent.locationPath + "." + element.position + "[1]";
+//     //                 f.children = [];
+//     //                 var d = $rootScope.datatypesMap[f.obj.datatype.id];
+//     //                 if (d === undefined) {
+//     //                     throw new Error("Cannot find Data Type[id=" + f.obj.datatype.id + ", name= " + f.obj.datatype.name + "]");
+//     //                 }
+//     //                 f.obj.datatype.ext = $rootScope.datatypesMap[f.obj.datatype.id].ext;
+//     //                 f.obj.datatype.label = $rootScope.getLabel(f.obj.datatype.name, f.obj.datatype.ext);
+//     //
+//     //                 parent.children.push(f);
+//     //                 $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype.id], f);
+//     //             } else if (element.type === "component") {
+//     //                 var c = {};
+//     //
+//     //                 c.obj = element;
+//     //                 c.path = parent.path + "." + element.position + "[1]";
+//     //                 c.locationPath = parent.locationPath + "." + element.position + "[1]";
+//     //                 c.children = [];
+//     //                 var d = $rootScope.datatypesMap[c.obj.datatype.id];
+//     //                 if (d === undefined) {
+//     //                     throw new Error("Cannot find Data Type[id=" + c.obj.datatype.id + ", name= " + c.obj.datatype.name + "]");
+//     //                 }
+//     //                 c.obj.datatype.ext = d.ext;
+//     //                 c.obj.datatype.label = $rootScope.getLabel(c.obj.datatype.name, c.obj.datatype.ext);
+//     //                 parent.children.push(c);
+//     //                 $rootScope.processMessageTree($rootScope.datatypesMap[element.datatype.id], c);
+//     //             } else if (element.type === "datatype") {
+//     //                 if (!parent) {
+//     //                     var d = {};
+//     //                     d.obj = element;
+//     //                     d.path = element.name;
+//     //                     d.locationPath = element.name;
+//     //                     d.children = [];
+//     //                     parent = d;
+//     //                 }
+//     //                 angular.forEach(element.components, function(component) {
+//     //                     $rootScope.processMessageTree(component, parent);
+//     //                 });
+//     //             }
+//     //         }
+//     //     } catch (e) {
+//     //         throw e;
+//     //     }
+//     // };
 
 
 	$scope.loadIntegrationProfile = function (callBack) {
@@ -2039,16 +2242,20 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
               if (!parent || parent == null) {
                 	if(root&&root.children){
                     return root.children;
-                	}else{
+                	}else {
                 		var children=[];
                 		return children;
                 	}
                 } else {
                     return parent.children;
                 }
+
+
 	};
 
 	$rootScope.getTemplatesForMessage = function(node, root) {
+        //return 'MessageRowTree.html';
+
         if (node.obj.type === 'segmentRef') {
             return 'MessageSegmentRefReadTree.html';
         } else if (node.obj.type === 'group') {
@@ -2070,10 +2277,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 	$rootScope.messageParams = new ngTreetableParams({
 			getNodes: function(parent) {
-				return $rootScope.getNodesForMessage(parent, $rootScope.messageTree);
+				return $rootScope.getNodesForMessage(parent,$rootScope.messageTree);
 			},
 			getTemplate: function(node) {
-				return $rootScope.getTemplatesForMessage(node, $rootScope.messageTree);
+				return $rootScope.getTemplatesForMessage(node,$rootScope.messageTree);
 			}
 		});
 
@@ -2090,7 +2297,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.OpenMessageMetadata = function(msg) {
 		$rootScope.selectedTestCaseGroup=null;
-		$rootScope.message=null;
+		$rootScope.message=msg;
 		$rootScope.selectedTestCase = null;
 		$rootScope.selectedTestStep = null;
 		$rootScope.selectedSegmentNode =null;
@@ -2115,6 +2322,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				$rootScope.messageParams = $rootScope.getMessageParams();
 		}
 	};
+
+
+
+
 
 	$scope.generateConstraintsXML = function (segmentList, testStep, selectedConformanceProfile, selectedIntegrationProfile){
 		$rootScope.categorizationsDataMap = {};
@@ -3395,10 +3606,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	});
 
-	$scope.hasChildren = function (node) {
-		if(!node || !node.children || node.children.length === 0) return false;
-		return true;
-	};
+	// $scope.hasChildren = function (node) {
+	// 	if(!node || !node.children || node.children.length === 0) return false;
+	// 	return true;
+	// };
 
 	$scope.filterForSegmentList = function(segment)
 	{
@@ -4615,15 +4826,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	return obj.name;
     }
     $rootScope.getDatatypeLabel=function(datatype){
-    	if(datatype.ext!==""||datatype.ext!==null){
-    		return datatype.name;
-		}else{
-    		return datatype.name+"_"+datatype.ext;
+    	if(datatype){
+            if(!datatype.ext&&datatype.ext!==null){
+                return datatype.name;
+            }else{
+                return datatype.name+"_"+datatype.ext;
+            }
 		}
+
 	}
-    $rootScope.getTableLabel=function(table){
-    	if(table) return table.bindingIdentifier;
-    	return null;
+    $rootScope.getTableLabel=function(id){
+
+    	if($rootScope.tablesMap[id]) return $rootScope.tablesMap[id].bindingIdentifier;
+    	//return null;
     }
 
 });
@@ -4893,4 +5108,15 @@ angular.module('tcl').controller('OpenApplyMessageTemplate', function($scope, $m
 		$modalInstance.dismiss('cancel');
 	};
 });
+angular.module('tcl').controller('DynamicMapping', function($scope, $mdDialog, segment,$rootScope) {
+	$scope.segment=segment;
+    $scope.close = function() {
+		$mdDialog.hide();
+    };
+
+    $scope.cancel = function() {
+        $mdDialog.hide();
+    };
+});
+
 

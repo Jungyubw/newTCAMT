@@ -1,6 +1,1 @@
-{
-    "uploadedImagesUrl": "http://hit-2015.nist.gov/igamt/uploaded_dev_images",
-    "version": "1.0-betaX",
-    "date": "03/03/2016 02:57:52",
-    "adminEmail": "robert.snelick@nist.gov"
-}
+{"version":"2.0.0-beta-1","date":"05/02/2017","igamtLogin":"http://localhost:8080/igamt/api/accounts/login","igamtBaseUrl":"http://localhost:8080/igamt/api/getResource","uploadedImagesUrl":"http://localhost:8080/tcamt/api/uploaded_files","adminEmail":"rsnelick@nist.gov"}
