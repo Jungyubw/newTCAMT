@@ -2886,8 +2886,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 					$scope.generateNISTSegment(segmentElm, segment, xmlDoc, selectedIntegrationProfile);
 				}
 
-
-
 				rootElm.appendChild(segmentElm);
 			} else {
 				var parentElm = rootElm;
