@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { TestComponentComponent } from './test-component/test-component.component';
+import { HeaderModule } from './header/header.module';
+import { AngularFontAwesomeModule } from 'angular-font-awesome/angular-font-awesome';
+
 
 @NgModule({
   declarations: [
@@ -10,7 +13,9 @@ import { TestComponentComponent } from './test-component/test-component.componen
     TestComponentComponent
   ],
   imports: [
-    BrowserModule
+      AngularFontAwesomeModule,
+      BrowserModule,
+      HeaderModule
   ],
   providers: [],
   bootstrap: [AppComponent]
