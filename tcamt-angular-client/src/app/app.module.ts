@@ -9,6 +9,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 
+import { CarService } from './service/carservice';
+
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -23,7 +26,8 @@ import { HomeComponent } from './home/home.component';
         BrowserAnimationsModule
     ],
     providers: [
-        { provide: LocationStrategy, useClass: HashLocationStrategy }
+        { provide: LocationStrategy, useClass: HashLocationStrategy },
+        CarService
     ],
     bootstrap: [AppComponent]
 })

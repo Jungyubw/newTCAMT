@@ -5,16 +5,20 @@
     </a>
 
     <a href="#" class="logo" [routerLink]="['/']">
-      <img alt="logo" src="assets/showcase/images/logo.png" />
+      <img alt="logo" src="assets/images/NISTLogo.png" />
     </a>
 
     <ul class="topbar-menu">
       <li>
-        <a href="#" [routerLink]="['/setup']">GET STARTED</a>
+        <a href="#" [routerLink]="['/testplan']">TEST PLANS</a>
+      </li>
+      <li>
+        <a href="#" [routerLink]="['/profiles']">PROFILES</a>
       </li>
       <li>
         <a [routerLink]="['/support']">SUPPORT</a>
       </li>
     </ul>
   </div>
+      <router-outlet></router-outlet>
 </div>

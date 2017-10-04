@@ -1,0 +1,17 @@
+<div id="layout-content-full">
+  <h3 class="first">List Testplans</h3>
+  <p-dataTable [value]="cars" [loading]="loading">
+    <p-column field="vin" header="Vin"></p-column>
+    <p-column field="year" header="Year"></p-column>
+    <p-column field="brand" header="Brand"></p-column>
+    <p-column field="color" header="Color"></p-column>
+    <p-column styleClass="col-button">
+      <ng-template pTemplate="header">
+        <button type="button" pButton icon="fa-refresh"></button>
+      </ng-template>
+      <ng-template let-testplan="rowData" pTemplate="body">
+        <button type="button" pButton (click)="selectTestplan(testplan)" icon="fa-search"></button>
+      </ng-template>
+    </p-column>
+  </p-dataTable>
+</div>

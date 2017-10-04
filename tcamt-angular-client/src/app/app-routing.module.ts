@@ -6,10 +6,11 @@ import { HomeComponent } from './home/home.component';
     imports: [
         RouterModule.forRoot([
             {path: '', component: HomeComponent},
-            {path: 'setup', loadChildren: './footer/footer.module#FooterModule'},
-            {path: 'support', loadChildren: './footer/footer.module#FooterModule'}
+            {path: 'testplan', loadChildren: './testplan/testplan.module#TestplanModule'},
+            {path: 'support', loadChildren: './support/support.module#SupportModule'}
         ])
     ],
     exports: [RouterModule]
 })
 export class AppRoutingModule {}
+
