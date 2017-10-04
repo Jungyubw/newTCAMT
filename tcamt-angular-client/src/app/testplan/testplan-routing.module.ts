@@ -7,7 +7,7 @@ import {TestplansComponent} from './list/testplans.component';
 		RouterModule.forChild([
 			{ path: '', redirectTo: 'testplans', pathMatch: 'full' },
 			{ path: 'testplans',  component: TestplansComponent },
-			{ path: 'testplandetail', loadChildren: './edit/testplan-edit.module#TestplanEditModule'}
+			{ path: 'testplandetail/:id', loadChildren: './edit/testplan-edit.module#TestplanEditModule'}
 
 		])
 	],

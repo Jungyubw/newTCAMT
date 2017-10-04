@@ -344,9 +344,30 @@ body {
     background-color: #f5f7f8;
 }
 
+.tcamt-top-padding {
+    padding: 10px;
+}
+
 .content-section.introduction {
     background-image: linear-gradient(to left, #2bc0ec, #1b81d7);
     color: #ffffff;
+}
+
+.content-section.introductionfixed {
+    background-image: linear-gradient(to left, #2bc0ec, #1b81d7);
+    color: #ffffff;
+    padding-top: 10px;
+    box-sizing: border-box;
+    display: block;
+    height: 70px;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    z-index: 999999;
+    -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3);
 }
 
 .content-section:first-of-type > div > span {
@@ -391,6 +412,22 @@ body {
     margin-top: 0px !important;
 }
 .implementation h4 {
+    color: #5C666A;
+}
+
+.implementationfixed {
+    background-color: #FFFFFF;
+    margin-top: 70px;
+    overflow: visible;
+}
+.implementationfixed > h3 {
+    margin-top: 30px;
+    color: #5C666A;
+}
+.implementationfixed h3.first {
+    margin-top: 0px !important;
+}
+.implementationfixed h4 {
     color: #5C666A;
 }
 

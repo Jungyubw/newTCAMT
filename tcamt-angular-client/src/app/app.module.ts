@@ -9,7 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 
-import { CarService } from './service/carservice';
+import { TestplanService } from './service/testplanservice';
 
 
 @NgModule({
@@ -27,7 +27,7 @@ import { CarService } from './service/carservice';
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
-        CarService
+        TestplanService
     ],
     bootstrap: [AppComponent]
 })
