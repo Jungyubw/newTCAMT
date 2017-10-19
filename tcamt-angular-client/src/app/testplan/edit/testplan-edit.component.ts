@@ -8,6 +8,7 @@ export class TestplanEditComponent implements OnInit, OnDestroy{
 
     constructor(private route: ActivatedRoute) {}
     testplanId: any;
+    testplan : any;
     private sub: any;
 
     ngOnInit() {
