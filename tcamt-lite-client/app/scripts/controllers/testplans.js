@@ -3167,24 +3167,24 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 								}
 							}
 							if(cate.testDataCategorization == 'NonPresence'){
-								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD NOT be presented.');
+								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL NOT be presented.');
 							}else if(cate.testDataCategorization == 'Presence-Content Indifferent' ||
 								cate.testDataCategorization == 'Presence-Configuration' ||
 								cate.testDataCategorization == 'Presence-System Generated' ||
 								cate.testDataCategorization == 'Presence-Test Case Proper'){
-								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be presented.');
+								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
 							}else if(cate.testDataCategorization == 'Presence Length-Content Indifferent' ||
 								cate.testDataCategorization == 'Presence Length-Configuration' ||
 								cate.testDataCategorization == 'Presence Length-System Generated' ||
 								cate.testDataCategorization == 'Presence Length-Test Case Proper'){
-								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be presented.');
-								cate.constraints.push('Length of ' + cate.iPath + ' (' + cate.name + ') SHOULD be more than '+ cate.data.length);
+								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+								cate.constraints.push('Length of ' + cate.iPath + ' (' + cate.name + ') SHALL be more than '+ cate.data.length);
 							}else if(cate.testDataCategorization == 'Value-Test Case Fixed'){
-								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be presented.');
-								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be '+ cate.data);
+								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be '+ cate.data);
 							}else if(cate.testDataCategorization == 'Value-Test Case Fixed List'){
-								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be presented.');
-								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHOULD be one of '+ cate.listData);
+								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be one of '+ cate.listData);
 							}
 							$scope.listOfTDC.push(cate);
 						}
