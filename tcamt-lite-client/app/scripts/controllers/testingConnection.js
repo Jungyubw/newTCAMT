@@ -6,8 +6,8 @@ angular.module('tcl').controller('loginTestingTool', ['$scope','$rootScope', '$m
     $scope.testplan=$rootScope.selectedTestPlan;
     $scope.mode=mode;
     // $rootScope.testingUrl= 'https://hit-dev.nist.gov:8099/gvt';
-    $rootScope.testingUrl= 'https://hl7v2.gvt.nist.gov/gvt';
-
+    //$rootScope.testingUrl= 'https://hl7v2.gvt.nist.gov/gvt';
+    $rootScope.testingUrl="http://129.6.229.97:8080/gvt/";
     $scope.alert=false;
     $scope.alertText='';
    $scope.user={
