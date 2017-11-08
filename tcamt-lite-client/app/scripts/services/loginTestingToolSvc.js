@@ -6,7 +6,7 @@ angular.module('tcl').factory('loginTestingToolSvc',
 
         var svc = this;
 
-        svc.pushRB = function(host,username,password) {
+        svc.pushRB = function(host,username,password,scope) {
             var delay = $q.defer();
             console.log(host);
             console.log(username);
@@ -19,7 +19,7 @@ angular.module('tcl').factory('loginTestingToolSvc',
             var testplanId=$rootScope.selectedTestPlan.id;
             console.log($rootScope.selectedTestPlan);
 
-            $http.post('api/testplans/pushRB/'+testplanId,host,{headers:httpHeaders}).then(function (re) {
+            $http.post('api/testplans/pushRB/'+testplanId+'/'+scope,host,{headers:httpHeaders}).then(function (re) {
 
 
                 delay.resolve(re);

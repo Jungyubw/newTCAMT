@@ -5,10 +5,13 @@ angular.module('tcl').controller('loginTestingTool', ['$scope','$rootScope', '$m
     $rootScope.error = {text: undefined, show:false};
     $scope.testplan=$rootScope.selectedTestPlan;
     $scope.mode=mode;
+    $scope.options=null;
     // $rootScope.testingUrl= 'https://hit-dev.nist.gov:8099/gvt';
     $rootScope.testingUrl= 'https://hl7v2.gvt.nist.gov/gvt';
-    
-    $scope.alert=false;
+    $scope.RegistredGrant=[];
+    $scope.scope= null;
+
+        $scope.alert=false;
     $scope.alertText='';
    $scope.user={
        username:'',
@@ -19,13 +22,18 @@ angular.module('tcl').controller('loginTestingTool', ['$scope','$rootScope', '$m
     };
 
     $scope.submit = function(testingUsername,testingPassword) {
+        Notification.success({message:"We are processing your request. You will be notified by e-mail once we are done", delay: 2000});
+        $scope.scope= null;
+
+        $mdDialog.hide('cancel');
 
         $rootScope.error = {text: undefined, show:false};
-        loginTestingToolSvc.pushRB( $rootScope.testingUrl,testingUsername, testingPassword).then(function(auth){
+        loginTestingToolSvc.pushRB( $rootScope.testingUrl,testingUsername, testingPassword, $scope.scope).then(function(auth){
 
             $rootScope.selectedTestPlan.gvtPresence=true;
 
-            $mdDialog.hide('cancel');
+
+
         }, function(error){
             console.log(error);
             $scope.alertText =  error.data != null ? error.data : "ERROR: Cannot access server.";
@@ -57,25 +65,26 @@ angular.module('tcl').controller('loginTestingTool', ['$scope','$rootScope', '$m
         $http.post('api/testplans/createSession',$rootScope.testingUrl,{headers:httpHeaders}).then(function (re) {
             var response=angular.fromJson(re.data);
 
-            if(response){
 
-                console.log("SUCCESS")
-                $mdDialog.hide();
 
                 $scope.alert=false;
+                $scope.options=$scope.getOptionsFromRoles(response);
 
 
 
-                Notification.success({message:"We are processing your request. You will be notified by e-mail once we are done", delay: 2000});
-                $scope.submit(username, password);
-            }else{
-                $scope.alertText = "ERROR: Cannot access server. Please verify you Credentials";
-                $scope.alert=true;
-            }
+                // Notification.success({message:"We are processing your request. You will be notified by e-mail once we are done", delay: 2000});
+                // $scope.submit(username, password);
+                // $mdDialog.hide();
+
 
             delay.resolve(response);
 
+
+
+
         }, function(er){
+            $scope.alertText = "ERROR: Cannot access server. Please verify you Credentials";
+            $scope.alert=true;
             delay.reject(er);
         });
         return delay.promise;
@@ -116,7 +125,20 @@ angular.module('tcl').controller('loginTestingTool', ['$scope','$rootScope', '$m
 
     $scope.initAlert=function(){
         $scope.alert=false;
-    }
+    };
+
+
+    $scope.getOptionsFromRoles=function (roles) {
+        if(_.contains(roles, "SUPERVISOR")){
+            return ["GLOBAL", "USER"];
+        }else if(_.contains(roles, "DEPLOYER")){
+            return ["GLOBAL", "USER"];
+        }else{
+            return [];
+        };
+
+    };
+
 
 
 

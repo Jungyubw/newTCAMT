@@ -20,6 +20,7 @@
         <md-dialog-content>
 
             <div class="md-dialog-content">
+                <div ng-if="!options">
 
             <div class="alert alert-danger row" ng-show="alert" id="ehrloginalert">
                 <button type="button" class="close" ng-click="initAlert()">×</button>
@@ -48,23 +49,40 @@
                        ng-model="user.password" ng-minlength="4" required>
             </div>
             </div>
-        </div>
+                </div>
+                <div ng-if="options">
+                    Select Scope:
+                    <md-select ng-model="scope">
+                        <md-option ng-repeat="opt in options" ng-value="opt">{{opt}}</md-option>
+                    </md-select>
+
+                </div>
+            </div>
         </md-dialog-content>
         <md-dialog-actions layout="column">
             <div layout="row" flex layout-align="end end">
-            <md-button flex ng-click="login(user.username,user.password)" class="btn btn-raised btn-primary" type="submit"
+                <md-button flex ng-if="!options" ng-click="login(user.username,user.password)" class="btn btn-raised btn-primary" type="submit"
                     ng-disabled='!testingLoginForm.$valid' ng-if="mode!=='Deleting'">
-                <i class="fa fa-sign-in"></i>   Confirm
-            </md-button>
-                <md-button  ng-if="mode=='Deleting'"flex ng-click="deleteFromGVT(user.username,user.password)" class="btn btn-raised btn-primary" type="submit"
-                           ng-disabled='!testingLoginForm.$valid'>
-                    <i class="fa fa-sign-in"></i>   Confirm
+                <i class="fa fa-sign-in"></i>   Login
                 </md-button>
+                <md-button ng-if="options" flex ng-click="submit(user.username,user.password)"  ng-disabled="!scope" class="btn btn-raised btn-primary" type="submit"
+                           ng-disabled='!testingLoginForm.$valid' ng-if="mode!=='Deleting'">
+                    <i class="fa fa-sign-in"></i>  submit
+                </md-button>
+
+
+
+
+
+                <!--<md-button  ng-if="mode=='Deleting'"flex ng-click="deleteFromGVT(user.username,user.password)" class="btn btn-raised btn-primary" type="submit"-->
+                           <!--ng-disabled='!testingLoginForm.$valid'>-->
+                    <!--<i class="fa fa-sign-in"></i>   Confirm-->
+                <!--</md-button>-->
             <md-button flex class="btn btn-raised btn-warning" ng-click="cancel()">
                 <i class="fa fa-times"></i>  <span msg key="login.button.cancel"></span>
             </md-button>
             </div>
-            <div layout="row" flex layout-align="end end" class="pull-right">
+            <div ng-if="!options" layout="row" flex layout-align="end end" class="pull-right">
 
                 <a flex ng-href="{{testingUrl}}#/forgotten" target="_blank"  class="pull-right">
                     <span> Forgot your Password</span>
@@ -72,7 +90,7 @@
             </div>
 
 
-            <div layout="row" flex layout-align="end end" class="pull-right">
+            <div  ng-if="!options" layout="row" flex layout-align="end end" class="pull-right">
                 <a flex ng-href="{{testingUrl}}#/registration" target="_blank" class="pull-right">
                     <span> Create an Account</span>
                 </a>
