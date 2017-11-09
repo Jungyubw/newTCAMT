@@ -28,20 +28,10 @@
                 </div>
 
                 <div class="pull-right">
-                    <div ng-if="accordi.tpDetails" class="btn-group" >
-                        <button type="button" class="btn btn-info btn-sm">
+                    <div ng-if="accordi.tpDetails" >
+                        <button type="button" class="btn btn-info btn-sm" ng-click="pushRB(selectedTestPlan,'Pushing')" style="margin-bottom:10px !important;">
                             <span><i class="fa fa-share-alt" aria-hidden="true"></i> Connect With GVT</span>
                         </button>
-                        <button type="button" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            <span class="caret"></span>
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu igl-menu" role="menu">
-                            <li><a class="point" ng-click="pushRB(selectedTestPlan,'Pushing')">Push Test Plan</a></li>
-                            <!--<li><a class="point" ng-click="pushRB(testplan,'Deleting')">DELETE</a></li>-->
-                            <li ng-if="selectedTestPlan.gvtPresence"><a class="point" ng-click="pushRB(selectedTestPlan,'Deleting')">Delete Test Plan </a></li>
-
-                        </ul>
                     </div>
 
 

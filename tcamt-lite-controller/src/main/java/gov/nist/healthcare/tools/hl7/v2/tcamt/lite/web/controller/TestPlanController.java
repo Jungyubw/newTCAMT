@@ -77,7 +77,7 @@ import gov.nist.hit.resources.deploy.client.SSLHL7v2ResourceClient;
 import gov.nist.hit.resources.deploy.model.Payload;
 import gov.nist.hit.resources.deploy.model.RegistredGrant;
 import gov.nist.hit.resources.deploy.model.ResourceType;
-import gov.nist.hit.resources.deploy.model.TestPlanScope;
+import gov.nist.hit.resources.deploy.model.Scope;
 
 @RestController
 @RequestMapping("/testplans")
@@ -331,91 +331,91 @@ public class TestPlanController extends CommonController {
 
   }
 
-//  @RequestMapping(value = "/pushRB/{testplanId}/{scope}", method = RequestMethod.POST,
-//      produces = "application/json")
-//  public void pushRB(@PathVariable("testplanId") String testplanId,@PathVariable("scope") TestPlanScope scope, @RequestBody String host,
-//      @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
-//      throws Exception {
-//	  host = "http://129.6.227.10:8080/gvt/";
-//
-//    User u = userService.getCurrentUser();
-//    Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-//
-//    SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
-//    TestPlan tp = findTestPlan(testplanId);
-//    InputStream testPlanIO = null;
-//    Map<String, String> ipidMap = new HashMap<String, String>();
-//
-//    for (TestCaseOrGroup tcog : tp.getChildren()) {
-//      if (tcog instanceof TestCaseGroup) {
-//        TestCaseGroup group = (TestCaseGroup) tcog;
-//        visitGroup(group, ipidMap);
-//      } else if (tcog instanceof TestCase) {
-//        TestCase tc = (TestCase) tcog;
-//        for (TestStep ts : tc.getTeststeps()) {
-//          addProfileId(ts, ipidMap);
-//        }
-//      }
-//    }
-//
-//    try {
-//      long range = 1234567L;
-//      Random r = new Random();
-//      Long rand = (long) (r.nextDouble() * range);
-//
-//      for (String id : ipidMap.keySet()) {
-//        if (id != null && !id.isEmpty()) {
-//          InputStream[] xmlArrayIO = new InputStream[3];
-//          xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(id, profileService, rand);
-//
-//          xmlArrayIO[0].reset();
-//          xmlArrayIO[1].reset();
-//          xmlArrayIO[2].reset();
-//
-//          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE, scope);
-//          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET, scope);
-//          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS, scope);
-//        }
-//      }
-//
-//
-//      testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, rand);
-//      testPlanIO.reset();
-//      client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN,scope);
-//      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//
-//      tp.setGvtDate("This TestPlan was published on GVT at "
-//          + dateFormat.format(Calendar.getInstance().getTime()));
-//      tp.setGvtPresence(true);
-//      testPlanRepository.save(tp);
-//
-//      if (account == null) {
-//        throw new UserAccountNotFoundException();
-//      } else {
-//        sendPushConfirmation(tp, account, host);
-//      }
-//
-//    } catch (Exception e) {
-//      this.sendPushFailConfirmation(tp, account, host, e);
-//      e.printStackTrace();
-//      throw new PushRBException(e);
-//    }
-//
-//  }
+  @RequestMapping(value = "/pushRB/{testplanId}/{scope}", method = RequestMethod.POST,
+      produces = "application/json")
+  public void pushRB(@PathVariable("testplanId") String testplanId,@PathVariable("scope") Scope scope, @RequestBody String host,
+      @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
+      throws Exception {
+	  host = "http://129.6.229.97:8080/gvt/";
 
-//  @RequestMapping(value = "/createSession", method = RequestMethod.POST,
-//      produces = "application/json")
-//  public Set<RegistredGrant> createSession(@RequestBody String host,
-//      @RequestHeader("gvt-auth") String authorization) throws Exception{
-//    host = "http://129.6.227.10:8080/gvt/";
-//    try {
-//      SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
-//
-//      return client.validCredentials();
-//    } catch (Exception e) {
-//    	throw new Exception();
-//    }
-//  }
+    User u = userService.getCurrentUser();
+    Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+
+    SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
+    TestPlan tp = findTestPlan(testplanId);
+    InputStream testPlanIO = null;
+    Map<String, String> ipidMap = new HashMap<String, String>();
+
+    for (TestCaseOrGroup tcog : tp.getChildren()) {
+      if (tcog instanceof TestCaseGroup) {
+        TestCaseGroup group = (TestCaseGroup) tcog;
+        visitGroup(group, ipidMap);
+      } else if (tcog instanceof TestCase) {
+        TestCase tc = (TestCase) tcog;
+        for (TestStep ts : tc.getTeststeps()) {
+          addProfileId(ts, ipidMap);
+        }
+      }
+    }
+
+    try {
+      long range = 1234567L;
+      Random r = new Random();
+      Long rand = (long) (r.nextDouble() * range);
+
+      for (String id : ipidMap.keySet()) {
+        if (id != null && !id.isEmpty()) {
+          InputStream[] xmlArrayIO = new InputStream[3];
+          xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(id, profileService, rand);
+
+          xmlArrayIO[0].reset();
+          xmlArrayIO[1].reset();
+          xmlArrayIO[2].reset();
+
+          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE, scope);
+          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET, scope);
+          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS, scope);
+        }
+      }
+
+
+      testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, rand);
+      testPlanIO.reset();
+      client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN,scope);
+      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+      tp.setGvtDate("This TestPlan was published on GVT at "
+          + dateFormat.format(Calendar.getInstance().getTime()));
+      tp.setGvtPresence(true);
+      testPlanRepository.save(tp);
+
+      if (account == null) {
+        throw new UserAccountNotFoundException();
+      } else {
+        sendPushConfirmation(tp, account, host);
+      }
+
+    } catch (Exception e) {
+      this.sendPushFailConfirmation(tp, account, host, e);
+      e.printStackTrace();
+      throw new PushRBException(e);
+    }
+
+  }
+
+  @RequestMapping(value = "/createSession", method = RequestMethod.POST,
+      produces = "application/json")
+  public Set<RegistredGrant> createSession(@RequestBody String host,
+      @RequestHeader("gvt-auth") String authorization) throws Exception{
+	  host="http://129.6.229.97:8080/gvt/";
+    try {
+      SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
+
+      return client.validCredentials();
+    } catch (Exception e) {
+    	throw new Exception();
+    }
+  }
 
 //  @RequestMapping(value = "{id}/deleteFromGVT", method = RequestMethod.POST,
 //      produces = "application/json")
