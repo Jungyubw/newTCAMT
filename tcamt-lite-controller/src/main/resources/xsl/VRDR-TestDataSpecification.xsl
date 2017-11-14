@@ -118,10 +118,10 @@
 				<xsl:with-param name="segments" select="//PID"/>
 				<xsl:with-param name="mode" select="'JDI'"/>
 			</xsl:call-template>
-			<xsl:call-template name="display-repeating-segment-in-accordion">
+			 <xsl:call-template name="display-repeating-segment-in-accordion">
 				<xsl:with-param name="segments" select="//PDA"/>
 				<xsl:with-param name="mode" select="'JDI'"/>
-			</xsl:call-template>
+			</xsl:call-template> 
 			<!-- all OBXs are merged into one table -->
 			<xsl:value-of select="util:title('title', 'Death Report Observations', 'Death Report Observations', $ind1, true(), false(), false())"/>
 			<xsl:value-of select="util:elements-obx($ind1)"/>
@@ -138,7 +138,6 @@
 				</xsl:if>
 			</xsl:for-each-group>
 		</xsl:if>
-		
 		<xsl:if test="$group-type = 'CCOD'">
 			<xsl:call-template name="display-repeating-segment-in-accordion">
 				<xsl:with-param name="segments" select="//PID"/>
@@ -224,13 +223,13 @@
 					<xsl:with-param name="counter" select="$counter"/>
 				</xsl:apply-templates>
 			</xsl:when>
-			<xsl:when test="$mode = 'JSI'">
-				<xsl:apply-templates select="." mode="JSI">
+			<xsl:when test="$mode = 'JDI'">
+				<xsl:apply-templates select="." mode="JDI">
 					<xsl:with-param name="vertical-orientation" as="xs:boolean" select="$vertical-orientation"/>
 					<xsl:with-param name="counter" select="$counter"/>
 				</xsl:apply-templates>
 			</xsl:when>
-						<xsl:when test="$mode = 'CCOD'">
+			<xsl:when test="$mode = 'CCOD'">
 				<xsl:apply-templates select="." mode="CCOD">
 					<xsl:with-param name="vertical-orientation" as="xs:boolean" select="$vertical-orientation"/>
 					<xsl:with-param name="counter" select="$counter"/>
@@ -254,12 +253,12 @@
 		<xsl:value-of select="util:elements($ind1)"/>
 		<xsl:value-of select="util:element('Patient Name', concat(util:format-with-space(.//PID.5.2), util:format-with-space(.//PID.5.3),.//PID.5.1.1), $ind1)"/>
 		<xsl:value-of select="util:element('ID Number', concat(util:format-with-space(.//PID.3.1[1]), .//PID.3.1[2]), $ind1)"/>
-		<xsl:value-of select="util:element('Date/Time of Birth',util:format-date(.//PID.7.1), $ind1)"/>
+		<xsl:value-of select="util:element('Date/Time of Birth',util:format-date(.//PID.7), $ind1)"/>
 		<xsl:value-of select="util:element('Administrative Sex', util:admin-sex(.//PID.8), $ind1)"/>
 		<xsl:for-each select="PID.11">
 			<xsl:value-of select="util:element(concat('Patient Address', ' ', util:blank-if-1(position(), count(..//PID.11))), util:format-address(PID.11.1/PID.11.1.1, PID.11.3, PID.11.4, PID.11.5, PID.11.6), $ind1)"/>
 		</xsl:for-each>
-		<xsl:value-of select="util:element('Patient Death  Date and Time',util:format-time(.//PID.29.1), $ind1)"/>
+		<xsl:value-of select="util:element('Patient Death  Date and Time',util:format-time(.//PID.29), $ind1)"/>
 		<xsl:value-of select="util:last-element('Patient Death Indicator',util:protection-indicator(.//PID.30), $ind1, $vertical-orientation, false())"/>
 	</xsl:template>
 	<xsl:template match="PID" mode="JDI">
@@ -269,15 +268,18 @@
 		<xsl:value-of select="util:elements($ind1)"/>
 		<xsl:value-of select="util:element('Patient Name', concat(util:format-with-space(.//PID.5.2), util:format-with-space(.//PID.5.3),.//PID.5.1.1), $ind1)"/>
 		<xsl:value-of select="util:element('ID Number', concat(util:format-with-space(.//PID.3.1[1]), .//PID.3.1[2]), $ind1)"/>
-		<xsl:value-of select="util:element('Date/Time of Birth',util:format-date(.//PID.7.1), $ind1)"/>
+		<xsl:value-of select="util:element('Date/Time of Birth',util:format-date(.//PID.7), $ind1)"/>
 		<xsl:value-of select="util:element('Administrative Sex', util:admin-sex(.//PID.8), $ind1)"/>
+		<xsl:for-each select="PID.10">
 		<xsl:value-of select="util:element('Race', .//PID.10.2, $ind1)"/>
+
+</xsl:for-each>
 		<xsl:value-of select="util:element('Marital Status', .//PID.16.2, $ind1)"/>
 		<xsl:value-of select="util:element('Ethnic Group', .//PID.16.2, $ind1)"/>
 		<xsl:for-each select="PID.11">
 			<xsl:value-of select="util:element(concat('Patient Address', ' ', util:blank-if-1(position(), count(..//PID.11))), util:format-address(PID.11.1/PID.11.1.1, PID.11.3, PID.11.4, PID.11.5, PID.11.6), $ind1)"/>
 		</xsl:for-each>
-		<xsl:value-of select="util:element('Patient Death  Date and Time',util:format-time(.//PID.29.1), $ind1)"/>
+		<xsl:value-of select="util:element('Patient Death  Date and Time',util:format-time(.//PID.29), $ind1)"/>
 		<xsl:value-of select="util:last-element('Patient Death Indicator',util:protection-indicator(.//PID.30), $ind1, $vertical-orientation, false())"/>
 	</xsl:template>
 	<xsl:template match="PID" mode="CCOD">
@@ -287,7 +289,7 @@
 		<xsl:value-of select="util:elements($ind1)"/>
 		<xsl:value-of select="util:element('Patient Name', concat(util:format-with-space(.//PID.5.2), util:format-with-space(.//PID.5.3),.//PID.5.1.1), $ind1)"/>
 		<xsl:value-of select="util:element('ID Number', concat(util:format-with-space(.//PID.3.1[1]), .//PID.3.1[2]), $ind1)"/>
-		<xsl:value-of select="util:element('Patient Death  Date and Time',util:format-time(.//PID.29.1), $ind1)"/>
+		<xsl:value-of select="util:element('Patient Death  Date and Time',util:format-time(.//PID.29), $ind1)"/>
 		<xsl:value-of select="util:last-element('Patient Death Indicator',util:protection-indicator(.//PID.30), $ind1, $vertical-orientation, false())"/>
 	</xsl:template>
 	<!-- - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -->
@@ -317,7 +319,8 @@
 		<xsl:value-of select="util:title('title', concat('Patient Death And Autopsy Information ', $counter), 'Patient Death And Autopsy Information ', $ind1, false(), $vertical-orientation, false())"/>
 		<xsl:value-of select="util:elements($ind1)"/>
 		<xsl:value-of select="util:element('Death Location', .//PDA.2.9, $ind1)"/>
-		<xsl:value-of select="util:element('Autopsy Indicator', util:protection-indicator(.//PDA.6), $ind1)"/>
+		<xsl:value-of select="util:last-element('Autopsy Indicator', util:protection-indicator(.//PDA.6), $ind1, $vertical-orientation, false())"/>
+
 	</xsl:template>
 	<xsl:template match="PDA" mode="CCOD"/>
 	<!-- - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -->
@@ -328,13 +331,55 @@
 	<!-- - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -->
 	<!-- - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -->
 	<xsl:template match="OBX" mode="PSDI">
-		<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5, $ind1)"/>
+		<xsl:variable name="OBX-2" select=".//OBX.2"/>
+		<xsl:choose>
+			<xsl:when test="$OBX-2 = 'CWE'">
+				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+			</xsl:when>
+			<xsl:when test="$OBX-2 = 'CE'">
+				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+			</xsl:when>
+			<xsl:when test="$OBX-2 = 'DTM'">
+				<xsl:value-of select="util:element(.//OBX.3.2,util:format-time(.//OBX.5.1), $ind1)"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5, $ind1)"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	<xsl:template match="OBX" mode="JDI">
-		<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5, $ind1)"/>
+		<xsl:variable name="OBX-2" select=".//OBX.2"/>
+		<xsl:choose>
+			<xsl:when test="$OBX-2 = 'CWE'">
+				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+			</xsl:when>
+			<xsl:when test="$OBX-2 = 'CE'">
+				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+			</xsl:when>
+			<xsl:when test="$OBX-2 = 'DTM'">
+				<xsl:value-of select="util:element(.//OBX.3.2,util:format-time(.//OBX.5.1), $ind1)"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5, $ind1)"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	<xsl:template match="OBX" mode="CCOD">
-		<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5, $ind1)"/>
+		<xsl:variable name="OBX-2" select=".//OBX.2"/>
+		<xsl:choose>
+			<xsl:when test="$OBX-2 = 'CWE'">
+				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+			</xsl:when>
+			<xsl:when test="$OBX-2 = 'CE'">
+				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+			</xsl:when>
+			<xsl:when test="$OBX-2 = 'DTM'">
+				<xsl:value-of select="util:element(.//OBX.3.2,util:format-time(.//OBX.5.1), $ind1)"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5, $ind1)"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	<!-- - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -->
 	<!-- - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -->
@@ -766,8 +811,8 @@
 		<xsl:param name="name"/>
 		<xsl:param name="value"/>
 		<xsl:param name="ind"/>
-		<xsl:message> Processing <xsl:value-of select="$name"/>
-		</xsl:message>
+		<!--		<xsl:message> Processing <xsl:value-of select="$name"/>
+		</xsl:message>-->
 		<xsl:value-of select="util:element-with-delimiter($name, $value, ',', 2, $ind)"/>
 	</xsl:function>
 	<xsl:function xmlns:xalan="http://xml.apache.org/xslt" name="util:element-var-cols">
@@ -775,8 +820,8 @@
 		<xsl:param name="value"/>
 		<xsl:param name="cols" as="xs:integer"/>
 		<xsl:param name="ind"/>
-		<xsl:message> Processing <xsl:value-of select="$name"/>
-		</xsl:message>
+		<!--		<xsl:message> Processing <xsl:value-of select="$name"/>
+		</xsl:message>-->
 		<xsl:value-of select="util:element-with-delimiter($name, $value, ',', $cols, $ind)"/>
 	</xsl:function>
 	<xsl:function xmlns:xalan="http://xml.apache.org/xslt" name="util:last-element">
@@ -925,9 +970,9 @@
 	<xsl:function xmlns:xalan="http://xml.apache.org/xslt" name="util:blank-if-1">
 		<xsl:param name="pos"/>
 		<xsl:param name="total"/>
-		<xsl:message>
+		<!--		<xsl:message>
 			<xsl:value-of select="$total"/>
-		</xsl:message>
+		</xsl:message>-->
 		<xsl:choose>
 			<xsl:when test="$total = 1">
 			</xsl:when>
