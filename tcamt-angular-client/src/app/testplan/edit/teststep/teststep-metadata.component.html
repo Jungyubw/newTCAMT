@@ -1,0 +1,46 @@
+
+  <p-treeTable [value]="files5" [style]="{'margin-top':'50px'}">
+    <p-header>Edit TestData and TestData Categorization for NewRX message</p-header>
+    <p-column header="Name">
+      <ng-template let-node="rowData" pTemplate="body">
+        <span>{{node.data.name}}</span>
+      </ng-template>
+    </p-column>
+    <p-column header="XSDPath">
+      <ng-template let-node="rowData" pTemplate="body">
+        <span>{{node.data.path}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="size" header="Description">
+      <ng-template let-node="rowData" pTemplate="body">
+        <span>{{node.data.description}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="type" header="Cardi.">
+      <ng-template let-node="rowData" pTemplate="body">
+        <span>[{{node.data.min}}..{{node.data.max}}]</span>
+      </ng-template>
+    </p-column>
+    <p-column field="type" header="Datatype">
+      <ng-template let-node="rowData" pTemplate="body">
+        <span>{{node.data.datatype}}</span>
+      </ng-template>
+    </p-column>
+    <p-column field="type" header="TestData">
+      <ng-template let-node="rowData" pTemplate="body">
+        <div *ngIf="isLeafNode(node)">
+          <input type="text" [(ngModel)]="node.data.testdata" style="width:100%;border-width:0px 0px 1px 0px">
+        </div>
+      </ng-template>
+    </p-column>
+    <p-column field="type" header="TestData Cate.">
+      <ng-template let-node="rowData" pTemplate="body">
+        <div *ngIf="isLeafNode(node)">
+          <p-dropdown [options]="cate" [(ngModel)]="node.data.testdataCate" [style]="{'width':'100%'}" styleClass="ui-column-filter" appendTo="body"></p-dropdown>
+        </div>
+      </ng-template>
+    </p-column>
+  </p-treeTable>
+
+  <textarea pInputTextarea autoResize="autoResize" [rows]="30" [(ngModel)]="messageString" style="margin-top:50px;width:100%;"></textarea>
+  <button pButton type="button" (click)="submitMessage()" label="Submit"></button>

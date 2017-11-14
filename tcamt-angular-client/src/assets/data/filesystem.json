@@ -1,0 +1,1286 @@
+{
+  "data":
+  [
+    {
+      "data":{
+        "path":"Message",
+        "name":"Message",
+        "description" :"",
+        "datatype":"MessageType",
+        "min": 1,
+        "max": "1"
+      },
+      "children":[
+        {
+          "data":{
+            "path":"Message/Header",
+            "name":"Header",
+            "description" :"UIB-070-1",
+            "datatype":"HeaderType",
+            "min": 1,
+            "max": "1"
+          },
+          "children":[
+            {
+              "data":{
+                "path":"Message/Header/To",
+                "name":"To",
+                "description" :"",
+                "datatype":"MailAddressType",
+                "min": 1,
+                "max": "1"
+              },
+              "children":[
+                {
+                  "data": {
+                    "path": "Message/Header/To/@Qualifier",
+                    "name":"@Qualifier",
+                    "description": "UIB-070-2",
+                    "datatype": "xs:string",
+                    "min": 0,
+                    "max": "1"
+                  }
+                }
+              ]
+            },
+            {
+              "data":{
+                "path":"Message/Header/From",
+                "name":"From",
+                "description" :"",
+                "datatype":"MailAddressType",
+                "min": 1,
+                "max": "1"
+              },
+              "children":[
+                {
+                  "data": {
+                    "path": "Message/Header/From/@Qualifier",
+                    "name":"@Qualifier",
+                    "description": "UIB-060-2",
+                    "datatype": "xs:string",
+                    "min": 0,
+                    "max": "1"
+                  }
+                }
+              ]
+            },
+            {
+              "data": {
+                "path": "Message/Header/MessageID",
+                "name":"MessageID",
+                "description": "UIB-030-1",
+                "datatype": "an..35M",
+                "min": 1,
+                "max": "1"
+              }
+            },
+            {
+              "data": {
+                "path": "Message/Header/SentTime",
+                "name":"SentTime",
+                "description": "UIB-080",
+                "datatype": "UtcDateType",
+                "min": 1,
+                "max": "1"
+              }
+            },
+            {
+              "data": {
+                "path": "Message/Header/Security",
+                "name":"Security",
+                "description": "",
+                "datatype": "SecurityType",
+                "min": 0,
+                "max": "1"
+              }
+            },
+            {
+              "data": {
+                "path": "Message/Header/Mailbox",
+                "name":"Mailbox",
+                "description": "",
+                "datatype": "MailboxType",
+                "min": 0,
+                "max": "1"
+              }
+            },
+            {
+              "data": {
+                "path": "Message/Header/TestMessage",
+                "name":"TestMessage",
+                "description": "UIB-100",
+                "datatype": "n1",
+                "min": 0,
+                "max": "1"
+              }
+            },
+            {
+              "data": {
+                "path": "Message/Header/RxReferenceNumber",
+                "name":"RxReferenceNumber",
+                "description": "Trading Partner Defined UIH-020 or UIB-030-2",
+                "datatype": "an..35",
+                "min": 0,
+                "max": "1"
+              }
+            },
+            {
+              "data": {
+                "path": "Message/Header/TertiaryIdentifier",
+                "name":"TertiaryIdentifier",
+                "description": "Trading Partner Defined UIB-030-3",
+                "datatype": "an..35",
+                "min": 0,
+                "max": "1"
+              }
+            },
+            {
+              "data": {
+                "path": "Message/Header/PrescriberOrderNumber",
+                "name":"PrescriberOrderNumber",
+                "description": "Trading Partner Defined UIH-030-1 or UIH-020",
+                "datatype": "an..35",
+                "min": 0,
+                "max": "1"
+              }
+            }
+          ]
+        },
+        {
+          "data": {
+            "path": "Message/Body",
+            "name": "Body",
+            "description": "",
+            "datatype": "BodyType",
+            "min": 1,
+            "max": "1"
+          },
+          "children":[
+            {
+              "data": {
+                "path": "Message/Body/NewRx",
+                "name": "NewRx",
+                "description": "",
+                "datatype": "NewRx",
+                "min": 1,
+                "max": "1"
+              },
+              "children":[
+                {
+                  "data": {
+                    "path": "Message/Body/NewRx/Request",
+                    "name": "Request",
+                    "description": "REQ",
+                    "datatype": "NewRxRequestType",
+                    "min": 0,
+                    "max": "1"
+                  },
+                  "children":[
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Request/ChangeRequestType",
+                        "name": "ChangeRequestType",
+                        "description": "REQ-010",
+                        "datatype": "xs:string",
+                        "min": 0,
+                        "max": "1"
+                      }
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Request/ReturnReceipt",
+                        "name": "ReturnReceipt",
+                        "description": "REQ-020",
+                        "datatype": "an..3",
+                        "min": 0,
+                        "max": "1"
+                      }
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Request/RequestReferenceNumber",
+                        "name": "RequestReferenceNumber",
+                        "description": "REQ-030",
+                        "datatype": "an..35",
+                        "min": 0,
+                        "max": "1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "data": {
+                    "path": "Message/Body/NewRx/Pharmacy",
+                    "name": "Pharmacy",
+                    "description": "PVD-P2",
+                    "datatype": "MandatoryPharmacyType",
+                    "min": 0,
+                    "max": "1"
+                  },
+                  "children":[
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Pharmacy/Identification",
+                        "name": "Identification",
+                        "description": "PVD-020 On the mandatory transactions: One occurrence must contain the value “D3” (NCPDP Provider ID Number). One occurrence must contain the value “HPI” (National Provider ID).",
+                        "datatype": "MandatoryProviderIDType",
+                        "min": 1,
+                        "max": "1",
+                        "choiceMin" : 1,
+                        "choiceMax" : 3
+                      },
+                      "children":[
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/NCPDPID",
+                            "name": "NCPDPID",
+                            "description": "D3",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/FileID",
+                            "name": "FileID",
+                            "description": "94",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/StateLicenseNumber",
+                            "name": "StateLicenseNumber",
+                            "description": "0B",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/MedicareNumber",
+                            "name": "MedicareNumber",
+                            "description": "1C",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/MedicaidNumber",
+                            "name": "MedicareNumber",
+                            "description": "1D",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/DentistLicenseNumber",
+                            "name": "DentistLicenseNumber",
+                            "description": "1E",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/UPIN",
+                            "name": "UPIN",
+                            "description": "1G",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/FacilityID",
+                            "name": "FacilityID",
+                            "description": "1J",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/PPONumber",
+                            "name": "PPONumber",
+                            "description": "1M",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/PayerID",
+                            "name": "PayerID",
+                            "description": "2U",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/ProcessorIdentificationNumber",
+                            "name": "ProcessorIdentificationNumber",
+                            "description": "ADI",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/BINLocationNumber",
+                            "name": "BINLocationNumber",
+                            "description": "BO",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/Commercial",
+                            "name": "Commercial",
+                            "description": "C1",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/MedicalRecordIdentificationNumberEHR",
+                            "name": "MedicalRecordIdentificationNumberEHR",
+                            "description": "EA",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/PatientAccountNumber",
+                            "name": "PatientAccountNumber",
+                            "description": "EJ",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/DEANumber",
+                            "name": "DEANumber",
+                            "description": "DH",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/HIN",
+                            "name": "HIN",
+                            "description": "HI",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/IndividualPolicyNumber",
+                            "name": "IndividualPolicyNumber",
+                            "description": "IP",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/SecondaryCoverage",
+                            "name": "SecondaryCoverage",
+                            "description": "NC",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/NAICCode",
+                            "name": "NAICCode",
+                            "description": "NF",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/PromotionNumber",
+                            "name": "PromotionNumber",
+                            "description": "PD",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/SocialSecurity",
+                            "name": "SocialSecurity",
+                            "description": "SY",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/NPI",
+                            "name": "NPI",
+                            "description": "HPI",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/PriorAuthorization",
+                            "name": "PriorAuthorization",
+                            "description": "G1",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Identification/MutuallyDefined",
+                            "name": "MutuallyDefined",
+                            "description": "ZZ",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Pharmacy/Specialty",
+                        "name": "Specialty",
+                        "description": "PVD-040 Value A",
+                        "datatype": "an..10",
+                        "min": 0,
+                        "max": "1"
+                      }
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Pharmacy/Pharmacist",
+                        "name": "Pharmacist",
+                        "description": "PVD-050",
+                        "datatype": "NameType",
+                        "min": 0,
+                        "max": "1"
+                      },
+                      "children":[
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Pharmacist/LastName",
+                            "name": "LastName",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Pharmacist/FirstName",
+                            "name": "FirstName",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Pharmacist/MiddleName",
+                            "name": "MiddleName",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Pharmacist/Suffix",
+                            "name": "Suffix",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },{
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Pharmacist/Prefix",
+                            "name": "Prefix",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Pharmacy/StoreName",
+                        "name": "StoreName",
+                        "description": "PVD-070",
+                        "datatype": "an..35M",
+                        "min": 1,
+                        "max": "1"
+                      }
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Pharmacy/Address",
+                        "name": "Address",
+                        "description": "PVD-080",
+                        "datatype": "AddressType",
+                        "min": 0,
+                        "max": "1"
+                      },
+                      "children":[
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/AddressLine1",
+                            "name": "AddressLine1",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/AddressLine2",
+                            "name": "AddressLine2",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/City",
+                            "name": "City",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/State",
+                            "name": "State",
+                            "description": "",
+                            "datatype": "StateCodes",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/ZipCode",
+                            "name": "ZipCode",
+                            "description": "",
+                            "datatype": "xs:string",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/PlaceLocationQualifier",
+                            "name": "PlaceLocationQualifier",
+                            "description": "",
+                            "datatype": "an..3",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Pharmacy/CommunicationNumbers",
+                        "name": "CommunicationNumbers",
+                        "description": "PVD-090 or PTT-070 or COO-150",
+                        "datatype": "CommunicationNumbersType",
+                        "min": 1,
+                        "max": "1"
+                      },
+                      "children":[
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/CommunicationNumbers/Communication",
+                            "name": "Communication",
+                            "description": "One Occurance Must Contain the Qualifier TE for Telephone",
+                            "datatype": "CommunicationType",
+                            "min": 1,
+                            "max": "*"
+                          },
+                          "children":[
+                            {
+                              "data": {
+                                "path": "Message/Body/NewRx/Pharmacy/CommunicationNumbers/Communication/Number",
+                                "name": "Number",
+                                "description": "",
+                                "datatype": "an..80M",
+                                "min": 1,
+                                "max": "1"
+                              }
+                            },
+                            {
+                              "data": {
+                                "path": "Message/Body/NewRx/Pharmacy/CommunicationNumbers/Communication/Qualifier",
+                                "name": "Qualifier",
+                                "description": "",
+                                "datatype": "xs:string",
+                                "min": 1,
+                                "max": "1"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "data": {
+                    "path": "Message/Body/NewRx/Prescriber",
+                    "name": "Prescriber",
+                    "description": "PVD-PC",
+                    "datatype": "MandatoryPrescriberType",
+                    "min": 1,
+                    "max": "1"
+                  },
+                  "children":[
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Prescriber/Identification",
+                        "name": "Identification",
+                        "description": "PVD-020 If the prescriber has an NPI, one occurrence must contain the value “HPI” (NPI). If the prescriber has a DEA number, one occurrence must contain the value “DH” (DEA Number). Not every entity allowed to prescribe may have an NPI or DEA. If this is the case, the other identifiers can be used.",
+                        "datatype": "MandatoryPrescriberType",
+                        "min": 1,
+                        "max": "1",
+                        "choiceMin" : 1,
+                        "choiceMax" : 3
+                      },
+                      "children":[
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/NCPDPID",
+                            "name": "NCPDPID",
+                            "description": "D3",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/FileID",
+                            "name": "FileID",
+                            "description": "94",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/StateLicenseNumber",
+                            "name": "StateLicenseNumber",
+                            "description": "0B",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/MedicareNumber",
+                            "name": "MedicareNumber",
+                            "description": "1C",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/MedicaidNumber",
+                            "name": "MedicareNumber",
+                            "description": "1D",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/DentistLicenseNumber",
+                            "name": "DentistLicenseNumber",
+                            "description": "1E",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/UPIN",
+                            "name": "UPIN",
+                            "description": "1G",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/FacilityID",
+                            "name": "FacilityID",
+                            "description": "1J",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/PPONumber",
+                            "name": "PPONumber",
+                            "description": "1M",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/PayerID",
+                            "name": "PayerID",
+                            "description": "2U",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/ProcessorIdentificationNumber",
+                            "name": "ProcessorIdentificationNumber",
+                            "description": "ADI",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/BINLocationNumber",
+                            "name": "BINLocationNumber",
+                            "description": "BO",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/Commercial",
+                            "name": "Commercial",
+                            "description": "C1",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/MedicalRecordIdentificationNumberEHR",
+                            "name": "MedicalRecordIdentificationNumberEHR",
+                            "description": "EA",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/PatientAccountNumber",
+                            "name": "PatientAccountNumber",
+                            "description": "EJ",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/DEANumber",
+                            "name": "DEANumber",
+                            "description": "DH",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/HIN",
+                            "name": "HIN",
+                            "description": "HI",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/IndividualPolicyNumber",
+                            "name": "IndividualPolicyNumber",
+                            "description": "IP",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/SecondaryCoverage",
+                            "name": "SecondaryCoverage",
+                            "description": "NC",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/NAICCode",
+                            "name": "NAICCode",
+                            "description": "NF",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/PromotionNumber",
+                            "name": "PromotionNumber",
+                            "description": "PD",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/SocialSecurity",
+                            "name": "SocialSecurity",
+                            "description": "SY",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/NPI",
+                            "name": "NPI",
+                            "description": "HPI",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/PriorAuthorization",
+                            "name": "PriorAuthorization",
+                            "description": "G1",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Identification/MutuallyDefined",
+                            "name": "MutuallyDefined",
+                            "description": "ZZ",
+                            "datatype": "an..35M",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Prescriber/Specialty",
+                        "name": "Specialty",
+                        "description": "PVD-040, Value \"A\" for the NUCC taxonomy list",
+                        "datatype": "an..10",
+                        "min": 0,
+                        "max": "1"
+                      }
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Prescriber/ClinicName",
+                        "name": "ClinicName",
+                        "description": "PVD-070",
+                        "datatype": "an..35",
+                        "min": 0,
+                        "max": "1"
+                      }
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Prescriber/Name",
+                        "name": "Name",
+                        "description": "PVD-050",
+                        "datatype": "MandatoryNameType",
+                        "min": 1,
+                        "max": "1"
+                      },
+                      "children":[
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Name/LastName",
+                            "name": "LastName",
+                            "description": "",
+                            "datatype": "an..35M",
+                            "min": 1,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Name/FirstName",
+                            "name": "FirstName",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Name/MiddleName",
+                            "name": "MiddleName",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Name/Suffix",
+                            "name": "Suffix",
+                            "description": "",
+                            "datatype": "an..10",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },{
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/Name/Prefix",
+                            "name": "Prefix",
+                            "description": "",
+                            "datatype": "an..10",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Prescriber/Address",
+                        "name": "Name",
+                        "description": "PVD-080",
+                        "datatype": "MandatoryAddressType",
+                        "min": 1,
+                        "max": "1"
+                      },
+                      "children":[
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/AddressLine1",
+                            "name": "AddressLine1",
+                            "description": "",
+                            "datatype": "an..35M",
+                            "min": 1,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/AddressLine2",
+                            "name": "AddressLine2",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/City",
+                            "name": "City",
+                            "description": "",
+                            "datatype": "an..35M",
+                            "min": 1,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/State",
+                            "name": "State",
+                            "description": "",
+                            "datatype": "StateCodes",
+                            "min": 1,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/ZipCode",
+                            "name": "ZipCode",
+                            "description": "",
+                            "datatype": "xs:string",
+                            "min": 1,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Address/PlaceLocationQualifier",
+                            "name": "PlaceLocationQualifier",
+                            "description": "",
+                            "datatype": "an..3",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Prescriber/CommunicationNumbers",
+                        "name": "CommunicationNumbers",
+                        "description": "PVD-090 or PTT-070 or COO-150",
+                        "datatype": "CommunicationNumbersType",
+                        "min": 1,
+                        "max": "1"
+                      },
+                      "children":[
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Prescriber/CommunicationNumbers/Communication",
+                            "name": "Communication",
+                            "description": "One Occurance Must Contain the Qualifier TE for Telephone",
+                            "datatype": "CommunicationType",
+                            "min": 1,
+                            "max": "*"
+                          },
+                          "children":[
+                            {
+                              "data": {
+                                "path": "Message/Body/NewRx/Prescriber/CommunicationNumbers/Communication/Number",
+                                "name": "Number",
+                                "description": "",
+                                "datatype": "an..80M",
+                                "min": 1,
+                                "max": "1"
+                              }
+                            },
+                            {
+                              "data": {
+                                "path": "Message/Body/NewRx/Prescriber/CommunicationNumbers/Communication/Qualifier",
+                                "name": "Qualifier",
+                                "description": "",
+                                "datatype": "xs:string",
+                                "min": 1,
+                                "max": "1"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "data": {
+                        "path": "Message/Body/NewRx/Prescriber/PrescriberAgent",
+                        "name": "PrescriberAgent",
+                        "description": "PVD-100",
+                        "datatype": "NameType",
+                        "min": 0,
+                        "max": "1"
+                      },
+                      "children":[
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Pharmacist/LastName",
+                            "name": "LastName",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Pharmacist/FirstName",
+                            "name": "FirstName",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Pharmacist/MiddleName",
+                            "name": "MiddleName",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },
+                        {
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Pharmacist/Suffix",
+                            "name": "Suffix",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        },{
+                          "data": {
+                            "path": "Message/Body/NewRx/Pharmacy/Pharmacist/Prefix",
+                            "name": "Prefix",
+                            "description": "",
+                            "datatype": "an..35",
+                            "min": 0,
+                            "max": "1"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "data": {
+                    "path": "Message/Body/NewRx/Supervisor",
+                    "name": "Supervisor",
+                    "description": "PVD-SU",
+                    "datatype": "MandatorySupervisorType",
+                    "min": 0,
+                    "max": "1"
+                  }
+                },
+                {
+                  "data": {
+                    "path": "Message/Body/NewRx/Facility",
+                    "name": "Facility",
+                    "description": "PVD-SK",
+                    "datatype": "MandatoryFaciltyType",
+                    "min": 0,
+                    "max": "1"
+                  }
+                },
+                {
+                  "data": {
+                    "path": "Message/Body/NewRx/Patient",
+                    "name": "Patient",
+                    "description": "PTT",
+                    "datatype": "PatientType",
+                    "min": 1,
+                    "max": "1"
+                  }
+                },
+                {
+                  "data": {
+                    "path": "Message/Body/NewRx/MedicationPrescribed",
+                    "name": "MedicationPrescribed",
+                    "description": "DRU-P",
+                    "datatype": "NewRxPrescribedMedicationType",
+                    "min": 1,
+                    "max": "1"
+                  }
+                },
+                {
+                  "data": {
+                    "path": "Message/Body/NewRx/Observation",
+                    "name": "Observation",
+                    "description": "",
+                    "datatype": "Observation",
+                    "min": 0,
+                    "max": "1"
+                  }
+                },
+                {
+                  "data": {
+                    "path": "Message/Body/NewRx/BenefitsCoordination",
+                    "name": "BenefitsCoordination",
+                    "description": "",
+                    "datatype": "BenefitsCoordinationType",
+                    "min": 0,
+                    "max": "3"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+<div class="layout-wrapper">
+  <div id="layout-topbar">
+    <a href="#" class="menu-button" (click)="onMenuButtonClick($event)">
+      <i class="fa fa-bars"></i>
+    </a>
+
+    <a href="#" class="logo" [routerLink]="['/']">
+      <img alt="logo" src="assets/images/NISTLogo.png" />
+    </a>
+
+    <ul class="topbar-menu">
+      <li>
+        <a href="#" [routerLink]="['/testplan']">TEST PLANS</a>
+      </li>
+      <li>
+        <a href="#" [routerLink]="['/profiles']">PROFILES</a>
+      </li>
+      <li>
+        <a [routerLink]="['/support']">SUPPORT</a>
+      </li>
+    </ul>
+  </div>
+      <router-outlet></router-outlet>
+</div>
