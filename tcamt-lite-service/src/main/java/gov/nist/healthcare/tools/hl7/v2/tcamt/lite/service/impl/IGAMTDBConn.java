@@ -160,7 +160,7 @@ public class IGAMTDBConn {
     segments.setType(p.getSegmentLibrary().getType());
     for (SegmentLink link : p.getSegmentLibrary().getChildren()) {
       Segment seg = this.findSegmentById(link.getId());
-      seg = this.generateDynamicMappingDefinition(seg, datatypes, tables);
+//      seg = this.generateDynamicMappingDefinition(seg, datatypes, tables);
       segments.addSegment(seg);
     }
     tcamtProfile.setSegments(segments);
