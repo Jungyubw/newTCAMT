@@ -312,9 +312,9 @@
 		<xsl:value-of select="util:element('Death Location', .//PDA.2.9, $ind1)"/>
 		<xsl:value-of select="util:element('Death Certificate Signed Date/Time', util:format-time(.//PDA.4), $ind1)"/>
 		<xsl:value-of select="util:element('Death Certified By', concat(util:format-with-space(.//PDA.5.3), util:format-with-space(.//PDA.5.2.1)), $ind1)"/>
-		<xsl:value-of select="util:element('Autopsy Indicator', util:protection-indicator(.//PDA.6), $ind1)"/>
+		<xsl:value-of select="util:element('Autopsy Indicator', util:protection-indicator(normalize-space(.//PDA.6)), $ind1)"/>
 		<xsl:value-of select="util:element('Autopsy Performed By', concat(util:format-with-space(.//PDA.8.6), util:format-with-space(.//PDA.8.3),.//PDA.8.2.1), $ind1)"/>
-		<xsl:value-of select="util:last-element('Coroner Indicator',util:protection-indicator(.//PDA.9), $ind1, $vertical-orientation, false())"/>
+		<xsl:value-of select="util:last-element('Coroner Indicator',util:protection-indicator(normalize-space(.//PDA.9)), $ind1, $vertical-orientation, false())"/>
 	</xsl:template>
 	<xsl:template match="PDA" mode="JDI">
 		<xsl:param name="vertical-orientation" as="xs:boolean"/>
@@ -322,7 +322,7 @@
 		<xsl:value-of select="util:title('title', concat('Patient Death And Autopsy Information ', $counter), 'Patient Death And Autopsy Information ', $ind1, false(), $vertical-orientation, false())"/>
 		<xsl:value-of select="util:elements($ind1)"/>
 		<xsl:value-of select="util:element('Death Location', .//PDA.2.9, $ind1)"/>
-		<xsl:value-of select="util:last-element('Autopsy Indicator', util:protection-indicator(.//PDA.6), $ind1, $vertical-orientation, false())"/>
+		<xsl:value-of select="util:last-element('Autopsy Indicator', util:protection-indicator(normalize-space(.//PDA.6)), $ind1, $vertical-orientation, false())"/>
 	</xsl:template>
 	<xsl:template match="PDA" mode="CCOD"/>
 	<!-- - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - -->
