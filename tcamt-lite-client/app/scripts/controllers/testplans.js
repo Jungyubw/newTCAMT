@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce,Notification) {
+angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce,Notification,PreferenceService) {
 	$scope.loading = false;
 	$scope.selectedTestCaseTab = 0;
     $scope.selectedTestStepTab = {};
@@ -14,6 +14,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			name:""
 	};
 
+	$scope.context="free";
 	$scope.hideOrShowToc = function (){
         $scope.hideToc = !$scope.hideToc;
 	};
@@ -270,12 +271,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.privateProfiles = $rootScope.privateProfiles;
 		$scope.publicProfiles = $rootScope.publicProfiles;
 
+
 		$scope.createNewTestPlan = function() {
 			var changes = angular.toJson([]);
 			var data = angular.fromJson({"changes": changes, "tp": $scope.newTestPlan});
 			$http.post('api/testplans/save', data).then(function (response) {
 				var saveResponse = angular.fromJson(response.data);
                 $rootScope.isChanged=false;
+
 
 			}, function (error) {
 			});
@@ -549,8 +552,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         $scope.loadTemplate();
 		$scope.getScrollbarWidth();
         $scope.loadTestStoryConfigs();
+        $scope.loadPreference();
 	};
 
+	$scope.loadPreference=function () {
+        PreferenceService.find().then(function (response) {
+        	$rootScope.preference=response.data;
+        	console.log(PreferenceService);
+		});
+    };
     $scope.loadTestStoryConfigs = function () {
         var delay = $q.defer();
 
@@ -1050,6 +1060,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                 $scope.editor.on("change", function () {
                     $rootScope.selectedTestStep.er7Message = $scope.editor.getValue();
                     //$scope.recordChanged($rootScope.selectedTestStep);
+
+
                 });
 			}
 
@@ -1170,6 +1182,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                         $rootScope.selectedTestPlan.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
                     }
 
+
                     for(i in $rootScope.selectedTestPlan.children){
                         if($rootScope.selectedTestPlan.children[i].type == 'testcasegroup'){
                             $scope.updateTestGroupTestStoryConfig($rootScope.selectedTestPlan.children[i]);
@@ -1184,7 +1197,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                     $rootScope.isChanged=false;
 
 
-                    console.log(JSON.stringify($rootScope.selectedTestPlan.listOfIntegrationProfileIds));
                 }, 100);
             }, function (error) {
                 $scope.error = error.data;
@@ -1432,6 +1444,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.recordChanged = function (obj) {
+		console.log("Called");
 
 		if(obj){
             $rootScope.isChanged = true;
@@ -1439,6 +1452,24 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $rootScope.changesMap[obj.id] = true;
 		}
 	};
+    $rootScope.fixNull=function (string) {
+    	console.log("called")
+        if(string==undefined||string==null){
+    		console.log("Undefined");
+    		string="x";
+		}
+
+    };
+    $rootScope.froalaChange=function (attribute, parent) {
+		if(attribute==undefined||attribute==null||attribute===""){
+
+        }else{
+
+            $rootScope.isChanged = true;
+            $rootScope.changesMap[parent.id] = true;
+        }
+    };
+
     $scope.recordChangeForGroup = function (ids,obj) {
         var changed=angular.copy(JSON.stringify(ids));
 

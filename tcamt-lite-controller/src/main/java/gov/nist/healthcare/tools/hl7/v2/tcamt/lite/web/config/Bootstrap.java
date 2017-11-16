@@ -74,8 +74,8 @@ public class Bootstrap implements InitializingBean {
     // updateHL7Version();
     // updateLongIDforTestPlan();
     //
-    updateMessageTemplates();
-    resetIGAMTProfile();
+//	  updateMessageTemplates();
+//	  resetIGAMTProfile();
   }
 
   private void updateMessageTemplates() {
