@@ -20,11 +20,8 @@ angular.module('tcl').factory('loginTestingToolSvc',
             console.log($rootScope.selectedTestPlan);
 
             $http.post('api/testplans/pushRB/'+testplanId+'/'+scope,host,{headers:httpHeaders}).then(function (re) {
-
-
                 delay.resolve(re);
 
-                console.log("SUCCESS")
 
             }, function(error){
                 console.log("ERROR");

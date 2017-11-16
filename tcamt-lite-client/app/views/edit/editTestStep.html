@@ -134,7 +134,7 @@ body {
 											</span>
 										</uib-accordion-heading>
 										<div class="col-md-12">
-											<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestStep)" name="teststorydesc" ng-model="selectedTestStep.testStoryContent[entry.id]"></textarea>
+											<textarea froala="froalaEditorOptions" ng-change="froalaChange(selectedTestStep.testStoryContent[entry.id],selectedTestStep)" name="teststorydesc" ng-model="selectedTestStep.testStoryContent[entry.id]"></textarea>
 										</div>
 									</uib-accordion-group>
 								</uib-accordion>
@@ -152,7 +152,6 @@ body {
 							</div>
 							<div class="col-md-12">
 								<textarea rows="10" type="cb" class="form-control" id="er7-textarea"
-							  		ng-change="recordChanged(selectedTestStep)"
 							  		ng-model="selectedTestStep.er7Message"
 							  		wrap="off" style="overflow:auto;"/>
 							</div>
@@ -353,17 +352,35 @@ body {
 					</md-tab>
 					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestStepTab(4);" label="Validation">
 						<md-content class="md-padding">
-							<div class="row">
-								<span class="pull-right">
-									<div class="btn-group" data-toggle="buttons">
-										<label class="btn btn-primary " ng-click="validate('free')" ng-class="{'active':context === 'free'}">
-											<input type="radio">Context Free</input>
-										</label>
-										<label class="btn btn-primary " ng-click="validate('based')" ng-class="{'active':context === 'based'}">
-											<input type="radio">Context Based</input>
-										</label>
-									</div>
-								</span>
+							<div layout="row">
+								<md-radio-group ng-model="context" style="margin-top: 11px;">
+									<md-radio-button ng-value="'free'" class="md-primary" style="display: inline-block; margin-right: 9px;">
+									Context Free
+
+									</md-radio-button>
+									<md-radio-button ng-value="'based'" class="md-primary" style="display: inline-block">
+										Context Based
+
+									</md-radio-button>
+								</md-radio-group>
+
+
+								<md-button class="btn btn-primary" style="margin-left: 100px;" ng-click="validate(context)">
+									Validate
+								</md-button>
+
+
+
+								<!--<span class="pull-right">-->
+									<!--<div class="btn-group" data-toggle="buttons">-->
+										<!--<label class="btn btn-primary " ng-click="validate('free')" ng-class="{'active':context === 'free'}">-->
+											<!--<input type="radio">Context Free</input>-->
+										<!--</label>-->
+										<!--<label class="btn btn-primary " ng-click="validate('based')" ng-class="{'active':context === 'based'}">-->
+											<!--<input type="radio">Context Based</input>-->
+										<!--</label>-->
+									<!--</div>-->
+								<!--</span>-->
 							</div>
 							<div class="row">
 								<div class="panel panel-warning">

@@ -74,7 +74,7 @@ body {
 							<div class="col-md-6">
 								<md-input-container style="width: 100%;">
 									<label>Integration Profiles</label>
-									<md-select multiple ng-init="print('INIT'); print(selectedTestPlan.listOfIntegrationProfileIds)" ng-model="selectedTestPlan.listOfIntegrationProfileIds" ng-change="print('CHANGED'); print(selectedTestPlan.listOfIntegrationProfileIds);recordChangeForGroup(selectedTestPlan.listOfIntegrationProfileIds,selectedTestPlan);updateListOfIntegrationAbstractProfiles();">
+									<md-select multiple ng-init="print('INIT'); print(selectedTestPlan.listOfIntegrationProfileIds)" ng-model="selectedTestPlan.listOfIntegrationProfileIds" md-on-close="print('CHANGED'); print(selectedTestPlan.listOfIntegrationProfileIds);recordChangeForGroup(selectedTestPlan.listOfIntegrationProfileIds,selectedTestPlan);updateListOfIntegrationAbstractProfiles();">
 										<md-optgroup label="IGAMT Profiles">
 											<md-option  ng-value="p.id" ng-repeat="p in igamtProfiles track by $index">{{p.metaData.name}}</md-option>
 										</md-optgroup>
@@ -197,7 +197,7 @@ body {
 					<div class="row">
 						<md-input-container style="width: 100%;">
 							<label>TestPlan Test Story Configuration</label>
-							<md-select ng-model="selectedTestPlan.testStoryConfigId" ng-change="recordChanged(selectedTestPlan);updateGlobalTestStoryConfigForTestPlan();">
+							<md-select ng-model="selectedTestPlan.testStoryConfigId" ng-change="print('top');recordChanged(selectedTestPlan);updateGlobalTestStoryConfigForTestPlan();">
 								<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>
 							</md-select>
 						</md-input-container>
@@ -210,7 +210,7 @@ body {
 									</span>
 								</uib-accordion-heading>
 								<div class="col-md-12">
-									<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestPlan)" name="teststorydesc" ng-model="selectedTestPlan.testStoryContent[entry.id]"></textarea>
+									<textarea froala="froalaEditorOptions"  ng-change="froalaChange(selectedTestPlan.testStoryContent[entry.id], selectedTestPlan)" name="teststorydesc" ng-model="selectedTestPlan.testStoryContent[entry.id]"/></textarea>
 								</div>
 							</uib-accordion-group>
 						</uib-accordion>

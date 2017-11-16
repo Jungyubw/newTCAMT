@@ -210,11 +210,11 @@ public class TestPlanController extends CommonController {
       if (account == null)
         throw new UserAccountNotFoundException();
       TestPlan tp = findTestPlan(id);
-      if (tp.getAccountId() == account.getId()) {
+      if (tp.getAccountId().equals(account.getId())) {
         testPlanService.save(testPlanService.clone(tp));
         return new ResponseMessage(ResponseMessage.Type.success, "testPlanCSuccess", null);
       } else {
-        throw new OperationNotAllowException("delete");
+        throw new OperationNotAllowException("clone");
       }
     } catch (RuntimeException e) {
       throw new TestPlanDeleteException(e);

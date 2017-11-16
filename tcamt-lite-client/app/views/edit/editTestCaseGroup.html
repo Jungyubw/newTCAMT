@@ -59,7 +59,7 @@ body {
 											</span>
 							</uib-accordion-heading>
 							<div class="col-md-12">
-								<textarea froala="froalaEditorOptions" ng-change="recordChanged(selectedTestCaseGroup)" name="teststorydesc" ng-model="selectedTestCaseGroup.testStoryContent[entry.id]"></textarea>
+								<textarea froala="froalaEditorOptions" ng-change="froalaChange(selectedTestCaseGroup.testStoryContent[entry.id],selectedTestCaseGroup)" name="teststorydesc" ng-model="selectedTestCaseGroup.testStoryContent[entry.id]"></textarea>
 							</div>
 						</uib-accordion-group>
 					</uib-accordion>

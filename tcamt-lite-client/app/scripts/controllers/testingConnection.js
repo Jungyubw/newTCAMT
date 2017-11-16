@@ -1,7 +1,7 @@
 /**
  * Created by ena3 on 3/21/17.
  */
-angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$mdDialog', 'loginTestingToolSvc', 'base64', '$http', '$q', 'Notification', 'testplan', 'mode', function ($scope, $rootScope, $mdDialog, loginTestingToolSvc, base64, $http, $q, Notification, testplan, mode) {
+angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$mdDialog', 'loginTestingToolSvc', 'base64', '$http', '$q', 'Notification', 'testplan', 'mode', 'PreferenceService',function ($scope, $rootScope, $mdDialog, loginTestingToolSvc, base64, $http, $q, Notification, testplan, mode,PreferenceService) {
     $rootScope.error = {text: undefined, show: false};
     $scope.testplan = $rootScope.selectedTestPlan;
     $scope.mode = mode;
@@ -26,25 +26,77 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
     };
 
     $scope.submit = function (testingUsername, testingPassword, testPlanScope) {
-        Notification.success({
-            message: "We are processing your request. You will be notified by e-mail once we are done",
-            delay: 2000
-        });
 
-        $mdDialog.hide('cancel');
+        $mdDialog.hide();
 
-        $rootScope.error = {text: undefined, show: false};
-        loginTestingToolSvc.pushRB($rootScope.testingUrl, testingUsername, testingPassword, testPlanScope).then(function (auth) {
+        if($rootScope.preference.hideGvtDialg!==true) {
+            $mdDialog.show({
+                controller: DialogController,
+                templateUrl: 'GVTConfirm.html',
+                parent: angular.element(document.body),
 
-            $rootScope.selectedTestPlan.gvtPresence = true;
+                locals: {
+                    preference: $rootScope.preference
+                }
 
 
-        }, function (error) {
-            console.log(error);
-            $scope.alertText = error.data != null ? error.data : "ERROR: Cannot access server.";
-            $scope.alert = true;
-        });
+            }).then(function (pref) {
+                $scope.showNotification();
+
+                if (pref.hideGvtDialg == true) {
+
+
+                    PreferenceService.save($rootScope.preference).then(function (response) {
+                        $rootScope.preference = response.data;
+                        $rootScope.error = {text: undefined, show: false};
+                        loginTestingToolSvc.pushRB($rootScope.testingUrl, testingUsername, testingPassword, testPlanScope).then(function (auth) {
+
+                        }, function (error) {
+                            console.log(error);
+                            $scope.alertText = error.data != null ? error.data : "ERROR: Cannot access server.";
+                            $scope.alert = true;
+                        });
+
+                    });
+                } else {
+                    $rootScope.error = {text: undefined, show: false};
+                    loginTestingToolSvc.pushRB($rootScope.testingUrl, testingUsername, testingPassword, testPlanScope).then(function (auth) {
+                    }, function (error) {
+                        console.log(error);
+                        $scope.alertText = error.data != null ? error.data : "ERROR: Cannot access server.";
+                        $scope.alert = true;
+                    });
+
+
+                }
+
+            });
+
+
+        }else{
+            $scope.showNotification();
+
+
+            $rootScope.error = {text: undefined, show: false};
+            loginTestingToolSvc.pushRB($rootScope.testingUrl, testingUsername, testingPassword, testPlanScope).then(function (auth) {
+
+
+            }, function (error) {
+                console.log(error);
+                $scope.alertText = error.data != null ? error.data : "ERROR: Cannot access server.";
+                $scope.alert = true;
+            });
+        }
+
+
+
+
+
+
+
+
     };
+
     $scope.login = function (username, password) {
         var delay = $q.defer();
         var httpHeaders = {};
@@ -107,6 +159,20 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
         return _.contains(user.roles, "SUPERVISOR");
 
     };
+
+   $scope.showNotification=function () {
+       Notification.success({message:"we are processing your request. You will be notfied by e-mail once the operation is completed", delay: 1000});
+   };
+
+   function DialogController($scope, $mdDialog, preference) {
+       $scope.preference=preference;
+       $scope.ok=function () {
+           $mdDialog.hide($scope.preference);
+       };
+
+
+
+   };
 
 
 }])
