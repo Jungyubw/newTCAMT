@@ -1,0 +1,64 @@
+<div id="layout-content-full">
+  <div class="content-section introductionfixed">
+    <div class="tcamt-top-padding">
+      <div class="ui-toolbar-group-left">
+        <span class="feature-title">List of Test Plans</span>
+      </div>
+      <div class="ui-toolbar-group-right">
+        <button pButton type="button" (click)="addNewTestPlan()" label="NEW" icon="fa-plus"></button>
+        <button pButton type="button" label="IMPORT JSON" icon="fa-plus"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-section implementationfixed">
+    <h3 class="first">Your Test Plans</h3>
+    <p-dataTable [value]="abstractMyTestPlans" [rows]="10" [paginator]="true" [loading]="loading" [responsive]="true" selectionMode="single" [(selection)]="selectedTestplan" (onRowSelect)="onSelectTestPlan($event)">
+      <p-column field="name" header="Name" [filter]="true" filterPlaceholder="Search by name" [sortable]="true"></p-column>
+      <p-column field="description" header="Description"></p-column>
+      <p-column field="version" header="Version"></p-column>
+      <p-column field="lastUpdateDate" header="LastUpdateDate" [sortable]="true"></p-column>
+
+      <p-column styleClass="col-button" header="Details">
+        <ng-template let-testplan="rowData" pTemplate="body">
+          <button type="button" pButton (click)="goToEditTestPlan(testplan)" icon="fa-pencil-square-o"></button>
+        </ng-template>
+      </p-column>
+    </p-dataTable>
+  </div>
+
+  <div class="content-section implementationfixed">
+    <h3 class="first">Shared Test Plans</h3>
+    <p-dataTable [value]="abstractSharedTestPlans" [rows]="10" [paginator]="true" [loading]="loading" [responsive]="true" selectionMode="single" [(selection)]="selectedTestplan" (onRowSelect)="onRowSelect($event)">
+      <p-column field="name" header="Name" [filter]="true" filterPlaceholder="Search by name" [sortable]="true"></p-column>
+      <p-column field="description" header="Description"></p-column>
+      <p-column field="version" header="Version"></p-column>
+      <p-column field="lastUpdateDate" header="LastUpdateDate" [sortable]="true"></p-column>
+    </p-dataTable>
+  </div>
+
+</div>
+
+<p-dialog header="Testplan Metadata" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="1000">
+  <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="testplan">
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-3"><label for="name">Name</label></div>
+      <div class="ui-grid-col-9">
+        <input pInputText id="name" [(ngModel)]="testplan.name" size="80" /></div>
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-3"><label for="description">Description</label></div>
+      <div class="ui-grid-col-9"><input pInputText id="description" [(ngModel)]="testplan.description" size="80" /></div>
+    </div>
+    <div class="ui-grid-row">
+      <div class="ui-grid-col-3"><label for="version">Version</label></div>
+      <div class="ui-grid-col-9"><input pInputText id="version" [(ngModel)]="testplan.version" size="80" /></div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button type="button" pButton icon="fa-close" (click)="delete()" label="Delete" class="ui-button-danger"></button>
+      <button type="button" pButton icon="fa-floppy-o" (click)="save()" label="Save"></button>
+    </div>
+  </p-footer>
+</p-dialog>

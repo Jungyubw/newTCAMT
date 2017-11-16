@@ -3791,16 +3791,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.context=mode;
 		$scope.contextValidation=mode;
 		var context=mode;
-			$scope.loadingv = true;
-			var req = {
+
+		$scope.loadingv = true;
+
+		var req = {
 		    method: 'POST',
 		    url: 'api/validation',
-		    params: { message: message, igDocumentId: igDocumentId, conformanceProfileId : conformanceProfileId , context:context}
+		    params: { igDocumentId: igDocumentId, conformanceProfileId : conformanceProfileId , context:context}
 		    ,
 		    data:{
-				constraint:cbConstraints
+				constraint:cbConstraints, message: message
 		    }
 		}
+
 		$http(req).then(function(response) {
 			var result = angular.fromJson(response.data);
 			$scope.report=$sce.trustAsHtml(result.html);

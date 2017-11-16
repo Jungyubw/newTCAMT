@@ -1,0 +1,28 @@
+<div id="layout-sidebar">
+
+
+    <div>
+        The SideBar
+    </div>
+
+        <li>
+            <a routerLink="./" routerLinkActive="active">Edit TestPlan MetaData</a>
+        </li>
+
+        <li>
+            <a routerLink="./testgroupmetadata" routerLinkActive="active">Edit TestGroup MetaData</a>
+        </li>
+
+    <li>
+        <a routerLink="./testcasemetadata" routerLinkActive="active">Edit TestCase MetaData</a>
+    </li>
+
+    <li>
+        <a routerLink="./teststepmetadata" routerLinkActive="active">Edit TestStep MetaData</a>
+    </li>
+
+</div>
+
+<div id="layout-content">
+    <router-outlet></router-outlet>
+</div>

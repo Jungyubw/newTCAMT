@@ -122,18 +122,20 @@ public class Bootstrap implements InitializingBean {
     IGAMTDBConn con = new IGAMTDBConn();
     for(String id:ids){
       IGDocument igd = con.findIGDocument(id);
-      System.out.println(igd.getScope());
-      if(igd.getScope().equals(IGDocumentScope.USER)){
-        Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
-        p.getMetaData().setName(igd.getMetaData().getTitle());
-        p.getMetaData().setDescription(igd.getMetaData().getDescription());
-        p.getMetaData().setDate(igd.getMetaData().getDate());
-        p.setSourceType("igamt");
-        p.setSegments(null);
-        p.setDatatypes(null);
-        p.setTables(null);
-        p.setAccountId(igd.getAccountId());
-        profileService.save(p); 
+      if(igd != null){
+        System.out.println(igd.getScope());
+        if(igd.getScope().equals(IGDocumentScope.USER)){
+          Profile p = con.convertIGAMT2TCAMT(igd.getProfile(), igd.getMetaData().getTitle(), igd.getId(), igd.getDateUpdated());
+          p.getMetaData().setName(igd.getMetaData().getTitle());
+          p.getMetaData().setDescription(igd.getMetaData().getDescription());
+          p.getMetaData().setDate(igd.getMetaData().getDate());
+          p.setSourceType("igamt");
+          p.setSegments(null);
+          p.setDatatypes(null);
+          p.setTables(null);
+          p.setAccountId(igd.getAccountId());
+          profileService.save(p); 
+        }        
       }
     }
   }
