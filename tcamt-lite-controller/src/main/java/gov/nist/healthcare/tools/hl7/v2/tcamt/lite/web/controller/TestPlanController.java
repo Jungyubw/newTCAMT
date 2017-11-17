@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -74,7 +75,9 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotF
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 import gov.nist.hit.resources.deploy.client.SSLHL7v2ResourceClient;
 import gov.nist.hit.resources.deploy.model.Payload;
+import gov.nist.hit.resources.deploy.model.RegistredGrant;
 import gov.nist.hit.resources.deploy.model.ResourceType;
+import gov.nist.hit.resources.deploy.model.Scope;
 
 @RestController
 @RequestMapping("/testplans")
@@ -207,11 +210,11 @@ public class TestPlanController extends CommonController {
       if (account == null)
         throw new UserAccountNotFoundException();
       TestPlan tp = findTestPlan(id);
-      if (tp.getAccountId() == account.getId()) {
+      if (tp.getAccountId().equals(account.getId())) {
         testPlanService.save(testPlanService.clone(tp));
         return new ResponseMessage(ResponseMessage.Type.success, "testPlanCSuccess", null);
       } else {
-        throw new OperationNotAllowException("delete");
+        throw new OperationNotAllowException("clone");
       }
     } catch (RuntimeException e) {
       throw new TestPlanDeleteException(e);
@@ -328,11 +331,12 @@ public class TestPlanController extends CommonController {
 
   }
 
-  @RequestMapping(value = "/pushRB/{testplanId}", method = RequestMethod.POST,
+  @RequestMapping(value = "/pushRB/{testplanId}/{scope}", method = RequestMethod.POST,
       produces = "application/json")
-  public void pushRB(@PathVariable("testplanId") String testplanId, @RequestBody String host,
+  public void pushRB(@PathVariable("testplanId") String testplanId,@PathVariable("scope") Scope scope, @RequestBody String host,
       @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
       throws Exception {
+//	  host = "http://129.6.229.97:8080/gvt/";
 
     User u = userService.getCurrentUser();
     Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
@@ -368,16 +372,16 @@ public class TestPlanController extends CommonController {
           xmlArrayIO[1].reset();
           xmlArrayIO[2].reset();
 
-          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE);
-          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET);
-          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS);
+          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE, scope);
+          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET, scope);
+          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS, scope);
         }
       }
 
 
       testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, rand);
       testPlanIO.reset();
-      client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN);
+      client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN,scope);
       DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
       tp.setGvtDate("This TestPlan was published on GVT at "
@@ -401,40 +405,40 @@ public class TestPlanController extends CommonController {
 
   @RequestMapping(value = "/createSession", method = RequestMethod.POST,
       produces = "application/json")
-  public boolean createSession(@RequestBody String host,
-      @RequestHeader("gvt-auth") String authorization) {
-    // host = "http://129.6.225.48:8080/gvt/";
+  public Set<RegistredGrant> createSession(@RequestBody String host,
+      @RequestHeader("gvt-auth") String authorization) throws Exception{
+//	  host="http://129.6.229.97:8080/gvt/";
     try {
       SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
 
       return client.validCredentials();
     } catch (Exception e) {
-      return false;
+    	throw new Exception();
     }
   }
 
-  @RequestMapping(value = "{id}/deleteFromGVT", method = RequestMethod.POST,
-      produces = "application/json")
-  public boolean deleteFromGvt(@PathVariable("id") String id, @RequestBody String host,
-      @RequestHeader("gvt-auth") String authorization) {
-    try {
-      SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
-      if (client.validCredentials()) {
-        TestPlan tp = findTestPlan(id);
-        client.delete(tp.getLongId(), ResourceType.TEST_PLAN);
-        // TODO neeed to delete
-        tp.setGvtPresence(false);
-        tp.setGvtDate("This TestPlan is not published on GVT.");
-        testPlanRepository.save(tp);
-        return true;
-      } else {
-        return false;
-      }
-
-    } catch (Exception e) {
-      return false;
-    }
-  }
+//  @RequestMapping(value = "{id}/deleteFromGVT", method = RequestMethod.POST,
+//      produces = "application/json")
+//  public boolean deleteFromGvt(@PathVariable("id") String id, @RequestBody String host,
+//      @RequestHeader("gvt-auth") String authorization) throws UserNotFoundException{
+////    try {
+////      SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
+////      if (client.validCredentials()) {
+////        TestPlan tp = findTestPlan(id);
+////        client.delete(tp.getLongId(), ResourceType.TEST_PLAN);
+////        // TODO neeed to delete
+////        tp.setGvtPresence(false);
+////        tp.setGvtDate("This TestPlan is not published on GVT.");
+////        testPlanRepository.save(tp);
+////        return true;
+////      } else {
+////        return false;
+////      }
+////
+////    } catch (Exception e) {
+////      return false;
+////    }
+//  }
 
   @RequestMapping(value = "/{tpid}/exportProfileXMLs", method = RequestMethod.POST,
       produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")

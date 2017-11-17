@@ -105,20 +105,20 @@
                             <md-option value="Isolated">Isolated</md-option>
                         </md-select>
                     </md-input-container>
-                    <!--<md-input-container style="width: 100%;">-->
-                        <!--<label>Integration Profiles</label>-->
-                        <!--<md-select ng-model="newTestPlan.listOfIntegrationProfileIds" multiple>-->
-                            <!--<md-optgroup label="IGAMT Profiles">-->
-                                <!--<md-option ng-value="p.id" ng-repeat="p in igamtProfiles">{{p.metaData.name}}</md-option>-->
-                            <!--</md-optgroup>-->
-                            <!--<md-optgroup label="Private Profiles">-->
-                                <!--<md-option ng-value="p.id" ng-repeat="p in privateProfiles">{{p.metaData.name}}</md-option>-->
-                            <!--</md-optgroup>-->
-                            <!--<md-optgroup label="Public Profiles">-->
-                                <!--<md-option ng-value="p.id" ng-repeat="p in publicProfiles">{{p.metaData.name}}</md-option>-->
-                            <!--</md-optgroup>-->
-                        <!--</md-select>-->
-                    <!--</md-input-container>-->
+                    <md-input-container style="width: 100%;">
+                        <label>Integration Profiles</label>
+                        <md-select ng-model="newTestPlan.listOfIntegrationProfileIds" multiple>
+                            <md-optgroup label="IGAMT Profiles">
+                                <md-option ng-value="p.id" ng-repeat="p in igamtProfiles">{{p.metaData.name}}</md-option>
+                            </md-optgroup>
+                            <md-optgroup label="Private Profiles">
+                                <md-option ng-value="p.id" ng-repeat="p in privateProfiles">{{p.metaData.name}}</md-option>
+                            </md-optgroup>
+                            <md-optgroup label="Public Profiles">
+                                <md-option ng-value="p.id" ng-repeat="p in publicProfiles">{{p.metaData.name}}</md-option>
+                            </md-optgroup>
+                        </md-select>
+                    </md-input-container>
                 </div>
             </md-dialog-content>
             <md-dialog-actions layout="row">
@@ -466,6 +466,30 @@
                 <md-button class="btn btn-primary btn-sm" ng-click="saveTestStoryConfig();">
                     <i class="fa fa-repeat fa-fw">&nbsp; </i> Save
                 </md-button>
+            </md-dialog-actions>
+        </form>
+    </md-dialog>
+</script>
+<script type="text/ng-template" id="GVTConfirm.html">
+    <md-dialog aria-label="Confirmation">
+        <form ng-cloak>
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2>Confirmation</h2>
+                    <span flex></span>
+                </div>
+            </md-toolbar>
+            <md-dialog-content>
+                <div class="md-dialog-content">
+                        <div class="alert alert-warning">
+                            This Opertaion may take a few minutes depending on your test plan size. you will be notified by e-mail when your test plan is available on GVT
+                        </div>
+                    <br/>
+                    <md-checkbox ng-model="preference.hideGvtDialg">Don't show this message again</md-checkbox>
+                </div>
+            </md-dialog-content>
+            <md-dialog-actions layout="row" layout-align="end end">
+                <md-button class="btn btn-primary btn-sm pull-right"  ng-click="ok()">Ok
             </md-dialog-actions>
         </form>
     </md-dialog>
