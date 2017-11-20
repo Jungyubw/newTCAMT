@@ -336,10 +336,20 @@
 		<xsl:variable name="OBX-2" select=".//OBX.2"/>
 		<xsl:choose>
 			<xsl:when test="$OBX-2 = 'CWE'">
-				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				<xsl:if test=".//OBX.5.2/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				</xsl:if>
+				<xsl:if test=".//OBX.5.9/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.9, $ind1)"/>
+				</xsl:if>
 			</xsl:when>
 			<xsl:when test="$OBX-2 = 'CE'">
-				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				<xsl:if test=".//OBX.5.2/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				</xsl:if>
+				<xsl:if test=".//OBX.5.9/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.9, $ind1)"/>
+				</xsl:if>
 			</xsl:when>
 			<xsl:when test="$OBX-2 = 'DTM'">
 				<xsl:value-of select="util:element(.//OBX.3.2,util:format-time(.//OBX.5.1), $ind1)"/>
@@ -353,10 +363,20 @@
 		<xsl:variable name="OBX-2" select=".//OBX.2"/>
 		<xsl:choose>
 			<xsl:when test="$OBX-2 = 'CWE'">
-				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				<xsl:if test=".//OBX.5.2/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				</xsl:if>
+				<xsl:if test=".//OBX.5.9/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.9, $ind1)"/>
+				</xsl:if>
 			</xsl:when>
 			<xsl:when test="$OBX-2 = 'CE'">
-				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				<xsl:if test=".//OBX.5.2/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				</xsl:if>
+				<xsl:if test=".//OBX.5.9/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.9, $ind1)"/>
+				</xsl:if>
 			</xsl:when>
 			<xsl:when test="$OBX-2 = 'DTM'">
 				<xsl:value-of select="util:element(.//OBX.3.2,util:format-time(.//OBX.5.1), $ind1)"/>
@@ -370,10 +390,20 @@
 		<xsl:variable name="OBX-2" select=".//OBX.2"/>
 		<xsl:choose>
 			<xsl:when test="$OBX-2 = 'CWE'">
-				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				<xsl:if test=".//OBX.5.2/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				</xsl:if>
+				<xsl:if test=".//OBX.5.9/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.9, $ind1)"/>
+				</xsl:if>
 			</xsl:when>
 			<xsl:when test="$OBX-2 = 'CE'">
-				<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				<xsl:if test=".//OBX.5.2/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.2, $ind1)"/>
+				</xsl:if>
+				<xsl:if test=".//OBX.5.9/text()">
+					<xsl:value-of select="util:element(.//OBX.3.2,.//OBX.5.9, $ind1)"/>
+				</xsl:if>
 			</xsl:when>
 			<xsl:when test="$OBX-2 = 'DTM'">
 				<xsl:value-of select="util:element(.//OBX.3.2,util:format-time(.//OBX.5.1), $ind1)"/>
