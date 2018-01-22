@@ -32,6 +32,7 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -109,6 +110,11 @@ public class TestPlanController extends CommonController {
   @Autowired
   private SimpleMailMessage templateMessage;
 
+  
+  @Value("${gvt.url}")
+  private String GVT_URL;
+  
+  
   /**
    * 
    * @param type
@@ -336,8 +342,7 @@ public class TestPlanController extends CommonController {
   public void pushRB(@PathVariable("testplanId") String testplanId,@PathVariable("scope") Scope scope, @RequestBody String host,
       @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
       throws Exception {
-//	  host = "http://129.6.229.97:8080/gvt/";
-
+    host = GVT_URL;
     User u = userService.getCurrentUser();
     Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 
@@ -392,7 +397,7 @@ public class TestPlanController extends CommonController {
       if (account == null) {
         throw new UserAccountNotFoundException();
       } else {
-        sendPushConfirmation(tp, account, host);
+        sendPushConfirmation(tp, account);
       }
 
     } catch (Exception e) {
@@ -408,6 +413,8 @@ public class TestPlanController extends CommonController {
   public Set<RegistredGrant> createSession(@RequestBody String host,
       @RequestHeader("gvt-auth") String authorization) throws Exception{
 //	  host="http://129.6.229.97:8080/gvt/";
+    
+    host = GVT_URL;
     try {
       SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
 
@@ -714,14 +721,14 @@ public class TestPlanController extends CommonController {
     return str.replaceAll(" ", "-");
   }
 
-  private void sendPushConfirmation(TestPlan doc, Account target, String host) {
+  private void sendPushConfirmation(TestPlan doc, Account target) {
 
     SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
 
     msg.setSubject("Your Test Plan is pushed to the GVT");
     msg.setTo(target.getEmail());
     msg.setText("Dear " + target.getUsername() + ", \n\n"
-        + "your Test Plan has been successfully pushed to GVT. Now you can test it at " + host);
+        + "your Test Plan has been successfully pushed to GVT. Now you can test it at " + this.GVT_URL);
     try {
       this.mailSender.send(msg);
 
