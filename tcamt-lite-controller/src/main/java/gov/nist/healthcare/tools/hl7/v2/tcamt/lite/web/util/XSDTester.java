@@ -43,7 +43,7 @@ public class XSDTester {
 
   private static void visit(XSModel model, XSElementDeclaration found) {
     XSTypeDefinition xSTypeDefinition = model.getTypeDefinition(found.getTypeDefinition().getName(), found.getNamespace());
-    System.out.println(xSTypeDefinition.get);
+//    System.out.println(xSTypeDefinition.get);
   }
 
 }
