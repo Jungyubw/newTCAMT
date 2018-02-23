@@ -119,8 +119,7 @@ public class IGAMTDBConn {
     Datatypes datatypes = new Datatypes();
     datatypes.setId(p.getDatatypeLibrary().getId());
     datatypes.setSectionContents(p.getDatatypeLibrary().getSectionContents());
-    datatypes.setSectionDescription(p.getDatatypeLibrary().getSectionDescription());
-    datatypes.setSectionDescription(p.getDatatypeLibrary().getSectionDescription());
+    datatypes.setSectionDescription(p.getDatatypeLibrary().getSectionContent());
     datatypes.setSectionPosition(p.getDatatypeLibrary().getSectionPosition());
     datatypes.setSectionTitle(p.getDatatypeLibrary().getSectionTitle());
     datatypes.setType(p.getDatatypeLibrary().getType());
@@ -138,7 +137,7 @@ public class IGAMTDBConn {
     tables.setOrganizationName(p.getTableLibrary().getOrganizationName());
     tables.setProfileName(p.getTableLibrary().getProfileName());
     tables.setSectionContents(p.getTableLibrary().getSectionContents());
-    tables.setSectionDescription(p.getTableLibrary().getSectionDescription());
+    tables.setSectionDescription(p.getTableLibrary().getSectionContent());
     tables.setSectionPosition(p.getTableLibrary().getSectionPosition());
     tables.setSectionTitle(p.getTableLibrary().getSectionTitle());
     tables.setStatus(p.getTableLibrary().getStatus());
@@ -154,7 +153,7 @@ public class IGAMTDBConn {
     Segments segments = new Segments();
     segments.setId(p.getSegmentLibrary().getId());
     segments.setSectionContents(p.getSegmentLibrary().getSectionContents());
-    segments.setSectionDescription(p.getSegmentLibrary().getSectionDescription());
+    segments.setSectionDescription(p.getSegmentLibrary().getSectionContent());
     segments.setSectionPosition(p.getSegmentLibrary().getSectionPosition());
     segments.setSectionTitle(p.getSegmentLibrary().getSectionTitle());
     segments.setType(p.getSegmentLibrary().getType());
