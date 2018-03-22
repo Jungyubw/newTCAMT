@@ -8,7 +8,6 @@
 	<description>tcamt-lite tool</description>
 	<packaging>pom</packaging>
 	<modules>
-		<module>tcamt-lite-resource</module>
 		<module>tcamt-lite-domain</module>
 		<module>tcamt-lite-repo</module>
 		<module>tcamt-lite-service</module>

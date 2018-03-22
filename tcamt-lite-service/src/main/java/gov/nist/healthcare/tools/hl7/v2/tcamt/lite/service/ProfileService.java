@@ -21,27 +21,21 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileDataStr;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileData;
 
 @Service
 public interface ProfileService {
 	
-	public Profile save(Profile p) throws ProfileException;
+	public ProfileData save(ProfileData data) throws Exception;
 
 	public void delete(String id);
 
-	public Profile findOne(String id);
+	public ProfileData findOne(String id);
 
-	public List<Profile> findAll();
+	public List<ProfileData> findAll();
 
-	public List<Profile> findByAccountId(Long accountId);
+	public List<ProfileData> findByAccountId(Long accountId);
 	
-	public List<Profile> findByAccountIdAndSourceType(Long accountId, String sourceType);
-
-	public Profile clone(Profile ig) throws CloneNotSupportedException;
-
-	public Profile apply(Profile ig) throws ProfileSaveException;
+	public List<ProfileData> findByAccountIdAndSourceType(Long accountId, String sourceType);
 	
-	public Profile readXML2Profile(ProfileDataStr pds) throws ProfileException;
 }
