@@ -1,53 +1,47 @@
+/**
+ * This software was developed at the National Institute of Standards and Technology by employees of
+ * the Federal Government in the course of their official duties. Pursuant to title 17 Section 105
+ * of the United States Code this software is not subject to copyright protection and is in the
+ * public domain. This is an experimental system. NIST assumes no responsibility whatsoever for its
+ * use by other parties, and makes no guarantees, expressed or implied, about its quality,
+ * reliability, or any other characteristic. We would appreciate acknowledgement if the software is
+ * used. This software can be redistributed and/or modified freely provided that any derivative
+ * works bear some notice that they are derived from it, and any modified versions bear some notice
+ * that they have been modified.
+ */
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ConformanceProfile {
+/**
+ * @author jungyubw
+ *
+ */
+public class ConformanceProfile {  
+  private ConformanceProfileMetaData conformanceProfileMetaData;
 
-  public ConformanceProfile() {
-    super();
+  private List<SegmentRefOrGroup> children;
+
+  public ConformanceProfileMetaData getConformanceProfileMetaData() {
+    return conformanceProfileMetaData;
   }
 
-  private ConformanceProfileMetaData metaData;
-
-  private Set<Datatype> datatypes;
-
-  private Set<Segment> segments;
-
-  private Set<Message> messages;
-
-  public ConformanceProfileMetaData getMetaData() {
-    return metaData;
+  public void setConformanceProfileMetaData(ConformanceProfileMetaData conformanceProfileMetaData) {
+    this.conformanceProfileMetaData = conformanceProfileMetaData;
   }
 
-  public void setMetaData(ConformanceProfileMetaData metaData) {
-    this.metaData = metaData;
+  public List<SegmentRefOrGroup> getChildren() {
+    return children;
   }
 
-  public Set<Datatype> getDatatypes() {
-    return datatypes;
+  public void setChildren(List<SegmentRefOrGroup> children) {
+    this.children = children;
   }
-
-  public void setDatatypes(Set<Datatype> datatypes) {
-    this.datatypes = datatypes;
+  
+  public void addChild(SegmentRefOrGroup seog){
+    if(this.children == null) this.children = new ArrayList<SegmentRefOrGroup>();
+    this.children.add(seog);
   }
-
-  public Set<Segment> getSegments() {
-    return segments;
-  }
-
-  public void setSegments(Set<Segment> segments) {
-    this.segments = segments;
-  }
-
-  public Set<Message> getMessages() {
-    return messages;
-  }
-
-  public void setMessages(Set<Message> messages) {
-    this.messages = messages;
-  }
-
-
 
 }

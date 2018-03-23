@@ -1,11 +1,17 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +24,7 @@ import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceProfile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanListException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
@@ -56,9 +63,14 @@ public class ProfileController extends CommonController {
         pa.setId(p.getId());
         pa.setLastUpdatedDate(p.getLastUpdatedDate());
         pa.setSourceType(p.getSourceType());
-        pa.setConformanceContextMetaData(p.getConformanceContextMetaData());
-        pa.setConformanceProfileMetaData(p.getConformanceProfileMetaData());
-        pa.setValueSetLibraryMetaData(p.getValueSetLibraryMetaData());
+        pa.setConformanceContextMetaData(p.getConformanceContext().getMetaData());
+        pa.setIntegrationProfileMetaData(p.getIntegrationProfile().getIntegrationProfileMetaData());
+        pa.setValueSetLibraryMetaData(p.getValueSetLibrary().getMetaData());
+        
+        for(ConformanceProfile cp : p.getIntegrationProfile().getConformanceProfiles()){
+          pa.addConformanceProfileMetaData(cp.getConformanceProfileMetaData());
+        }
+        
         abstractResult.add(pa);
       }
 
@@ -142,6 +154,42 @@ public class ProfileController extends CommonController {
     p.setLastUpdatedDate(new Date());
     p.setSourceType("public");
     profileService.save(p);
+  }
+  
+  @RequestMapping(value = "/downloadProfileXML/{id}", method = RequestMethod.POST, produces = "text/xml",
+      consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+  public void downloadProfileXML(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    ProfileData data = profileService.findOne(id);
+    if(data != null && data.getProfileXMLFileStr() != null){
+      InputStream content = IOUtils.toInputStream(data.getProfileXMLFileStr());
+      response.setContentType("text/html");
+      response.setHeader("Content-disposition", "attachment;filename=" + "Profile.xml");
+      FileCopyUtils.copy(content, response.getOutputStream());
+    }
+  }
+  
+  @RequestMapping(value = "/downloadConstraintXML/{id}", method = RequestMethod.POST, produces = "text/xml",
+      consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+  public void downloadConstraintXML(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    ProfileData data = profileService.findOne(id);
+    if(data != null && data.getConstraintsXMLFileStr() != null){
+      InputStream content = IOUtils.toInputStream(data.getConstraintsXMLFileStr());
+      response.setContentType("text/html");
+      response.setHeader("Content-disposition", "attachment;filename=" + "Constraints.xml");
+      FileCopyUtils.copy(content, response.getOutputStream());
+    }
+  }
+  
+  @RequestMapping(value = "/downloadValueSetXML/{id}", method = RequestMethod.POST, produces = "text/xml",
+      consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+  public void downloadValueSetXML(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    ProfileData data = profileService.findOne(id);
+    if(data != null && data.getValueSetXMLFileStr() != null){
+      InputStream content = IOUtils.toInputStream(data.getValueSetXMLFileStr());
+      response.setContentType("text/html");
+      response.setHeader("Content-disposition", "attachment;filename=" + "ValueSets.xml");
+      FileCopyUtils.copy(content, response.getOutputStream());
+    }
   }
 
   private List<ProfileData> getAllPrivateProfiles(Account account)

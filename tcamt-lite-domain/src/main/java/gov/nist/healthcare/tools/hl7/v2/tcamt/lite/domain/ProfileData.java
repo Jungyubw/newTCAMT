@@ -1,18 +1,16 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Id;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints.ConformanceContextMetaData;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceProfileMetaData;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.MessageMetaData;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset.ValueSetLibraryMetaData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints.ConformanceContext;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.IntegrationProfile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset.ValueSetLibrary;
 
-@Document(collection = "profile")
+@Document(collection = "profiledata")
 public class ProfileData {
 
   @Id
@@ -24,10 +22,9 @@ public class ProfileData {
   
   private Date lastUpdatedDate;
 
-  private ConformanceProfileMetaData conformanceProfileMetaData;
-  private ConformanceContextMetaData conformanceContextMetaData;
-  private ValueSetLibraryMetaData valueSetLibraryMetaData;
-  private Set<MessageMetaData> messageMetaDataSet;
+  private IntegrationProfile integrationProfile;
+  private ConformanceContext conformanceContext;
+  private ValueSetLibrary valueSetLibrary;
 
   private String profileXMLFileStr;
   private String valueSetXMLFileStr;
@@ -56,39 +53,7 @@ public class ProfileData {
   public void setConstraintsXMLFileStr(String constraintsXMLFileStr) {
     this.constraintsXMLFileStr = constraintsXMLFileStr;
   }
-
-  public ConformanceProfileMetaData getConformanceProfileMetaData() {
-    return conformanceProfileMetaData;
-  }
-
-  public void setConformanceProfileMetaData(ConformanceProfileMetaData conformanceProfileMetaData) {
-    this.conformanceProfileMetaData = conformanceProfileMetaData;
-  }
-
-  public ConformanceContextMetaData getConformanceContextMetaData() {
-    return conformanceContextMetaData;
-  }
-
-  public void setConformanceContextMetaData(ConformanceContextMetaData conformanceContextMetaData) {
-    this.conformanceContextMetaData = conformanceContextMetaData;
-  }
-
-  public ValueSetLibraryMetaData getValueSetLibraryMetaData() {
-    return valueSetLibraryMetaData;
-  }
-
-  public void setValueSetLibraryMetaData(ValueSetLibraryMetaData valueSetLibraryMetaData) {
-    this.valueSetLibraryMetaData = valueSetLibraryMetaData;
-  }
-
-  public Set<MessageMetaData> getMessageMetaDataSet() {
-    return messageMetaDataSet;
-  }
-
-  public void setMessageMetaDataSet(Set<MessageMetaData> messageMetaDataSet) {
-    this.messageMetaDataSet = messageMetaDataSet;
-  }
-
+  
   public Long getAccountId() {
     return accountId;
   }
@@ -121,5 +86,29 @@ public class ProfileData {
     this.id = id;
   }
 
+  public IntegrationProfile getIntegrationProfile() {
+    return integrationProfile;
+  }
 
+  public void setIntegrationProfile(IntegrationProfile integrationProfile) {
+    this.integrationProfile = integrationProfile;
+  }
+
+  public ConformanceContext getConformanceContext() {
+    return conformanceContext;
+  }
+
+  public void setConformanceContext(ConformanceContext conformanceContext) {
+    this.conformanceContext = conformanceContext;
+  }
+
+  public ValueSetLibrary getValueSetLibrary() {
+    return valueSetLibrary;
+  }
+
+  public void setValueSetLibrary(ValueSetLibrary valueSetLibrary) {
+    this.valueSetLibrary = valueSetLibrary;
+  }
+  
+  
 }

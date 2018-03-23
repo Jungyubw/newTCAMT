@@ -39,12 +39,6 @@ angular.module('tcl').factory('StorageService',
             },
             getAppVersion: function () {
                 return this.get(this.APP_VERSION);
-            },
-            getIgDocument: function () {
-                return this.get(this.IG_DOCUMENT) != null ? angular.fromJson(this.get(this.IG_DOCUMENT)):null;
-            },
-            setIgDocument: function (igDocument) {
-                this.set(this.IG_DOCUMENT,igDocument != null ?  angular.toJson(igDocument):null);
             }
         };
         return service;

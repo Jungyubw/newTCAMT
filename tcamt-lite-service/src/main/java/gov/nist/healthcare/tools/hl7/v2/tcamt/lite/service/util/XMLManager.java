@@ -1,4 +1,4 @@
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.util;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

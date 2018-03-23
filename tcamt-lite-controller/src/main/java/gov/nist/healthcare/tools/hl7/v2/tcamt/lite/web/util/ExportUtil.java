@@ -26,6 +26,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStoryConfiguration
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStroyEntry;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.util.XMLManager;
 
 public class ExportUtil {
 

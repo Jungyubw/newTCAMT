@@ -13,12 +13,21 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints;
 
 import java.util.Set;
 
+import javax.persistence.Id;
+
+import org.springframework.data.mongodb.core.mapping.Document;
+
 /**
  * @author jungyubw
  *
  */
+
+@Document(collection = "conformance-context")
 public class ConformanceContext {
 
+  @Id
+  private String id;
+  
   private ConformanceContextMetaData metaData;
 
   private Set<Predicate> datatypePredicates;
@@ -104,6 +113,14 @@ public class ConformanceContext {
   public void setMessageConformanceStatements(
       Set<ConformanceStatement> messageConformanceStatements) {
     this.messageConformanceStatements = messageConformanceStatements;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
 

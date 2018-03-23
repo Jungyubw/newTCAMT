@@ -16,14 +16,13 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
  *
  */
 public class ConformanceProfileMetaData {
-
   private String id;
-  private String type;
-  private String hl7Version;
   private String name;
-  private String orgName;
-  private String date;
-  private String specificationName;
+  private String type;
+  private String event;
+  private String structId;
+  private String description;
+  private String identifier;
 
   public String getId() {
     return id;
@@ -31,22 +30,6 @@ public class ConformanceProfileMetaData {
 
   public void setId(String id) {
     this.id = id;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getHl7Version() {
-    return hl7Version;
-  }
-
-  public void setHl7Version(String hl7Version) {
-    this.hl7Version = hl7Version;
   }
 
   public String getName() {
@@ -57,29 +40,46 @@ public class ConformanceProfileMetaData {
     this.name = name;
   }
 
-  public String getOrgName() {
-    return orgName;
+  public String getType() {
+    return type;
   }
 
-  public void setOrgName(String orgName) {
-    this.orgName = orgName;
+  public void setType(String type) {
+    this.type = type;
   }
 
-  public String getDate() {
-    return date;
+  public String getEvent() {
+    return event;
   }
 
-  public void setDate(String date) {
-    this.date = date;
+  public void setEvent(String event) {
+    this.event = event;
   }
 
-  public String getSpecificationName() {
-    return specificationName;
+  public String getStructId() {
+    return structId;
   }
 
-  public void setSpecificationName(String specificationName) {
-    this.specificationName = specificationName;
+  public void setStructId(String structId) {
+    this.structId = structId;
   }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
+  }
+
 
 
 }

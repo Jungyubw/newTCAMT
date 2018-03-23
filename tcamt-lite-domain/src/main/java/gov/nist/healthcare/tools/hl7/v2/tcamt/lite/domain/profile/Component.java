@@ -16,7 +16,7 @@ public class Component {
   
   private BindingStrength bindingStrength;
   
-  private String bindingLocatoin;
+  private String bindingLocation;
   
   public Component() {
     super();
@@ -62,14 +62,6 @@ public class Component {
     this.bindingStrength = bindingStrength;
   }
 
-  public String getBindingLocatoin() {
-    return bindingLocatoin;
-  }
-
-  public void setBindingLocatoin(String bindingLocatoin) {
-    this.bindingLocatoin = bindingLocatoin;
-  }
-
   public String getMaxLength() {
     return maxLength;
   }
@@ -84,6 +76,14 @@ public class Component {
 
   public void setMinLength(Integer minLength) {
     this.minLength = minLength;
+  }
+
+  public String getBindingLocation() {
+    return bindingLocation;
+  }
+
+  public void setBindingLocation(String bindingLocation) {
+    this.bindingLocation = bindingLocation;
   }
 
   

@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce,Notification,PreferenceService) {
+angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, ElementUtils,$sce,Notification,PreferenceService) {
 	$scope.loading = false;
 	$scope.selectedTestCaseTab = 0;
     $scope.selectedTestStepTab = {};
@@ -267,7 +267,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.newTestPlan = {};
 		$scope.newTestPlan.accountId = userInfoService.getAccountID();
         $scope.newTestPlan.longId = Math.random() * 1000000000;
-		$scope.igamtProfiles = $rootScope.igamtProfiles;
 		$scope.privateProfiles = $rootScope.privateProfiles;
 		$scope.publicProfiles = $rootScope.publicProfiles;
 
@@ -495,6 +494,49 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 
+    $scope.downloadProfileXML = function () {
+        var form = document.createElement("form");
+        form.action = 'api/profiles/downloadProfileXML/' + $rootScope.selectedProfile.id;
+        form.method = "POST";
+        form.target = "_target";
+        var csrfInput = document.createElement("input");
+        csrfInput.name = "X-XSRF-TOKEN";
+        csrfInput.value = $cookies['XSRF-TOKEN'];
+        form.appendChild(csrfInput);
+        form.style.display = 'none';
+        document.body.appendChild(form);
+        form.submit();
+    };
+
+    $scope.downloadConstraintXML = function () {
+        var form = document.createElement("form");
+        form.action = 'api/profiles/downloadConstraintXML/' + $rootScope.selectedProfile.id;
+        form.method = "POST";
+        form.target = "_target";
+        var csrfInput = document.createElement("input");
+        csrfInput.name = "X-XSRF-TOKEN";
+        csrfInput.value = $cookies['XSRF-TOKEN'];
+        form.appendChild(csrfInput);
+        form.style.display = 'none';
+        document.body.appendChild(form);
+        form.submit();
+    };
+
+    $scope.downloadValueSetXML = function () {
+        var form = document.createElement("form");
+        form.action = 'api/profiles/downloadValueSetXML/' + $rootScope.selectedProfile.id;
+        form.method = "POST";
+        form.target = "_target";
+        var csrfInput = document.createElement("input");
+        csrfInput.name = "X-XSRF-TOKEN";
+        csrfInput.value = $cookies['XSRF-TOKEN'];
+        form.appendChild(csrfInput);
+        form.style.display = 'none';
+        document.body.appendChild(form);
+        form.submit();
+    };
+
+
 	$scope.loadTestPlans = function () {
 		var delay = $q.defer();
 		$scope.error = null;
@@ -540,9 +582,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         waitingDialog.show('Apply Conformance Profile...', {dialogSize: 'xs', progressType: 'info'});
 		$rootScope.selectedTestStep.integrationProfileId = igid;
 		$rootScope.selectedTestStep.conformanceProfileId = mid;
-		$scope.loadIntegrationProfile(function(){
+
+		// $scope.loadIntegrationProfile(function(){
             waitingDialog.hide();
-		});
+		// });
 	};
 
 
@@ -611,34 +654,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}
 		}
 	};
-	$scope.selectIg=function(msg, ig){
-        $http.get('api/profiles/' + ig.id).then(function (response) {
-            var integrationProfile = angular.fromJson(response.data);
-            if(integrationProfile && integrationProfile != null) {
-                $rootScope.segmentsMap={};
-                $rootScope.datatypesMap={};
-                $rootScope.tablesMap={};
-
-                angular.forEach(integrationProfile.datatypes.children, function(dt){
-                    $rootScope.datatypesMap[dt.id]=dt;
-                });
-                angular.forEach(integrationProfile.segments.children, function(seg){
-                    $rootScope.segmentsMap[seg.id]=seg;
-                });
-                angular.forEach(integrationProfile.tables.children, function(tbl){
-                    $rootScope.tablesMap[tbl.id]=tbl;
-                });
-				$scope.OpenMessageMetadata(_.find(integrationProfile.messages.children, function(m){ return m.id == msg.id; }),integrationProfile);
-            }
-        }, function (error) {
-            $scope.error = error.data;
-        });
-	};
-
 
     $scope.deleteProfile = function (){
-        $rootScope.selectedIntegrationProfile = null;
-        $rootScope.selectedConformanceProfile = null;
         $rootScope.selectedTestStep.integrationProfileId = null;
         $rootScope.selectedTestStep.conformanceProfileId = null;
     };
@@ -1109,10 +1126,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.integrationAbstractProfiles = [];
 
 		if($rootScope.selectedTestPlan.listOfIntegrationProfileIds == null || $rootScope.selectedTestPlan.listOfIntegrationProfileIds.length == 0){
-			for(var i in $rootScope.igamtProfiles){
-				$rootScope.integrationAbstractProfiles.push($rootScope.igamtProfiles[i]);
-			};
-
 			for(var i in $rootScope.privateProfiles){
 				$rootScope.integrationAbstractProfiles.push($rootScope.privateProfiles[i]);
 			};
@@ -1122,12 +1135,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			};
 		}else {
 			for(var j in $rootScope.selectedTestPlan.listOfIntegrationProfileIds){
-				for(var i in $rootScope.igamtProfiles){
-					if($rootScope.igamtProfiles[i].id == $rootScope.selectedTestPlan.listOfIntegrationProfileIds[j]){
-						$rootScope.integrationAbstractProfiles.push($rootScope.igamtProfiles[i]);
-					}
-				};
-
 				for(var i in $rootScope.privateProfiles){
 					if($rootScope.privateProfiles[i].id == $rootScope.selectedTestPlan.listOfIntegrationProfileIds[j]){
 						$rootScope.integrationAbstractProfiles.push($rootScope.privateProfiles[i]);
@@ -1293,18 +1300,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         }
 	};
 
-	$scope.OpenIgMetadata= function(ig){
-		$rootScope.CurrentTitle="IG Document "+":"+ ig.metaData.title;
-
-
+	$scope.openProfileMetadata= function(p){
+		$rootScope.CurrentTitle="Profile "+":"+ p.integrationProfileMetaData.name;
 		$rootScope.selectedTemplate=null;
 		$rootScope.selectedSegmentNode =null;
 		$rootScope.selectedTestStep=null;
-		$rootScope.igDocument=ig;
+		$rootScope.selectedProfile = p;
 		$scope.editor = null;
 		$scope.editorValidation = null;
-		$scope.subview = "EditDocumentMetadata.html";
-
+		$scope.subview = "ViewIntegrationProfile.html";
 	};
 
 	$scope.selectTestCaseGroup = function (testCaseGroup) {
@@ -2126,7 +2130,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		});
 	};
 
-	$scope.OpenMessageMetadata = function(msg,ip) {
+	$scope.openMessageMetaData = function(msg , ip) {
 		$rootScope.selectedTestCaseGroup=null;
 		$rootScope.message=null;
 		$rootScope.selectedTestCase = null;
@@ -2137,21 +2141,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.editor = null;
 		$scope.editorValidation = null;
 
-		$rootScope.CurrentTitle="Conformance Profile"+":"+ msg.name;
-		$scope.subview = "EditMessages.html";
+		$rootScope.CurrentTitle="Conformance Profile:"+ msg.name;
+		$rootScope.selectedMessage = msg;
 
-		if($rootScope.messageTree && $rootScope.messageParams){
- 
-                $rootScope.message=msg;
-                $rootScope.processMessageTree($rootScope.message,null);
-				$rootScope.messageParams.refresh();
-			
-		}
-		else{
-                $rootScope.message=msg;
-                $rootScope.processMessageTree($rootScope.message,null);
-				$rootScope.messageParams = $rootScope.getMessageParams();
-		}
+		$scope.subview = "ViewMessageMetaData.html";
+
+
 	};
 
 	$scope.generateConstraintsXML = function (segmentList, testStep, selectedConformanceProfile, selectedIntegrationProfile){
@@ -4387,14 +4382,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 	$scope.ApplyProfile = [
-
-	                  		['Apply Profile', function($itemScope) {
-	                  			$scope.applyConformanceProfile($itemScope.ip.id, $itemScope.msg.id);
-	                  			$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
-	                  		}]
-	                  		
-
-	                  	];
+		['Apply Profile', function($itemScope) {
+		$scope.applyConformanceProfile($itemScope.ip.id, $itemScope.msg.id);
+		$rootScope.changesMap[$rootScope.selectedTestStep.id]=true;
+	}]];
 
 	$scope.messagetempCollapsed=false;
 	$scope.segmenttempCollapsed=false;
@@ -4423,7 +4414,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 		
 
-	}
+	};
 
 	$scope.OpenMsgTemplateMetadata=function(msgtemp){
 		$rootScope.selectedTestCaseGroup=null;
@@ -4511,26 +4502,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.findTitleForProfiles = function (ipid, cpid){
 		$scope.conformanceProfileTitle = null;
 		$scope.integrationProfileTitle = null;
-		for (i in $rootScope.igamtProfiles) {
-			var ip = $rootScope.igamtProfiles[i];
-			if(ipid == ip.id){
-				$scope.integrationProfileTitle = ip.metaData.name;
 
-				for (j in ip.messages.children) {
-					var cp = ip.messages.children[j];
-					if(cpid == cp.id){
-						$scope.conformanceProfileTitle = cp.structID + '-' + cp.name + '-' + cp.identifier;
-					}
-				}
-			}
-		}
-
-		for (i in $rootScope.privateProfiles) {
+		for (var i in $rootScope.privateProfiles) {
 			var ip = $rootScope.privateProfiles[i];
 			if(ipid == ip.id){
 				$scope.integrationProfileTitle = ip.metaData.name;
 
-				for (j in ip.messages.children) {
+				for (var j in ip.messages.children) {
 					var cp = ip.messages.children[j];
 					if(cpid == cp.id){
 						$scope.conformanceProfileTitle = cp.structID + '-' + cp.name + '-' + cp.identifier;

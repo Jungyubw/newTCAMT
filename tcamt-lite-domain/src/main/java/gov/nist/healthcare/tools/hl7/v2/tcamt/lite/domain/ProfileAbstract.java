@@ -12,9 +12,12 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints.ConformanceContextMetaData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceProfileMetaData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.IntegrationProfileMetaData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset.ValueSetLibraryMetaData;
 
 /**
@@ -26,17 +29,10 @@ public class ProfileAbstract {
   private Long accountId;
   private String sourceType;
   private Date lastUpdatedDate;
-  private ConformanceProfileMetaData conformanceProfileMetaData;
+  private IntegrationProfileMetaData integrationProfileMetaData;
   private ConformanceContextMetaData conformanceContextMetaData;
   private ValueSetLibraryMetaData valueSetLibraryMetaData;
-
-  public ConformanceProfileMetaData getConformanceProfileMetaData() {
-    return conformanceProfileMetaData;
-  }
-
-  public void setConformanceProfileMetaData(ConformanceProfileMetaData conformanceProfileMetaData) {
-    this.conformanceProfileMetaData = conformanceProfileMetaData;
-  }
+  private Set<ConformanceProfileMetaData> conformanceProfileMetaDataSet;
 
   public ConformanceContextMetaData getConformanceContextMetaData() {
     return conformanceContextMetaData;
@@ -86,5 +82,28 @@ public class ProfileAbstract {
     this.id = id;
   }
 
+  public IntegrationProfileMetaData getIntegrationProfileMetaData() {
+    return integrationProfileMetaData;
+  }
+
+  public void setIntegrationProfileMetaData(IntegrationProfileMetaData integrationProfileMetaData) {
+    this.integrationProfileMetaData = integrationProfileMetaData;
+  }
+
+  public Set<ConformanceProfileMetaData> getConformanceProfileMetaDataSet() {
+    return conformanceProfileMetaDataSet;
+  }
+
+  public void setConformanceProfileMetaDataSet(Set<ConformanceProfileMetaData> conformanceProfileMetaDataSet) {
+    this.conformanceProfileMetaDataSet = conformanceProfileMetaDataSet;
+  }
+
+  /**
+   * @param conformanceProfileMetaData
+   */
+  public void addConformanceProfileMetaData(ConformanceProfileMetaData conformanceProfileMetaData) {
+    if(this.conformanceProfileMetaDataSet == null) this.conformanceProfileMetaDataSet = new HashSet<ConformanceProfileMetaData>();
+    this.conformanceProfileMetaDataSet.add(conformanceProfileMetaData);
+  }
 
 }

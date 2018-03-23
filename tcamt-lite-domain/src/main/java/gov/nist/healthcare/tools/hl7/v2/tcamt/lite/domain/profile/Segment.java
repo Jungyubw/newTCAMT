@@ -11,6 +11,7 @@
  */
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -66,5 +67,14 @@ public class Segment {
 
   public void setChildren(List<Field> children) {
     this.children = children;
+  }
+
+  /**
+   * @param f
+   */
+  public void addField(Field f) {
+    if(this.children == null) this.children = new ArrayList<Field>();
+    this.children.add(f);
+    
   }
 }

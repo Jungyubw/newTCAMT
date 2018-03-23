@@ -11,6 +11,7 @@
  */
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,5 +41,12 @@ public class Group extends SegmentRefOrGroup {
   }
   public void setChildren(List<SegmentRefOrGroup> children) {
     this.children = children;
+  }
+  /**
+   * @param parseSegmentRef
+   */
+  public void addChild(SegmentRefOrGroup child) {
+    if(this.children == null) this.children = new ArrayList<SegmentRefOrGroup>();
+    this.children.add(child);
   }
 }

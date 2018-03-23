@@ -54,6 +54,7 @@ body {
 									</div>
 								</div>
 							</div>
+
 							<div class="row" ng-if="!selectedTestPlan.transport">
 								<div class="col-md-12">
 									<div class="col-md-6">
@@ -67,7 +68,7 @@ body {
 								</div>
 							</div>
 
-							<div class="row" ng-if="selectedIntegrationProfile">
+							<div class="row" ng-if="isNotManualTestStep()">
 								<div class="col-md-12">
 									<button title="Delete Profile" type="button" class="btn btn-danger btn-xs" ng-click="deleteProfile();">
 										<span><i class="fa fa-cross fa-fw"></i> Delete Profile (Make Manual TestStep)</span>
@@ -78,14 +79,14 @@ body {
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
 											<label>Integration Profile</label>
-											<input ng-model="selectedIntegrationProfile.sectionTitle" disabled type="text"/>
+											<input ng-model="selectedTestStep.integrationProfileId" disabled type="text"/>
 										</md-input-container>
 									</div>
 
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
 											<label>Conformance Profile</label>
-											<input ng-model="selectedConformanceProfile.name" disabled type="text"/>
+											<input ng-model="selectedTestStep.conformanceProfileId" disabled type="text"/>
 										</md-input-container>
 									</div>
 								</div>

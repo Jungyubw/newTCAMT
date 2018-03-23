@@ -7,4 +7,12 @@ public enum BindingStrength {
   public String value() {
     return name();
   }
+  
+  public static BindingStrength fromValue(String v) {
+    try {
+      return !"".equals(v) && v != null ? valueOf(v) : null;
+    } catch (IllegalArgumentException e) {
+      return null; // ????
+    }
+  }
 }

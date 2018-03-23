@@ -15,14 +15,16 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
  * @author jungyubw
  *
  */
-public class MessageMetaData {
+public class IntegrationProfileMetaData {
+
   private String id;
-  private String name;
   private String type;
-  private String event;
-  private String structId;
-  private String description;
-  private String Identifier;
+  private String hl7Version;
+  private String version;
+  private String name;
+  private String orgName;
+  private String date;
+  private String specificationName;
 
   public String getId() {
     return id;
@@ -30,14 +32,6 @@ public class MessageMetaData {
 
   public void setId(String id) {
     this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public String getType() {
@@ -48,36 +42,52 @@ public class MessageMetaData {
     this.type = type;
   }
 
-  public String getEvent() {
-    return event;
+  public String getHl7Version() {
+    return hl7Version;
   }
 
-  public void setEvent(String event) {
-    this.event = event;
+  public void setHl7Version(String hl7Version) {
+    this.hl7Version = hl7Version;
   }
 
-  public String getStructId() {
-    return structId;
+  public String getName() {
+    return name;
   }
 
-  public void setStructId(String structId) {
-    this.structId = structId;
+  public void setName(String name) {
+    this.name = name;
   }
 
-  public String getDescription() {
-    return description;
+  public String getOrgName() {
+    return orgName;
   }
 
-  public void setDescription(String description) {
-    this.description = description;
+  public void setOrgName(String orgName) {
+    this.orgName = orgName;
   }
 
-  public String getIdentifier() {
-    return Identifier;
+  public String getDate() {
+    return date;
   }
 
-  public void setIdentifier(String identifier) {
-    Identifier = identifier;
+  public void setDate(String date) {
+    this.date = date;
+  }
+
+  public String getSpecificationName() {
+    return specificationName;
+  }
+
+  public void setSpecificationName(String specificationName) {
+    this.specificationName = specificationName;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 
 

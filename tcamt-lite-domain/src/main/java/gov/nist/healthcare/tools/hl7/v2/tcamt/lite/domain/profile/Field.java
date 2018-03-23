@@ -34,7 +34,7 @@ public class Field {
 
   private BindingStrength bindingStrength;
 
-  private String bindingLocatoin;
+  private String bindingLocation;
 
   public String getName() {
     return name;
@@ -108,12 +108,12 @@ public class Field {
     this.bindingStrength = bindingStrength;
   }
 
-  public String getBindingLocatoin() {
-    return bindingLocatoin;
+  public String getBindingLocation() {
+    return bindingLocation;
   }
 
-  public void setBindingLocatoin(String bindingLocatoin) {
-    this.bindingLocatoin = bindingLocatoin;
+  public void setBindingLocation(String bindingLocation) {
+    this.bindingLocation = bindingLocation;
   }
 
 

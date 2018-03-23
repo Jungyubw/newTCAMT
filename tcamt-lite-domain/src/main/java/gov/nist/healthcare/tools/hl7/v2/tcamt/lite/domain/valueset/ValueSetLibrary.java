@@ -13,12 +13,20 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset;
 
 import java.util.Set;
 
+import javax.persistence.Id;
+
+import org.springframework.data.mongodb.core.mapping.Document;
+
 /**
  * @author jungyubw
  *
  */
+@Document(collection = "valueset-library")
 public class ValueSetLibrary {
 
+  @Id
+  private String id;
+  
   private ValueSetLibraryMetaData metaData;
   private Set<String> noValidationSet;
   private Set<ValueSetDefinition> valueSetDefinitions;
@@ -45,6 +53,14 @@ public class ValueSetLibrary {
 
   public void setValueSetDefinitions(Set<ValueSetDefinition> valueSetDefinitions) {
     this.valueSetDefinitions = valueSetDefinitions;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
 
