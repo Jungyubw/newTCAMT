@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Constant.SCOPE;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DocumentMetaData;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Group;
@@ -32,7 +33,15 @@ import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRef;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRefOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
 import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ValueSetOrSingleCodeBinding;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.xml.serialization.XMLExportTool;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.exception.DatatypeNotFoundException;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.exception.TableNotFoundException;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.serialization.exception.ConstraintSerializationException;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.serialization.exception.DatatypeSerializationException;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.serialization.exception.MessageSerializationException;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.serialization.exception.ProfileSerializationException;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.serialization.exception.SegmentSerializationException;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.serialization.exception.TableSerializationException;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.serialization.xml.XMLExportTool;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
@@ -1186,7 +1195,7 @@ public class ExportUtil {
   }
 
   public InputStream exportProfileXMLZip(Set<String> keySet, ProfileService profileService,
-      Long rand) throws IOException {
+      Long rand) throws IOException, ProfileSerializationException, TableSerializationException, ConstraintSerializationException, MessageSerializationException, SegmentSerializationException, DatatypeSerializationException, DatatypeNotFoundException, TableNotFoundException {
 
     ByteArrayOutputStream outputStream = null;
     byte[] bytes;
@@ -1204,7 +1213,7 @@ public class ExportUtil {
   }
 
   public InputStream[] exportProfileXMLArrayZip(String id, ProfileService profileService, Long rand)
-      throws IOException {
+      throws IOException, ProfileSerializationException, TableSerializationException, ConstraintSerializationException, MessageSerializationException, SegmentSerializationException, DatatypeSerializationException, DatatypeNotFoundException, TableNotFoundException {
     ByteArrayOutputStream outputStream0 = null;
     ByteArrayOutputStream outputStream1 = null;
     ByteArrayOutputStream outputStream2 = null;
@@ -1328,7 +1337,7 @@ public class ExportUtil {
     return null;
   }
 
-  public String[] generateProfileXML(String id, ProfileService profileService) {
+  public String[] generateProfileXML(String id, ProfileService profileService) throws ProfileSerializationException, TableSerializationException, ConstraintSerializationException, MessageSerializationException, SegmentSerializationException, DatatypeSerializationException, DatatypeNotFoundException, TableNotFoundException {
     Profile tcamtProfile = profileService.findOne(id);
 
     if (tcamtProfile != null) {
@@ -1395,7 +1404,7 @@ public class ExportUtil {
   }
 
   private void generateProfileXML(ZipOutputStream out0, ZipOutputStream out1, ZipOutputStream out2,
-      String id, ProfileService profileService, Long rand) throws IOException {
+      String id, ProfileService profileService, Long rand) throws IOException, ProfileSerializationException, TableSerializationException, ConstraintSerializationException, MessageSerializationException, SegmentSerializationException, DatatypeSerializationException, DatatypeNotFoundException, TableNotFoundException {
     Profile tcamtProfile = profileService.findOne(id);
 
     if (tcamtProfile != null) {
@@ -1491,7 +1500,7 @@ public class ExportUtil {
   }
 
   private void generateProfileXML(ZipOutputStream out, String id, ProfileService profileService,
-      Long rand) throws IOException {
+      Long rand) throws IOException, ProfileSerializationException, TableSerializationException, ConstraintSerializationException, MessageSerializationException, SegmentSerializationException, DatatypeSerializationException, DatatypeNotFoundException, TableNotFoundException {
     Profile tcamtProfile = profileService.findOne(id);
 
     if (tcamtProfile != null) {
@@ -1530,6 +1539,8 @@ public class ExportUtil {
 
       for (Table t : tcamtProfile.getTables().getChildren()) {
         if (t != null) {
+          if(t.getScope() == null) t.setScope(SCOPE.USER);
+          
           tablesMap.put(t.getId(), t);
         }
       }
