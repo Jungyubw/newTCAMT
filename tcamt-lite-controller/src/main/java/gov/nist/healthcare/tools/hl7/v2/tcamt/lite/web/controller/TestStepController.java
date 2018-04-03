@@ -54,6 +54,78 @@ public class TestStepController extends CommonController {
   private int repeatedNum = 1;
   private int currentPosition = 0;
   private Map<String, Integer> segmantCountMap;
+  
+  @RequestMapping(value = "/getSegmentList", method = RequestMethod.POST)
+  public List<SegmentInstanceData> popSegmentList(@RequestBody TestStepParams params) {
+
+    if (params.getIntegrationProfileId() != null) {
+      this.profileData = null;
+      this.profileData = profileService.findOne(params.getIntegrationProfileId());
+      if (profileData != null && profileData.getIntegrationProfile() != null
+          && params.getConformanceProfileId() != null) {
+
+        ConformanceProfile cp = profileData.getIntegrationProfile()
+            .findConformanceProfileById(params.getConformanceProfileId());
+
+        if (cp != null && params.getEr7Message() != null
+            && params.getEr7Message().startsWith("MSH")) {
+
+          List<SegmentInstanceData> segmentInstanceDataList = new ArrayList<SegmentInstanceData>();
+          segmantCountMap = new HashMap<String, Integer>();
+
+          String[] listLineOfMessage = params.getEr7Message().split("\n");
+          int lineNum = 0;
+
+
+          for (String line : listLineOfMessage) {
+            lineNum = lineNum + 1;
+            SegmentInstanceData segmentInstanceData = new SegmentInstanceData();
+            segmentInstanceData.setLineStr(line);
+            segmentInstanceData.setSegmentName(line.substring(0, 3));
+            segmentInstanceData.setLineNum(lineNum);
+            segmentInstanceDataList.add(segmentInstanceData);
+
+            if (segmantCountMap.containsKey(segmentInstanceData.getSegmentName())) {
+              segmantCountMap.put(segmentInstanceData.getSegmentName(),
+                  segmantCountMap.get(segmentInstanceData.getSegmentName()) + 1);
+            } else {
+              segmantCountMap.put(segmentInstanceData.getSegmentName(), 1);
+            }
+          }
+
+          for (String key : segmantCountMap.keySet()) {
+            if (this.repeatedNum < segmantCountMap.get(key))
+              this.repeatedNum = segmantCountMap.get(key);
+          }
+
+          segmentsInfoList = new ArrayList<SegmentInfo>();
+          int index = 0;
+          for (SegmentRefOrGroup srog : cp.getChildren()) {
+            index = index + 1;
+            this.analyzeSegmentRefOrGroup(srog, index, "", "", "", "", "", false);
+          }
+
+          this.currentPosition = 0;
+
+          for (SegmentInstanceData sid : segmentInstanceDataList) {
+            SegmentInfo sInfo = this.findSegmentInfo(sid.getSegmentName());
+            if (sInfo != null) {
+              sid.setiPath(sInfo.getiPath());
+              sid.setPath(sInfo.getPath());
+              sid.setPositionIPath(sInfo.getiPositionPath());
+              sid.setPositionPath(sInfo.getPositionPath());
+              sid.setSegmentDef(sInfo.getSegment());
+              sid.setUsagePath(sInfo.getUsagePath());
+            }
+          }
+
+          return segmentInstanceDataList;
+        }
+      }
+    }
+
+    return null;
+  }
 
 
   @RequestMapping(value = "/getSegmentNode", method = RequestMethod.POST)
@@ -102,6 +174,27 @@ public class TestStepController extends CommonController {
         fieldValues.add(splittedSegmentStr[index]);
       }
     }
+    
+    String dynamicMappingTarget = null;
+    String dynamicMappingDatatypeId = null;
+    
+    if(s.getDynamicMapping() != null && s.getDynamicMapping().getDynamicMappingDef() != null && s.getDynamicMapping().getItems() != null){
+      if(s.getDynamicMapping().getItems().size() > 0){
+        if(s.getDynamicMapping().getDynamicMappingDef().getPostion() != null && !s.getDynamicMapping().getDynamicMappingDef().getPostion().equals("")){
+          if(s.getDynamicMapping().getDynamicMappingDef().getReference() != null && !s.getDynamicMapping().getDynamicMappingDef().getReference().equals("")){
+            
+            dynamicMappingTarget = s.getDynamicMapping().getDynamicMappingDef().getPostion();
+            String referenceLocation = s.getDynamicMapping().getDynamicMappingDef().getReference();
+            String secondReferenceLocation = s.getDynamicMapping().getDynamicMappingDef().getSecondReference();
+            
+            String referenceValue = this.findValueByPath(segmentStr, referenceLocation);
+            String secondReferenceLocationValue = this.findValueByPath(segmentStr, secondReferenceLocation);
+            
+            dynamicMappingDatatypeId = s.getDynamicMapping().findDataypteIdByReferences(referenceValue, secondReferenceLocationValue);
+          }
+        }
+      }
+    }
 
 
     for (int i = 0; i < s.getChildren().size(); i++) {
@@ -120,7 +213,6 @@ public class TestStepController extends CommonController {
         Field f = s.getChildren().get(i);
         Datatype fieldDt = profileData.getIntegrationProfile().findDatatypeById(f.getDatatypeId());
         FieldNode fieldNode = new FieldNode();
-        fieldNode.setDt(fieldDt);
         fieldNode.setField(f);
         fieldNode.setiPath(params.getiPath() + "." + (i + 1) + "[" + (h + 1) + "]");
         fieldNode.setPath(params.getPath() + "." + (i + 1));
@@ -129,53 +221,15 @@ public class TestStepController extends CommonController {
         fieldNode.setType("field");
         fieldNode.setUsagePath(params.getUsagePath() + "-" + f.getUsage());
         fieldNode.setValue(fieldInstanceValues.get(h));
+        
+        if(dynamicMappingTarget != null && dynamicMappingTarget.equals("" + (i + 1)) && dynamicMappingDatatypeId != null){
+          fieldNode.setDt(profileData.getIntegrationProfile().findDatatypeById(dynamicMappingDatatypeId));
+        }else {
+          fieldNode.setDt(fieldDt);
+        }
+        
         if (f.getUsage().equals(Usage.C))
           fieldNode.setPredicate(this.findPredicate());
-
-
-        /*
-         * if(segment.obj.dynamicMappingDefinition &&
-         * segment.obj.dynamicMappingDefinition.dynamicMappingItems &&
-         * segment.obj.dynamicMappingDefinition.dynamicMappingItems.length > 0 &&
-         * segment.obj.dynamicMappingDefinition.mappingStructure){
-         * 
-         * var targetLocation =
-         * segment.obj.dynamicMappingDefinition.mappingStructure.targetLocation; var
-         * firstReferenceLocation =
-         * segment.obj.dynamicMappingDefinition.mappingStructure.referenceLocation; var
-         * secondRefereceLocation =
-         * segment.obj.dynamicMappingDefinition.mappingStructure.secondRefereceLocation;
-         * 
-         * if(targetLocation && targetLocation === i + 1 + "") { var firstReferenceValue = null; var
-         * secondReferenceValue = null;
-         * 
-         * if(firstReferenceLocation){ firstReferenceValue = fieldValues[firstReferenceLocation -
-         * 1].split("^")[0]; if(secondRefereceLocation){ if(secondRefereceLocation.includes(".")){
-         * secondReferenceValue = fieldValues[secondRefereceLocation.split(".")[0] - 1];
-         * secondReferenceValue =
-         * secondReferenceValue.split("^")[secondRefereceLocation.split(".")[1] - 1]; }else {
-         * secondReferenceValue = fieldValues[secondRefereceLocation - 1].split("^")[0]; }
-         * 
-         * } }
-         * 
-         * if(firstReferenceValue){ if(secondReferenceValue){ var itemFound =
-         * _.find(segment.obj.dynamicMappingDefinition.dynamicMappingItems, function(item){ return
-         * firstReferenceValue === item.firstReferenceValue && secondReferenceValue ===
-         * item.secondReferenceValue; }); if(!itemFound){ itemFound =
-         * _.find(segment.obj.dynamicMappingDefinition.dynamicMappingItems, function(item){ return
-         * firstReferenceValue === item.firstReferenceValue && (item.secondReferenceValue === '' ||
-         * item.secondReferenceValue == undefined); }); }
-         * 
-         * if(itemFound){ fieldNode.dt = $scope.findDatatypeById(itemFound.datatypeId,
-         * $rootScope.selectedIntegrationProfile); }
-         * 
-         * }else { var itemFound = _.find(segment.obj.dynamicMappingDefinition.dynamicMappingItems,
-         * function(item){ return firstReferenceValue === item.firstReferenceValue &&
-         * (item.secondReferenceValue === '' || item.secondReferenceValue == undefined); });
-         * 
-         * if(itemFound){ fieldNode.dt = $scope.findDatatypeById(itemFound.datatypeId,
-         * $rootScope.selectedIntegrationProfile); } } } } }
-         */
 
         if (params.getTestDataCategorizationMap() != null) {
           Categorization fieldTestDataCategorizationObj =
@@ -276,80 +330,44 @@ public class TestStepController extends CommonController {
     return filedNodes;
   }
 
-  private Predicate findPredicate() {
-    // TODO Auto-generated method stub
+  /**
+   * @param segmentStr
+   * @param referenceLocation
+   * @return
+   */
+  private String findValueByPath(String segmentStr, String path) {
+    if(segmentStr != null && path != null) {
+      String[] splittedStr = segmentStr.split("\\|");
+      String[] splittedPathStr = path.split("\\.");     
+      String result = null;
+      
+      for(int i= 0; i<splittedPathStr.length; i++){
+        int position = Integer.parseInt(splittedPathStr[i]);
+        
+        if(i==0) {
+          if(position < splittedStr.length) {
+            result = splittedStr[position];
+          }          
+          splittedStr = result.split("\\^");
+        }else if(i == 1) {
+          if(position - 1< splittedStr.length) {
+            result = splittedStr[position - 1];
+          } 
+          splittedStr = result.split("\\&");
+        }else if(i == 2) {
+          if(position - 1< splittedStr.length) {
+            result = splittedStr[position - 1];
+          } 
+        }
+      }
+      return result;
+    }
     return null;
   }
 
-  @RequestMapping(value = "/getSegmentList", method = RequestMethod.POST)
-  public List<SegmentInstanceData> popSegmentList(@RequestBody TestStepParams params) {
 
-    if (params.getIntegrationProfileId() != null) {
-      this.profileData = null;
-      this.profileData = profileService.findOne(params.getIntegrationProfileId());
-      if (profileData != null && profileData.getIntegrationProfile() != null
-          && params.getConformanceProfileId() != null) {
-
-        ConformanceProfile cp = profileData.getIntegrationProfile()
-            .findConformanceProfileById(params.getConformanceProfileId());
-
-        if (cp != null && params.getEr7Message() != null
-            && params.getEr7Message().startsWith("MSH")) {
-
-          List<SegmentInstanceData> segmentInstanceDataList = new ArrayList<SegmentInstanceData>();
-          segmantCountMap = new HashMap<String, Integer>();
-
-          String[] listLineOfMessage = params.getEr7Message().split("\n");
-          int lineNum = 0;
-
-
-          for (String line : listLineOfMessage) {
-            lineNum = lineNum + 1;
-            SegmentInstanceData segmentInstanceData = new SegmentInstanceData();
-            segmentInstanceData.setLineStr(line);
-            segmentInstanceData.setSegmentName(line.substring(0, 3));
-            segmentInstanceData.setLineNum(lineNum);
-            segmentInstanceDataList.add(segmentInstanceData);
-
-            if (segmantCountMap.containsKey(segmentInstanceData.getSegmentName())) {
-              segmantCountMap.put(segmentInstanceData.getSegmentName(),
-                  segmantCountMap.get(segmentInstanceData.getSegmentName()) + 1);
-            } else {
-              segmantCountMap.put(segmentInstanceData.getSegmentName(), 1);
-            }
-          }
-
-          for (String key : segmantCountMap.keySet()) {
-            if (this.repeatedNum < segmantCountMap.get(key))
-              this.repeatedNum = segmantCountMap.get(key);
-          }
-
-          segmentsInfoList = new ArrayList<SegmentInfo>();
-          int index = 0;
-          for (SegmentRefOrGroup srog : cp.getChildren()) {
-            index = index + 1;
-            this.analyzeSegmentRefOrGroup(srog, index, "", "", "", "", "", false);
-          }
-
-          this.currentPosition = 0;
-
-          for (SegmentInstanceData sid : segmentInstanceDataList) {
-            SegmentInfo sInfo = this.findSegmentInfo(sid.getSegmentName());
-            if (sInfo != null) {
-              sid.setiPath(sInfo.getiPath());
-              sid.setPath(sInfo.getPath());
-              sid.setPositionIPath(sInfo.getiPositionPath());
-              sid.setPositionPath(sInfo.getPositionPath());
-              sid.setSegmentDef(sInfo.getSegment());
-              sid.setUsagePath(sInfo.getUsagePath());
-            }
-          }
-
-          return segmentInstanceDataList;
-        }
-      }
-    }
-
+  private Predicate findPredicate() {
+    // TODO Auto-generated method stub
     return null;
   }
 

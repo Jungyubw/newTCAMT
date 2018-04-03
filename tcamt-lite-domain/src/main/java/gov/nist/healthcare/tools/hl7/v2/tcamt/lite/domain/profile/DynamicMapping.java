@@ -48,16 +48,18 @@ public class DynamicMapping {
   public String findDataypteIdByReferences(String firstRef, String secondRef){
     if(firstRef != null && secondRef == null){
       for(DynamicMappingItem item:this.items){
-        if(item.getValue().equals(firstRef) && item.getSecondValue() == null){
+        if(item.getValue() != null && item.getValue().equals(firstRef) && item.getSecondValue() == null){
           return item.getDatatypeId();
         }
       }
     }else if(firstRef != null && secondRef != null){
       for(DynamicMappingItem item:this.items){
-        if(item.getValue().equals(firstRef) && item.getSecondValue().equals(secondRef)){
+        if(item.getValue() != null && item.getSecondValue() != null && item.getValue().equals(firstRef) && item.getSecondValue().equals(secondRef)){
           return item.getDatatypeId();
         }
       }
+      
+      return findDataypteIdByReferences(firstRef, null);
     }
     return null;
   }
