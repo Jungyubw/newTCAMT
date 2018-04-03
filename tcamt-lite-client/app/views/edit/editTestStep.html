@@ -295,7 +295,6 @@ body {
 															<th class="col-md-1" ng-if="isShow(7)">Conf.Statement</th>
 															<th class="col-md-1">Value</th>
 															<th class="col-md-1">Test Data Cate.</th>
-															<th class="col-md-1">Action</th>
 														</tr>
 														</thead>
 														<tbody></tbody>
@@ -539,7 +538,7 @@ body {
 <script type="text/ng-template" id="FieldTree.html">
 	<tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
-			{{::selectedSegmentNode.segment.obj.name}}-{{::minimizePath(node.iPath)}}
+			{{::getSegmentName()}}-{{::minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
 			{{::node.field.name}}
@@ -594,21 +593,13 @@ body {
 				</div>
 			</div>
 		</td>
-		<td class="col-md-1">
-			<button ng-if="!minimizePath(node.iPath).includes('[') && node.field.max != '0' && node.field.max != '1'" title="Delete Repeated Field" type="button" class="btn btn-info btn-xxs" ng-click="addRepeatedField(node)">
-				<span><i class="fa fa-plus fa-fw"></i> Add Field</span>
-			</button>
-			<button ng-if="minimizePath(node.iPath).includes('[')" title="Delete Repeated Field" type="button" class="btn btn-danger btn-xxs" ng-click="deleteRepeatedField(node)">
-				<span><i class="fa fa-times fa-fw"></i> Del Field</span>
-			</button>
-        </td>
     </tr>
 </script>
 
 <script type="text/ng-template" id="ComponentTree.html">
 	<tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
-			{{::selectedSegmentNode.segment.obj.name}}-{{::minimizePath(node.iPath)}}
+			{{::getSegmentName()}}-{{::minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
 			{{::node.component.name}}
@@ -663,16 +654,13 @@ body {
 				</div>
 			</div>
 		</td>
-		<td class="col-md-1">
-			-
-        </td>
     </tr>
 </script>
 
 <script type="text/ng-template" id="SubComponentTree.html">
 	<tr tt-node is-branch="hasChildren(node)">
 		<td class="col-md-1">
-			{{::selectedSegmentNode.segment.obj.name}}-{{::minimizePath(node.iPath)}}
+			{{::getSegmentName()}}-{{::minimizePath(node.iPath)}}
         </td>
 		<td class="col-md-1">
 			{{::node.component.name}}
@@ -727,9 +715,6 @@ body {
 				</div>
 			</div>
 		</td>
-		<td class="col-md-1">
-			-
-        </td>
     </tr>
 </script>
 

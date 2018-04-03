@@ -3147,6 +3147,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		return '';
 	};
 
+
+	$scope.getSegmentName = function (){
+        if($rootScope.selectedSegmentNode){
+            return $rootScope.selectedSegmentNode.segmentStr.substring(0,3);
+        }
+		return '';
+	};
+
 	$scope.replaceAll = function(str, search, replacement) {
 		return str.split(search).join(replacement);
 	};
