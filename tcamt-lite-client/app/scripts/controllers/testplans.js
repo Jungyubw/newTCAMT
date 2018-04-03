@@ -627,32 +627,25 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
 	$scope.segmentTemplateApplicable= function(temp){
-		if(!$rootScope.selectedTestStep){
-			return false;
-		}
-		if(!$rootScope.selectedSegmentNode){
-			return false;
-		}else{
-			if($rootScope.selectedSegmentNode.segment.obj){
-				if($rootScope.selectedSegmentNode.segment.obj.name && $rootScope.selectedSegmentNode.segment.obj.name===temp.segmentName){
-					return true;
-				}else{
-					return false;
+		if($rootScope.selectedTestStep){
+			if($rootScope.selectedSegmentNode){
+				if($rootScope.selectedSegmentNode.segmentStr){
+                    if(temp.segmentName === $rootScope.selectedSegmentNode.segmentStr.substring(0,3)) return true;
 				}
-			}else{
-				return false
 			}
 		}
 
+		return false;
+
 	};
 	$scope.messageTemplateApplicable=function(er7Tmp){
-		if(!$rootScope.selectedTestStep){
-			return false
-		} else{
-			if($rootScope.selectedConformanceProfile){
-				return $rootScope.selectedConformanceProfile.structID === er7Tmp.structID;
-			}
+		if($rootScope.selectedTestStep){
+            var cpMeta = $rootScope.findConformanceProfileMeta($rootScope.selectedTestStep.integrationProfileId, $rootScope.selectedTestStep.conformanceProfileId);
+            if(cpMeta){
+                return cpMeta.structId === er7Tmp.structID;
+            }
 		}
+		return false;
 	};
 
     $scope.deleteProfile = function (){
@@ -1727,6 +1720,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.testDataAccordi.selectedSegment = false;
 		$scope.testDataAccordi.constraintList = false;
 		$rootScope.selectedSegmentNode = null;
+        $rootScope.selectedSegment = null;
 
         $rootScope.segmentList = [];
         var data = {};
@@ -1746,6 +1740,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.testDataAccordi.constraintList = false;
 
         $rootScope.selectedSegmentNode = {};
+        $rootScope.selectedSegment = segment;
 
         var data = {};
         data.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
@@ -3277,8 +3272,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}
 			$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(node.iPath)] = testDataCategorizationObj;
 		}
-
-		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 	};
 
     $scope.replaceDot2Dash = function(path){
@@ -3391,31 +3384,33 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
     $scope.overwriteER7Template = function (template){
 		if($rootScope.selectedTestStep){
 			$rootScope.selectedTestStep.er7Message = template.er7Message;
-
-			$scope.updateEr7Message();
-
-			if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.segment){
-				$scope.selectSegment($rootScope.selectedSegmentNode.segment);
-				$scope.refreshTree();
-			}
 		}
-
 		$scope.initHL7EncodedMessageTab();
+
+        $scope.selectedTestStepTab.tabNum = 2;
+        $scope.initTestStepTab($scope.selectedTestStepTab.tabNum);
+
 		$scope.recordChanged($rootScope.selectedTestStep);
 		Notification.success("Template "+template.name+" Applied")
     };
 
     $scope.overwriteER7SegmentTemplate = function (template){
-           $rootScope.selectedSegmentNode.segment.segmentStr = template.content;
-           var updatedER7Message = '';
-           for(var i in $rootScope.segmentList){
-               updatedER7Message = updatedER7Message + $rootScope.segmentList[i].segmentStr + '\n';
-           }
-           $rootScope.selectedTestStep.er7Message = updatedER7Message;
-		   $scope.selectSegment($rootScope.selectedSegmentNode.segment);
-		   $scope.recordChanged($rootScope.selectedTestStep);
+        $rootScope.selectedSegment.segmentStr = template.content;
+        var updatedER7Message = '';
+        for(var i in $rootScope.segmentList){
+            updatedER7Message = updatedER7Message + $rootScope.segmentList[i].segmentStr + '\n';
+        }
 
+        $rootScope.selectedTestStep.er7Message = updatedER7Message;
+        $scope.initHL7EncodedMessageTab();
+
+        $scope.selectedTestStepTab.tabNum = 2;
+        $scope.initTestStepTab($scope.selectedTestStepTab.tabNum);
+
+        $scope.recordChanged($rootScope.selectedTestStep);
+        Notification.success("Template "+template.name+" Applied")
     };
+
 	$scope.getNameFromSegment=function(segment){
 
 	var listOfFields = segment.split("|");
@@ -3525,15 +3520,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}
 		}
 
-		$rootScope.selectedTestStep.messageContentsXMLCode = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
-		$rootScope.selectedTestStep.nistXMLCode = $scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),false);
-		$rootScope.selectedTestStep.stdXMLCode = $scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),true);
-		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
-		$scope.recordChanged($rootScope.selectedTestStep);
-	};
-
-	$scope.updateEr7Message = function () {
-		$scope.initTestData();
 		$rootScope.selectedTestStep.messageContentsXMLCode = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 		$rootScope.selectedTestStep.nistXMLCode = $scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),false);
 		$rootScope.selectedTestStep.stdXMLCode = $scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),true);
@@ -4208,7 +4194,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedTemplate=msgtemp;
 		$scope.msgTemplate=msgtemp;
 		$rootScope.CurrentTitle= "Message Template: " + msgtemp.name;
-		$scope.findTitleForProfiles(msgtemp.integrationProfileId, msgtemp.conformanceProfileId);
+
+        var ipMeta = $rootScope.findIntegrationProfileMeta(msgtemp.integrationProfileId);
+        var cpMeta = $rootScope.findConformanceProfileMeta(msgtemp.integrationProfileId, msgtemp.conformanceProfileId);
+
+        if(ipMeta){
+            $scope.integrationProfileTitle = ipMeta.name;
+        }
+
+        if(cpMeta){
+            $scope.conformanceProfileTitle = cpMeta.structId + '-' + cpMeta.name + '-' + cpMeta.identifier;
+        }
 		$scope.subview = "MessageTemplateMetadata.html";
 	}
 	$scope.OpenTemplateMetadata=function(temp){
@@ -4254,13 +4250,24 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.editorValidation = null;
 
 		$rootScope.CurrentTitle= "Er7 Message Template: " + er7temp.name;
-		$scope.findTitleForProfiles(er7temp.integrationProfileId, er7temp.conformanceProfileId);
+
+		var ipMeta = $rootScope.findIntegrationProfileMeta(er7temp.integrationProfileId);
+        var cpMeta = $rootScope.findConformanceProfileMeta(er7temp.integrationProfileId, er7temp.conformanceProfileId);
+
+        if(ipMeta){
+            $scope.integrationProfileTitle = ipMeta.name;
+        }
+
+        if(cpMeta){
+            $scope.conformanceProfileTitle = cpMeta.structId + '-' + cpMeta.name + '-' + cpMeta.identifier;
+		}
 
 		$rootScope.selectedTemplate=er7temp;
 		$scope.er7Template=er7temp;
 		$scope.subview = "Er7TemplateMetadata.html";
-	}
-		$scope.OpenEr7SegmentTemplatesMetadata=function(er7temp){
+	};
+
+	$scope.OpenEr7SegmentTemplatesMetadata=function(er7temp){
 		$rootScope.selectedTestCaseGroup=null;
 		$rootScope.selectedTestCase = null;
 		$rootScope.selectedTestStep = null;
@@ -4271,31 +4278,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.editorValidation = null;
 
 		$rootScope.CurrentTitle= "Er7 Segment Line Template: " + er7temp.name;
-		//$scope.findTitleForProfiles(er7temp.integrationProfileId, er7temp.conformanceProfileId);
 
 		$rootScope.er7SegmentTemplate=er7temp;
 		$scope.er7SegmentTemplate=er7temp;
 		$scope.subview = "Er7SegmentTemplateMetadata.html";
-	}
-
-	$scope.findTitleForProfiles = function (ipid, cpid){
-		$scope.conformanceProfileTitle = null;
-		$scope.integrationProfileTitle = null;
-
-		for (var i in $rootScope.privateProfiles) {
-			var ip = $rootScope.privateProfiles[i];
-			if(ipid == ip.id){
-				$scope.integrationProfileTitle = ip.metaData.name;
-
-				for (var j in ip.messages.children) {
-					var cp = ip.messages.children[j];
-					if(cpid == cp.id){
-						$scope.conformanceProfileTitle = cp.structID + '-' + cp.name + '-' + cp.identifier;
-					}
-				}
-			}
-		}
-	}
+	};
 
 	$scope.cloneTestStep=function(testStep){
 		var clone= angular.copy(testStep);
@@ -4586,16 +4573,20 @@ angular.module('tcl').controller('SegmentTemplateCreationModalCtrl', function($s
 });
 
 angular.module('tcl').controller('Er7TemplateCreationModalCtrl', function($scope, $modalInstance, $rootScope) {
-	$scope.newEr7Template = {};
-	$scope.newEr7Template.id = new ObjectId().toString();
-	$rootScope.changesMap[$scope.newEr7Template.id]=true;
-	$scope.newEr7Template.name = 'new Er7 Template for ' + $rootScope.selectedConformanceProfile.structID;
-	$scope.newEr7Template.descrption = 'No Desc';
-	$scope.newEr7Template.date = new Date();
-	$scope.newEr7Template.integrationProfileId = $rootScope.selectedIntegrationProfile.id;
-	$scope.newEr7Template.conformanceProfileId =  $rootScope.selectedConformanceProfile.id;
-	$scope.newEr7Template.er7Message = $rootScope.selectedTestStep.er7Message;
-    $scope.newEr7Template.structID = $rootScope.selectedConformanceProfile.structID
+    var cpMeta = $rootScope.findConformanceProfileMeta($rootScope.selectedTestStep.integrationProfileId, $rootScope.selectedTestStep.conformanceProfileId);
+
+    if(cpMeta){
+        $scope.newEr7Template = {};
+        $scope.newEr7Template.id = new ObjectId().toString();
+        $rootScope.changesMap[$scope.newEr7Template.id]=true;
+        $scope.newEr7Template.name = 'new Er7 Template for ' + cpMeta.structId;
+        $scope.newEr7Template.descrption = 'No Desc';
+        $scope.newEr7Template.date = new Date();
+        $scope.newEr7Template.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
+        $scope.newEr7Template.conformanceProfileId =  $rootScope.selectedTestStep.conformanceProfileId;
+        $scope.newEr7Template.er7Message = $rootScope.selectedTestStep.er7Message;
+        $scope.newEr7Template.structID = cpMeta.structId;
+	}
 
 	$scope.createEr7Template = function() {
 		$rootScope.template.er7Templates.push($scope.newEr7Template);
@@ -4615,9 +4606,8 @@ angular.module('tcl').controller('Er7SegmentTemplateCreationModalCtrl', function
 	
 	$scope.newEr7SegmentTemplate.descrption = 'No Desc';
 	$scope.newEr7SegmentTemplate.date = new Date();
-	$scope.newEr7SegmentTemplate.content=$rootScope.selectedSegmentNode.segment.segmentStr;
-	$scope.newEr7SegmentTemplate.segmentName = $rootScope.selectedSegmentNode.segment.obj.name;
-
+	$scope.newEr7SegmentTemplate.content=$rootScope.selectedSegmentNode.segmentStr;
+	$scope.newEr7SegmentTemplate.segmentName = $rootScope.selectedSegmentNode.segmentStr.substring(0,3);
 	$scope.newEr7SegmentTemplate.name = 'new Er7 Template for '+$scope.newEr7SegmentTemplate.segmentName;
 
 

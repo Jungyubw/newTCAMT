@@ -233,7 +233,7 @@ public class TestStepController extends CommonController {
 
         if (params.getTestDataCategorizationMap() != null) {
           Categorization fieldTestDataCategorizationObj =
-              params.getTestDataCategorizationMap().get(fieldNode.getiPath());
+              params.getTestDataCategorizationMap().get(this.replaceDotToDash(fieldNode.getiPath()));
           if (fieldTestDataCategorizationObj != null) {
             fieldNode.setTestDataCategorization(
                 fieldTestDataCategorizationObj.getTestDataCategorization());
@@ -267,7 +267,7 @@ public class TestStepController extends CommonController {
 
             if (params.getTestDataCategorizationMap() != null) {
               Categorization componentTestDataCategorizationObj =
-                  params.getTestDataCategorizationMap().get(componentNode.getiPath());
+                  params.getTestDataCategorizationMap().get(this.replaceDotToDash(componentNode.getiPath()));
               if (componentTestDataCategorizationObj != null) {
                 componentNode.setTestDataCategorization(
                     componentTestDataCategorizationObj.getTestDataCategorization());
@@ -302,7 +302,7 @@ public class TestStepController extends CommonController {
 
                 if (params.getTestDataCategorizationMap() != null) {
                   Categorization subComponentTestDataCategorizationObj =
-                      params.getTestDataCategorizationMap().get(subComponentNode.getiPath());
+                      params.getTestDataCategorizationMap().get(this.replaceDotToDash(subComponentNode.getiPath()));
                   if (subComponentTestDataCategorizationObj != null) {
                     subComponentNode.setTestDataCategorization(
                         subComponentTestDataCategorizationObj.getTestDataCategorization());
@@ -329,6 +329,16 @@ public class TestStepController extends CommonController {
     }
     return filedNodes;
   }
+
+  /**
+   * @param getiPath
+   * @return
+   */
+  private String replaceDotToDash(String iPath) {
+    if(iPath != null) return iPath.replaceAll("\\.", "\\-");
+    return null;
+  }
+
 
   /**
    * @param segmentStr

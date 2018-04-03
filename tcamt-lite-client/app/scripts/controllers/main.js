@@ -19,6 +19,36 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
             }
         };
 
+        $rootScope.testDataCategorizations = ['Indifferent', 'Presence-Content Indifferent', 'Presence-Configuration',
+            'Presence-System Generated', 'Presence-Test Case Proper', 'Presence Length-Content Indifferent',
+            'Presence Length-Configuration', 'Presence Length-System Generated', 'Presence Length-Test Case Proper',
+            'Value-Test Case Fixed', 'Value-Test Case Fixed List', 'NonPresence', 'Value-Profile Fixed', 'Value-Profile Fixed List'];
+
+
+        $rootScope.findConformanceProfileMeta = function (ipid, cpid){
+            for(var i in $rootScope.integrationAbstractProfiles){
+                if(ipid === $rootScope.integrationAbstractProfiles[i].id){
+                    for(var j in $rootScope.integrationAbstractProfiles[i].conformanceProfileMetaDataSet){
+                        var cpMeta = $rootScope.integrationAbstractProfiles[i].conformanceProfileMetaDataSet[j];
+                        if(cpMeta.id === cpid) return cpMeta;
+                    }
+                }
+            };
+
+            return null;
+        };
+
+
+        $rootScope.findIntegrationProfileMeta = function (ipid){
+            for(var i in $rootScope.integrationAbstractProfiles){
+                if(ipid === $rootScope.integrationAbstractProfiles[i].id){
+                    return $rootScope.integrationAbstractProfiles[i].integrationProfileMetaData;
+                }
+            };
+
+            return null;
+        };
+
         $scope.language = function () {
             return i18n.language;
         };
