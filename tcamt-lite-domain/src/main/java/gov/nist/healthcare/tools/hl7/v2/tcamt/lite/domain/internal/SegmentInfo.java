@@ -1,7 +1,7 @@
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.internal;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Usage;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segment;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Usage;
 
 public class SegmentInfo {
 

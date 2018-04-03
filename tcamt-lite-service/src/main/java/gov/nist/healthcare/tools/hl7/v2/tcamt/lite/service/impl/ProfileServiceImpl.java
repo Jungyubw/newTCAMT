@@ -35,7 +35,6 @@ import org.w3c.dom.NodeList;
 
 import com.mongodb.MongoException;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Usage;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.BindingStrength;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Component;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceContext;
@@ -52,6 +51,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Predicate;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segment;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.SegmentRef;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Usage;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ValueElement;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ValueSetDefinition;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ValueSetLibrary;

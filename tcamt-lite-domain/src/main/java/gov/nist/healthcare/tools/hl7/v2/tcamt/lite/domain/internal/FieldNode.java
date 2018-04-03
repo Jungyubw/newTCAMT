@@ -1,25 +1,32 @@
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.internal;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Component;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Field;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Predicate;
 
-public class SubComponentNode {
-
+public class FieldNode {
   private String type;
   private String path;
   private String iPath;
   private String positionPath;
   private String positioniPath;
   private String usagePath;
-  private Component component;
+  private Field field;
   private Datatype dt;
   private String value;
+  private List<ComponentNode> children;
   private String testDataCategorization;
   private List<String> testDataCategorizationListData;
   private Predicate predicate;
+  
+  public void addChild(ComponentNode n) {
+    if (this.children == null)
+      this.children = new ArrayList<ComponentNode>();
+    this.children.add(n);
+  }
 
   public String getType() {
     return type;
@@ -45,36 +52,12 @@ public class SubComponentNode {
     this.iPath = iPath;
   }
 
-  public String getPositionPath() {
-    return positionPath;
-  }
-
-  public void setPositionPath(String positionPath) {
-    this.positionPath = positionPath;
-  }
-
-  public String getPositioniPath() {
-    return positioniPath;
-  }
-
-  public void setPositioniPath(String positioniPath) {
-    this.positioniPath = positioniPath;
-  }
-
   public String getUsagePath() {
     return usagePath;
   }
 
   public void setUsagePath(String usagePath) {
     this.usagePath = usagePath;
-  }
-
-  public Component getComponent() {
-    return component;
-  }
-
-  public void setComponent(Component component) {
-    this.component = component;
   }
 
   public Datatype getDt() {
@@ -91,6 +74,22 @@ public class SubComponentNode {
 
   public void setValue(String value) {
     this.value = value;
+  }
+
+  public List<ComponentNode> getChildren() {
+    return children;
+  }
+
+  public void setChildren(List<ComponentNode> children) {
+    this.children = children;
+  }
+
+  public Field getField() {
+    return field;
+  }
+
+  public void setField(Field field) {
+    this.field = field;
   }
 
   public String getTestDataCategorization() {
@@ -117,5 +116,22 @@ public class SubComponentNode {
     this.predicate = predicate;
   }
 
+  public String getPositionPath() {
+    return positionPath;
+  }
 
+  public void setPositionPath(String positionPath) {
+    this.positionPath = positionPath;
+  }
+
+  public String getPositioniPath() {
+    return positioniPath;
+  }
+
+  public void setPositioniPath(String positioniPath) {
+    this.positioniPath = positioniPath;
+  }
+
+  
+  
 }

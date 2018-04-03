@@ -1,4 +1,4 @@
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view;
 
 import java.util.HashMap;
 

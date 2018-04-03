@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Usage;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.internal.ComponentNode;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.internal.FieldNode;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.internal.SegmentInfo;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.internal.SegmentNode;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.internal.SubComponentNode;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Component;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceProfile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatype;
@@ -26,7 +30,9 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segment;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.SegmentRef;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.SegmentRefOrGroup;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Usage;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.SegmentInstanceData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.SegmentParams;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.TestStepParams;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 
