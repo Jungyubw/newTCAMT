@@ -26,6 +26,8 @@ public class Segment {
   private String label;
 
   private String description;
+  
+  private DynamicMapping dynamicMapping;
 
   private List<Field> children;
 
@@ -76,5 +78,13 @@ public class Segment {
     if(this.children == null) this.children = new ArrayList<Field>();
     this.children.add(f);
     
+  }
+
+  public DynamicMapping getDynamicMapping() {
+    return dynamicMapping;
+  }
+
+  public void setDynamicMapping(DynamicMapping dynamicMapping) {
+    this.dynamicMapping = dynamicMapping;
   }
 }

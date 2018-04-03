@@ -43,6 +43,9 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformancePro
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceProfileMetaData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceStatement;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.DynamicMapping;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.DynamicMappingDef;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.DynamicMappingItem;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Field;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Group;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.IntegrationProfile;
@@ -141,6 +144,42 @@ public class ProfileServiceImpl implements ProfileService {
             segment.addField(f);
           }
         }
+        NodeList dmList = segmentElm.getElementsByTagName("DynamicMapping");
+        
+        if(dmList != null && dmList.getLength() > 0){
+          Element dynamicMappingElm = (Element)dmList.item(0);
+          NodeList mappingList = dynamicMappingElm.getElementsByTagName("Mapping");
+          if(mappingList != null && mappingList.getLength() > 0){
+            Element mappingElm = (Element)mappingList.item(0);
+            
+            NodeList caseList = mappingElm.getElementsByTagName("Case");
+            if(caseList != null && caseList.getLength() > 0){
+              
+              DynamicMapping dynamicMapping = new DynamicMapping();
+              DynamicMappingDef dynamicMappingDef = new DynamicMappingDef();
+              dynamicMappingDef.setPostion(mappingElm.getAttribute("Position"));
+              dynamicMappingDef.setReference(mappingElm.getAttribute("Reference"));
+              if(mappingElm.getAttribute("SecondReference") != null && !mappingElm.getAttribute("SecondReference").equals(""))
+                dynamicMappingDef.setSecondReference(mappingElm.getAttribute("SecondReference"));
+              dynamicMapping.setDynamicMappingDef(dynamicMappingDef);
+              
+              for(int k = 0; k < caseList.getLength(); k++){
+                Element caseElm = (Element)caseList.item(k);
+                
+                DynamicMappingItem dynamicMappingItem = new DynamicMappingItem();
+                if(caseElm.getAttribute("Value") != null && !caseElm.getAttribute("Value").equals("")) dynamicMappingItem.setValue(caseElm.getAttribute("Value"));
+                if(caseElm.getAttribute("SecondValue") != null && !caseElm.getAttribute("SecondValue").equals("")) dynamicMappingItem.setSecondValue(caseElm.getAttribute("SecondValue"));
+                if(caseElm.getAttribute("Datatype") != null && !caseElm.getAttribute("Datatype").equals("")) dynamicMappingItem.setDatatypeId(caseElm.getAttribute("Datatype"));
+                
+                dynamicMapping.addItem(dynamicMappingItem);
+                
+              }
+              segment.setDynamicMapping(dynamicMapping);
+            }
+            
+          }
+        }
+        
         integrationProfile.addSegment(segment);
       }
 
