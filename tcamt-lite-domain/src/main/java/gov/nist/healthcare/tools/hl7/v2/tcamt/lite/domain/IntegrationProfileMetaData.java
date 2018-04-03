@@ -9,44 +9,86 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
-
-import java.util.ArrayList;
-import java.util.List;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 /**
  * @author jungyubw
  *
  */
-public class Group extends SegmentRefOrGroup {
+public class IntegrationProfileMetaData {
 
   private String id;
+  private String type;
+  private String hl7Version;
+  private String version;
   private String name;
-  private List<SegmentRefOrGroup> children;
-  
+  private String orgName;
+  private String date;
+  private String specificationName;
+
   public String getId() {
     return id;
   }
+
   public void setId(String id) {
     this.id = id;
   }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getHl7Version() {
+    return hl7Version;
+  }
+
+  public void setHl7Version(String hl7Version) {
+    this.hl7Version = hl7Version;
+  }
+
   public String getName() {
     return name;
   }
+
   public void setName(String name) {
     this.name = name;
   }
-  public List<SegmentRefOrGroup> getChildren() {
-    return children;
+
+  public String getOrgName() {
+    return orgName;
   }
-  public void setChildren(List<SegmentRefOrGroup> children) {
-    this.children = children;
+
+  public void setOrgName(String orgName) {
+    this.orgName = orgName;
   }
-  /**
-   * @param parseSegmentRef
-   */
-  public void addChild(SegmentRefOrGroup child) {
-    if(this.children == null) this.children = new ArrayList<SegmentRefOrGroup>();
-    this.children.add(child);
+
+  public String getDate() {
+    return date;
   }
+
+  public void setDate(String date) {
+    this.date = date;
+  }
+
+  public String getSpecificationName() {
+    return specificationName;
+  }
+
+  public void setSpecificationName(String specificationName) {
+    this.specificationName = specificationName;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+
 }

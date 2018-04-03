@@ -9,51 +9,39 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Usage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author jungyubw
  *
  */
-public class Predicate {
-  private Usage trueUsage;
-  private Usage falseUsage;
-  private String target;
-  private String description;
+public class ConformanceProfile {  
+  private ConformanceProfileMetaData conformanceProfileMetaData;
 
-  public Usage getTrueUsage() {
-    return trueUsage;
+  private List<SegmentRefOrGroup> children;
+
+  public ConformanceProfileMetaData getConformanceProfileMetaData() {
+    return conformanceProfileMetaData;
   }
 
-  public void setTrueUsage(Usage trueUsage) {
-    this.trueUsage = trueUsage;
+  public void setConformanceProfileMetaData(ConformanceProfileMetaData conformanceProfileMetaData) {
+    this.conformanceProfileMetaData = conformanceProfileMetaData;
   }
 
-  public Usage getFalseUsage() {
-    return falseUsage;
+  public List<SegmentRefOrGroup> getChildren() {
+    return children;
   }
 
-  public void setFalseUsage(Usage falseUsage) {
-    this.falseUsage = falseUsage;
+  public void setChildren(List<SegmentRefOrGroup> children) {
+    this.children = children;
   }
-
-  public String getTarget() {
-    return target;
+  
+  public void addChild(SegmentRefOrGroup seog){
+    if(this.children == null) this.children = new ArrayList<SegmentRefOrGroup>();
+    this.children.add(seog);
   }
-
-  public void setTarget(String target) {
-    this.target = target;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
 
 }

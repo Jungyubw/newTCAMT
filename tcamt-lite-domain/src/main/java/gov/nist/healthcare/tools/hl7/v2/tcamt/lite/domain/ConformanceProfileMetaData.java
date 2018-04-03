@@ -9,20 +9,20 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 /**
  * @author jungyubw
  *
  */
-public class ConformanceContextMetaData {
-
+public class ConformanceProfileMetaData {
   private String id;
   private String name;
-  private String orgName;
-  private String version;
-  private String date;
-  private String specificationName;
+  private String type;
+  private String event;
+  private String structId;
+  private String description;
+  private String identifier;
 
   public String getId() {
     return id;
@@ -40,37 +40,46 @@ public class ConformanceContextMetaData {
     this.name = name;
   }
 
-  public String getOrgName() {
-    return orgName;
+  public String getType() {
+    return type;
   }
 
-  public void setOrgName(String orgName) {
-    this.orgName = orgName;
+  public void setType(String type) {
+    this.type = type;
   }
 
-  public String getVersion() {
-    return version;
+  public String getEvent() {
+    return event;
   }
 
-  public void setVersion(String version) {
-    this.version = version;
+  public void setEvent(String event) {
+    this.event = event;
   }
 
-  public String getDate() {
-    return date;
+  public String getStructId() {
+    return structId;
   }
 
-  public void setDate(String date) {
-    this.date = date;
+  public void setStructId(String structId) {
+    this.structId = structId;
   }
 
-  public String getSpecificationName() {
-    return specificationName;
+  public String getDescription() {
+    return description;
   }
 
-  public void setSpecificationName(String specificationName) {
-    this.specificationName = specificationName;
+  public void setDescription(String description) {
+    this.description = description;
   }
+
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
+  }
+
 
 
 }

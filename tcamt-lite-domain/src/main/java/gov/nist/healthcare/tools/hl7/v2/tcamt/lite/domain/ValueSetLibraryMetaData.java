@@ -9,28 +9,26 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset;
-
-import java.util.Set;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 /**
  * @author jungyubw
  *
  */
-public class ValueSetDefinition {
-  private String bindingIdentifier;
+public class ValueSetLibraryMetaData {
+  private String id;
   private String name;
-  private String group;
-  private Integer order;
+  private String orgName;
+  private String version;
+  private String date;
+  private String specificationName;
 
-  private Set<ValueElement> children;
-
-  public String getBindingIdentifier() {
-    return bindingIdentifier;
+  public String getId() {
+    return id;
   }
 
-  public void setBindingIdentifier(String bindingIdentifier) {
-    this.bindingIdentifier = bindingIdentifier;
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getName() {
@@ -41,28 +39,36 @@ public class ValueSetDefinition {
     this.name = name;
   }
 
-  public String getGroup() {
-    return group;
+  public String getOrgName() {
+    return orgName;
   }
 
-  public void setGroup(String group) {
-    this.group = group;
+  public void setOrgName(String orgName) {
+    this.orgName = orgName;
   }
 
-  public Integer getOrder() {
-    return order;
+  public String getVersion() {
+    return version;
   }
 
-  public void setOrder(Integer order) {
-    this.order = order;
+  public void setVersion(String version) {
+    this.version = version;
   }
 
-  public Set<ValueElement> getChildren() {
-    return children;
+  public String getDate() {
+    return date;
   }
 
-  public void setChildren(Set<ValueElement> children) {
-    this.children = children;
+  public void setDate(String date) {
+    this.date = date;
+  }
+
+  public String getSpecificationName() {
+    return specificationName;
+  }
+
+  public void setSpecificationName(String specificationName) {
+    this.specificationName = specificationName;
   }
 
 

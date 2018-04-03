@@ -15,11 +15,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints.ConformanceContextMetaData;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceProfileMetaData;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.IntegrationProfileMetaData;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset.ValueSetLibraryMetaData;
-
 /**
  * @author jungyubw
  *

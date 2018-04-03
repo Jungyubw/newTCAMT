@@ -208,7 +208,7 @@ body {
 															{{::segment.iPath}}
 														</td>
 														<td class="col-md-7">
-															<textarea disabled class="form-control">{{::segment.segmentStr}}</textarea>
+															<textarea disabled class="form-control">{{::segment.lineStr}}</textarea>
 														</td>
 														<td class="col-md-2">
 															{{::segment.usagePath}}
@@ -233,9 +233,9 @@ body {
 												<i class="fa fa-pencil fa-fw"></i> Selected Segment
 											</span>
 										</uib-accordion-heading>
-										<div class="col-md-12" ng-if="!selectedSegmentNode.segment || !testDataAccordi.selectedSegment"><p style ="color:red;"> No Segment Selected</p></div>
+										<div class="col-md-12" ng-if="!selectedSegmentNode || !testDataAccordi.selectedSegment"><p style ="color:red;"> No Segment Selected</p></div>
 
-										<div class="col-md-12" ng-if="selectedSegmentNode.segment && testDataAccordi.selectedSegment">
+										<div class="col-md-12" ng-if="selectedSegmentNode && testDataAccordi.selectedSegment">
 											<div class="row">
 												<span class="pull-left">
 													<button type="button" class="btn btn-info btn-sm" ng-click="openCreateSegmentTemplateModal()"><i class="fa fa-plus"></i>
@@ -255,7 +255,7 @@ body {
 													<label class="control-label">Selected Segment:</label>
 												</div>
 												<div class="col-md-10">
-													<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.iPath" />
+													<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.iPath" />
 												</div>
 											</div>
 
@@ -264,7 +264,7 @@ body {
 													<label class="control-label">Line String:</label>
 												</div>
 												<div class="col-md-10">
-													<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segment.segmentStr" />
+													<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segmentStr" />
 												</div>
 											</div>
 

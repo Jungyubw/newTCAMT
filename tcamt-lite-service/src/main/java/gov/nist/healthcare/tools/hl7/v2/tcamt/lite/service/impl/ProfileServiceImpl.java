@@ -18,7 +18,9 @@
 
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,23 +35,27 @@ import org.w3c.dom.NodeList;
 
 import com.mongodb.MongoException;
 
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.BindingStrength;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Component;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ConformanceContext;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ConformanceContextMetaData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ConformanceProfile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ConformanceProfileMetaData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ConformanceStatement;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Field;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Group;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.IntegrationProfile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.IntegrationProfileMetaData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Predicate;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileData;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints.ConformanceContext;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints.ConformanceContextMetaData;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.BindingStrength;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Component;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceProfile;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceProfileMetaData;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatype;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Field;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Group;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.IntegrationProfile;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.IntegrationProfileMetaData;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segment;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.SegmentRef;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Usage;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset.ValueSetLibrary;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset.ValueSetLibraryMetaData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Segment;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.SegmentRef;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Usage;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ValueElement;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ValueSetDefinition;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ValueSetLibrary;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ValueSetLibraryMetaData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.repo.ProfileRepository;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.util.XMLManager;
@@ -184,9 +190,46 @@ public class ProfileServiceImpl implements ProfileService {
           .setSpecificationName(valueSetMetaDataElm.getAttribute("SpecificationName"));
       valueSetLibraryMetaData.setVersion(valueSetMetaDataElm.getAttribute("Version"));
       valueSetLibrary.setMetaData(valueSetLibraryMetaData);
-
-      // TODO
-
+      
+      Element noValidationElm = (Element) valueSetDom.getElementsByTagName("NoValidation").item(0);
+      NodeList noValidationNodeList = noValidationElm.getElementsByTagName("BindingIdentifier");
+      for (int i = 0; i < noValidationNodeList.getLength(); i++) {
+        Element noValidationItemElm = (Element) noValidationNodeList.item(i);
+        valueSetLibrary.addNoValidation(noValidationItemElm.getTextContent());
+      }
+      
+      NodeList valueSetDefinitionsNodeList = valueSetDom.getElementsByTagName("ValueSetDefinitions");
+      for (int i = 0; i < valueSetDefinitionsNodeList.getLength(); i++) {
+        Element valueSetDefinitionsElm = (Element) valueSetDefinitionsNodeList.item(i);
+        String groupName = valueSetDefinitionsElm.getAttribute("Group");
+        String order = valueSetDefinitionsElm.getAttribute("Order");
+        
+        NodeList valueSetDefinitionNodeList = valueSetDefinitionsElm.getElementsByTagName("ValueSetDefinition");
+        for (int j = 0; j < valueSetDefinitionNodeList.getLength(); j++) {
+          Element valueSetDefinitionElm = (Element) valueSetDefinitionNodeList.item(j);
+          String bindingIdentifier = valueSetDefinitionElm.getAttribute("BindingIdentifier");
+          String name = valueSetDefinitionElm.getAttribute("Name");
+          
+          ValueSetDefinition valueSetDefinition = new ValueSetDefinition();
+          valueSetDefinition.setName(name);
+          if(order != null && !order.equals("")) {
+            valueSetDefinition.setOrder(Integer.parseInt(order));
+          }
+          valueSetDefinition.setGroup(groupName);
+          valueSetDefinition.setBindingIdentifier(bindingIdentifier);
+          
+          NodeList valueElementNodeList = valueSetDefinitionElm.getElementsByTagName("ValueElement");
+          for (int k = 0; k < valueElementNodeList.getLength(); k++) {
+            Element valueElm = (Element) valueElementNodeList.item(k);
+            ValueElement ve = new ValueElement();
+            ve.setCodeSystem(valueElm.getAttribute("CodeSystem"));
+            ve.setDisplayName(valueElm.getAttribute("DisplayName"));
+            ve.setValue(valueElm.getAttribute("Value"));
+            valueSetDefinition.addValueElement(ve);
+          }
+          valueSetLibrary.addValueSetDefinition(valueSetDefinition);
+        }
+      }
       data.setValueSetLibrary(valueSetLibrary);
 
       ConformanceContext conformanceContext = new ConformanceContext();
@@ -200,18 +243,116 @@ public class ProfileServiceImpl implements ProfileService {
       conformanceContextMetaData.setId(conformanceContextElm.getAttribute("UUID"));
       conformanceContextMetaData.setName(constraintMetaDataElm.getAttribute("Name"));
       conformanceContextMetaData.setOrgName(constraintMetaDataElm.getAttribute("OrgName"));
-      conformanceContextMetaData
-          .setSpecificationName(constraintMetaDataElm.getAttribute("SpecificationName"));
+      conformanceContextMetaData.setSpecificationName(constraintMetaDataElm.getAttribute("SpecificationName"));
       conformanceContextMetaData.setVersion(constraintMetaDataElm.getAttribute("Version"));
       conformanceContext.setMetaData(conformanceContextMetaData);
+      
+      Element predicatesElm = (Element) constraintDom.getElementsByTagName("Predicates").item(0);
+      Element predicateDatatypesElm = (Element) predicatesElm.getElementsByTagName("Datatype").item(0);
+      Element predicateSegmentsElm = (Element) predicatesElm.getElementsByTagName("Segment").item(0);
+      Element predicateGroupsElm = (Element) predicatesElm.getElementsByTagName("Group").item(0);
+      Element predicateMessagesElm = (Element) predicatesElm.getElementsByTagName("Message").item(0);
+      conformanceContext.setDatatypePredicates(this.convertPredicates(predicateDatatypesElm));
+      conformanceContext.setSegmentPredicates(this.convertPredicates(predicateSegmentsElm));
+      conformanceContext.setGroupPredicates(this.convertPredicates(predicateGroupsElm));
+      conformanceContext.setMessagePredicates(this.convertPredicates(predicateMessagesElm));
+      
+      Element conformanceStatementsElm = (Element) constraintDom.getElementsByTagName("Constraints").item(0);
+      Element conformanceStatementDatatypesElm = (Element) conformanceStatementsElm.getElementsByTagName("Datatype").item(0);
+      Element conformanceStatementSegmentsElm = (Element) conformanceStatementsElm.getElementsByTagName("Segment").item(0);
+      Element conformanceStatementGroupsElm = (Element) conformanceStatementsElm.getElementsByTagName("Group").item(0);
+      Element conformanceStatementMessagesElm = (Element) conformanceStatementsElm.getElementsByTagName("Message").item(0);
+      conformanceContext.setDatatypeConformanceStatements(this.convertConformanceStatements(conformanceStatementDatatypesElm));
+      conformanceContext.setGroupConformanceStatements(this.convertConformanceStatements(conformanceStatementGroupsElm));
+      conformanceContext.setMessageConformanceStatements(this.convertConformanceStatements(conformanceStatementMessagesElm));
+      conformanceContext.setSegmentConformanceStatements(this.convertConformanceStatements(conformanceStatementSegmentsElm));
 
-      // TODO
       data.setConformanceContext(conformanceContext);
 
-      return profileRepository.save(data);
+      ProfileData result = profileRepository.save(data);
+      
+      return result;
     } catch (MongoException e) {
       throw new Exception(e);
     }
+  }
+
+  private Set<ConformanceStatement> convertConformanceStatements(Element elm) {
+    if(elm != null) {
+      Set<ConformanceStatement> conformanceStatements = new HashSet<ConformanceStatement>();
+      NodeList byIdNodeList = elm.getElementsByTagName("ByID");
+      NodeList byNameNodeList = elm.getElementsByTagName("ByName");
+      for (int i = 0; i < byIdNodeList.getLength(); i++) {
+        Element byIdElm = (Element) byIdNodeList.item(i);
+        String id = byIdElm.getAttribute("ID");
+        NodeList constraintNodeList = byIdElm.getElementsByTagName("Constraint");
+        
+        for(int j=0; j < constraintNodeList.getLength(); j++) {
+          conformanceStatements.add(this.convertConformanceStatement((Element)constraintNodeList.item(j), id, null));
+        }
+      }
+      for (int i = 0; i < byNameNodeList.getLength(); i++) {
+        Element byNameElm = (Element) byNameNodeList.item(i);
+        String name = byNameElm.getAttribute("Name");
+        NodeList constraintNodeList = byNameElm.getElementsByTagName("Constraint");
+        for(int j=0; j < constraintNodeList.getLength(); j++) {
+          conformanceStatements.add(this.convertConformanceStatement((Element)constraintNodeList.item(j), null, name));
+        }
+      }
+      if(conformanceStatements.size() > 0) return conformanceStatements;      
+    }
+
+    return null;
+  }
+
+  private Set<Predicate> convertPredicates(Element elm) {
+    if(elm != null) {
+      Set<Predicate> predicates = new HashSet<Predicate>();
+      NodeList byIdNodeList = elm.getElementsByTagName("ByID");
+      NodeList byNameNodeList = elm.getElementsByTagName("ByName");
+      for (int i = 0; i < byIdNodeList.getLength(); i++) {
+        Element byIdElm = (Element) byIdNodeList.item(i);
+        String id = byIdElm.getAttribute("ID");
+        NodeList predicateNodeList = byIdElm.getElementsByTagName("Predicate");
+        
+        for(int j=0; j < predicateNodeList.getLength(); j++) {
+          predicates.add(this.convertPredicate((Element)predicateNodeList.item(j), id, null));
+        }
+      }
+      for (int i = 0; i < byNameNodeList.getLength(); i++) {
+        Element byNameElm = (Element) byNameNodeList.item(i);
+        String name = byNameElm.getAttribute("Name");
+        NodeList predicateNodeList = byNameElm.getElementsByTagName("Predicate");
+        for(int j=0; j < predicateNodeList.getLength(); j++) {
+          predicates.add(this.convertPredicate((Element)predicateNodeList.item(j), null, name));
+        }
+      }
+      if(predicates.size() > 0) return predicates;      
+    }
+
+    return null;
+  }
+
+  private Predicate convertPredicate(Element elm, String id, String name) {
+    Predicate p = new Predicate();
+    p.setById(id);
+    p.setByName(name);
+    Element descriptionElm = (Element) elm.getElementsByTagName("Description").item(0);
+    p.setDescription(descriptionElm.getTextContent());
+    p.setFalseUsage(Usage.fromValue(elm.getAttribute("FalseUsage")));
+    p.setTrueUsage(Usage.fromValue(elm.getAttribute("TrueUsage")));
+    p.setTarget(elm.getAttribute("Target"));
+    return p;
+  }
+  
+  private ConformanceStatement convertConformanceStatement(Element elm, String id, String name) {
+    ConformanceStatement cs = new ConformanceStatement();
+    cs.setById(id);
+    cs.setByName(name);
+    Element descriptionElm = (Element) elm.getElementsByTagName("Description").item(0);
+    cs.setDescription(descriptionElm.getTextContent());
+    cs.setCsId(elm.getAttribute("ID"));
+    return cs;
   }
 
   /**

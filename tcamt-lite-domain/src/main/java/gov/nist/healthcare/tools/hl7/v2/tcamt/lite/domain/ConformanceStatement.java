@@ -9,13 +9,15 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 /**
  * @author jungyubw
  *
  */
 public class ConformanceStatement {
+  private String byId;
+  private String byName;
   private String csId;
   private String description;
 
@@ -33,6 +35,22 @@ public class ConformanceStatement {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getById() {
+    return byId;
+  }
+
+  public void setById(String byId) {
+    this.byId = byId;
+  }
+
+  public String getByName() {
+    return byName;
+  }
+
+  public void setByName(String byName) {
+    this.byName = byName;
   }
 
 

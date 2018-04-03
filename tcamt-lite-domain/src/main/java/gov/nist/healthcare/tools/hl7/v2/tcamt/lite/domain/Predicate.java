@@ -9,59 +9,42 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 /**
  * @author jungyubw
  *
  */
-public class ConformanceProfileMetaData {
-  private String id;
-  private String name;
-  private String type;
-  private String event;
-  private String structId;
+public class Predicate {
+  private String byId;
+  private String byName;
+  private Usage trueUsage;
+  private Usage falseUsage;
+  private String target;
   private String description;
-  private String identifier;
 
-  public String getId() {
-    return id;
+  public Usage getTrueUsage() {
+    return trueUsage;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setTrueUsage(Usage trueUsage) {
+    this.trueUsage = trueUsage;
   }
 
-  public String getName() {
-    return name;
+  public Usage getFalseUsage() {
+    return falseUsage;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setFalseUsage(Usage falseUsage) {
+    this.falseUsage = falseUsage;
   }
 
-  public String getType() {
-    return type;
+  public String getTarget() {
+    return target;
   }
 
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getEvent() {
-    return event;
-  }
-
-  public void setEvent(String event) {
-    this.event = event;
-  }
-
-  public String getStructId() {
-    return structId;
-  }
-
-  public void setStructId(String structId) {
-    this.structId = structId;
+  public void setTarget(String target) {
+    this.target = target;
   }
 
   public String getDescription() {
@@ -72,14 +55,21 @@ public class ConformanceProfileMetaData {
     this.description = description;
   }
 
-  public String getIdentifier() {
-    return identifier;
+  public String getById() {
+    return byId;
   }
 
-  public void setIdentifier(String identifier) {
-    this.identifier = identifier;
+  public void setById(String byId) {
+    this.byId = byId;
   }
 
+  public String getByName() {
+    return byName;
+  }
+
+  public void setByName(String byName) {
+    this.byName = byName;
+  }
 
 
 }

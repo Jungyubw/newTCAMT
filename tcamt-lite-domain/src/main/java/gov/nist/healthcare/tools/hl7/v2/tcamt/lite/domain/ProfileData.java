@@ -2,16 +2,15 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.util.Date;
 
-import javax.persistence.Id;
-
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints.ConformanceContext;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.IntegrationProfile;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset.ValueSetLibrary;
-
 @Document(collection = "profiledata")
-public class ProfileData {
+public class ProfileData implements java.io.Serializable{
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -1936198766473594071L;
 
   @Id
   private String id;
@@ -23,7 +22,9 @@ public class ProfileData {
   private Date lastUpdatedDate;
 
   private IntegrationProfile integrationProfile;
+  
   private ConformanceContext conformanceContext;
+  
   private ValueSetLibrary valueSetLibrary;
 
   private String profileXMLFileStr;

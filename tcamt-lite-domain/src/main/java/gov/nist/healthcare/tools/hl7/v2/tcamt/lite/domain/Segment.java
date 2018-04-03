@@ -9,7 +9,7 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,30 +18,63 @@ import java.util.List;
  * @author jungyubw
  *
  */
-public class ConformanceProfile {  
-  private ConformanceProfileMetaData conformanceProfileMetaData;
+public class Segment {
+  private String id;
 
-  private List<SegmentRefOrGroup> children;
+  private String name;
 
-  public ConformanceProfileMetaData getConformanceProfileMetaData() {
-    return conformanceProfileMetaData;
+  private String label;
+
+  private String description;
+
+  private List<Field> children;
+
+  public String getId() {
+    return id;
   }
 
-  public void setConformanceProfileMetaData(ConformanceProfileMetaData conformanceProfileMetaData) {
-    this.conformanceProfileMetaData = conformanceProfileMetaData;
+  public void setId(String id) {
+    this.id = id;
   }
 
-  public List<SegmentRefOrGroup> getChildren() {
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getLabel() {
+    return label;
+  }
+
+  public void setLabel(String label) {
+    this.label = label;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public List<Field> getChildren() {
     return children;
   }
 
-  public void setChildren(List<SegmentRefOrGroup> children) {
+  public void setChildren(List<Field> children) {
     this.children = children;
   }
-  
-  public void addChild(SegmentRefOrGroup seog){
-    if(this.children == null) this.children = new ArrayList<SegmentRefOrGroup>();
-    this.children.add(seog);
-  }
 
+  /**
+   * @param f
+   */
+  public void addField(Field f) {
+    if(this.children == null) this.children = new ArrayList<Field>();
+    this.children.add(f);
+    
+  }
 }

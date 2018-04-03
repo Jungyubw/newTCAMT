@@ -1,4 +1,4 @@
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +69,12 @@ public class Datatype implements java.io.Serializable {
       this.children = new ArrayList<Component>();
     this.children.add(c);
 
+  }
+
+  @Override
+  public String toString() {
+    return "Datatype [id=" + id + ", name=" + name + ", label=" + label + ", description="
+        + description + ", children=" + children + "]";
   }
 
 

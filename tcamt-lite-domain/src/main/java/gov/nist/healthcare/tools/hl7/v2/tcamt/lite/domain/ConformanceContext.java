@@ -9,12 +9,12 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.constraints;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.util.Set;
 
-import javax.persistence.Id;
-
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -23,7 +23,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 
 @Document(collection = "conformance-context")
-public class ConformanceContext {
+public class ConformanceContext implements java.io.Serializable{
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -6137855295572071416L;
 
   @Id
   private String id;
@@ -39,6 +44,11 @@ public class ConformanceContext {
   private Set<ConformanceStatement> segmentConformanceStatements;
   private Set<ConformanceStatement> groupConformanceStatements;
   private Set<ConformanceStatement> messageConformanceStatements;
+  
+  public ConformanceContext() {
+    super();
+    this.id = new ObjectId().toString();
+  }
 
   public ConformanceContextMetaData getMetaData() {
     return metaData;

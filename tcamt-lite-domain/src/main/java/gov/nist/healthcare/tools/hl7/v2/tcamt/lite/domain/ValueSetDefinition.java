@@ -9,26 +9,29 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author jungyubw
  *
  */
-public class ValueSetLibraryMetaData {
-  private String id;
+public class ValueSetDefinition {
+  private String bindingIdentifier;
   private String name;
-  private String orgName;
-  private String version;
-  private String date;
-  private String specificationName;
+  private String group;
+  private Integer order;
 
-  public String getId() {
-    return id;
+  private Set<ValueElement> children;
+
+  public String getBindingIdentifier() {
+    return bindingIdentifier;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setBindingIdentifier(String bindingIdentifier) {
+    this.bindingIdentifier = bindingIdentifier;
   }
 
   public String getName() {
@@ -39,37 +42,32 @@ public class ValueSetLibraryMetaData {
     this.name = name;
   }
 
-  public String getOrgName() {
-    return orgName;
+  public String getGroup() {
+    return group;
   }
 
-  public void setOrgName(String orgName) {
-    this.orgName = orgName;
+  public void setGroup(String group) {
+    this.group = group;
   }
 
-  public String getVersion() {
-    return version;
+  public Integer getOrder() {
+    return order;
   }
 
-  public void setVersion(String version) {
-    this.version = version;
+  public void setOrder(Integer order) {
+    this.order = order;
   }
 
-  public String getDate() {
-    return date;
+  public Set<ValueElement> getChildren() {
+    return children;
   }
 
-  public void setDate(String date) {
-    this.date = date;
+  public void setChildren(Set<ValueElement> children) {
+    this.children = children;
   }
 
-  public String getSpecificationName() {
-    return specificationName;
+  public void addValueElement(ValueElement ve) {
+    if(this.children == null) this.children = new HashSet<ValueElement>();
+    this.children.add(ve);
   }
-
-  public void setSpecificationName(String specificationName) {
-    this.specificationName = specificationName;
-  }
-
-
 }

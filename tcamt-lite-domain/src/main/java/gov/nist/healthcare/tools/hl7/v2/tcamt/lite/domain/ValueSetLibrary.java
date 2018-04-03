@@ -9,12 +9,13 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.valueset;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Id;
-
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -22,7 +23,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  */
 @Document(collection = "valueset-library")
-public class ValueSetLibrary {
+public class ValueSetLibrary implements java.io.Serializable{
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 2977735380027633233L;
 
   @Id
   private String id;
@@ -30,6 +36,11 @@ public class ValueSetLibrary {
   private ValueSetLibraryMetaData metaData;
   private Set<String> noValidationSet;
   private Set<ValueSetDefinition> valueSetDefinitions;
+
+  public ValueSetLibrary() {
+    super();
+    this.id = new ObjectId().toString();
+  }
 
   public ValueSetLibraryMetaData getMetaData() {
     return metaData;
@@ -46,6 +57,11 @@ public class ValueSetLibrary {
   public void setNoValidationSet(Set<String> noValidationSet) {
     this.noValidationSet = noValidationSet;
   }
+  
+  public void addNoValidation(String id) {
+    if(this.noValidationSet == null) this.noValidationSet = new HashSet<String>();
+    this.noValidationSet.add(id);
+  }
 
   public Set<ValueSetDefinition> getValueSetDefinitions() {
     return valueSetDefinitions;
@@ -53,6 +69,11 @@ public class ValueSetLibrary {
 
   public void setValueSetDefinitions(Set<ValueSetDefinition> valueSetDefinitions) {
     this.valueSetDefinitions = valueSetDefinitions;
+  }
+  
+  public void addValueSetDefinition(ValueSetDefinition valueSetDefinition) {
+    if(this.valueSetDefinitions == null) this.valueSetDefinitions = new HashSet<ValueSetDefinition>();
+    this.valueSetDefinitions.add(valueSetDefinition);
   }
 
   public String getId() {

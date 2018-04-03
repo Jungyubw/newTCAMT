@@ -1393,47 +1393,39 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.selectTestStep = function (testStep) {
 		if (testStep != null) {
 			waitingDialog.show('Opening Test Step ...', {dialogSize: 'xs', progressType: 'info'});
-            $rootScope.segmentList = [];
-            $rootScope.selectedIntegrationProfile = null;
             $rootScope.selectedTestStep = testStep;
             $scope.updateCurrentTitle("Test Step", $rootScope.selectedTestStep.name);
-            if($rootScope.selectedTestStep.testDataCategorizationMap == undefined || $rootScope.selectedTestStep == null){
-                $rootScope.selectedTestStep.testDataCategorizationMap = {};
-            }
 
-            $scope.loadIntegrationProfile(function (){
-                $rootScope.selectedTestCaseGroup=null;
-                $rootScope.selectedTestCase = null;
-                $rootScope.selectedTemplate=null;
-                $rootScope.selectedSegmentNode =null;
-                $scope.subview = "EditTestStepMetadata.html";
-                $scope.selectedTestStepTab.tabNum = 0;
-                $scope.initTestStepTab($scope.selectedTestStepTab.tabNum);
+            $rootScope.selectedTestCaseGroup=null;
+            $rootScope.selectedTestCase = null;
+            $rootScope.selectedTemplate=null;
+            $rootScope.selectedSegmentNode =null;
+            $scope.subview = "EditTestStepMetadata.html";
+            $scope.selectedTestStepTab.tabNum = 0;
+            $scope.initTestStepTab($scope.selectedTestStepTab.tabNum);
 
-                if($rootScope.selectedTestStep.testStoryConfigId){
-                    $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestStep.testStoryConfigId; });
-                }else {
-                    if($rootScope.selectedTestStep.integrationProfileId == null){
-                        if($rootScope.selectedTestPlan.globalManualTestStepConfigId){
-                            $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalManualTestStepConfigId;  });
-                            $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestPlan.globalManualTestStepConfigId;
-                        }else {
-                            $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
-                            $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestStep.testStoryConfig.id;
-                        }
+            if($rootScope.selectedTestStep.testStoryConfigId){
+                $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestStep.testStoryConfigId; });
+            }else {
+                if($rootScope.selectedTestStep.integrationProfileId == null){
+                    if($rootScope.selectedTestPlan.globalManualTestStepConfigId){
+                        $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalManualTestStepConfigId;  });
+                        $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestPlan.globalManualTestStepConfigId;
                     }else {
-                        if($rootScope.selectedTestPlan.globalAutoTestStepConfigId){
-                            $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalAutoTestStepConfigId;  });
-                            $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestPlan.globalAutoTestStepConfigId;
-                        }else {
-                            $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
-                            $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestStep.testStoryConfig.id;
-                        }
+                        $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                        $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestStep.testStoryConfig.id;
+                    }
+                }else {
+                    if($rootScope.selectedTestPlan.globalAutoTestStepConfigId){
+                        $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.id == $rootScope.selectedTestPlan.globalAutoTestStepConfigId;  });
+                        $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestPlan.globalAutoTestStepConfigId;
+                    }else {
+                        $rootScope.selectedTestStep.testStoryConfig = _.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; });
+                        $rootScope.selectedTestStep.testStoryConfigId = $rootScope.selectedTestStep.testStoryConfig.id;
                     }
                 }
-                waitingDialog.hide();
-
-            });
+            }
+            waitingDialog.hide();
 		}
 	};
 
@@ -1734,270 +1726,49 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.testDataAccordi.segmentList = true;
 		$scope.testDataAccordi.selectedSegment = false;
 		$scope.testDataAccordi.constraintList = false;
-		$scope.updateMessage();
 		$rootScope.selectedSegmentNode = null;
+
+        $rootScope.segmentList = [];
+        var data = {};
+        data.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
+        data.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
+        data.er7Message = $rootScope.selectedTestStep.er7Message;
+        $http.post('api/teststep/getSegmentList', data).then(function (response) {
+            $rootScope.segmentList = angular.fromJson(response.data);
+        }, function (error) {
+        });
 	};
 
 	$scope.selectSegment = function (segment) {
+		console.log(segment);
 		$scope.testDataAccordi.segmentList = false;
 		$scope.testDataAccordi.selectedSegment = true;
 		$scope.testDataAccordi.constraintList = false;
 
+        $rootScope.selectedSegmentNode = {};
 
-		$rootScope.selectedSegmentNode = {};
-		$rootScope.selectedSegmentNode.segment = segment;
-		$rootScope.selectedSegmentNode.children = [];
-		var splittedSegment = segment.segmentStr.split("|");
+        var data = {};
+        data.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
+        data.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
+        data.iPath = segment.iPath;
+        data.iPositionPath = segment.positionIPath;
+        data.path = segment.path;
+        data.positionPath = segment.positionPath;
+        data.lineStr = segment.lineStr;
+        data.segmentId = segment.segmentDef.id;
+        data.usagePath = segment.usagePath;
+        data.testDataCategorizationMap = $rootScope.selectedTestStep.testDataCategorizationMap;
+        $http.post('api/teststep/getSegmentNode', data).then(function (response) {
+            $rootScope.selectedSegmentNode = angular.fromJson(response.data);
+            console.log($rootScope.selectedSegmentNode);
 
-		var fieldValues = [];
-
-		if(splittedSegment[0] === 'MSH'){
-			fieldValues.push('|');
-			fieldValues.push('^~\\&');
-			for(var index = 2; index < splittedSegment.length; index++){
-				fieldValues.push(splittedSegment[index]);
-			}
-		}else {
-			for(var index = 1; index < splittedSegment.length; index++){
-				fieldValues.push(splittedSegment[index]);
-			}
-		}
-
-
-		for(var i = 0; i < segment.obj.fields.length; i++){
-			var fieldInstanceValues = [];
-			if(splittedSegment[0] === 'MSH' && i == 1) {
-				fieldInstanceValues.push('^~\\&');
-			}else {
-				if (fieldValues[i] != undefined) {
-					fieldInstanceValues = fieldValues[i].split("~");
-				}else {
-					fieldInstanceValues.push('');
-				}
-			}
-
-			for(var h = 0; h < fieldInstanceValues.length; h++){
-				var fieldNode = {
-					type: 'field',
-					path : segment.path + "." + (i + 1),
-					iPath : segment.iPath + "." + (i + 1) + "[" + (h + 1) + "]",
-					ID: segment.iPath + "." + (i + 1) + "[" + (h + 1) + "]",
-					
-					
-					positionPath : segment.positionPath + "." + (i + 1),
-					positioniPath : segment.positioniPath + "." + (i + 1) + "[" + (h + 1) + "]",
-					usagePath : segment.usagePath + "-" + segment.obj.fields[i].usage,
-					field: segment.obj.fields[i],
-					dt: $scope.findDatatype(segment.obj.fields[i].datatype, $rootScope.selectedIntegrationProfile),
-					value: fieldInstanceValues[h],
-					children : []
-				};
-
-				if(segment.obj.dynamicMappingDefinition
-					&& segment.obj.dynamicMappingDefinition.dynamicMappingItems
-					&& segment.obj.dynamicMappingDefinition.dynamicMappingItems.length > 0
-					&& segment.obj.dynamicMappingDefinition.mappingStructure){
-
-                    var targetLocation         = segment.obj.dynamicMappingDefinition.mappingStructure.targetLocation;
-                    var firstReferenceLocation = segment.obj.dynamicMappingDefinition.mappingStructure.referenceLocation;
-                    var secondRefereceLocation = segment.obj.dynamicMappingDefinition.mappingStructure.secondRefereceLocation;
-
-                    if(targetLocation && targetLocation === i + 1 + "") {
-						var firstReferenceValue = null;
-						var secondReferenceValue = null;
-
-						if(firstReferenceLocation){
-                            firstReferenceValue = fieldValues[firstReferenceLocation - 1].split("^")[0];
-							if(secondRefereceLocation){
-								if(secondRefereceLocation.includes(".")){
-                                    secondReferenceValue = fieldValues[secondRefereceLocation.split(".")[0] - 1];
-                                    secondReferenceValue = secondReferenceValue.split("^")[secondRefereceLocation.split(".")[1] - 1];
-								}else {
-                                    secondReferenceValue = fieldValues[secondRefereceLocation - 1].split("^")[0];
-								}
-
-							}
-						}
-
-                        if(firstReferenceValue){
-                        	if(secondReferenceValue){
-                                var itemFound = _.find(segment.obj.dynamicMappingDefinition.dynamicMappingItems, function(item){
-                                    return firstReferenceValue === item.firstReferenceValue && secondReferenceValue === item.secondReferenceValue;
-                                });
-                                if(!itemFound){
-                                    itemFound = _.find(segment.obj.dynamicMappingDefinition.dynamicMappingItems, function(item){
-                                        return firstReferenceValue === item.firstReferenceValue && (item.secondReferenceValue === '' || item.secondReferenceValue == undefined);
-                                    });
-								}
-
-                                if(itemFound){
-                                    fieldNode.dt = $scope.findDatatypeById(itemFound.datatypeId, $rootScope.selectedIntegrationProfile);
-                                }
-
-							}else {
-                                var itemFound = _.find(segment.obj.dynamicMappingDefinition.dynamicMappingItems, function(item){
-                                	return firstReferenceValue === item.firstReferenceValue && (item.secondReferenceValue === '' || item.secondReferenceValue == undefined);
-                                });
-
-                                if(itemFound){
-                                    fieldNode.dt = $scope.findDatatypeById(itemFound.datatypeId, $rootScope.selectedIntegrationProfile);
-                                }
-							}
-						}
-                    }
-				}
-
-                var fieldTestDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(fieldNode.iPath)];
-
-                if(fieldTestDataCategorizationObj != undefined && fieldTestDataCategorizationObj != null){
-                    fieldNode.testDataCategorization = fieldTestDataCategorizationObj.testDataCategorization;
-                    fieldNode.testDataCategorizationListData = fieldTestDataCategorizationObj.listData;
-                }
-
-				fieldNode.conformanceStatments = $scope.findConformanceStatements(segment.obj.conformanceStatements, i + 1);
-				fieldNode.predicate = $scope.findPredicate(segment.obj.predicates, i + 1);
-
-
-				if(fieldNode.conformanceStatments.length > 0){
-					for (index in fieldNode.conformanceStatments) {
-						var cs = fieldNode.conformanceStatments[index];
-						var assertionObj =  $.parseXML(cs.assertion);
-						if(assertionObj && assertionObj.childNodes.length > 0){
-							var assertionElm = assertionObj.childNodes[0];
-							if(assertionElm.childNodes.length > 0){
-								for(index2 in assertionElm.childNodes){
-									if(assertionElm.childNodes[index2].nodeName === 'PlainText'){
-										fieldNode.testDataCategorization = 'Value-Profile Fixed';
-										fieldNode.testDataCategorizationListData = null;
-									}else if(assertionElm.childNodes[index2].nodeName === 'StringList'){
-										fieldNode.testDataCategorization = 'Value-Profile Fixed List';
-										fieldNode.testDataCategorizationListData = null;
-									}
-								}
-							}
-						}
-					}
-				}
-
-
-				var componentValues = [];
-				if (fieldInstanceValues[h] != undefined) componentValues = fieldInstanceValues[h].split("^");
-
-				for(var j = 0; j < fieldNode.dt.components.length; j++){
-
-					var componentNode = {
-						type: 'component',
-						path : fieldNode.path + "." + (j + 1),
-						iPath : fieldNode.iPath + "." + (j + 1) + "[1]",
-						ID:fieldNode.iPath + "." + (j + 1) + "[1]",
-						parentID:fieldNode.iPath,
-						positionPath : fieldNode.positionPath + "." + (j + 1),
-						positioniPath : fieldNode.positioniPath + "." + (j + 1) + "[1]",
-						usagePath : fieldNode.usagePath + "-" + fieldNode.dt.components[j].usage,
-						component: fieldNode.dt.components[j],
-						dt: $scope.findDatatype(fieldNode.dt.components[j].datatype, $rootScope.selectedIntegrationProfile),
-						value: componentValues[j],
-						children : []
-					};
-                    var componentTestDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(componentNode.iPath)];
-
-                    if(componentTestDataCategorizationObj != undefined && componentTestDataCategorizationObj != null){
-                        componentNode.testDataCategorization = componentTestDataCategorizationObj.testDataCategorization;
-                        componentNode.testDataCategorizationListData = componentTestDataCategorizationObj.listData;
-                    }
-
-					componentNode.conformanceStatments = $scope.findConformanceStatements(fieldNode.dt.conformanceStatements, j + 1);
-					componentNode.predicate = $scope.findPredicate(fieldNode.dt.predicates, j + 1);
-
-					if(componentNode.conformanceStatments.length > 0){
-						for (index in componentNode.conformanceStatments) {
-							var cs = componentNode.conformanceStatments[index];
-							var assertionObj =  $.parseXML(cs.assertion);
-							if(assertionObj && assertionObj.childNodes.length > 0){
-								var assertionElm = assertionObj.childNodes[0];
-								if(assertionElm.childNodes.length > 0){
-									for(index2 in assertionElm.childNodes){
-										if(assertionElm.childNodes[index2].nodeName === 'PlainText'){
-											componentNode.testDataCategorization = 'Value-Profile Fixed';
-											componentNode.testDataCategorizationListData = null;
-										}else if(assertionElm.childNodes[index2].nodeName === 'StringList'){
-											componentNode.testDataCategorization = 'Value-Profile Fixed List';
-											componentNode.testDataCategorizationListData = null;
-										}
-									}
-								}
-							}
-						}
-					}
-
-
-					var subComponentValues = [];
-					if (componentValues[j] != undefined) subComponentValues = componentValues[j].split("&");
-					for(var k = 0; k < componentNode.dt.components.length; k++){
-						var subComponentNode = {
-							type: 'subcomponent',
-							path : componentNode.path + "." + (k + 1),
-							iPath : componentNode.iPath + "." + (k + 1) + "[1]",
-							ID:componentNode.iPath + "." + (k + 1) + "[1]",
-							parentID:componentNode.iPath,
-							positionPath : componentNode.positionPath + "." + (k + 1),
-							positioniPath : componentNode.positioniPath + "." + (k + 1) + "[1]",
-							usagePath : componentNode.usagePath + "-" + componentNode.dt.components[k].usage,
-							component: componentNode.dt.components[k],
-							dt: $scope.findDatatype(componentNode.dt.components[k].datatype, $rootScope.selectedIntegrationProfile),
-							value: subComponentValues[k],
-							children : []
-						};
-
-                        var subComponentTestDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(subComponentNode.iPath)];
-
-                        if(subComponentTestDataCategorizationObj != undefined && subComponentTestDataCategorizationObj != null){
-                            subComponentNode.testDataCategorization = subComponentTestDataCategorizationObj.testDataCategorization;
-                            subComponentNode.testDataCategorizationListData = subComponentTestDataCategorizationObj.listData;
-                        }
-
-						subComponentNode.conformanceStatments = $scope.findConformanceStatements(componentNode.dt.conformanceStatements, k + 1);
-						subComponentNode.predicate = $scope.findPredicate(componentNode.dt.predicates, k + 1);
-
-						if(subComponentNode.conformanceStatments.length > 0){
-							for (index in subComponentNode.conformanceStatments) {
-								var cs = subComponentNode.conformanceStatments[index];
-								var assertionObj =  $.parseXML(cs.assertion);
-								if(assertionObj && assertionObj.childNodes.length > 0){
-									var assertionElm = assertionObj.childNodes[0];
-									if(assertionElm.childNodes.length > 0){
-										for(index2 in assertionElm.childNodes){
-											if(assertionElm.childNodes[index2].nodeName === 'PlainText'){
-												subComponentNode.testDataCategorization = 'Value-Profile Fixed';
-												subComponentNode.testDataCategorizationListData = null;
-											}else if(assertionElm.childNodes[index2].nodeName === 'StringList'){
-												subComponentNode.testDataCategorization = 'Value-Profile Fixed List';
-												subComponentNode.testDataCategorizationListData = null;
-											}
-										}
-									}
-								}
-							}
-						}
-
-						componentNode.children.push(subComponentNode);
-					}
-
-					fieldNode.children.push(componentNode);
-
-
-				}
-
-				$rootScope.selectedSegmentNode.children.push(fieldNode);
-			}
-
-
-		}
-
-		setTimeout(function () {
-			$scope.refreshTree();
-		}, 1000);
+            setTimeout(function () {
+                $scope.refreshTree();
+            }, 1000);
+        }, function (error) {
+        });
 	};
+
     $scope.findTestCaseNameOfTestStepInsideGroup = function (group, result){
     	for(i in group.children){
             if(group.children[i].type == "testcasegroup"){
@@ -3370,7 +3141,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.minimizePath = function (iPath) {
 
 		if($rootScope.selectedSegmentNode){
-			return $scope.replaceAll(iPath.replace($rootScope.selectedSegmentNode.segment.iPath + "." ,""), "[1]","");
+			return $scope.replaceAll(iPath.replace($rootScope.selectedSegmentNode.iPath + "." ,""), "[1]","");
 		}
 
 		return '';

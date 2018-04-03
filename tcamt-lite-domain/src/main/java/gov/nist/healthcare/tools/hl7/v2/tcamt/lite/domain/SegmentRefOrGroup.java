@@ -9,21 +9,41 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 /**
  * @author jungyubw
  *
  */
-public class SegmentRef extends SegmentRefOrGroup {
+public class SegmentRefOrGroup {
 
-  private String ref;
+  private String max;
+  private Integer min;
+  private Usage usage;
 
-  public String getRef() {
-    return ref;
+  public String getMax() {
+    return max;
   }
 
-  public void setRef(String ref) {
-    this.ref = ref;
+  public void setMax(String max) {
+    this.max = max;
   }
+
+  public Integer getMin() {
+    return min;
+  }
+
+  public void setMin(Integer min) {
+    this.min = min;
+  }
+
+  public Usage getUsage() {
+    return usage;
+  }
+
+  public void setUsage(Usage usage) {
+    this.usage = usage;
+  }
+
+
 }

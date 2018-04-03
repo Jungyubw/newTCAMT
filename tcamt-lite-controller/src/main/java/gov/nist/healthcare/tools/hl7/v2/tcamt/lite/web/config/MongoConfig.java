@@ -30,7 +30,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
 @Configuration
-@EnableMongoRepositories(basePackages = { "gov.nist.healthcare" })
+@EnableMongoRepositories(basePackages = { "gov.nist.healthcare.tools.hl7.v2.tcamt.lite" })
 @PropertySource(value = "classpath:tcl-mongo.properties")
 public class MongoConfig extends AbstractMongoConfiguration {
 
