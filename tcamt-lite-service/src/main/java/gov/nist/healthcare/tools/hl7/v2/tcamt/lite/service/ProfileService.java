@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
 
 @Service
 public interface ProfileService {

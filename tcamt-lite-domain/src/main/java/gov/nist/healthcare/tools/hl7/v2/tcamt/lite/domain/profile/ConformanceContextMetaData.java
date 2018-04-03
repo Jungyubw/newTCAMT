@@ -9,25 +9,20 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
-
-import java.util.ArrayList;
-import java.util.List;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
 /**
  * @author jungyubw
  *
  */
-public class Segment {
+public class ConformanceContextMetaData {
+
   private String id;
-
   private String name;
-
-  private String label;
-
-  private String description;
-
-  private List<Field> children;
+  private String orgName;
+  private String version;
+  private String date;
+  private String specificationName;
 
   public String getId() {
     return id;
@@ -45,36 +40,37 @@ public class Segment {
     this.name = name;
   }
 
-  public String getLabel() {
-    return label;
+  public String getOrgName() {
+    return orgName;
   }
 
-  public void setLabel(String label) {
-    this.label = label;
+  public void setOrgName(String orgName) {
+    this.orgName = orgName;
   }
 
-  public String getDescription() {
-    return description;
+  public String getVersion() {
+    return version;
   }
 
-  public void setDescription(String description) {
-    this.description = description;
+  public void setVersion(String version) {
+    this.version = version;
   }
 
-  public List<Field> getChildren() {
-    return children;
+  public String getDate() {
+    return date;
   }
 
-  public void setChildren(List<Field> children) {
-    this.children = children;
+  public void setDate(String date) {
+    this.date = date;
   }
 
-  /**
-   * @param f
-   */
-  public void addField(Field f) {
-    if(this.children == null) this.children = new ArrayList<Field>();
-    this.children.add(f);
-    
+  public String getSpecificationName() {
+    return specificationName;
   }
+
+  public void setSpecificationName(String specificationName) {
+    this.specificationName = specificationName;
+  }
+
+
 }

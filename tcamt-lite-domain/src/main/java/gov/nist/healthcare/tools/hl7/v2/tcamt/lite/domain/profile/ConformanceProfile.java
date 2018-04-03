@@ -9,38 +9,39 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author jungyubw
  *
  */
-public class ValueElement {
-  private String value;
-  private String codeSystem;
-  private String displayName;
+public class ConformanceProfile {  
+  private ConformanceProfileMetaData conformanceProfileMetaData;
 
-  public String getValue() {
-    return value;
+  private List<SegmentRefOrGroup> children;
+
+  public ConformanceProfileMetaData getConformanceProfileMetaData() {
+    return conformanceProfileMetaData;
   }
 
-  public void setValue(String value) {
-    this.value = value;
+  public void setConformanceProfileMetaData(ConformanceProfileMetaData conformanceProfileMetaData) {
+    this.conformanceProfileMetaData = conformanceProfileMetaData;
   }
 
-  public String getCodeSystem() {
-    return codeSystem;
+  public List<SegmentRefOrGroup> getChildren() {
+    return children;
   }
 
-  public void setCodeSystem(String codeSystem) {
-    this.codeSystem = codeSystem;
+  public void setChildren(List<SegmentRefOrGroup> children) {
+    this.children = children;
+  }
+  
+  public void addChild(SegmentRefOrGroup seog){
+    if(this.children == null) this.children = new ArrayList<SegmentRefOrGroup>();
+    this.children.add(seog);
   }
 
-  public String getDisplayName() {
-    return displayName;
-  }
-
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
-  }
 }

@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
 
 public interface ProfileRepository extends MongoRepository<ProfileData, String> {
   List<ProfileData> findByAccountId(Long accountId);

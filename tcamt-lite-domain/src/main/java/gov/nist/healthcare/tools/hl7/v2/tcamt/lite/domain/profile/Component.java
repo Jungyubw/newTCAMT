@@ -1,4 +1,6 @@
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
+
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Usage;
 
 public class Component {
 

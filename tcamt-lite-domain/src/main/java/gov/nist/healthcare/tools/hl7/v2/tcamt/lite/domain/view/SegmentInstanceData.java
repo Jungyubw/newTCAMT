@@ -1,6 +1,6 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Segment;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segment;
 
 public class SegmentInstanceData {
 

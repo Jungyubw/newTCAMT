@@ -9,29 +9,27 @@
  * works bear some notice that they are derived from it, and any modified versions bear some notice
  * that they have been modified.
  */
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
-
-import java.util.HashSet;
-import java.util.Set;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
 /**
  * @author jungyubw
  *
  */
-public class ValueSetDefinition {
-  private String bindingIdentifier;
+public class ConformanceProfileMetaData {
+  private String id;
   private String name;
-  private String group;
-  private Integer order;
+  private String type;
+  private String event;
+  private String structId;
+  private String description;
+  private String identifier;
 
-  private Set<ValueElement> children;
-
-  public String getBindingIdentifier() {
-    return bindingIdentifier;
+  public String getId() {
+    return id;
   }
 
-  public void setBindingIdentifier(String bindingIdentifier) {
-    this.bindingIdentifier = bindingIdentifier;
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getName() {
@@ -42,32 +40,46 @@ public class ValueSetDefinition {
     this.name = name;
   }
 
-  public String getGroup() {
-    return group;
+  public String getType() {
+    return type;
   }
 
-  public void setGroup(String group) {
-    this.group = group;
+  public void setType(String type) {
+    this.type = type;
   }
 
-  public Integer getOrder() {
-    return order;
+  public String getEvent() {
+    return event;
   }
 
-  public void setOrder(Integer order) {
-    this.order = order;
+  public void setEvent(String event) {
+    this.event = event;
   }
 
-  public Set<ValueElement> getChildren() {
-    return children;
+  public String getStructId() {
+    return structId;
   }
 
-  public void setChildren(Set<ValueElement> children) {
-    this.children = children;
+  public void setStructId(String structId) {
+    this.structId = structId;
   }
 
-  public void addValueElement(ValueElement ve) {
-    if(this.children == null) this.children = new HashSet<ValueElement>();
-    this.children.add(ve);
+  public String getDescription() {
+    return description;
   }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
+  }
+
+
+
 }

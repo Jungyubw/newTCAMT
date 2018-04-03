@@ -2,9 +2,9 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
 import java.util.List;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Component;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Datatype;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Predicate;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Component;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Predicate;
 
 public class SubComponentNode {
 

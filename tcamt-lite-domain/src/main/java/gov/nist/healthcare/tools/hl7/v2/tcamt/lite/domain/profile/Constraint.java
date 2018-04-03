@@ -1,4 +1,4 @@
-package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
+package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile;
 
 import java.io.Serializable;
 import java.util.ArrayList;

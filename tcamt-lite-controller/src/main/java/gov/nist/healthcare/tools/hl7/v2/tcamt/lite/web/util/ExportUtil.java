@@ -16,7 +16,6 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
@@ -24,6 +23,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStoryConfiguration;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStroyEntry;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.util.XMLManager;
