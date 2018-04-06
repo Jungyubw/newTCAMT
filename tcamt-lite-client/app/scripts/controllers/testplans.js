@@ -658,62 +658,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		return true;
 	};
 
-	// $rootScope.processMessageTree = function(element, parent) {
-	// 	try {
-	// 		if (element != undefined && element != null) {
-	// 			if (element.type === "message") {
-	// 				var m = {};
-	// 				m.children = [];
-	// 				$rootScope.messageTree = m;
-
-	// 				angular.forEach(element.children, function(segmentRefOrGroup) {
-	// 					$rootScope.processMessageTree(segmentRefOrGroup, m);
-	// 				});
-
-	// 			} else if (element.type === "group" && element.children) {
-	// 				var g = {};
-	// 				g.path = element.position + "[1]";
-	// 				g.obj = element;
-	// 				g.children = [];
-	// 				if (parent.path) {
-	// 					g.path = parent.path + "." + element.position + "[1]";
-	// 				}
-	// 				parent.children.push(g);
-	// 				angular.forEach(element.children, function(segmentRefOrGroup) {
-	// 					$rootScope.processMessageTree(segmentRefOrGroup, g);
-	// 				});
-	// 			} else if (element.type === "segmentRef") {
-	// 				var s = {};
-	// 				s.path = element.position + "[1]";
-	// 				s.obj = element;
-	// 				s.children = [];
-	// 				if (parent.path) {
-	// 					s.path = parent.path + "." + element.position + "[1]";
-	// 				}
-	// 				s.obj.ref.ext = s.obj.ref.ext;
-	// 				//s.obj.ref.label=$rootScope.getLabel(s.obj.ref.name,s.obj.ref.ext);
-	// 				parent.children.push(s);
-
-	// 				//$rootScope.processMessageTree(ref, s);
-
-	// 			} else if (element.type === "segment") {
-	// 				if (!parent) {
-	// 					var s = {};
-	// 					s.obj = element;
-	// 					s.path = element.name;
-	// 					s.children = [];
-	// 					parent = s;
-	// 				}
-
-	// 				angular.forEach(element.fields, function(field) {
-	// 					$rootScope.processMessageTree(field, parent);
-	// 				});
-	// 			}
-	// 		}
-	// 	} catch (e) {
-	// 		throw e;
-	// 	}};
-
 		$rootScope.getLabel=function(name, ext){
 			if(ext){
 				return name+"_"+ext;

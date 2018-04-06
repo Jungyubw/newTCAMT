@@ -25,6 +25,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformancePro
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatype;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Field;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Group;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.IntegrationProfile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Predicate;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segment;
@@ -229,7 +230,7 @@ public class TestStepController extends CommonController {
         }
         
         if (f.getUsage().equals(Usage.C))
-          fieldNode.setPredicate(this.findPredicate());
+          fieldNode.setPredicate(this.findPredicate(params.getConformanceProfileId(), s, null, fieldNode.getPositionPath(), "field"));
 
         if (params.getTestDataCategorizationMap() != null) {
           Categorization fieldTestDataCategorizationObj =
@@ -263,7 +264,7 @@ public class TestStepController extends CommonController {
             if(j < componentValues.size()) componentNode.setValue(componentValues.get(j));
             else componentNode.setValue("");
             if (c.getUsage().equals(Usage.C))
-              componentNode.setPredicate(this.findPredicate());
+              componentNode.setPredicate(this.findPredicate(params.getConformanceProfileId(), s, fieldDt, componentNode.getPositionPath(), "component"));
 
             if (params.getTestDataCategorizationMap() != null) {
               Categorization componentTestDataCategorizationObj =
@@ -298,7 +299,7 @@ public class TestStepController extends CommonController {
                 if(k < subComponentValues.size()) subComponentNode.setValue(subComponentValues.get(k));
                 else subComponentNode.setValue("");
                 if (sc.getUsage().equals(Usage.C))
-                  subComponentNode.setPredicate(this.findPredicate());
+                  subComponentNode.setPredicate(this.findPredicate(params.getConformanceProfileId(), s, componentDt, subComponentNode.getPositionPath(), "subComponent"));
 
                 if (params.getTestDataCategorizationMap() != null) {
                   Categorization subComponentTestDataCategorizationObj =
@@ -376,10 +377,112 @@ public class TestStepController extends CommonController {
   }
 
 
-  private Predicate findPredicate() {
-    // TODO Auto-generated method stub
+  private Predicate findPredicate(String messageId, Segment segment, Datatype datatype, String positionPath, String type) {
+    if(type != null && positionPath != null && this.profileData != null && this.profileData.getIntegrationProfile() != null){
+      
+      IntegrationProfile profile = this.profileData.getIntegrationProfile();
+      if(messageId != null){
+        ConformanceProfile message = profile.findConformanceProfileById(messageId);
+        if(message != null && profileData.getConformanceContext() != null && profileData.getConformanceContext().getMessagePredicates() != null){
+          for(Predicate p : profileData.getConformanceContext().getMessagePredicates()){
+            if(p.getById() != null && p.getById().equals(message.getConformanceProfileMetaData().getId())){
+              if(comparePositionPath(positionPath, p.getTarget(), type, "m")) return p;
+            }
+            
+            if(p.getByName() != null && p.getByName().equals(message.getConformanceProfileMetaData().getName())){
+              if(comparePositionPath(positionPath, p.getTarget(), type, "m")) return p;
+            }
+          }          
+        }
+      }
+      
+      for(Predicate p : profileData.getConformanceContext().getGroupPredicates()){
+        
+      }
+      
+
+      if(segment != null && profileData.getConformanceContext() != null && profileData.getConformanceContext().getSegmentPredicates() != null){
+        for(Predicate p : profileData.getConformanceContext().getSegmentPredicates()){
+          if(p.getById() != null && p.getById().equals(segment.getId())){
+            if(comparePositionPath(positionPath, p.getTarget(), type, "s")) return p;
+          }
+          
+          if(p.getByName() != null && p.getByName().equals(segment.getName())){
+            if(comparePositionPath(positionPath, p.getTarget(), type, "s")) return p;
+          }  
+        }
+      }
+      
+      if(datatype != null && profileData.getConformanceContext() != null && profileData.getConformanceContext().getDatatypePredicates() != null){
+        for(Predicate p : profileData.getConformanceContext().getDatatypePredicates()){
+          if(p.getById() != null && p.getById().equals(datatype.getId())){
+            if(comparePositionPath(positionPath, p.getTarget(), type, "d")) return p;
+          }
+          
+          if(p.getByName() != null && p.getByName().equals(datatype.getName())){
+            if(comparePositionPath(positionPath, p.getTarget(), type, "d")) return p;
+          }
+        }
+      }
+      
+    }
     return null;
   }
+
+  private boolean comparePositionPath(String targetPosition, String predicatePosition, String targetType, String predicateLevel) {
+    if(predicatePosition == null) return false;
+    if(targetPosition == null) return false;
+    String[] predicatePositionSplits = predicatePosition.split("\\.");
+    String[] targetPositionSplits = targetPosition.split("\\.");
+    if(predicateLevel.equals("m")){
+      if(predicatePositionSplits.length == targetPositionSplits.length){
+        for(int i=0; i<predicatePositionSplits.length;i++){
+          if(!predicatePositionSplits[i].startsWith(targetPositionSplits[i] + "[")) return false;
+        }
+      }else return false;
+    }else if(predicateLevel.equals("s")){
+      if(targetType.equals("field")){
+        String fieldPositionPredicate =  predicatePositionSplits[predicatePositionSplits.length - 1];
+        String fieldPositionTarget =  targetPositionSplits[targetPositionSplits.length - 1];
+        if(!fieldPositionPredicate.startsWith(fieldPositionTarget + "[")) return false;
+      }else if(targetType.equals("component")){
+        if(predicatePositionSplits.length < 2 || targetPositionSplits.length < 2) return false;
+        String fieldPositionPredicate =  predicatePositionSplits[predicatePositionSplits.length - 2];
+        String fieldPositionTarget =  targetPositionSplits[targetPositionSplits.length - 2];
+        String componentPositionPredicate =  predicatePositionSplits[predicatePositionSplits.length - 1];
+        String componentPositionTarget =  targetPositionSplits[targetPositionSplits.length - 1];
+        if(!fieldPositionPredicate.startsWith(fieldPositionTarget + "[")) return false;
+        if(!componentPositionPredicate.startsWith(componentPositionTarget + "[")) return false;
+      }else if(targetType.equals("subComponent")){
+        if(predicatePositionSplits.length < 3 || targetPositionSplits.length < 3) return false;
+        String fieldPositionPredicate =  predicatePositionSplits[predicatePositionSplits.length - 3];
+        String fieldPositionTarget =  targetPositionSplits[targetPositionSplits.length - 3];
+        String componentPositionPredicate =  predicatePositionSplits[predicatePositionSplits.length - 2];
+        String componentPositionTarget =  targetPositionSplits[targetPositionSplits.length - 2];
+        String subComponentPositionPredicate =  predicatePositionSplits[predicatePositionSplits.length - 1];
+        String subComponentPositionTarget =  targetPositionSplits[targetPositionSplits.length - 1];
+        if(!fieldPositionPredicate.startsWith(fieldPositionTarget + "[")) return false;
+        if(!componentPositionPredicate.startsWith(componentPositionTarget + "[")) return false;   
+        if(!subComponentPositionPredicate.startsWith(subComponentPositionTarget + "[")) return false;   
+      }else return false;
+    }else if(predicateLevel.equals("d")){
+      if(targetType.equals("component")){
+        String componentPositionPredicate =  predicatePositionSplits[predicatePositionSplits.length - 1];
+        String componentPositionTarget =  targetPositionSplits[targetPositionSplits.length - 1];
+        if(!componentPositionPredicate.startsWith(componentPositionTarget + "[")) return false;
+      }else if(targetType.equals("subComponent")){
+        if(predicatePositionSplits.length < 2 || targetPositionSplits.length < 2) return false;
+        String componentPositionPredicate =  predicatePositionSplits[predicatePositionSplits.length - 2];
+        String componentPositionTarget =  targetPositionSplits[targetPositionSplits.length - 2];
+        String subComponentPositionPredicate =  predicatePositionSplits[predicatePositionSplits.length - 1];
+        String subComponentPositionTarget =  targetPositionSplits[targetPositionSplits.length - 1];
+        if(!componentPositionPredicate.startsWith(componentPositionTarget + "[")) return false;   
+        if(!subComponentPositionPredicate.startsWith(subComponentPositionTarget + "[")) return false;   
+      }else return false;
+    }
+    return true;
+  }
+
 
   private SegmentInfo findSegmentInfo(String segmentName) {
     if (currentPosition >= this.segmentsInfoList.size())
