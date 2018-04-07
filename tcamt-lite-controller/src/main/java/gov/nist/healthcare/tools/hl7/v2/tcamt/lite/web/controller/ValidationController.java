@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ValidationContainer;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 import gov.nist.healthcare.unified.enums.Context;
 import gov.nist.healthcare.unified.model.EnhancedReport;
 import gov.nist.healthcare.unified.proxy.ValidationProxy;
@@ -46,21 +46,21 @@ public class ValidationController {
   @RequestMapping(value = "/validation", method = RequestMethod.POST)
   public String Validate(@RequestParam(value = "igDocumentId") String igDocumentId,
       @RequestParam(value = "conformanceProfileId") String conformanceProfileId,
-      @RequestParam(value = "context") String context,
+      @RequestParam(value = "context") String contextMode,
       @RequestBody ValidationContainer validationContainer) throws Exception {
-    ExportUtil util = new ExportUtil();
+    
     String html = "";
     String error = "";
+    
+    ProfileData pData = profileService.findOne(igDocumentId);
 
-    String[] xmls = util.generateProfileXML(igDocumentId, profileService);
-
-    if (xmls != null) {
+    if (pData != null) {
       String message = validationContainer.getMessage();
-      String profileXML = xmls[0];
-      String valueSetXML = xmls[1];
-      String constraintsXML = xmls[2];
-      String testStepConstraintXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-          + System.getProperty("line.separator") + validationContainer.getConstraint();
+      String profileXML = pData.getProfileXMLFileStr();
+      String valueSetXML = pData.getValueSetXMLFileStr();
+      String constraintsXML = pData.getConstraintsXMLFileStr();
+      String testStepConstraintXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+//          + System.getProperty("line.separator") + validationContainer.getConstraint();
 
       System.out.println(message);
       System.out.println(profileXML);
@@ -75,14 +75,14 @@ public class ValidationController {
             new ByteArrayInputStream(valueSetXML.getBytes(StandardCharsets.UTF_8));
         ValueSetLibrary valueSetLibrary = ValueSetLibraryImpl.apply(vsLibXML).get();
 
-        if (context.equals("free")) {
+        if (contextMode.equals("free")) {
           InputStream contextXML =
               new ByteArrayInputStream(constraintsXML.getBytes(StandardCharsets.UTF_8));
           List<InputStream> confContexts = Arrays.asList(contextXML);
           ConformanceContext cc = DefaultConformanceContext.apply(confContexts).get();
           report = vp.validate(message, profileXML, cc, valueSetLibrary, conformanceProfileId,
               Context.Free);
-        } else if (context.equals("based")) {
+        } else if (contextMode.equals("based")) {
           InputStream contextTCAMTXML =
               new ByteArrayInputStream(testStepConstraintXML.getBytes(StandardCharsets.UTF_8));
           // InputStream contextIGAMTXML = new

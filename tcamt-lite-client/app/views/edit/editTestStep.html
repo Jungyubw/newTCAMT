@@ -357,20 +357,15 @@ body {
 							<div layout="row">
 								<md-radio-group ng-model="context" style="margin-top: 11px;">
 									<md-radio-button ng-value="'free'" class="md-primary" style="display: inline-block; margin-right: 9px;">
-									Context Free
-
+										Context Free
 									</md-radio-button>
 									<md-radio-button ng-value="'based'" class="md-primary" style="display: inline-block">
 										Context Based
-
 									</md-radio-button>
 								</md-radio-group>
-
-
 								<md-button class="btn btn-primary" style="margin-left: 100px;" ng-click="validate(context)">
 									Validate
 								</md-button>
-
 							</div>
 							<div class="row">
 								<div class="panel panel-warning">
@@ -391,7 +386,6 @@ body {
 									<div class="panel-body">
 										<div class="toc-container">
 											<textarea ng-if="!refreshingMessage" rows="10" type="cb" class="form-control" id="er7-textarea-validation"
-													  ng-change="recordChanged(selectedTestStep)"
 													  ng-model="er7MessageOnlineValidation"
 													  wrap="off" style="overflow:auto;"/>
 										</div>
