@@ -141,6 +141,7 @@ public class TestStepController extends CommonController {
         Segment s = profileData.getIntegrationProfile().findSegemntById(params.getSegmentId());
         if (s != null && params.getLineStr() != null
             && params.getLineStr().startsWith(s.getName())) {
+          segmentNode.setSegmentName(s.getName());
           segmentNode.setiPath(params.getiPath());
           segmentNode.setiPositionPath(params.getiPositionPath());
           segmentNode.setPath(params.getPath());
@@ -229,6 +230,12 @@ public class TestStepController extends CommonController {
           fieldNode.setDt(fieldDt);
         }
         
+        if(f.getBindingId() != null) {
+          for(String bid : f.getBindingId().split("\\:")) {
+            fieldNode.addBindingIdentifier(bid);
+          }
+        }
+        
         if (f.getUsage().equals(Usage.C))
           fieldNode.setPredicate(this.findPredicate(params.getConformanceProfileId(), s, null, fieldNode.getPositionPath(), "field"));
 
@@ -263,6 +270,13 @@ public class TestStepController extends CommonController {
             componentNode.setUsagePath(fieldNode.getUsagePath() + "-" + c.getUsage());
             if(j < componentValues.size()) componentNode.setValue(componentValues.get(j));
             else componentNode.setValue("");
+            
+            if(c.getBindingId() != null) {
+              for(String bid : c.getBindingId().split("\\:")) {
+                componentNode.addBindingIdentifier(bid);
+              }
+            }
+            
             if (c.getUsage().equals(Usage.C))
               componentNode.setPredicate(this.findPredicate(params.getConformanceProfileId(), s, fieldDt, componentNode.getPositionPath(), "component"));
 
@@ -298,6 +312,13 @@ public class TestStepController extends CommonController {
                 subComponentNode.setUsagePath(componentNode.getUsagePath() + "-" + sc.getUsage());
                 if(k < subComponentValues.size()) subComponentNode.setValue(subComponentValues.get(k));
                 else subComponentNode.setValue("");
+                
+                if(sc.getBindingId() != null) {
+                  for(String bid : sc.getBindingId().split("\\:")) {
+                    subComponentNode.addBindingIdentifier(bid);
+                  }
+                }
+                
                 if (sc.getUsage().equals(Usage.C))
                   subComponentNode.setPredicate(this.findPredicate(params.getConformanceProfileId(), s, componentDt, subComponentNode.getPositionPath(), "subComponent"));
 
@@ -395,11 +416,6 @@ public class TestStepController extends CommonController {
           }          
         }
       }
-      
-      for(Predicate p : profileData.getConformanceContext().getGroupPredicates()){
-        
-      }
-      
 
       if(segment != null && profileData.getConformanceContext() != null && profileData.getConformanceContext().getSegmentPredicates() != null){
         for(Predicate p : profileData.getConformanceContext().getSegmentPredicates()){

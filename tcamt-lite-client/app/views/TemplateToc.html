@@ -22,7 +22,7 @@
                 <i data-nodrag ng-click="switcherseg()" class="fa" ng-class="{'fa-caret-right': segmenttempCollapsed, 'fa-caret-down': !segmenttempCollapsed}"></i> Segment Templates
             </div>
             <ol ui-tree-nodes="" ng-model="template.segmentTemplates" ng-if="!segmenttempCollapsed">
-                <li ng-repeat="segTmp in template.segmentTemplates" ui-tree-node ng-if="selectedSegmentNode===null ||selectedSegmentNode.segment.obj.name===segTmp.segmentName">
+                <li ng-repeat="segTmp in template.segmentTemplates" ui-tree-node ng-if="selectedSegmentNode===null ||selectedSegmentNode.segmentName===segTmp.segmentName">
                     <div ui-tree-handle ng-click="Activate(this);OpenSegmentTemplateMetadata(segTmp)" ng-class="{selected : this.$modelValue===activeModel,'unsaved':changesMap[segTmp.id]}">
                         <span class="MenuEnabled" ng-show="segmentTemplateApplicable(segTmp)" context-menu="SegmentOptions"><span class=" label label-success label-icon">ST</span>[{{segTmp.segmentName}}]{{segTmp.name}}</span>
                         <span class="MenuDisabled" ng-show="!segmentTemplateApplicable(segTmp)"  context-menu="SegmentOptionsDisabled" ><span class=" label label-success label-icon">ST</span>[{{segTmp.segmentName}}]{{segTmp.name}}</span>

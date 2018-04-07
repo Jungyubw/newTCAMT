@@ -23,6 +23,7 @@ public class ComponentNode {
   private String testDataCategorization;
   private List<String> testDataCategorizationListData;
   private Predicate predicate;
+  private List<String> bindingIdentifiers;
 
   public void addChild(SubComponentNode n) {
     if (this.children == null)
@@ -134,6 +135,16 @@ public class ComponentNode {
     this.predicate = predicate;
   }
 
+  public List<String> getBindingIdentifiers() {
+    return bindingIdentifiers;
+  }
 
+  public void setBindingIdentifiers(List<String> bindingIdentifiers) {
+    this.bindingIdentifiers = bindingIdentifiers;
+  }
 
+  public void addBindingIdentifier(String bindingId) {
+    if(this.bindingIdentifiers == null) this.bindingIdentifiers = new ArrayList<String>();
+    this.bindingIdentifiers.add(bindingId);
+  }
 }

@@ -1,5 +1,6 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.internal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Component;
@@ -20,6 +21,7 @@ public class SubComponentNode {
   private String testDataCategorization;
   private List<String> testDataCategorizationListData;
   private Predicate predicate;
+  private List<String> bindingIdentifiers;
 
   public String getType() {
     return type;
@@ -117,5 +119,17 @@ public class SubComponentNode {
     this.predicate = predicate;
   }
 
+  public List<String> getBindingIdentifiers() {
+    return bindingIdentifiers;
+  }
+
+  public void setBindingIdentifiers(List<String> bindingIdentifiers) {
+    this.bindingIdentifiers = bindingIdentifiers;
+  }
+
+  public void addBindingIdentifier(String bindingId) {
+    if(this.bindingIdentifiers == null) this.bindingIdentifiers = new ArrayList<String>();
+    this.bindingIdentifiers.add(bindingId);
+  }
 
 }

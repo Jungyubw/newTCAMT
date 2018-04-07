@@ -31,7 +31,7 @@ body {
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
 											<label>Description</label>
-											<input ng-model="selectedTestStep.description" ng-change="recordChanged(selectedTestStep)" type="text"/>
+											<textarea ng-model="selectedTestStep.description" ng-change="recordChanged(selectedTestStep)"></textarea>
 										</md-input-container>
 									</div>
 								</div>
@@ -159,8 +159,10 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestStepTab(3);" label="Test Data">
-						<md-content class="md-padding">
+					<md-tab ng-disabled="!isNotManualTestStep()" md-on-select="initTestStepTab(3);" label="Test Data">
+						<div class="col-md-12" ng-if="!hasValidEr7Message()"><p style ="color:red;"> HL7 Encoded Message is not processable. Please check.</p></div>
+
+						<md-content ng-if="hasValidEr7Message()" class="md-padding">
 							<div class="row">
 								<div class="col-md-6">
 									<span class="pull-left">
@@ -264,7 +266,7 @@ body {
 													<label class="control-label">Line String:</label>
 												</div>
 												<div class="col-md-10">
-													<input class="form-control" type="text" disabled ng-model="selectedSegmentNode.segmentStr" />
+													<textarea class="form-control" ng-model="selectedSegmentNode.segmentStr" disabled></textarea>
 												</div>
 											</div>
 
@@ -292,7 +294,6 @@ body {
 															<th class="col-md-1" ng-if="isShow(4)">Length</th>
 															<th class="col-md-1" ng-if="isShow(5)">ValueSet</th>
 															<th class="col-md-1" ng-if="isShow(6)">Predicate</th>
-															<th class="col-md-1" ng-if="isShow(7)">Conf.Statement</th>
 															<th class="col-md-1">Value</th>
 															<th class="col-md-1">Test Data Cate.</th>
 														</tr>
@@ -351,7 +352,7 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestStepTab(4);" label="Validation">
+					<md-tab ng-disabled="!isNotManualTestStep()" md-on-select="initTestStepTab(4);" label="Validation">
 						<md-content class="md-padding">
 							<div layout="row">
 								<md-radio-group ng-model="context" style="margin-top: 11px;">
@@ -370,18 +371,6 @@ body {
 									Validate
 								</md-button>
 
-
-
-								<!--<span class="pull-right">-->
-									<!--<div class="btn-group" data-toggle="buttons">-->
-										<!--<label class="btn btn-primary " ng-click="validate('free')" ng-class="{'active':context === 'free'}">-->
-											<!--<input type="radio">Context Free</input>-->
-										<!--</label>-->
-										<!--<label class="btn btn-primary " ng-click="validate('based')" ng-class="{'active':context === 'based'}">-->
-											<!--<input type="radio">Context Based</input>-->
-										<!--</label>-->
-									<!--</div>-->
-								<!--</span>-->
 							</div>
 							<div class="row">
 								<div class="panel panel-warning">
@@ -441,7 +430,7 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestStepTab(5);" label="STD/NIST XML">
+					<md-tab ng-disabled="!isNotManualTestStep()" md-on-select="initTestStepTab(5);" label="STD/NIST XML">
 						<md-content class="md-padding">
 							<div class="row">
 								<uib-accordion close-others="true">
@@ -467,7 +456,7 @@ body {
 							</div>
 						</md-content>
 					</md-tab>
-					<md-tab ng-disabled="!isNotManualTestStep();" md-on-select="initTestStepTab(6);" label="Supplement Documents">
+					<md-tab ng-disabled="!isNotManualTestStep()" md-on-select="initTestStepTab(6);" label="Supplement Documents">
 						<md-content class="md-padding">
 							<div class="row">
 								<uib-accordion close-others="true">
@@ -566,17 +555,12 @@ body {
 			[{{::node.field.minLength}}..{{::node.field.maxLength}}]
         </td>
 		<td class="col-md-1" ng-if="isShow(5)">
-			<!--<div ng-repeat="t in node.field.tables">-->
-				<!--<li>{{findTable(t).bindingIdentifier}}</li>-->
-			<!--</div>-->
-        </td>
+			<div ng-repeat="t in node.bindingIdentifiers">
+				<li>{{::t}}</li>
+			</div>
+		</td>
 		<td class="col-md-1" ng-if="isShow(6)">
 			<span>{{::node.predicate.description}}</span>
-        </td>
-		<td class="col-md-1" ng-if="isShow(7)">
-			<div ng-repeat="cs in node.conformanceStatments track by cs.id">
-				<span>{{::cs.constraintId}} : {{::cs.description}}</span>
-			</div>
         </td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
@@ -627,10 +611,10 @@ body {
 			[{{::node.component.minLength}}..{{::node.component.maxLength}}]
         </td>
 		<td class="col-md-1" ng-if="isShow(5)">
-			<!--<div ng-repeat="t in node.component.tables">-->
-				<!--<li>{{findTable(t).bindingIdentifier}}</li>-->
-			<!--</div>-->
-        </td>
+			<div ng-repeat="t in node.bindingIdentifiers">
+				<li>{{::t}}</li>
+			</div>
+		</td>
 		<td class="col-md-1" ng-if="isShow(6)">
 			<span>{{::node.predicate.description}}</span>
 		</td>
@@ -688,9 +672,9 @@ body {
 			[{{::node.component.minLength}}..{{::node.component.maxLength}}]
         </td>
 		<td class="col-md-1" ng-if="isShow(5)">
-			<!--<div ng-repeat="t in node.component.tables">-->
-				<!--<li>{{findTable(t).bindingIdentifier}}</li>-->
-			<!--</div>-->
+			<div ng-repeat="t in node.bindingIdentifiers">
+				<li>{{::t}}</li>
+			</div>
         </td>
 		<td class="col-md-1" ng-if="isShow(6)">
 			<span>{{::node.predicate.description}}</span>

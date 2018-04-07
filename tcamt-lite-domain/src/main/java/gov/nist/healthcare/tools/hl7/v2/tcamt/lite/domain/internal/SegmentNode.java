@@ -7,6 +7,7 @@ import java.util.List;
 public class SegmentNode {
 
   private String segmentStr;
+  private String segmentName;
   private String segmentId;
   private String iPath;
   private String iPositionPath;
@@ -75,6 +76,14 @@ public class SegmentNode {
 
   public void setPostionPath(String postionPath) {
     this.postionPath = postionPath;
+  }
+
+  public String getSegmentName() {
+    return segmentName;
+  }
+
+  public void setSegmentName(String segmentName) {
+    this.segmentName = segmentName;
   }
 
 }

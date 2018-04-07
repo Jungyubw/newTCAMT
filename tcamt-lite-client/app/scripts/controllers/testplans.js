@@ -630,13 +630,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if($rootScope.selectedTestStep){
 			if($rootScope.selectedSegmentNode){
 				if($rootScope.selectedSegmentNode.segmentStr){
-                    if(temp.segmentName === $rootScope.selectedSegmentNode.segmentStr.substring(0,3)) return true;
+                    if(temp.segmentName === $rootScope.selectedSegmentNode.segmentName) return true;
 				}
 			}
 		}
-
 		return false;
-
 	};
 	$scope.messageTemplateApplicable=function(er7Tmp){
 		if($rootScope.selectedTestStep){
@@ -657,6 +655,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if($rootScope.selectedTestStep == null || $rootScope.selectedTestStep.integrationProfileId == null) return false;
 		return true;
 	};
+
+    $scope.hasValidEr7Message = function(){
+        if($rootScope.selectedTestStep !== null && $rootScope.selectedTestStep.er7Message && $rootScope.selectedTestStep.er7Message.startsWith('MSH'))
+            return true;
+        return false;
+    };
 
 		$rootScope.getLabel=function(name, ext){
 			if(ext){
@@ -996,12 +1000,51 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.selectTestPlan(newTestPlan);
 	};
 
+    // $scope.er7EditorOptions = {
+    //     lineWrapping : false,
+    //     lineNumbers: true,
+    //     readOnly: false,
+    //     mode: 'xml'
+    // };
+    //
+    // $scope.refreshCodemirror = true;
+    //
+    // $scope.codemirrorLoaded = function(_editor){
+    //     // Editor part
+    //     var _doc = _editor.getDoc();
+    //     _editor.focus();
+    //
+    //     // Options
+    //     _editor.setOption('firstLineNumber', 10);
+    //     _doc.markClean();
+    //
+    //     // Events
+    //     _editor.on("beforeChange", function(){
+    //     	console.log("11111");
+    //         setTimeout(function () {
+    //             _editor.refresh();
+    //         }, 200);
+		// });
+    //     _editor.on("change", function(){
+    //         console.log("22222");
+    //         setTimeout(function () {
+    //             _editor.refresh();
+    //         }, 200);
+		// });
+    //
+    //     setTimeout(function () {
+    //         _editor.refresh();
+    //     }, 200);
+    // };
+
 	$scope.initCodemirror = function () {
 		if($scope.editor == null){
             var elm = document.getElementById("er7-textarea");
 
             if(elm){
                 $scope.editor = CodeMirror.fromTextArea(document.getElementById("er7-textarea"), {
+                    mode: "javascript",
+                    autoRefresh: true,
                     lineNumbers: true,
                     fixedGutter: true,
                     theme: "elegant",
@@ -1012,15 +1055,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                 $scope.editor.refresh();
 
                 $scope.editor.on("change", function () {
-                    $rootScope.selectedTestStep.er7Message = $scope.editor.getValue();
-                    //$scope.recordChanged($rootScope.selectedTestStep);
-
-
+                    $scope.updateEr7Message($scope.editor.getValue());
                 });
 			}
 
 		}
 	};
+
+    $scope.updateEr7Message = function (m) {
+        $rootScope.selectedTestStep.er7Message = m;
+        $scope.recordChanged($rootScope.selectedTestStep);
+    };
 
 	$scope.initCodemirrorOnline = function () {
 		if($scope.editorValidation == null){
@@ -1377,8 +1422,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.recordChanged = function (obj) {
-		console.log("Called");
-
 		if(obj){
             $rootScope.isChanged = true;
 
@@ -1386,12 +1429,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	};
     $rootScope.fixNull=function (string) {
-    	console.log("called")
         if(string==undefined||string==null){
     		console.log("Undefined");
     		string="x";
 		}
-
     };
     $rootScope.froalaChange=function (attribute, parent) {
 		if(attribute==undefined||attribute==null||attribute===""){
@@ -1513,7 +1554,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.getSegment = function (segmentList, currentPosition, segmentStr) {
-		var segmentName = segmentStr.substring(0,3);
+		var segmentName = segmentStr.segmentName;
 		if(segmentName === "SGH") $scope.countSGH = $scope.countSGH + 1;
 
 		for(var index = currentPosition; index < $scope.nodeList.length; index++){
@@ -1636,12 +1677,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.initHL7EncodedMessageForOnlineValidationTab = function (){
 		$scope.initCodemirrorOnline();
-
 		if($scope.editorValidation){
             setTimeout(function () {
                 $scope.result="";
-                $rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
-
                 if($rootScope.selectedTestStep.er7Message == null){
                     $scope.editorValidation.setValue("");
                     $scope.er7MessageOnlineValidation = '';
@@ -1650,8 +1688,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                     $scope.editorValidation.setValue($scope.er7MessageOnlineValidation);
                 }
             }, 100);
-
-
             setTimeout(function () {
                 $scope.editorValidation.refresh();
             }, 200);
@@ -1671,10 +1707,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         data.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
         data.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
         data.er7Message = $rootScope.selectedTestStep.er7Message;
-        $http.post('api/teststep/getSegmentList', data).then(function (response) {
-            $rootScope.segmentList = angular.fromJson(response.data);
-        }, function (error) {
-        });
+
+
+
+        if(data.er7Message !== undefined && data.er7Message !== null && data.er7Message !== '' && data.er7Message.startsWith('MSH')){
+            $http.post('api/teststep/getSegmentList', data).then(function (response) {
+                $rootScope.segmentList = angular.fromJson(response.data);
+            }, function (error) {
+            });
+		}
 	};
 
 	$scope.selectSegment = function (segment) {
@@ -3089,7 +3130,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.getSegmentName = function (){
         if($rootScope.selectedSegmentNode){
-            return $rootScope.selectedSegmentNode.segmentStr.substring(0,3);
+            return $rootScope.selectedSegmentNode.segmentName;
         }
 		return '';
 	};
@@ -3167,8 +3208,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		{id: 3, label: "Cardi."},
 		{id: 4, label: "Length"},
 		{id: 5, label: "ValueSet"},
-		{id: 6, label: "Predicate"},
-		{id: 7, label: "Conf.Statement"}];
+		{id: 6, label: "Predicate"}];
 
 	$scope.smartButtonSettings = {
 		smartButtonMaxItems: 8,
@@ -3257,20 +3297,17 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if($rootScope.selectedTestStep && $rootScope.selectedSegmentNode){
 			for(var i in template.categorizations){
 				var cate = angular.copy(template.categorizations[i]);
-				cate.iPath = $rootScope.selectedSegmentNode.segment.iPath  + cate.iPath;
+				cate.iPath = $rootScope.selectedSegmentNode.iPath  + cate.iPath;
 				if(cate.testDataCategorization && cate.testDataCategorization !== ''){
+					if($rootScope.selectedTestStep.testDataCategorizationMap == null)
+                        $rootScope.selectedTestStep.testDataCategorizationMap = {};
 					$rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(cate.iPath)] = cate;
 				}
 			}
 
-			if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.segment){
-				$scope.selectSegment($rootScope.selectedSegmentNode.segment);
-				$scope.refreshTree();
+			if($rootScope.selectedSegmentNode && $rootScope.selectedSegment){
+				$scope.selectSegment($rootScope.selectedSegment);
 			}
-
-			$rootScope.selectedTestStep.messageContentsXMLCode = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
-			$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
-
 		}
 		$scope.recordChanged($rootScope.selectedTestStep);
     };
@@ -3309,9 +3346,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 
     $scope.overwriteSegmentTemplate = function (template){
+    	if($rootScope.selectedTestStep.testDataCategorizationMap == null)
+            $rootScope.selectedTestStep.testDataCategorizationMap = {};
 		if($rootScope.selectedTestStep && $rootScope.selectedSegmentNode){
 			var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
-				if(i.includes($rootScope.selectedSegmentNode.segment.iPath.split('.').join('-')))
+				if(i.includes($rootScope.selectedSegmentNode.iPath.split('.').join('-')))
 					return i;
 			});
 
@@ -3399,7 +3438,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.updateValue =function(node){
-		var segmentStr = $rootScope.selectedSegmentNode.segment.obj.name;
+		var segmentStr = $rootScope.selectedSegmentNode.segmentName;
 		var previousFieldPath = '';
 		for(var i in $rootScope.selectedSegmentNode.children){
 			var fieldNode = $rootScope.selectedSegmentNode.children[i];
@@ -3411,12 +3450,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 			previousFieldPath = fieldNode.positionPath;
 
-			if(fieldNode.children.length === 0){
+			if(!fieldNode.children || fieldNode.children.length === 0){
 				if(fieldNode.value != undefined || fieldNode.value != null) segmentStr = segmentStr + fieldNode.value;
 			}else {
 				for(var j in fieldNode.children) {
 					var componentNode = fieldNode.children[j];
-					if(componentNode.children.length === 0){
+					if(!componentNode.children || componentNode.children.length === 0){
 						if(componentNode.value != undefined || componentNode.value != null) segmentStr = segmentStr + componentNode.value;
 						segmentStr = segmentStr + "^";
 					}else {
@@ -3444,12 +3483,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
         if(segmentStr.substring(0,10) == "MSH|||^~\\&") segmentStr = 'MSH|^~\\&' + segmentStr.substring(10);
 
-        $rootScope.selectedSegmentNode.segment.segmentStr = segmentStr;
-
+        $rootScope.selectedSegmentNode.segmentStr = segmentStr;
+        $rootScope.segmentList[$rootScope.selectedSegment.lineNum - 1].lineStr = segmentStr;
 		var updatedER7Message = '';
 
 		for(var i in $rootScope.segmentList){
-			updatedER7Message = updatedER7Message + $rootScope.segmentList[i].segmentStr + '\n';
+			updatedER7Message = updatedER7Message + $rootScope.segmentList[i].lineStr + '\n';
 		}
 
 		$rootScope.selectedTestStep.er7Message = updatedER7Message;
@@ -3464,10 +3503,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}
 		}
 
-		$rootScope.selectedTestStep.messageContentsXMLCode = $scope.generateMessageContentXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
-		$rootScope.selectedTestStep.nistXMLCode = $scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),false);
-		$rootScope.selectedTestStep.stdXMLCode = $scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, $scope.findTestCaseNameOfTestStep(),true);
-		$rootScope.selectedTestStep.constraintsXML = $scope.generateConstraintsXML($rootScope.segmentList, $rootScope.selectedTestStep, $rootScope.selectedConformanceProfile, $rootScope.selectedIntegrationProfile);
 		$scope.recordChanged($rootScope.selectedTestStep);
 	};
 
@@ -4480,15 +4515,17 @@ angular.module('tcl').controller('MessageTemplateCreationModalCtrl', function($s
 angular.module('tcl').controller('SegmentTemplateCreationModalCtrl', function($scope, $modalInstance, $rootScope) {
 
 	var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
-		if(i.includes($rootScope.selectedSegmentNode.segment.iPath.split('.').join('-')))
+		if(i.includes($rootScope.selectedSegmentNode.iPath.split('.').join('-')))
 			return i;
 	});
+
+    var segmentName = $rootScope.selectedSegmentNode.segmentName;
 	$scope.newSegmentTemplate = {};
 	$scope.newSegmentTemplate.id = new ObjectId().toString();
 	$rootScope.changesMap[$scope.newSegmentTemplate.id]=true;
-	$scope.newSegmentTemplate.name = 'new Template for ' + $rootScope.selectedSegmentNode.segment.obj.name;
+	$scope.newSegmentTemplate.name = 'new Template for ' + segmentName;
 	$scope.newSegmentTemplate.descrption = 'No Desc';
-	$scope.newSegmentTemplate.segmentName = $rootScope.selectedSegmentNode.segment.obj.name;
+	$scope.newSegmentTemplate.segmentName = segmentName;
 
 	$scope.newSegmentTemplate.date = new Date();
 	$scope.newSegmentTemplate.categorizations = [];
@@ -4497,7 +4534,7 @@ angular.module('tcl').controller('SegmentTemplateCreationModalCtrl', function($s
 
 		if(testDataCategorizationObj != undefined && testDataCategorizationObj != null){
 			var cate = {};
-			cate.iPath = testDataCategorizationObj.iPath.replace($rootScope.selectedSegmentNode.segment.iPath,'');
+			cate.iPath = testDataCategorizationObj.iPath.replace($rootScope.selectedSegmentNode.iPath,'');
 			cate.name = testDataCategorizationObj.name;
 			cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
 			cate.listData = testDataCategorizationObj.listData;
@@ -4551,7 +4588,7 @@ angular.module('tcl').controller('Er7SegmentTemplateCreationModalCtrl', function
 	$scope.newEr7SegmentTemplate.descrption = 'No Desc';
 	$scope.newEr7SegmentTemplate.date = new Date();
 	$scope.newEr7SegmentTemplate.content=$rootScope.selectedSegmentNode.segmentStr;
-	$scope.newEr7SegmentTemplate.segmentName = $rootScope.selectedSegmentNode.segmentStr.substring(0,3);
+	$scope.newEr7SegmentTemplate.segmentName = $rootScope.selectedSegmentNode.segmentName;
 	$scope.newEr7SegmentTemplate.name = 'new Er7 Template for '+$scope.newEr7SegmentTemplate.segmentName;
 
 
