@@ -1353,7 +1353,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.initTestData();
 		}else if (tabnum == 4) {
 			$scope.initHL7EncodedMessageForOnlineValidationTab();
-			$scope.resetValidation()
 		}else if (tabnum == 5) {
 			$scope.genSTDNISTXML($scope.findTestCaseNameOfTestStep());
 		}else if (tabnum == 6) {
@@ -1664,6 +1663,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.initHL7EncodedMessageForOnlineValidationTab = function (){
+        $scope.contextValidation=false;
+
 		$scope.initCodemirrorOnline();
 		if($scope.editorValidation){
             setTimeout(function () {
@@ -1763,6 +1764,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			}
 		});
 
+		console.log(result);
 		return result;
 	};
 
@@ -2569,9 +2571,27 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.genSTDNISTXML = function(testcaseName){
-		$scope.initTestData();
-		$rootScope.selectedTestStep.nistXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,false));
-		$rootScope.selectedTestStep.stdXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,true));
+        $scope.nistXMLCode = null;
+        $scope.stdXMLCode = null;
+
+        var data = {};
+        data.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
+        data.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
+        data.er7Message = $rootScope.selectedTestStep.er7Message;
+        data.testCaseName = testcaseName;
+
+        $http.post('api/teststep/getXMLs', data).then(function (response) {
+            var result = angular.fromJson(response.data);
+
+            $scope.nistXMLCode = result.nistXML;
+            $scope.stdXMLCode = result.stdXML;
+        }, function (error) {
+        });
+
+
+
+		// $rootScope.selectedTestStep.nistXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,false));
+		// $rootScope.selectedTestStep.stdXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,true));
 	};
 
 	$scope.formatXml = function (xml) {
@@ -2686,193 +2706,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var xmlString = serializer.serializeToString(xmlDoc);
 
 		return xmlString;
-	};
-
-	$scope.generateSegment = function (segmentElm, instanceSegment, xmlDoc, selectedIntegrationProfile) {
-		var lineStr = instanceSegment.segmentStr;
-		var segmentName = lineStr.substring(0, 3);
-		var segment = instanceSegment.obj;
-		var variesDT = "";
-
-		if (lineStr.startsWith("MSH")) {
-			lineStr = "MSH|%SEGMENTDVIDER%|%ENCODINGDVIDER%" + lineStr.substring(8);
-		}
-
-		var fieldStrs = lineStr.substring(4).split("|");
-
-		for (var i = 0; i < fieldStrs.length; i++) {
-			var fieldStrRepeats = fieldStrs[i].split("~");
-			for (var g = 0; g < fieldStrRepeats.length;g++) {
-				var fieldStr = fieldStrRepeats[g];
-				if (fieldStr === "%SEGMENTDVIDER%") {
-					var fieldElm = xmlDoc.createElement("MSH.1");
-					var value = xmlDoc.createTextNode("|");
-					fieldElm.appendChild(value);
-					segmentElm.appendChild(fieldElm);
-				} else if (fieldStr == "%ENCODINGDVIDER%") {
-					var fieldElm = xmlDoc.createElement("MSH.2");
-					var value = xmlDoc.createTextNode("^~\\&");
-					fieldElm.appendChild(value);
-					segmentElm.appendChild(fieldElm);
-				} else {
-					if (fieldStr != null && fieldStr !== "") {
-						if (i < segment.fields.length) {
-							var field = segment.fields[i];
-							var fieldElm = xmlDoc.createElement(segmentName + "." + field.position);
-							if ($scope.findDatatype(field.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(field.datatype, selectedIntegrationProfile).components.length == 0) {
-								if (lineStr.startsWith("OBX")) {
-									if (field.position == 2) {
-										variesDT = fieldStr;
-										var value = xmlDoc.createTextNode(fieldStr);
-										fieldElm.appendChild(value);
-									} else if (field.position == 5) {
-										var componentStrs = fieldStr.split("^");
-
-										for (var index = 0; index < componentStrs.length; index++) {
-											var componentStr = componentStrs[index];
-											var componentElm = xmlDoc.createElement(variesDT + "." + (index + 1));
-											var value = xmlDoc.createTextNode(componentStr);
-											componentElm.appendChild(value);
-											fieldElm.appendChild(componentElm);
-										}
-									} else {
-										var value = xmlDoc.createTextNode(fieldStr);
-										fieldElm.appendChild(value);
-									}
-								} else {
-									var value = xmlDoc.createTextNode(fieldStr);
-									fieldElm.appendChild(value);
-								}
-							} else {
-								var componentStrs = fieldStr.split("^");
-								var componentDataTypeName = $scope.findDatatype(field.datatype, selectedIntegrationProfile).name;
-								for (var j = 0; j < componentStrs.length; j++) {
-									if (j < $scope.findDatatype(field.datatype, selectedIntegrationProfile).components.length) {
-										var component = $scope.findDatatype(field.datatype, selectedIntegrationProfile).components[j];
-										var componentStr = componentStrs[j];
-										if (componentStr != null && componentStr !== "") {
-											var componentElm = xmlDoc.createElement(componentDataTypeName + "." + (j + 1));
-											if ($scope.findDatatype(component.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(component.datatype, selectedIntegrationProfile).components.length == 0) {
-												var value = xmlDoc.createTextNode(componentStr);
-												componentElm.appendChild(value);
-											} else {
-												var subComponentStrs = componentStr.split("&");
-												var subComponentDataTypeName = $scope.findDatatype(component.datatype, selectedIntegrationProfile).name;
-
-												for (var k = 0; k < subComponentStrs.length; k++) {
-													var subComponentStr = subComponentStrs[k];
-													if (subComponentStr != null && subComponentStr !== "") {
-														var subComponentElm = xmlDoc.createElement(subComponentDataTypeName + "." + (k + 1));
-														var value = xmlDoc.createTextNode(subComponentStr);
-														subComponentElm.appendChild(value);
-														componentElm.appendChild(subComponentElm);
-													}
-												}
-
-											}
-											fieldElm.appendChild(componentElm);
-										}
-									}
-								}
-
-							}
-							segmentElm.appendChild(fieldElm);
-						}
-					}
-				}
-			}
-		}
-	};
-
-	$scope.generateNISTSegment = function (segmentElm, instanceSegment, xmlDoc, selectedIntegrationProfile) {
-		var lineStr = instanceSegment.segmentStr;
-		var segmentName = lineStr.substring(0, 3);
-		var segment = instanceSegment.obj;
-
-		if (lineStr.startsWith("MSH")) {
-			lineStr = "MSH|%SEGMENTDVIDER%|%ENCODINGDVIDER%" + lineStr.substring(8);
-		}
-
-		var fieldStrs = lineStr.substring(4).split("|");
-
-		for (var i = 0; i < fieldStrs.length; i++) {
-			var fieldStrRepeats = fieldStrs[i].split("~");
-			for (var g = 0; g < fieldStrRepeats.length;g++) {
-				var fieldStr = fieldStrRepeats[g];
-
-				if (fieldStr == "%SEGMENTDVIDER%") {
-					var fieldElm = xmlDoc.createElement("MSH.1");
-					var value = xmlDoc.createTextNode("|");
-					fieldElm.appendChild(value);
-					segmentElm.appendChild(fieldElm);
-				} else if (fieldStr == "%ENCODINGDVIDER%") {
-					var fieldElm = xmlDoc.createElement("MSH.2");
-					var value = xmlDoc.createTextNode("^~\\&");
-					fieldElm.appendChild(value);
-					segmentElm.appendChild(fieldElm);
-				} else {
-					if (fieldStr != null && fieldStr !== "") {
-						if (i < segment.fields.length) {
-							var field = segment.fields[i];
-							var fieldElm = xmlDoc.createElement(segmentName + "." + field.position);
-							if ($scope.findDatatype(field.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(field.datatype, selectedIntegrationProfile).components.length == 0) {
-								if (lineStr.startsWith("OBX")) {
-									if (field.position == 2) {
-										var value = xmlDoc.createTextNode(fieldStr);
-										fieldElm.appendChild(value);
-									} else if (field.position == 5) {
-										var componentStrs = fieldStr.split("^");
-										for (var index = 0; index < componentStrs.length; index++) {
-											var componentStr = componentStrs[index];
-											var componentElm = xmlDoc.createElement(segmentName + "." + field.position + "." + (index + 1));
-											var value = xmlDoc.createTextNode(componentStr);
-											componentElm.appendChild(value);
-											fieldElm.appendChild(componentElm);
-										}
-									} else {
-										var value = xmlDoc.createTextNode(fieldStr);
-										fieldElm.appendChild(value);
-									}
-								} else {
-									var value = xmlDoc.createTextNode(fieldStr);
-									fieldElm.appendChild(value);
-								}
-							} else {
-								var componentStrs = fieldStr.split("^");
-								for (var j = 0; j < componentStrs.length; j++) {
-									if (j < $scope.findDatatype(field.datatype, selectedIntegrationProfile).components.length) {
-										var component = $scope.findDatatype(field.datatype, selectedIntegrationProfile).components[j];
-										var componentStr = componentStrs[j];
-										if (componentStr != null && componentStr !== "") {
-											var componentElm = xmlDoc.createElement(segmentName + "." + (i + 1) + "." + (j + 1));
-											if ($scope.findDatatype(component.datatype, selectedIntegrationProfile).components == null || $scope.findDatatype(component.datatype, selectedIntegrationProfile).components.length == 0){
-												var value = xmlDoc.createTextNode(componentStr);
-												componentElm.appendChild(value);
-											} else {
-												var subComponentStrs = componentStr.split("&");
-												for (var k = 0; k < subComponentStrs.length; k++) {
-													var subComponentStr = subComponentStrs[k];
-													if (subComponentStr != null && subComponentStr !== "") {
-														var subComponentElm = xmlDoc.createElement(segmentName + "." + (i + 1) + "." + (j + 1) + "." + (k + 1));
-														var value = xmlDoc.createTextNode(subComponentStr);
-														subComponentElm.appendChild(value);
-														componentElm.appendChild(subComponentElm);
-													}
-												}
-
-											}
-											fieldElm.appendChild(componentElm);
-										}
-									}
-								}
-
-							}
-							segmentElm.appendChild(fieldElm);
-						}
-					}
-				}
-			}
-		}
 	};
 
 	$scope.segmentListAccordionClicked = function () {
@@ -3552,10 +3385,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.refreshingMessage=false;
-	$scope.resetValidation=function(){
-		$scope.contextValidation=false;
-		$scope.initHL7EncodedMessageForOnlineValidationTab();
-	};
 
 	//Tree Functions
 	$scope.activeModel={};

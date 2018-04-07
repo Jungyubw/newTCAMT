@@ -374,7 +374,7 @@ body {
 										<span>
 											<strong >Message Content</strong>
 											<a style="color:white !important">
-												<span class="pull-right" title="Load Initial Message" ng-click="resetValidation();">
+												<span class="pull-right" title="Load Initial Message" ng-click="initHL7EncodedMessageForOnlineValidationTab();">
 													<strong>
 														<i class="fa fa-refresh" aria-hidden="true"></i>
 														<span style="margin-left:3px;">Reload</span>
@@ -425,7 +425,8 @@ body {
 						</md-content>
 					</md-tab>
 					<md-tab ng-disabled="!isNotManualTestStep()" md-on-select="initTestStepTab(5);" label="STD/NIST XML">
-						<md-content class="md-padding">
+						<div class="col-md-12" ng-if="!hasValidEr7Message()"><p style ="color:red;"> HL7 Encoded Message is not processable. Please check.</p></div>
+						<md-content ng-if="hasValidEr7Message()" class="md-padding">
 							<div class="row">
 								<uib-accordion close-others="true">
 									<uib-accordion-group  is-open="nistStd.nist">
@@ -435,7 +436,7 @@ body {
 								 				NIST XML
 											</span>
 										</uib-accordion-heading>
-										<textarea style="width:100%" ng-model="selectedTestStep.nistXMLCode" readonly rows="30"/>
+										<textarea style="width:100%" ng-model="nistXMLCode" readonly rows="30"/>
 									</uib-accordion-group>
 									<uib-accordion-group is-open="nistStd.std">
 										<uib-accordion-heading>
@@ -444,7 +445,7 @@ body {
 								 				STD XML
 											</span>
 										</uib-accordion-heading>
-										<textarea style="width:100%" ng-model="selectedTestStep.stdXMLCode"  readonly rows="30"/>
+										<textarea style="width:100%" ng-model="stdXMLCode"  readonly rows="30"/>
 									</uib-accordion-group>
 								</uib-accordion>
 							</div>
