@@ -452,7 +452,8 @@ body {
 						</md-content>
 					</md-tab>
 					<md-tab ng-disabled="!isNotManualTestStep()" md-on-select="initTestStepTab(6);" label="Supplement Documents">
-						<md-content class="md-padding">
+						<div class="col-md-12" ng-if="!hasValidEr7Message()"><p style ="color:red;"> HL7 Encoded Message is not processable. Please check.</p></div>
+						<md-content ng-if="hasValidEr7Message()" class="md-padding">
 							<div class="row">
 								<uib-accordion close-others="true">
 									<uib-accordion-group  is-open="DocAccordi.messageContents">

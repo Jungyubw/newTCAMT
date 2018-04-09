@@ -141,6 +141,8 @@ public class ProfileServiceImpl implements ProfileService {
             f.setMinLength(Integer.parseInt(childElm.getAttribute("MinLength")));
             f.setName(childElm.getAttribute("Name"));
             f.setUsage(Usage.fromValue(childElm.getAttribute("Usage")));
+            if(childElm.getAttribute("Hide") != null && childElm.getAttribute("Hide").equals("true")) f.setHide(true);
+            else f.setHide(false);
             segment.addField(f);
           }
         }
@@ -206,6 +208,8 @@ public class ProfileServiceImpl implements ProfileService {
             c.setMinLength(Integer.parseInt(childElm.getAttribute("MinLength")));
             c.setName(childElm.getAttribute("Name"));
             c.setUsage(Usage.fromValue(childElm.getAttribute("Usage")));
+            if(childElm.getAttribute("Hide") != null && childElm.getAttribute("Hide").equals("true")) c.setHide(true);
+            else c.setHide(false);
             datatype.addComponent(c);
           }
         }

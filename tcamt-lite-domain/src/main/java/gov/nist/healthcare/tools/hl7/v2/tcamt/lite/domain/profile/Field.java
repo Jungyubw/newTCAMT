@@ -35,6 +35,8 @@ public class Field {
   private BindingStrength bindingStrength;
 
   private String bindingLocation;
+  
+  private boolean hide;
 
   public String getName() {
     return name;
@@ -116,6 +118,12 @@ public class Field {
     this.bindingLocation = bindingLocation;
   }
 
+  public boolean isHide() {
+    return hide;
+  }
 
+  public void setHide(boolean hide) {
+    this.hide = hide;
+  }
 
 }

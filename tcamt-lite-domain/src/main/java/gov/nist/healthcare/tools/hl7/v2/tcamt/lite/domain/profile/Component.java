@@ -18,6 +18,8 @@ public class Component {
   
   private String bindingLocation;
   
+  private boolean hide;
+  
   public Component() {
     super();
   }
@@ -84,6 +86,14 @@ public class Component {
 
   public void setBindingLocation(String bindingLocation) {
     this.bindingLocation = bindingLocation;
+  }
+
+  public boolean isHide() {
+    return hide;
+  }
+
+  public void setHide(boolean hide) {
+    this.hide = hide;
   }
 
   

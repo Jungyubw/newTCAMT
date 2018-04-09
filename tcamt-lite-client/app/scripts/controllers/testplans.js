@@ -395,16 +395,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			});
 	};
 
-	$scope.exportResourceBundleZip = function () {
+	$scope.exportResourceBundleZip = function (tp) {
 		var changes = angular.toJson([]);
-		var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
+		var data = angular.fromJson({"changes": changes, "tp": tp});
 		$http.post('api/testplans/save', data).then(function (response) {
 			var saveResponse = angular.fromJson(response.data);
-			$rootScope.selectedTestPlan.lastUpdateDate = saveResponse.date;
+			tp.lastUpdateDate = saveResponse.date;
 			$rootScope.saved = true;
-
 			var form = document.createElement("form");
-			form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportRBZip/');
+			form.action = 'api/testplans/' + $rootScope.selectedTestPlan.id + '/exportRBZip/';
 			form.method = "POST";
 			form.target = "_target";
 			var csrfInput = document.createElement("input");
@@ -414,12 +413,11 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			form.style.display = 'none';
 			document.body.appendChild(form);
 			form.submit();
-
-
 		}, function (error) {
 			$rootScope.saved = false;
 		});
 	};
+
 	$scope.debug= function(node){
 		console.log("DEBUGGING");
 		console.log(node);
@@ -441,7 +439,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
 	$scope.exportTestPlanJson = function (tp) {
 		var form = document.createElement("form");
-		form.action = $rootScope.api('api/testplans/' + tp.id + '/exportJson/');
+		form.action = 'api/testplans/' + tp.id + '/exportJson/';
 		form.method = "POST";
 		form.target = "_target";
 		var csrfInput = document.createElement("input");
@@ -453,35 +451,33 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		form.submit();
 	};
     
-	$scope.exportCoverHTML = function () {
+	$scope.exportCoverHTML = function (tp) {
 		var changes = angular.toJson([]);
-		var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
+		var data = angular.fromJson({"changes": changes, "tp": tp});
 		$http.post('api/testplans/save', data).then(function (response) {
 			var saveResponse = angular.fromJson(response.data);
-			$rootScope.selectedTestPlan.lastUpdateDate = saveResponse.date;
+			tp.lastUpdateDate = saveResponse.date;
 			$rootScope.saved = true;
+
+            var form = document.createElement("form");
+            form.action = "api/testplans/" + tp.id + "/exportCover/";
+            form.method = "POST";
+            form.target = "_target";
+            var csrfInput = document.createElement("input");
+            csrfInput.name = "X-XSRF-TOKEN";
+            csrfInput.value = $cookies['XSRF-TOKEN'];
+            form.appendChild(csrfInput);
+            form.style.display = 'none';
+            document.body.appendChild(form);
+            form.submit();
 		}, function (error) {
 			$rootScope.saved = false;
 		});
-
-
-		var form = document.createElement("form");
-		form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportCover/');
-		form.method = "POST";
-		form.target = "_target";
-		var csrfInput = document.createElement("input");
-		csrfInput.name = "X-XSRF-TOKEN";
-		csrfInput.value = $cookies['XSRF-TOKEN'];
-		form.appendChild(csrfInput);
-		form.style.display = 'none';
-		document.body.appendChild(form);
-		form.submit();
-
 	};
 
-	$scope.exportProfileXMLs = function () {
+	$scope.exportProfileXMLs = function (tp) {
 		var form = document.createElement("form");
-		form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportProfileXMLs/');
+		form.action = 'api/testplans/' + tp.id + '/exportProfileXMLs/';
 		form.method = "POST";
 		form.target = "_target";
 		var csrfInput = document.createElement("input");
@@ -492,7 +488,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		document.body.appendChild(form);
 		form.submit();
 	};
-
 
     $scope.downloadProfileXML = function () {
         var form = document.createElement("form");
@@ -536,8 +531,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         form.submit();
     };
 
-
-	$scope.loadTestPlans = function () {
+    $scope.loadTestPlans = function () {
 		var delay = $q.defer();
 		$scope.error = null;
 		$rootScope.tps = [];
@@ -1763,16 +1757,29 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				});
 			}
 		});
-
-		console.log(result);
 		return result;
 	};
 
 	$scope.generateSupplementDocuments = function () {
-		$scope.initTestData();
-		$scope.generateTestDataSpecificationHTML();
-		$scope.generateJurorDocumentHTML();
-		$scope.generateMessageContentHTML();
+        $scope.jurorDocumentsHTML = null;
+        $scope.testDataSpecificationHTML = null;
+        $scope.messageContentsHTML = null;
+
+        var data = {};
+        data.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
+        data.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
+        data.er7Message = $rootScope.selectedTestStep.er7Message;
+        data.testCaseName = $scope.findTestCaseNameOfTestStep();
+        data.tdsXSL = $rootScope.selectedTestStep.tdsXSL;
+        data.jdXSL = $rootScope.selectedTestStep.jdXSL;
+
+        $http.post('api/teststep/getSupplements', data).then(function (response) {
+            var result = angular.fromJson(response.data);
+            $scope.jurorDocumentsHTML = $sce.trustAsHtml(result.jurorDocument);
+            $scope.testDataSpecificationHTML = result.testdataSpecification;
+            $scope.messageContentsHTML = result.messageContent;
+        }, function (error) {
+        });
 	};
 
 	$scope.generateTestDataSpecificationHTML = function () {
@@ -2587,11 +2594,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $scope.stdXMLCode = result.stdXML;
         }, function (error) {
         });
-
-
-
-		// $rootScope.selectedTestStep.nistXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,false));
-		// $rootScope.selectedTestStep.stdXMLCode = $scope.formatXml($scope.generateXML($rootScope.segmentList, $rootScope.selectedIntegrationProfile, $rootScope.selectedConformanceProfile, testcaseName,true));
 	};
 
 	$scope.formatXml = function (xml) {

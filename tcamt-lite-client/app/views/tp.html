@@ -49,12 +49,11 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu igl-menu" role="menu">
-                            <li><a class="point" ng-click="exportResourceBundleZip()">Export Resource Bundle</a></li>
-                            <li ng-disabled="true"><a ng-disabled="true" class="point">Export Json (Coming Soon)</a></li>
-                            <li><a class="point" ng-click="exportCoverHTML()">Cover Page HTML</a></li>
-                            <li><a class="point" ng-click="exportTestPackageHTML()">Test Package HTML</a></li>
-                            <li><a class="point" ng-click="exportProfileXMLs()">Export Profile XML ZIP</a></li>
-                            <!--<li><a class="point" ng-click="pushRB(testplan)">Push to a testing tool</a></li>-->
+                            <li><a class="point" ng-click="exportResourceBundleZip(selectedTestPlan)">Export Resource Bundle</a></li>
+                            <li><a class="point" ng-click="exportTestPackageHTML(selectedTestPlan)">Test Package HTML</a></li>
+                            <li><a class="point" ng-click="exportCoverHTML(selectedTestPlan)">Cover Page HTML</a></li>
+                            <li><a class="point" ng-click="exportProfileXMLs(selectedTestPlan)">Export Profile XML ZIP</a></li>
+                            <li><a class="point" ng-click="exportTestPlanJson(selectedTestPlan)">Export Json</a></li>
                         </ul>
                     </div>
 

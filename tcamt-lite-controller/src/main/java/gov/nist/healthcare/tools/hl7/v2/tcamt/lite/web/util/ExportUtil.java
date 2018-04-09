@@ -24,9 +24,12 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStoryConfiguration;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStroyEntry;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.TestStepSupplementXMLsOutput;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.TestStepSupplementsParams;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.util.XMLManager;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller.TestStepController;
 
 public class ExportUtil {
 
@@ -387,8 +390,7 @@ public class ExportUtil {
     return coverpageStr;
   }
 
-  public InputStream exportResourceBundleAsZip(TestPlan tp,
-      TestStoryConfigurationService testStoryConfigurationService, Long rand) throws Exception {
+  public InputStream exportResourceBundleAsZip(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
     ByteArrayOutputStream outputStream = null;
     byte[] bytes;
     outputStream = new ByteArrayOutputStream();
@@ -396,8 +398,7 @@ public class ExportUtil {
     this.genCoverAsHtml(out, tp);
     this.genPackagePages(out, tp, testStoryConfigurationService);
     this.generateTestPlanSummary(out, tp, testStoryConfigurationService);
-    this.generateTestPlanRB(out, tp, testStoryConfigurationService, rand);
-
+    this.generateTestPlanRB(out, tp, testStoryConfigurationService, profileService);
     out.close();
     bytes = outputStream.toByteArray();
     return new ByteArrayInputStream(bytes);
@@ -429,9 +430,7 @@ public class ExportUtil {
     inTestPackage.close();
   }
 
-  private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path,
-      TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, int index,
-      Long rand) throws Exception {
+  private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, int index, ProfileService profileService) throws Exception {
     String groupPath = "";
     if (path == null) {
       groupPath = tp.getId() + File.separator + "TestGroup_" + index;
@@ -464,18 +463,14 @@ public class ExportUtil {
     for (int i = 0; i < group.getChildren().size(); i++) {
       TestCaseOrGroup child = group.getChildren().get(i);
       if (child instanceof TestCaseGroup) {
-        generateTestPlanRBTestGroup(out, (TestCaseGroup) child, groupPath, tp,
-            testStoryConfigurationService, i + 1, rand);
+        generateTestPlanRBTestGroup(out, (TestCaseGroup) child, groupPath, tp, testStoryConfigurationService, i + 1, profileService);
       } else if (child instanceof TestCase) {
-        generateTestPlanRBTestCase(out, (TestCase) child, groupPath, tp,
-            testStoryConfigurationService, i + 1, rand);
+        generateTestPlanRBTestCase(out, (TestCase) child, groupPath, tp, testStoryConfigurationService, i + 1, profileService);
       }
     }
   }
 
-  private void generateTestPlanRBTestCase(ZipOutputStream out, TestCase tc, String path,
-      TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, int index,
-      Long rand) throws Exception {
+  private void generateTestPlanRBTestCase(ZipOutputStream out, TestCase tc, String path, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, int index, ProfileService profileService) throws Exception {
     String tcPath = "";
     if (path == null) {
       tcPath = tp.getId() + File.separator + "TestCase_" + index;
@@ -507,14 +502,12 @@ public class ExportUtil {
 
     for (int i = 0; i < tc.getTeststeps().size(); i++) {
       TestStep child = tc.getTeststeps().get(i);
-      generateTestPlanRBTestStep(out, child, tcPath, tp, testStoryConfigurationService, i + 1,
-          rand);
+      generateTestPlanRBTestStep(out, child, tcPath, tp, testStoryConfigurationService, i + 1, profileService, tc.getName());
     }
   }
 
   private void generateTestPlanRBTestStep(ZipOutputStream out, TestStep ts, String path,
-      TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, int index,
-      Long rand) throws Exception {
+      TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, int index, ProfileService profileService, String testCaseName) throws Exception {
     String stepPath = path + File.separator + "TestStep_" + index;
 
     String testStoryConfigId = null;
@@ -536,41 +529,51 @@ public class ExportUtil {
       testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
     }
 
-    this.generateTestStoryRB(out, ts.getTestStoryContent(), testStoryConfiguration, stepPath, tp,
-        "ng-tab-html");
-    this.generateTestStoryRB(out, ts.getTestStoryContent(), testStoryConfiguration, stepPath, tp,
-        "plain");
+    this.generateTestStoryRB(out, ts.getTestStoryContent(), testStoryConfiguration, stepPath, tp, "ng-tab-html");
+    this.generateTestStoryRB(out, ts.getTestStoryContent(), testStoryConfiguration, stepPath, tp, "plain");
 
-    this.generateTestStepJsonRB(out, ts, tp, stepPath, index, rand);
+    this.generateTestStepJsonRB(out, ts, tp, stepPath, index, profileService);
 
     if (ts.getConformanceProfileId() != null && !ts.getConformanceProfileId().equals("")) {
       this.generateEr7Message(out, ts.getEr7Message(), stepPath);
-      this.generateMessageContent(out, ts.getMessageContentsXMLCode(), stepPath, "ng-tab-html");
-      this.generateMessageContent(out, ts.getMessageContentsXMLCode(), stepPath, "plain");
-      String constraintsXML = ts.getConstraintsXML();
-      constraintsXML = constraintsXML.replaceAll(ts.getConformanceProfileId(),
-          ts.getConformanceProfileId() + rand);
-      System.out.println("[TESTSTEP Constraints]");
-      System.out.println(constraintsXML);
-      this.generateConstraintsXML(out, constraintsXML, stepPath);
-
-      if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
-        if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
-          this.generateTestDataSpecification(out, ts, stepPath, "ng-tab-html");
-          this.generateTestDataSpecification(out, ts, stepPath, "plain");
+      
+      TestStepSupplementsParams params = new TestStepSupplementsParams();
+      params.setConformanceProfileId(ts.getConformanceProfileId());
+      params.setEr7Message(ts.getEr7Message());
+      params.setIntegrationProfileId(ts.getIntegrationProfileId());
+      params.setTestCaseName(testCaseName);
+      params.setJdXSL(ts.getJdXSL());
+      params.setTdsXSL(ts.getTdsXSL());
+      params.setTestDataCategorizationMap(ts.getTestDataCategorizationMap());
+      
+      
+//      ConstraintXMLOutPut constraintXMLOutPut = new TestStepController().getConstraintsXML(params);
+//      if(constraintXMLOutPut != null && constraintXMLOutPut.getXmlStr() != null) this.generateConstraintsXML(out, constraintXMLOutPut.getXmlStr(), stepPath);
+      
+      TestStepSupplementXMLsOutput testStepSupplementXMLsOutput = new TestStepController().getSupplementXMLs(params, profileService);
+      
+      if(testStepSupplementXMLsOutput != null) {
+        if(testStepSupplementXMLsOutput.getNistXMLStr() != null) {
+          if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
+            this.generateTestDataSpecification(out, testStepSupplementXMLsOutput.getNistXMLStr(), ts.getTdsXSL(), stepPath, "ng-tab-html");
+            this.generateTestDataSpecification(out, testStepSupplementXMLsOutput.getNistXMLStr(), ts.getTdsXSL(), stepPath, "plain");
+          }
+          if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
+            //ZipOutputStream out, String jdXSL, String nistXMLStr, String teststepPath, String option
+            this.generateJurorDocument(out, ts.getJdXSL(), testStepSupplementXMLsOutput.getNistXMLStr(), stepPath, "ng-tab-html");
+            this.generateJurorDocument(out, ts.getJdXSL(), testStepSupplementXMLsOutput.getNistXMLStr(), stepPath, "plain");
+          }
         }
-
-        if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
-          this.generateJurorDocument(out, ts, stepPath, "ng-tab-html");
-          this.generateJurorDocument(out, ts, stepPath, "plain");
+        if(testStepSupplementXMLsOutput.getMessageContentsXMLStr() != null) {
+          this.generateMessageContent(out, testStepSupplementXMLsOutput.getMessageContentsXMLStr(), stepPath, "ng-tab-html");
+          this.generateMessageContent(out, testStepSupplementXMLsOutput.getMessageContentsXMLStr(), stepPath, "plain");          
         }
       }
     }
 
   }
 
-  private void generateTestPlanRB(ZipOutputStream out, TestPlan tp,
-      TestStoryConfigurationService testStoryConfigurationService, Long rand) throws Exception {
+  private void generateTestPlanRB(ZipOutputStream out, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
     this.generateTestPlanJsonRB(out, tp, 1);
     String testStoryConfigId = null;
     if (tp.getTestStoryConfigId() != null) {
@@ -585,28 +588,24 @@ public class ExportUtil {
     if (testStoryConfiguration == null) {
       testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
     }
-    this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, null, tp,
-        "ng-tab-html");
-    this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, null, tp,
-        "plain");
+    
+    this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, null, tp, "ng-tab-html");
+    this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, null, tp, "plain");
 
     for (int i = 0; i < tp.getChildren().size(); i++) {
       Object child = tp.getChildren().get(i);
       if (child instanceof TestCaseGroup) {
-        generateTestPlanRBTestGroup(out, (TestCaseGroup) child, null, tp,
-            testStoryConfigurationService, i + 1, rand);
+        generateTestPlanRBTestGroup(out, (TestCaseGroup) child, null, tp, testStoryConfigurationService, i + 1, profileService);
       } else if (child instanceof TestCase) {
-        generateTestPlanRBTestCase(out, (TestCase) child, null, tp, testStoryConfigurationService,
-            i + 1, rand);
+        generateTestPlanRBTestCase(out, (TestCase) child, null, tp, testStoryConfigurationService, i + 1, profileService);
       }
     }
   }
 
-  private void generateJurorDocument(ZipOutputStream out, TestStep ts, String teststepPath,
-      String option) throws IOException {
+  private void generateJurorDocument(ZipOutputStream out, String jdXSL, String nistXMLStr, String teststepPath, String option) throws IOException {
     ClassLoader classLoader = getClass().getClassLoader();
     InputStream is =
-        classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl");
+        classLoader.getResourceAsStream("xsl" + File.separator + jdXSL + ".xsl");
     String mcXSL = null;
     if (is != null) {
       byte[] buf = new byte[1024];
@@ -622,7 +621,7 @@ public class ExportUtil {
       }
 
       InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
-      InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
+      InputStream sourceInputStream = new ByteArrayInputStream(nistXMLStr.getBytes());
       Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
       Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
       String xsltStr = IOUtils.toString(xsltReader);
@@ -639,11 +638,11 @@ public class ExportUtil {
     }
   }
 
-  private void generateTestDataSpecification(ZipOutputStream out, TestStep ts, String teststepPath,
+  private void generateTestDataSpecification(ZipOutputStream out, String nistXML, String tdXSL , String teststepPath,
       String option) throws IOException {
     ClassLoader classLoader = getClass().getClassLoader();
     InputStream is =
-        classLoader.getResourceAsStream("xsl" + File.separator + ts.getTdsXSL() + ".xsl");
+        classLoader.getResourceAsStream("xsl" + File.separator + tdXSL + ".xsl");
     String mcXSL = null;
     if (is != null) {
       byte[] buf = new byte[1024];
@@ -661,7 +660,7 @@ public class ExportUtil {
       }
 
       InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
-      InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
+      InputStream sourceInputStream = new ByteArrayInputStream(nistXML.getBytes());
       Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
       Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
       String xsltStr = IOUtils.toString(xsltReader);
@@ -743,8 +742,7 @@ public class ExportUtil {
 
   }
 
-  private void generateTestStepJsonRB(ZipOutputStream out, TestStep ts, TestPlan tp,
-      String teststepPath, int index, Long rand) throws IOException {
+  private void generateTestStepJsonRB(ZipOutputStream out, TestStep ts, TestPlan tp, String teststepPath, int index, ProfileService profileService) throws IOException {
     byte[] buf = new byte[1024];
     out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestStep.json"));
 
@@ -754,6 +752,7 @@ public class ExportUtil {
     obj.put("id", ts.getLongId());
     obj.put("name", ts.getName());
     obj.put("description", ts.getDescription());
+    obj.put("position", index);
     if (ts.getType() == null) {
       if (tp.getType() != null && tp.getType().equals("Isolated")) {
         obj.put("type", "SUT_INITIATOR");
@@ -770,29 +769,22 @@ public class ExportUtil {
       } else {
         obj.put("type", ts.getType());
       }
-
     }
-
-    obj.put("position", index);
-
-    if (ts.getIntegrationProfileId() != null) {
-
+    
+    if(ts.getIntegrationProfileId() != null && ts.getConformanceProfileId() != null) {
       JSONArray plist = new JSONArray();
       plist.put("soap");
       obj.put("protocols", plist);
-
-
+      
+      ProfileData pd = profileService.findOne(ts.getIntegrationProfileId());
+      
+      JSONObject hl7v2Obj = new JSONObject();
+      hl7v2Obj.put("messageId", ts.getConformanceProfileId());
+      hl7v2Obj.put("constraintId", pd.getConformanceContext().getMetaData().getId());
+      hl7v2Obj.put("valueSetLibraryId", pd.getValueSetLibrary().getMetaData().getId());
+      obj.put("hl7v2", hl7v2Obj);
     }
-
-    JSONObject hl7v2Obj = new JSONObject();
-    hl7v2Obj.put("messageId", ts.getConformanceProfileId() + rand);
-
-
-    System.out.println("NEED CHEKC::::" + ts.getConformanceProfileId() + rand);
-    hl7v2Obj.put("constraintId", ts.getIntegrationProfileId() + rand);
-    hl7v2Obj.put("valueSetLibraryId", ts.getIntegrationProfileId() + rand);
-    obj.put("hl7v2", hl7v2Obj);
-
+    
     inTP = IOUtils.toInputStream(obj.toString());
     int lenTP;
     while ((lenTP = inTP.read(buf)) > 0) {
@@ -800,7 +792,6 @@ public class ExportUtil {
     }
     out.closeEntry();
     inTP.close();
-
   }
 
   private void generateTestStoryRB(ZipOutputStream out, HashMap<String, String> testStoryContent,
@@ -1178,7 +1169,7 @@ public class ExportUtil {
 
     for (String id : keySet) {
       if (id != null && !id.isEmpty()) {
-        this.generateProfileXML(out, id, profileService, rand);
+        this.generateProfileXML(out, id, profileService);
       }
     }
     out.close();
@@ -1265,16 +1256,15 @@ public class ExportUtil {
 
   }
 
-  private void generateProfileXML(ZipOutputStream out, String id, ProfileService profileService,
-      Long rand) throws IOException {
-    ProfileData tcamtProfile = profileService.findOne(id);
+  private void generateProfileXML(ZipOutputStream out, String id, ProfileService profileService) throws IOException {
+    ProfileData profileData = profileService.findOne(id);
 
-    if (tcamtProfile != null) {
+    if (profileData != null) {
       byte[] buf = new byte[1024];
       out.putNextEntry(new ZipEntry(
           "Global" + File.separator + "Profiles" + File.separator + id + "_Profile.xml"));
       InputStream inTP = null;
-      inTP = IOUtils.toInputStream(tcamtProfile.getProfileXMLFileStr());
+      inTP = IOUtils.toInputStream(profileData.getProfileXMLFileStr());
       int lenTP;
       while ((lenTP = inTP.read(buf)) > 0) {
         out.write(buf, 0, lenTP);
@@ -1286,7 +1276,7 @@ public class ExportUtil {
           "Global" + File.separator + "Tables" + File.separator + id + "_ValueSet.xml"));
       inTP = null;
       inTP =
-          IOUtils.toInputStream(tcamtProfile.getValueSetXMLFileStr());
+          IOUtils.toInputStream(profileData.getValueSetXMLFileStr());
       lenTP = 0;
       while ((lenTP = inTP.read(buf)) > 0) {
         out.write(buf, 0, lenTP);
@@ -1297,7 +1287,7 @@ public class ExportUtil {
       out.putNextEntry(new ZipEntry(
           "Global" + File.separator + "Constraints" + File.separator + id + "_Constraints.xml"));
       inTP = null;
-      inTP = IOUtils.toInputStream(tcamtProfile.getConstraintsXMLFileStr());
+      inTP = IOUtils.toInputStream(profileData.getConstraintsXMLFileStr());
       lenTP = 0;
       while ((lenTP = inTP.read(buf)) > 0) {
         out.write(buf, 0, lenTP);
@@ -1305,7 +1295,6 @@ public class ExportUtil {
       out.closeEntry();
       inTP.close();
     }
-
   }
   
   public String[] generateProfileXML(String id, ProfileService profileService) {

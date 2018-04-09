@@ -23,7 +23,7 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 
 		$mdDialog.show(confirm).then(function(result) {
 			if(result === 'nist1234'){
-				$http.post($rootScope.api('api/profiles/' + profile.id + '/delete')).then(function (response) {
+                $http.post('api/profiles/' + profile.id + '/delete').then(function () {
 					$rootScope.msg().text = "profileDeleteSuccess";
 					$rootScope.msg().type = "success";
 					$rootScope.msg().show = true;
@@ -51,19 +51,20 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 			.cancel('Cancel');
 
 		$mdDialog.show(confirm).then(function() {
-			$http.post($rootScope.api('api/profiles/' + profile.id + '/delete')).then(function (response) {
-				$rootScope.msg().text = "profileDeleteSuccess";
-				$rootScope.msg().type = "success";
-				$rootScope.msg().show = true;
-				$rootScope.manualHandle = true;
+
+            $http.post('api/profiles/' + profile.id + '/delete').then(function () {
+                $rootScope.msg().text = "profileDeleteSuccess";
+                $rootScope.msg().type = "success";
+                $rootScope.msg().show = true;
+                $rootScope.manualHandle = true;
                 $rootScope.loadProfiles();
-			}, function (error) {
-				$scope.error = error;
-				$scope.loading = false;
-				$rootScope.msg().text = "profileDeleteFailed";
-				$rootScope.msg().type = "danger";
-				$rootScope.msg().show = true;
-			});
+            }, function (error) {
+                $scope.error = error;
+                $scope.loading = false;
+                $rootScope.msg().text = "profileDeleteFailed";
+                $rootScope.msg().type = "danger";
+                $rootScope.msg().show = true;
+            });
 		}, function() {
 		});
 	};

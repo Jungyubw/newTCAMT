@@ -330,7 +330,7 @@ public class TestPlanController extends CommonController {
     log.info("Exporting as zip file RB with id=" + id);
     TestPlan tp = findTestPlan(id);
     InputStream content = null;
-    content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, 1234L);
+    content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, profileService);
     response.setContentType("application/zip");
     response.setHeader("Content-disposition", "attachment;filename=" + "Contextbased.zip");
     FileCopyUtils.copy(content, response.getOutputStream());
@@ -384,7 +384,7 @@ public class TestPlanController extends CommonController {
       }
 
 
-      testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, rand);
+      testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, profileService);
       testPlanIO.reset();
       client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN,scope);
       DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -468,7 +468,6 @@ public class TestPlanController extends CommonController {
       }
     }
     
-
     InputStream content = null;
     content = new ExportUtil().exportProfileXMLZip(ipidMap.keySet(), profileService, 1234L);
     response.setContentType("application/zip");
@@ -480,7 +479,6 @@ public class TestPlanController extends CommonController {
     if (ts.getIntegrationProfileId() != null) {
       ipidMap.put(ts.getIntegrationProfileId(), ts.getIntegrationProfileId());
     }
-
   }
 
   private void visitGroup(TestCaseGroup group, Map<String, String> ipidMap) {

@@ -132,6 +132,7 @@ public class ProfileController extends CommonController {
     }
 
     ProfileData p = pds;
+    p.setId(id);
     p.setAccountId(account.getId());
     p.setLastUpdatedDate(new Date());
     p.setSourceType("private");
