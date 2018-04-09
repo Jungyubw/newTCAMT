@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -29,7 +30,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.TestStepSupplemen
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.util.XMLManager;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller.TestStepController;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller.ConstraintXMLOutPut;
 
 public class ExportUtil {
 
@@ -38,8 +39,8 @@ public class ExportUtil {
   }
 
   public InputStream exportTestPackageAsHtml(TestPlan tp,
-      TestStoryConfigurationService testStoryConfigurationService) throws Exception {
-    return IOUtils.toInputStream(this.genPackagePages(tp, testStoryConfigurationService), "UTF-8");
+      TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
+    return IOUtils.toInputStream(this.genPackagePages(tp, testStoryConfigurationService, profileService), "UTF-8");
   }
 
   public InputStream exportCoverAsHtml(TestPlan tp) throws Exception {
@@ -48,7 +49,7 @@ public class ExportUtil {
 
   private String genPackagePagesInsideGroup(TestPlan tp, TestCaseGroup group,
       String packageBodyHTML, String index,
-      TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+      TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
     packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". "
         + group.getName() + "</h2>" + System.getProperty("line.separator");
     packageBodyHTML = packageBodyHTML + "<span>" + group.getDescription() + "</span>"
@@ -79,10 +80,10 @@ public class ExportUtil {
       TestCaseOrGroup child = group.getChildren().get(i);
       if (child instanceof TestCaseGroup) {
         packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup) child, packageBodyHTML,
-            index + "." + (i + 1), testStoryConfigurationService);
+            index + "." + (i + 1), testStoryConfigurationService, profileService);
       } else if (child instanceof TestCase) {
         packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase) child, packageBodyHTML,
-            index + "." + (i + 1), testStoryConfigurationService);
+            index + "." + (i + 1), testStoryConfigurationService, profileService);
 
       }
     }
@@ -91,7 +92,7 @@ public class ExportUtil {
   }
 
   private String genPackagePagesForTestCase(TestPlan tp, TestCase tc, String packageBodyHTML,
-      String index, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+      String index, TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
     packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". "
         + tc.getName() + "</h2>" + System.getProperty("line.separator");
     packageBodyHTML = packageBodyHTML + "<span>" + tc.getDescription() + "</span>"
@@ -121,14 +122,14 @@ public class ExportUtil {
     for (int i = 0; i < tc.getTeststeps().size(); i++) {
       TestStep child = tc.getTeststeps().get(i);
       packageBodyHTML = genPackagePagesForTestStep(tp, child, packageBodyHTML,
-          index + "." + (i + 1), testStoryConfigurationService);
+          index + "." + (i + 1), testStoryConfigurationService, tc.getName(), profileService);
     }
 
     return packageBodyHTML;
   }
 
   private String genPackagePagesForTestStep(TestPlan tp, TestStep ts, String packageBodyHTML,
-      String index, TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+      String index, TestStoryConfigurationService testStoryConfigurationService, String testCaseName, ProfileService profileService) throws Exception {
     ClassLoader classLoader = getClass().getClassLoader();
     packageBodyHTML = packageBodyHTML + "<A NAME=\"" + index + "\">" + "<h2>" + index + ". "
         + ts.getName() + "</h2>" + System.getProperty("line.separator");
@@ -163,7 +164,19 @@ public class ExportUtil {
         this.generateTestStory(ts.getTestStoryContent(), testStoryConfiguration, "plain", tp));
 
     if (ts != null && ts.getEr7Message() != null && ts.getIntegrationProfileId() != null) {
-      if (ts.getMessageContentsXMLCode() != null && !ts.getMessageContentsXMLCode().equals("")) {
+      
+      TestStepSupplementsParams params = new TestStepSupplementsParams();
+      params.setConformanceProfileId(ts.getConformanceProfileId());
+      params.setEr7Message(ts.getEr7Message());
+      params.setIntegrationProfileId(ts.getIntegrationProfileId());
+      params.setTestCaseName(testCaseName);
+      params.setJdXSL(ts.getJdXSL());
+      params.setTdsXSL(ts.getTdsXSL());
+      params.setTestDataCategorizationMap(ts.getTestDataCategorizationMap());
+      
+      TestStepSupplementXMLsOutput testStepSupplementXMLsOutput = new GenerationUtil().getSupplementXMLs(params, profileService.findOne(params.getIntegrationProfileId()));
+      
+      if (testStepSupplementXMLsOutput != null && testStepSupplementXMLsOutput.getMessageContentsXMLStr() != null && !testStepSupplementXMLsOutput.getMessageContentsXMLStr().equals("")) {
         String mcXSL = IOUtils
             .toString(
                 classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"))
@@ -171,7 +184,7 @@ public class ExportUtil {
                 "<xsl:param name=\"output\" select=\"'plain-html'\"/>");
         InputStream xsltInputStream = new ByteArrayInputStream(mcXSL.getBytes());
         InputStream sourceInputStream =
-            new ByteArrayInputStream(ts.getMessageContentsXMLCode().getBytes());
+            new ByteArrayInputStream(testStepSupplementXMLsOutput.getMessageContentsXMLStr().getBytes());
         Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
         Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
         String xsltStr = IOUtils.toString(xsltReader);
@@ -183,7 +196,7 @@ public class ExportUtil {
         packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(messageContentHTMLStr);
       }
 
-      if (ts.getNistXMLCode() != null && !ts.getNistXMLCode().equals("")) {
+      if (testStepSupplementXMLsOutput != null && testStepSupplementXMLsOutput.getNistXMLStr() != null && !testStepSupplementXMLsOutput.getNistXMLStr().equals("")) {
         if (ts.getTdsXSL() != null && !ts.getTdsXSL().equals("")) {
           String tdXSL = IOUtils
               .toString(
@@ -191,7 +204,7 @@ public class ExportUtil {
               .replaceAll("<xsl:param name=\"output\" select=\"'ng-tab-html'\"/>",
                   "<xsl:param name=\"output\" select=\"'plain-html'\"/>");
           InputStream xsltInputStream = new ByteArrayInputStream(tdXSL.getBytes());
-          InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
+          InputStream sourceInputStream = new ByteArrayInputStream(testStepSupplementXMLsOutput.getNistXMLStr().getBytes());
           Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
           Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
           String xsltStr = IOUtils.toString(xsltReader);
@@ -208,7 +221,7 @@ public class ExportUtil {
           String jdXSL = IOUtils.toString(
               classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl"));
           InputStream xsltInputStream = new ByteArrayInputStream(jdXSL.getBytes());
-          InputStream sourceInputStream = new ByteArrayInputStream(ts.getNistXMLCode().getBytes());
+          InputStream sourceInputStream = new ByteArrayInputStream(testStepSupplementXMLsOutput.getNistXMLStr().getBytes());
           Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
           Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
           String xsltStr = IOUtils.toString(xsltReader);
@@ -220,15 +233,13 @@ public class ExportUtil {
           packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jurorDocumentHTMLStr);
         }
       }
-
     }
-
     packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
     return packageBodyHTML;
   }
 
   private String genPackagePages(TestPlan tp,
-      TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+      TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
     ClassLoader classLoader = getClass().getClassLoader();
 
     String packageBodyHTML = "";
@@ -259,10 +270,10 @@ public class ExportUtil {
       TestCaseOrGroup child = tp.getChildren().get(i);
       if (child instanceof TestCaseGroup) {
         packageBodyHTML = genPackagePagesInsideGroup(tp, (TestCaseGroup) child, packageBodyHTML,
-            "" + (i + 1), testStoryConfigurationService);
+            "" + (i + 1), testStoryConfigurationService, profileService);
       } else if (child instanceof TestCase) {
         packageBodyHTML = genPackagePagesForTestCase(tp, (TestCase) child, packageBodyHTML,
-            "" + (i + 1), testStoryConfigurationService);
+            "" + (i + 1), testStoryConfigurationService, profileService);
       }
     }
 
@@ -395,8 +406,34 @@ public class ExportUtil {
     byte[] bytes;
     outputStream = new ByteArrayOutputStream();
     ZipOutputStream out = new ZipOutputStream(outputStream);
+    
+    Map<String, String> ipidMap = new HashMap<String, String>();
+
+    for (TestCaseOrGroup tcog : tp.getChildren()) {
+      if (tcog instanceof TestCaseGroup) {
+        TestCaseGroup group = (TestCaseGroup) tcog;
+        visitGroup(group, ipidMap);
+      } else if (tcog instanceof TestCase) {
+        TestCase tc = (TestCase) tcog;
+        for (TestStep ts : tc.getTeststeps()) {
+          addProfileId(ts, ipidMap);
+        }
+      }
+    }
+    
+    for (String id : ipidMap.keySet()) {
+      if (id != null && !id.isEmpty()) {
+        ProfileData profileData = profileService.findOne(id);
+        if(profileData != null) {
+          this.genProfileAsXML(out, tp, profileData.getId(), profileData.getProfileXMLFileStr());
+          this.genValueSetAsXML(out, tp, profileData.getId(), profileData.getValueSetXMLFileStr());
+          this.genConstraintsAsXML(out, tp, profileData.getId(), profileData.getConstraintsXMLFileStr());
+        }
+        
+      }
+    }
     this.genCoverAsHtml(out, tp);
-    this.genPackagePages(out, tp, testStoryConfigurationService);
+    this.genPackagePages(out, tp, testStoryConfigurationService, profileService);
     this.generateTestPlanSummary(out, tp, testStoryConfigurationService);
     this.generateTestPlanRB(out, tp, testStoryConfigurationService, profileService);
     out.close();
@@ -404,9 +441,69 @@ public class ExportUtil {
     return new ByteArrayInputStream(bytes);
   }
 
+  private void addProfileId(TestStep ts, Map<String, String> ipidMap) {
+    if (ts.getIntegrationProfileId() != null) {
+      ipidMap.put(ts.getIntegrationProfileId(), ts.getIntegrationProfileId());
+    }
+  }
+
+  private void visitGroup(TestCaseGroup group, Map<String, String> ipidMap) {
+    for (TestCaseOrGroup child : group.getChildren()) {
+      if (child instanceof TestCaseGroup) {
+        TestCaseGroup childGroup = (TestCaseGroup) child;
+        visitGroup(childGroup, ipidMap);
+      } else if (child instanceof TestCase) {
+        TestCase childTestCase = (TestCase) child;
+        for (TestStep ts : childTestCase.getTeststeps()) {
+          addProfileId(ts, ipidMap);
+        }
+      }
+    }
+
+  }
+
+  private void genProfileAsXML(ZipOutputStream out, TestPlan tp, String profileId, String profileXML) throws Exception {
+    byte[] buf = new byte[1024];
+    out.putNextEntry(new ZipEntry("Global" + File.separator + "Profiles" + File.separator + profileId + "_Profile.xml"));
+    InputStream profileIn = IOUtils.toInputStream(profileXML);
+    int lenTestPlanSummary;
+    while ((lenTestPlanSummary = profileIn.read(buf)) > 0) {
+      out.write(buf, 0, lenTestPlanSummary);
+    }
+    out.closeEntry();
+    profileIn.close();
+    
+  }
+  
+  private void genValueSetAsXML(ZipOutputStream out, TestPlan tp, String id,
+      String valueSetXMLFileStr) throws IOException {
+    byte[] buf = new byte[1024];
+    out.putNextEntry(new ZipEntry("Global" + File.separator + "Tables" + File.separator + id + "_ValueSets.xml"));
+    InputStream profileIn = IOUtils.toInputStream(valueSetXMLFileStr);
+    int lenTestPlanSummary;
+    while ((lenTestPlanSummary = profileIn.read(buf)) > 0) {
+      out.write(buf, 0, lenTestPlanSummary);
+    }
+    out.closeEntry();
+    profileIn.close();
+  }
+  
+  private void genConstraintsAsXML(ZipOutputStream out, TestPlan tp, String id,
+      String constraintsXMLFileStr) throws IOException {
+    byte[] buf = new byte[1024];
+    out.putNextEntry(new ZipEntry("Global" + File.separator + "Constraints" + File.separator + id + "_Constraints.xml"));
+    InputStream profileIn = IOUtils.toInputStream(constraintsXMLFileStr);
+    int lenTestPlanSummary;
+    while ((lenTestPlanSummary = profileIn.read(buf)) > 0) {
+      out.write(buf, 0, lenTestPlanSummary);
+    }
+    out.closeEntry();
+    profileIn.close();
+  }
+
   private void genCoverAsHtml(ZipOutputStream out, TestPlan tp) throws Exception {
     byte[] buf = new byte[1024];
-    out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "CoverPage.html"));
+    out.putNextEntry(new ZipEntry("Contextbased" + File.separator + tp.getName() + File.separator + "CoverPage.html"));
     InputStream inCoverPager = this.exportCoverAsHtml(tp);
     int lenTestPlanSummary;
     while ((lenTestPlanSummary = inCoverPager.read(buf)) > 0) {
@@ -417,11 +514,11 @@ public class ExportUtil {
   }
 
   private void genPackagePages(ZipOutputStream out, TestPlan tp,
-      TestStoryConfigurationService testStoryConfigurationService) throws Exception {
+      TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
 
     byte[] buf = new byte[1024];
-    out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "TestPackage.html"));
-    InputStream inTestPackage = this.exportTestPackageAsHtml(tp, testStoryConfigurationService);
+    out.putNextEntry(new ZipEntry("Contextbased" + File.separator + tp.getName() + File.separator + "TestPackage.html"));
+    InputStream inTestPackage = this.exportTestPackageAsHtml(tp, testStoryConfigurationService, profileService);
     int lenTestPlanSummary;
     while ((lenTestPlanSummary = inTestPackage.read(buf)) > 0) {
       out.write(buf, 0, lenTestPlanSummary);
@@ -433,7 +530,7 @@ public class ExportUtil {
   private void generateTestPlanRBTestGroup(ZipOutputStream out, TestCaseGroup group, String path, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, int index, ProfileService profileService) throws Exception {
     String groupPath = "";
     if (path == null) {
-      groupPath = tp.getId() + File.separator + "TestGroup_" + index;
+      groupPath = "Contextbased" + File.separator + tp.getName() + File.separator + "TestGroup_" + index;
     } else {
       groupPath = path + File.separator + "TestGroup_" + index;
     }
@@ -547,10 +644,10 @@ public class ExportUtil {
       params.setTestDataCategorizationMap(ts.getTestDataCategorizationMap());
       
       
-//      ConstraintXMLOutPut constraintXMLOutPut = new TestStepController().getConstraintsXML(params);
-//      if(constraintXMLOutPut != null && constraintXMLOutPut.getXmlStr() != null) this.generateConstraintsXML(out, constraintXMLOutPut.getXmlStr(), stepPath);
+      ConstraintXMLOutPut constraintXMLOutPut = new GenerationUtil().getConstraintsXML(params, profileService.findOne(params.getIntegrationProfileId()));
+      if(constraintXMLOutPut != null && constraintXMLOutPut.getXmlStr() != null) this.generateConstraintsXML(out, constraintXMLOutPut.getXmlStr(), stepPath);
       
-      TestStepSupplementXMLsOutput testStepSupplementXMLsOutput = new TestStepController().getSupplementXMLs(params, profileService);
+      TestStepSupplementXMLsOutput testStepSupplementXMLsOutput = new GenerationUtil().getSupplementXMLs(params, profileService.findOne(params.getIntegrationProfileId()));
       
       if(testStepSupplementXMLsOutput != null) {
         if(testStepSupplementXMLsOutput.getNistXMLStr() != null) {
@@ -800,9 +897,9 @@ public class ExportUtil {
     byte[] buf = new byte[1024];
     if (path == null) {
       if (option.equals("ng-tab-html")) {
-        out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "TestStory.html"));
+        out.putNextEntry(new ZipEntry("Contextbased" + File.separator + tp.getName() + File.separator + "TestStory.html"));
       } else {
-        out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "TestStoryPDF.html"));
+        out.putNextEntry(new ZipEntry("Contextbased" + File.separator + tp.getName() + File.separator + "TestStoryPDF.html"));
       }
     } else {
       if (option.equals("ng-tab-html")) {
@@ -881,7 +978,7 @@ public class ExportUtil {
     obj.put("skip", false);
 
     byte[] buf = new byte[1024];
-    out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "TestPlan.json"));
+    out.putNextEntry(new ZipEntry("Contextbased" + File.separator + tp.getName() + File.separator + "TestPlan.json"));
     InputStream inTP = IOUtils.toInputStream(obj.toString());
     int lenTP;
     while ((lenTP = inTP.read(buf)) > 0) {
@@ -1149,7 +1246,7 @@ public class ExportUtil {
     testPlanSummaryStr = testPlanSummaryStr.replace("?contentsHTML?", contentsHTML);
 
     byte[] buf = new byte[1024];
-    out.putNextEntry(new ZipEntry(tp.getId() + File.separator + "TestPlanSummary.html"));
+    out.putNextEntry(new ZipEntry("Contextbased" + File.separator + tp.getName() + File.separator + "TestPlanSummary.html"));
     InputStream inTestPlanSummary = IOUtils.toInputStream(testPlanSummaryStr);
     int lenTestPlanSummary;
     while ((lenTestPlanSummary = inTestPlanSummary.read(buf)) > 0) {

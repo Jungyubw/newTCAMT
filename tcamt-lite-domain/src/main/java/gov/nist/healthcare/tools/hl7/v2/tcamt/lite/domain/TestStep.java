@@ -10,221 +10,229 @@ import org.bson.types.ObjectId;
 
 public class TestStep implements Serializable, Cloneable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1164104159252764632L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1164104159252764632L;
 
-	@Id
-	private String id;
+  @Id
+  private String id;
 
-	private Long longId;
-	
-	private String name;
+  private Long longId;
 
-	private String description;
-	private HashMap<String, String> testStoryContent = new HashMap<String, String>();
+  private String name;
 
-	private String integrationProfileId;
+  private String description;
+  private HashMap<String, String> testStoryContent = new HashMap<String, String>();
 
-	private String conformanceProfileId;
+  private String integrationProfileId;
 
-	private String er7Message;
+  private String conformanceProfileId;
 
-	private Integer version;
+  private String er7Message;
 
-	private String type;
+  private Integer version;
 
-	private String tdsXSL;
+  private String type;
 
-	private String jdXSL;
+  private String tdsXSL;
 
-	private String nistXMLCode;
+  private String jdXSL;
 
-	private String stdXMLCode;
+  private String nistXMLCode;
 
-	private String constraintsXML;
+  private String stdXMLCode;
 
-	private String messageContentsXMLCode;
+  private String constraintsXML;
 
-	private HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>();
+  private String messageContentsXMLCode;
 
-	private String testStoryConfigId;
+  private HashMap<String, Categorization> testDataCategorizationMap =
+      new HashMap<String, Categorization>();
 
-	public TestStep(String id, String name, String description, Integer version) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.setDescription(description);
-		this.setVersion(version);
-	}
+  private String testStoryConfigId;
 
-	public TestStep() {
-		super();
-		this.id = ObjectId.get().toString();
-	}
+  private boolean manualTS;
 
-	public String getId() {
-		return id;
-	}
+  public TestStep(String id, String name, String description, Integer version) {
+    super();
+    this.id = id;
+    this.name = name;
+    this.setDescription(description);
+    this.setVersion(version);
+  }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+  public TestStep() {
+    super();
+    this.id = ObjectId.get().toString();
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getId() {
+    return id;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setId(String id) {
+    this.id = id;
+  }
 
-	public Integer getVersion() {
-		return version;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	@Override
-	public TestStep clone() throws CloneNotSupportedException {
-		TestStep cloned = (TestStep) super.clone();
-		cloned.setId(ObjectId.get().toString());
-		long range = Long.MAX_VALUE;
-		Random r = new Random();
-		cloned.setLongId((long)(r.nextDouble()*range));
+  public Integer getVersion() {
+    return version;
+  }
 
-		return cloned;
-	}
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
 
-	public String getType() {
-		return type;
-	}
+  @Override
+  public TestStep clone() throws CloneNotSupportedException {
+    TestStep cloned = (TestStep) super.clone();
+    cloned.setId(ObjectId.get().toString());
+    long range = Long.MAX_VALUE;
+    Random r = new Random();
+    cloned.setLongId((long) (r.nextDouble() * range));
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    return cloned;
+  }
 
-	public String getDescription() {
-		if (this.description == null)
-			return "";
-		return description;
-	}
+  public String getType() {
+    return type;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public String getIntegrationProfileId() {
-		return integrationProfileId;
-	}
+  public String getDescription() {
+    if (this.description == null)
+      return "";
+    return description;
+  }
 
-	public void setIntegrationProfileId(String integrationProfileId) {
-		this.integrationProfileId = integrationProfileId;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public String getConformanceProfileId() {
-		return conformanceProfileId;
-	}
+  public String getIntegrationProfileId() {
+    return integrationProfileId;
+  }
 
-	public void setConformanceProfileId(String conformanceProfileId) {
-		this.conformanceProfileId = conformanceProfileId;
-	}
+  public void setIntegrationProfileId(String integrationProfileId) {
+    this.integrationProfileId = integrationProfileId;
+  }
 
-	public String getEr7Message() {
-		return er7Message;
-	}
+  public String getConformanceProfileId() {
+    return conformanceProfileId;
+  }
 
-	public void setEr7Message(String er7Message) {
-		this.er7Message = er7Message;
-	}
+  public void setConformanceProfileId(String conformanceProfileId) {
+    this.conformanceProfileId = conformanceProfileId;
+  }
 
-	public HashMap<String, Categorization> getTestDataCategorizationMap() {
-		return testDataCategorizationMap;
-	}
+  public String getEr7Message() {
+    return er7Message;
+  }
 
-	public void setTestDataCategorizationMap(HashMap<String, Categorization> testDataCategorizationMap) {
-		this.testDataCategorizationMap = testDataCategorizationMap;
-	}
+  public void setEr7Message(String er7Message) {
+    this.er7Message = er7Message;
+  }
 
-	public String getTdsXSL() {
-		return tdsXSL;
-	}
+  public HashMap<String, Categorization> getTestDataCategorizationMap() {
+    return testDataCategorizationMap;
+  }
 
-	public void setTdsXSL(String tdsXSL) {
-		this.tdsXSL = tdsXSL;
-	}
+  public void setTestDataCategorizationMap(
+      HashMap<String, Categorization> testDataCategorizationMap) {
+    this.testDataCategorizationMap = testDataCategorizationMap;
+  }
 
-	public String getJdXSL() {
-		return jdXSL;
-	}
+  public String getTdsXSL() {
+    return tdsXSL;
+  }
 
-	public void setJdXSL(String jdXSL) {
-		this.jdXSL = jdXSL;
-	}
+  public void setTdsXSL(String tdsXSL) {
+    this.tdsXSL = tdsXSL;
+  }
 
-	public String getNistXMLCode() {
-		return nistXMLCode;
-	}
+  public String getJdXSL() {
+    return jdXSL;
+  }
 
-	public void setNistXMLCode(String nistXMLCode) {
-		this.nistXMLCode = nistXMLCode;
-	}
+  public void setJdXSL(String jdXSL) {
+    this.jdXSL = jdXSL;
+  }
 
-	public String getConstraintsXML() {
-		return constraintsXML;
-	}
+  public String getNistXMLCode() {
+    return nistXMLCode;
+  }
 
-	public void setConstraintsXML(String constraintsXML) {
-		this.constraintsXML = constraintsXML;
-	}
+  public void setNistXMLCode(String nistXMLCode) {
+    this.nistXMLCode = nistXMLCode;
+  }
 
-	public String getMessageContentsXMLCode() {
-		return messageContentsXMLCode;
-	}
+  public String getConstraintsXML() {
+    return constraintsXML;
+  }
 
-	public void setMessageContentsXMLCode(String messageContentsXMLCode) {
-		this.messageContentsXMLCode = messageContentsXMLCode;
-	}
+  public void setConstraintsXML(String constraintsXML) {
+    this.constraintsXML = constraintsXML;
+  }
 
-	public String getStdXMLCode() {
-		return stdXMLCode;
-	}
+  public String getMessageContentsXMLCode() {
+    return messageContentsXMLCode;
+  }
 
-	public void setStdXMLCode(String stdXMLCode) {
-		this.stdXMLCode = stdXMLCode;
-	}
+  public void setMessageContentsXMLCode(String messageContentsXMLCode) {
+    this.messageContentsXMLCode = messageContentsXMLCode;
+  }
 
-	public HashMap<String, String> getTestStoryContent() {
-		return testStoryContent;
-	}
+  public String getStdXMLCode() {
+    return stdXMLCode;
+  }
 
-	public void setTestStoryContent(HashMap<String, String> testStoryContent) {
-		this.testStoryContent = testStoryContent;
-	}
+  public void setStdXMLCode(String stdXMLCode) {
+    this.stdXMLCode = stdXMLCode;
+  }
 
-	public String getTestStoryConfigId() {
-		return testStoryConfigId;
-	}
+  public HashMap<String, String> getTestStoryContent() {
+    return testStoryContent;
+  }
 
-	public void setTestStoryConfigId(String testStoryConfigId) {
-		this.testStoryConfigId = testStoryConfigId;
-	}
+  public void setTestStoryContent(HashMap<String, String> testStoryContent) {
+    this.testStoryContent = testStoryContent;
+  }
 
-	public boolean isManualTS() {
-		if (this.conformanceProfileId == null || this.conformanceProfileId.equals(""))
-			return true;
-		return false;
-	}
+  public String getTestStoryConfigId() {
+    return testStoryConfigId;
+  }
 
-	public Long getLongId() {
-		return longId;
-	}
+  public void setTestStoryConfigId(String testStoryConfigId) {
+    this.testStoryConfigId = testStoryConfigId;
+  }
 
-	public void setLongId(Long longId) {
-		this.longId = longId;
-	}
+  public boolean isManualTS() {
+    if (this.conformanceProfileId == null || this.conformanceProfileId.equals(""))
+      return true;
+    return false;
+  }
+
+  public Long getLongId() {
+    return longId;
+  }
+
+  public void setLongId(Long longId) {
+    this.longId = longId;
+  }
+
+  public void setManualTS(boolean manualTS) {
+    this.manualTS = manualTS;
+  }
 
 }

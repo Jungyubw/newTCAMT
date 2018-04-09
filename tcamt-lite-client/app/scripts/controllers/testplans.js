@@ -369,17 +369,15 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	};
 	
-	$scope.exportTestPackageHTML = function () {
+	$scope.exportTestPackageHTML = function (tp) {
 			var changes = angular.toJson([]);
-			var data = angular.fromJson({"changes": changes, "tp": $rootScope.selectedTestPlan});
+			var data = angular.fromJson({"changes": changes, "tp": tp});
 			$http.post('api/testplans/save', data).then(function (response) {
 				var saveResponse = angular.fromJson(response.data);
 				$rootScope.selectedTestPlan.lastUpdateDate = saveResponse.date;
 				$rootScope.saved = true;
-
-
 				var form = document.createElement("form");
-				form.action = $rootScope.api('api/testplans/' + $rootScope.selectedTestPlan.id + '/exportTestPackageHTML/');
+				form.action = 'api/testplans/' + tp.id + '/exportTestPackageHTML/';
 				form.method = "POST";
 				form.target = "_target";
 				var csrfInput = document.createElement("input");
@@ -403,7 +401,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			tp.lastUpdateDate = saveResponse.date;
 			$rootScope.saved = true;
 			var form = document.createElement("form");
-			form.action = 'api/testplans/' + $rootScope.selectedTestPlan.id + '/exportRBZip/';
+			form.action = 'api/testplans/' + tp.id + '/exportRBZip/';
 			form.method = "POST";
 			form.target = "_target";
 			var csrfInput = document.createElement("input");
@@ -421,9 +419,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.debug= function(node){
 		console.log("DEBUGGING");
 		console.log(node);
-	}
+	};
+
 	$scope.copyTestPlan = function(tp) {
-		$http.post($rootScope.api('api/testplans/' + tp.id + '/copy')).then(function (response) {
+		$http.post('api/testplans/' + tp.id + '/copy').then(function (response) {
 			$rootScope.msg().text = "testplanCopySuccess";
 			$rootScope.msg().type = "success";
 			$rootScope.msg().show = true;
@@ -4248,7 +4247,7 @@ angular.module('tcl').controller('ConfirmTestPlanDeleteCtrl', function ($scope, 
     $scope.loading = false;
     $scope.deleteTestPlan = function () {
         $scope.loading = true;
-        $http.post($rootScope.api('api/testplans/' + $scope.testplanToDelete.id + '/delete')).then(function (response) {
+        $http.post('api/testplans/' + $scope.testplanToDelete.id + '/delete').then(function (response) {
             $rootScope.msg().text = "testplanDeleteSuccess";
             $rootScope.msg().type = "success";
             $rootScope.msg().show = true;

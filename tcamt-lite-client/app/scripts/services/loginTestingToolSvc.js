@@ -16,21 +16,15 @@ angular.module('tcl').factory('loginTestingToolSvc',
             var auth =  base64.encode(username + ':' + password);
             //httpHeaders['Authorization'] = 'Basic ' + auth;
             httpHeaders['gvt-auth'] = auth;
-            var testplanId=$rootScope.selectedTestPlan.id;
+            var testplanId = $rootScope.selectedTestPlan.id;
             console.log($rootScope.selectedTestPlan);
-
             $http.post('api/testplans/pushRB/'+testplanId+'/'+scope,host,{headers:httpHeaders}).then(function (re) {
                 delay.resolve(re);
-
-
             }, function(error){
                 console.log("ERROR");
                 console.log(error);
                 delay.reject(error);
             });
-
-
-
             return delay.promise;
         };
 

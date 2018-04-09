@@ -44,8 +44,6 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
                 $scope.showNotification();
 
                 if (pref.hideGvtDialg == true) {
-
-
                     PreferenceService.save($rootScope.preference).then(function (response) {
                         $rootScope.preference = response.data;
                         $rootScope.error = {text: undefined, show: false};

@@ -315,7 +315,7 @@ public class TestPlanController extends CommonController {
       HttpServletResponse response) throws Exception {
     TestPlan tp = findTestPlan(id);
     InputStream content = null;
-    content = new ExportUtil().exportTestPackageAsHtml(tp, testStoryConfigurationService);
+    content = new ExportUtil().exportTestPackageAsHtml(tp, testStoryConfigurationService, profileService);
     response.setContentType("text/html");
     response.setHeader("Content-disposition", "attachment;filename=" + escapeSpace(tp.getName())
         + "-" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_TestPackage.html");
@@ -332,13 +332,12 @@ public class TestPlanController extends CommonController {
     InputStream content = null;
     content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, profileService);
     response.setContentType("application/zip");
-    response.setHeader("Content-disposition", "attachment;filename=" + "Contextbased.zip");
+    response.setHeader("Content-disposition", "attachment;filename=" + "resources.zip");
     FileCopyUtils.copy(content, response.getOutputStream());
 
   }
 
-  @RequestMapping(value = "/pushRB/{testplanId}/{scope}", method = RequestMethod.POST,
-      produces = "application/json")
+  @RequestMapping(value = "/pushRB/{testplanId}/{scope}", method = RequestMethod.POST, produces = "application/json")
   public void pushRB(@PathVariable("testplanId") String testplanId,@PathVariable("scope") Scope scope, @RequestBody String host,
       @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
       throws Exception {
@@ -383,14 +382,12 @@ public class TestPlanController extends CommonController {
         }
       }
 
-
       testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, profileService);
       testPlanIO.reset();
       client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN,scope);
       DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-      tp.setGvtDate("This TestPlan was published on GVT at "
-          + dateFormat.format(Calendar.getInstance().getTime()));
+      tp.setGvtDate("This TestPlan was published on GVT at " + dateFormat.format(Calendar.getInstance().getTime()));
       tp.setGvtPresence(true);
       testPlanRepository.save(tp);
 
@@ -423,29 +420,6 @@ public class TestPlanController extends CommonController {
     	throw new Exception();
     }
   }
-
-//  @RequestMapping(value = "{id}/deleteFromGVT", method = RequestMethod.POST,
-//      produces = "application/json")
-//  public boolean deleteFromGvt(@PathVariable("id") String id, @RequestBody String host,
-//      @RequestHeader("gvt-auth") String authorization) throws UserNotFoundException{
-////    try {
-////      SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
-////      if (client.validCredentials()) {
-////        TestPlan tp = findTestPlan(id);
-////        client.delete(tp.getLongId(), ResourceType.TEST_PLAN);
-////        // TODO neeed to delete
-////        tp.setGvtPresence(false);
-////        tp.setGvtDate("This TestPlan is not published on GVT.");
-////        testPlanRepository.save(tp);
-////        return true;
-////      } else {
-////        return false;
-////      }
-////
-////    } catch (Exception e) {
-////      return false;
-////    }
-//  }
 
   @RequestMapping(value = "/{tpid}/exportProfileXMLs", method = RequestMethod.POST,
       produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
@@ -571,7 +545,6 @@ public class TestPlanController extends CommonController {
       groupMap.put((Integer)g.get("position"), g);
     }
     
-
     for (int i = 0; i < groups.length(); i++) {
       JSONObject g = groupMap.get(i+1);
 
@@ -582,7 +555,6 @@ public class TestPlanController extends CommonController {
       tcg.setType("testcasegroup");
 
       JSONArray testcases = (JSONArray) g.get("testcases");
-      
       
       HashMap <Integer, JSONObject> testcaseMap= new HashMap<Integer, JSONObject>();
       for (int j = 0; j < testcases.length(); j++) {
@@ -605,8 +577,7 @@ public class TestPlanController extends CommonController {
         testcaseStoryContent.put("Pre-condition", (String) testCaseStory.get("preCondition"));
         testcaseStoryContent.put("Post-Condition", (String) testCaseStory.get("postCondition"));
         testcaseStoryContent.put("Test Objectives", (String) testCaseStory.get("testObjectives"));
-        testcaseStoryContent.put("Evaluation Criteria",
-            (String) testCaseStory.get("evaluationCriteria"));
+        testcaseStoryContent.put("Evaluation Criteria", (String) testCaseStory.get("evaluationCriteria"));
         testcaseStoryContent.put("Notes", (String) testCaseStory.get("notes"));
         tc.setTestStoryContent(testcaseStoryContent);
         tc.setType("testcase");
@@ -669,7 +640,6 @@ public class TestPlanController extends CommonController {
                     for (int m = 0; m < listDataJson.length(); m++) {
                       listData.add(listDataJson.getString(m));
                     }
-
                     value.setListData(listData);
                   } else if (cate.equals("NonPresence")) {
                     value.setTestDataCategorization("NonPresence");
@@ -685,7 +655,6 @@ public class TestPlanController extends CommonController {
                   }
                   testDataCategorizationMap.put(key, value);
                 }
-
                 ts.setTestDataCategorizationMap(testDataCategorizationMap);
               }
             }
