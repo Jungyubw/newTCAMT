@@ -1,11 +1,6 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,10 +14,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
@@ -59,7 +50,6 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.XMLContainer;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.repo.TestPlanRepository;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
@@ -250,63 +240,12 @@ public class TestPlanController extends CommonController {
     }
   }
 
-  @RequestMapping(value = "/supplementsGeneration", method = RequestMethod.POST)
-  public XMLContainer supplementsGeneration(@RequestBody XMLContainer xmlContainer) {
-    XMLContainer result = new XMLContainer();
-    try {
-      User u = userService.getCurrentUser();
-      Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
-      if (account == null)
-        throw new UserAccountNotFoundException();
-
-      ClassLoader classLoader = getClass().getClassLoader();
-      String xsl = IOUtils.toString(classLoader
-          .getResourceAsStream("xsl" + File.separator + xmlContainer.getType() + ".xsl"));
-      InputStream xsltInputStream = new ByteArrayInputStream(xsl.getBytes());
-      InputStream sourceInputStream = new ByteArrayInputStream(xmlContainer.getXml().getBytes());
-      Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-      Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
-      String xsltStr = IOUtils.toString(xsltReader);
-      String sourceStr = IOUtils.toString(sourceReader);
-      result.setType("html");
-      result.setXml(TestPlanController.parseXmlByXSLT(sourceStr, xsltStr));
-      result.setXml(result.getXml().replace("accordion", "uib-accordion"));
-      return result;
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return result;
-  }
-
   private TestPlan findTestPlan(String testplanId) throws TestPlanNotFoundException {
     TestPlan tp = testPlanService.findOne(testplanId);
     if (tp == null) {
       throw new TestPlanNotFoundException(testplanId);
     }
     return tp;
-  }
-
-  private static String parseXmlByXSLT(String sourceStr, String xsltStr) {
-    System.setProperty("javax.xml.transform.TransformerFactory",
-        "net.sf.saxon.TransformerFactoryImpl");
-    TransformerFactory tFactory = TransformerFactory.newInstance();
-
-    try {
-      Transformer transformer =
-          tFactory.newTransformer(new StreamSource(new java.io.StringReader(xsltStr)));
-      StringWriter outWriter = new StringWriter();
-      StreamResult result = new StreamResult(outWriter);
-
-      transformer.transform(new StreamSource(new java.io.StringReader(sourceStr)), result);
-      StringBuffer sb = outWriter.getBuffer();
-      String finalstring = sb.toString();
-
-      return finalstring;
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    return null;
   }
 
   @RequestMapping(value = "/{id}/exportTestPackageHTML", method = RequestMethod.POST,
