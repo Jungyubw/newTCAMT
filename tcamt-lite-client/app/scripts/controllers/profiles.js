@@ -5,7 +5,6 @@
 angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog) {
 	$scope.loading = false;
 
-
 	$scope.initProfiles= function () {
 		if(!$rootScope.profiles || $rootScope.profiles == [] ) $rootScope.loadProfiles();
 	};
@@ -13,30 +12,25 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 	$scope.confirmDeletePublicProfile = function(ev, profile) {
 		var confirm = $mdDialog.prompt()
 			.title('Are you sure you want to delete the Public Profile?')
-			.textContent('This operation is irreversible. Need passcode.')
-			.placeholder('PASSCODE')
-			.ariaLabel('PASSCODE')
-			.initialValue('')
+			.textContent('This operation is irreversible.')
 			.targetEvent(ev)
 			.ok('Confirm')
 			.cancel('Cancel');
 
 		$mdDialog.show(confirm).then(function(result) {
-			if(result === 'nist1234'){
-                $http.post('api/profiles/' + profile.id + '/delete').then(function () {
-					$rootScope.msg().text = "profileDeleteSuccess";
-					$rootScope.msg().type = "success";
-					$rootScope.msg().show = true;
-					$rootScope.manualHandle = true;
-                    $rootScope.loadProfiles();
-				}, function (error) {
-					$scope.error = error;
-					$scope.loading = false;
-					$rootScope.msg().text = "profileDeleteFailed";
-					$rootScope.msg().type = "danger";
-					$rootScope.msg().show = true;
-				});
-			}
+            $http.post('api/profiles/' + profile.id + '/delete').then(function () {
+                $rootScope.msg().text = "profileDeleteSuccess";
+                $rootScope.msg().type = "success";
+                $rootScope.msg().show = true;
+                $rootScope.manualHandle = true;
+                $rootScope.loadProfiles();
+            }, function (error) {
+                $scope.error = error;
+                $scope.loading = false;
+                $rootScope.msg().text = "profileDeleteFailed";
+                $rootScope.msg().type = "danger";
+                $rootScope.msg().show = true;
+            });
 		}, function() {
 		});
 	};
@@ -130,15 +124,9 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 	};
 
 	$scope.ImportXMLPublicProfileModalCtrl = function($scope, $mdDialog, $http) {
-		$scope.isSuperUser = false;
-		$scope.passcode = '';
 		$scope.xmlFilesData = {};
 		$scope.cancel = function() {
 			$mdDialog.hide();
-		};
-
-		$scope.checkPassCode = function () {
-			if($scope.passcode == 'nist1234') $scope.isSuperUser = true;
 		};
 
 		$scope.checkLoadAll = function (){
@@ -202,15 +190,9 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 
 
 	$scope.ReplacePublicProfileModalCtrl = function($scope, $mdDialog, $http) {
-		$scope.isSuperUser = false;
-		$scope.passcode = '';
 		$scope.xmlFilesData = {};
 		$scope.cancel = function() {
 			$mdDialog.hide();
-		};
-
-		$scope.checkPassCode = function () {
-			if($scope.passcode == 'nist1234') $scope.isSuperUser = true;
 		};
 
 		$scope.checkLoadAll = function (){

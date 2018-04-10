@@ -1265,6 +1265,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	};
 	$scope.selectSegment = function (segment) {
+        waitingDialog.show('Loading Segment...', {dialogSize: 'xs', progressType: 'info'});
 		$scope.testDataAccordi.segmentList = false;
 		$scope.testDataAccordi.selectedSegment = true;
 		$scope.testDataAccordi.constraintList = false;
@@ -1287,8 +1288,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $rootScope.selectedSegmentNode = angular.fromJson(response.data);
             setTimeout(function () {
                 $scope.refreshTree();
-            }, 1000);
+                waitingDialog.hide();
+            }, 100);
         }, function (error) {
+            aitingDialog.hide();
         });
 	};
     $scope.findTestCaseNameOfTestStepInsideGroup = function (group, result){
@@ -1508,14 +1511,19 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		getNodes: function (parent) {
 			if (parent && parent != null) {
 				if($rootScope.usageViewFilter != 'All'){
-					return parent.children.filter($scope.usageFilter);
-
+					if(parent.children)
+						return parent.children.filter($scope.usageFilter);
+					else [];
 				}else {
 					return parent.children;
 				}
 			}else {
 				if($rootScope.usageViewFilter != 'All'){
-					if($rootScope.selectedSegmentNode) return $rootScope.selectedSegmentNode.children.filter($scope.usageFilter);
+					if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.children) {
+						return $rootScope.selectedSegmentNode.children.filter($scope.usageFilter);
+                    }else {
+						return [];
+					}
 				}else{
 					if($rootScope.selectedSegmentNode) return $rootScope.selectedSegmentNode.children;
 				}
@@ -1540,7 +1548,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 		return true;
 	};
-	$scope.selectedCols = [{id: 2, label: "Usage"}];
+	$scope.selectedCols = [];
 	$scope.colsData = [
 		{id: 1, label: "DT"},
 		{id: 2, label: "Usage"},
@@ -1550,7 +1558,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		{id: 6, label: "Predicate"}];
 
 	$scope.smartButtonSettings = {
-		smartButtonMaxItems: 8,
+		smartButtonMaxItems: 6,
 		smartButtonTextConverter: function(itemText, originalItem) {
 			return itemText;
 		}

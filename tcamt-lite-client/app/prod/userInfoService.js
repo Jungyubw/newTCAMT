@@ -39,7 +39,8 @@ angular.module('tcl').factory('userInfoService', ['StorageService', 'userLoaderS
         //console.log("USER ID=", StorageService.get('userID'));
        
         var loadFromCookie = function() {
-            //console.log("UserID=", StorageService.get('userID'));
+            console.log("UserID=", StorageService.get('userID'));
+            console.log("Is Admin?", StorageService.get('admin'));
 
             id = StorageService.get('userID');
             username = StorageService.get('username');
@@ -130,6 +131,8 @@ angular.module('tcl').factory('userInfoService', ['StorageService', 'userLoaderS
         var setCurrentUser = function(newUser) {
             currentUser = newUser;
             if ( currentUser !== null && currentUser !== undefined ) {
+                console.log(currentUser.authorities);
+
                 username = currentUser.username;
                 id = currentUser.accountId;
                 fullName = currentUser.fullName;

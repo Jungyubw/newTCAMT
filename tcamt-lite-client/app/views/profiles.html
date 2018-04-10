@@ -69,7 +69,7 @@
                                 <md-content class="md-padding">
                                     <div class="col-md-12">
                                         <div class="pull-right">
-                                            <button type="button" class="btn btn-info btn-sm" ng-click="openDialogForImportXMLPublicProfile($event);"><i class="fa fa-plus"></i>
+                                            <button type="button" class="btn btn-info btn-sm" ng-if="isAdmin()" ng-click="openDialogForImportXMLPublicProfile($event);"><i class="fa fa-plus"></i>
                                                 Import Profile
                                             </button>
                                         </div>
@@ -77,25 +77,27 @@
                                             <thead>
                                             <tr class="tbl-header">
                                                 <th st-ratio="5">#</th>
-                                                <th st-ratio="10" st-sort="metaData.name">Name</th>
-                                                <th st-ratio="10">Description</th>
-                                                <th st-ratio="10" st-sort="metaData.hl7Version">HL7Version</th>
-                                                <th st-ratio="10" st-sort="metaData.date">Date</th>
+                                                <th st-ratio="10" st-sort="integrationProfileMetaData.name">Profile XML Name</th>
+                                                <th st-ratio="10">Constraints XML name</th>
+                                                <th st-ratio="10">ValueSet XML name</th>
+                                                <th st-ratio="10" st-sort="integrationProfileMetaData.hl7Version">HL7Version</th>
+                                                <th st-ratio="10" st-sort="date">Uploaded Date</th>
                                                 <th st-ratio="45">Conformance Profiles</th>
-                                                <th st-ratio="10">Actions</th>
+                                                <th st-ratio="10" ng-if="isAdmin()">Actions</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr ng-repeat="row in tmpPublicProfiles | orderBy:'row.metaData.date'">
                                                 <td st-ratio="5">{{$index + 1}}</td>
-                                                <td st-ratio="10" ng-bind="row.metaData.name"></td>
-                                                <td st-ratio="10" ng-bind="row.metaData.description"></td>
-                                                <td st-ratio="10" ng-bind="row.metaData.hl7Version"></td>
+                                                <td st-ratio="10" ng-bind="row.integrationProfileMetaData.name"></td>
+                                                <td st-ratio="10" ng-bind="row.conformanceContextMetaData.name"></td>
+                                                <td st-ratio="10" ng-bind="row.valueSetLibraryMetaData.name"></td>
+                                                <td st-ratio="10" ng-bind="row.integrationProfileMetaData.hl7Version"></td>
                                                 <td st-ratio="10">{{row.lastUpdatedDate | date:dateFormat}}</td>
                                                 <td st-ratio="45">
-                                                    <li ng-repeat="m in row.messages.children">{{m.name}} [{{m.messageType}}^{{m.event}}^{{m.structID}}, {{m.identifier}}]</li>
+                                                    <li ng-repeat="m in row.conformanceProfileMetaDataSet">{{m.name}} [{{m.type}}^{{m.event}}^{{m.structId}}, {{m.identifier}}]</li>
                                                 </td>
-                                                <td st-ratio="10">
+                                                <td st-ratio="10" ng-if="isAdmin()">
                                                     <button title="Replace Profile"
                                                             type="button" class="btn btn-xs btn-info no-margin"
                                                             ng-click="openDialogForReplacePublicProfile($event, row);">

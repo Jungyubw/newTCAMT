@@ -138,6 +138,10 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
             return userInfoService.isAdmin();
         };
 
+        $rootScope.isAdmin = function () {
+            return userInfoService.isAdmin();
+        };
+
         $scope.getRoleAsString = function () {
             if ($scope.isAuthor() === true) {
                 return 'author';

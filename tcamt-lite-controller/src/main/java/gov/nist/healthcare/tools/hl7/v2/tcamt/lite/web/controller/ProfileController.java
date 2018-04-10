@@ -135,9 +135,6 @@ public class ProfileController extends CommonController {
     p.setId(id);
     p.setAccountId(account.getId());
     p.setLastUpdatedDate(new Date());
-    p.setSourceType("private");
-
-
     profileService.save(p);
   }
 

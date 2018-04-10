@@ -283,7 +283,7 @@ body {
 										   </div>
 
 												<div class="table-responsive">
-													<table  tt-table tt-params="segmentParams" class="table table-bordered table-fix-header table-condensed profile-table" id="segmentTable">
+													<table tt-table tt-params="segmentParams" class="table table-bordered table-condensed profile-table" id="segmentTable">
 														<thead>
 														<tr class="tbl-header">
 															<th class="col-md-1">Path</th>
@@ -614,11 +614,6 @@ body {
 		<td class="col-md-1" ng-if="isShow(6)">
 			<span>{{::node.predicate.description}}</span>
 		</td>
-		<td class="col-md-1" ng-if="isShow(7)">
-			<div ng-repeat="cs in node.conformanceStatments track by cs.id">
-				<span>{{::cs.constraintId}} : {{::cs.description}}</span>
-			</div>
-		</td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">
 				<input ng-hide="hasChildren(node)" class="form-control" type="text" ng-change="recordChanged(selectedTestStep);updateValue(node);" ng-model="node.value"  ng-class="{'invalidValue':hasError(node.testDataCategorization,node.value,node.usagePath)}" />
@@ -674,11 +669,6 @@ body {
         </td>
 		<td class="col-md-1" ng-if="isShow(6)">
 			<span>{{::node.predicate.description}}</span>
-		</td>
-		<td class="col-md-1" ng-if="isShow(7)">
-			<div ng-repeat="cs in node.conformanceStatments track by cs.id">
-				<span>{{::cs.constraintId}} : {{::cs.description}}</span>
-			</div>
 		</td>
 		<td class="col-md-1">
 			<div ng-hide="hasChildren(node)">

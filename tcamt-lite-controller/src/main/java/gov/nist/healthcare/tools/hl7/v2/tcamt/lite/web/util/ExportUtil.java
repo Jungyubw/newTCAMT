@@ -400,6 +400,23 @@ public class ExportUtil {
 
     return coverpageStr;
   }
+  
+  public InputStream exportResourceBundlePushRBAsZip(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
+    ByteArrayOutputStream outputStream = null;
+    byte[] bytes;
+    outputStream = new ByteArrayOutputStream();
+    ZipOutputStream out = new ZipOutputStream(outputStream);
+    
+    String rootPath = tp.getName();
+    this.genCoverAsHtml(out, tp, rootPath);
+    this.genPackagePages(out, tp, testStoryConfigurationService, profileService, rootPath);
+    this.generateTestPlanSummary(out, tp, testStoryConfigurationService, rootPath);
+    this.generateTestPlanRB(out, tp, testStoryConfigurationService, profileService, rootPath);
+    out.close();
+    bytes = outputStream.toByteArray();
+    return new ByteArrayInputStream(bytes);
+  }
+  
 
   public InputStream exportResourceBundleAsZip(TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
     ByteArrayOutputStream outputStream = null;
@@ -432,10 +449,12 @@ public class ExportUtil {
         
       }
     }
-    this.genCoverAsHtml(out, tp);
-    this.genPackagePages(out, tp, testStoryConfigurationService, profileService);
-    this.generateTestPlanSummary(out, tp, testStoryConfigurationService);
-    this.generateTestPlanRB(out, tp, testStoryConfigurationService, profileService);
+    
+    String rootPath = "Contextbased" + File.separator + tp.getName();
+    this.genCoverAsHtml(out, tp, rootPath);
+    this.genPackagePages(out, tp, testStoryConfigurationService, profileService, rootPath);
+    this.generateTestPlanSummary(out, tp, testStoryConfigurationService, rootPath);
+    this.generateTestPlanRB(out, tp, testStoryConfigurationService, profileService, rootPath);
     out.close();
     bytes = outputStream.toByteArray();
     return new ByteArrayInputStream(bytes);
@@ -501,9 +520,9 @@ public class ExportUtil {
     profileIn.close();
   }
 
-  private void genCoverAsHtml(ZipOutputStream out, TestPlan tp) throws Exception {
+  private void genCoverAsHtml(ZipOutputStream out, TestPlan tp, String rootPath) throws Exception {
     byte[] buf = new byte[1024];
-    out.putNextEntry(new ZipEntry("Contextbased" + File.separator + tp.getName() + File.separator + "CoverPage.html"));
+    out.putNextEntry(new ZipEntry(rootPath + File.separator + "CoverPage.html"));
     InputStream inCoverPager = this.exportCoverAsHtml(tp);
     int lenTestPlanSummary;
     while ((lenTestPlanSummary = inCoverPager.read(buf)) > 0) {
@@ -512,12 +531,12 @@ public class ExportUtil {
     out.closeEntry();
     inCoverPager.close();
   }
-
+ 
   private void genPackagePages(ZipOutputStream out, TestPlan tp,
-      TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
+      TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService, String rootPath) throws Exception {
 
     byte[] buf = new byte[1024];
-    out.putNextEntry(new ZipEntry("Contextbased" + File.separator + tp.getName() + File.separator + "TestPackage.html"));
+    out.putNextEntry(new ZipEntry(rootPath + File.separator + "TestPackage.html"));
     InputStream inTestPackage = this.exportTestPackageAsHtml(tp, testStoryConfigurationService, profileService);
     int lenTestPlanSummary;
     while ((lenTestPlanSummary = inTestPackage.read(buf)) > 0) {
@@ -656,7 +675,6 @@ public class ExportUtil {
             this.generateTestDataSpecification(out, testStepSupplementXMLsOutput.getNistXMLStr(), ts.getTdsXSL(), stepPath, "plain");
           }
           if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
-            //ZipOutputStream out, String jdXSL, String nistXMLStr, String teststepPath, String option
             this.generateJurorDocument(out, ts.getJdXSL(), testStepSupplementXMLsOutput.getNistXMLStr(), stepPath, "ng-tab-html");
             this.generateJurorDocument(out, ts.getJdXSL(), testStepSupplementXMLsOutput.getNistXMLStr(), stepPath, "plain");
           }
@@ -670,8 +688,8 @@ public class ExportUtil {
 
   }
 
-  private void generateTestPlanRB(ZipOutputStream out, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService) throws Exception {
-    this.generateTestPlanJsonRB(out, tp, 1);
+  private void generateTestPlanRB(ZipOutputStream out, TestPlan tp, TestStoryConfigurationService testStoryConfigurationService, ProfileService profileService, String rootPath) throws Exception {
+    this.generateTestPlanJsonRB(out, tp, 1, rootPath);
     String testStoryConfigId = null;
     if (tp.getTestStoryConfigId() != null) {
       testStoryConfigId = tp.getTestStoryConfigId();
@@ -686,15 +704,15 @@ public class ExportUtil {
       testStoryConfiguration = testStoryConfigurationService.findByAccountId((long) 0).get(0);
     }
     
-    this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, null, tp, "ng-tab-html");
-    this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, null, tp, "plain");
+    this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, rootPath, tp, "ng-tab-html");
+    this.generateTestStoryRB(out, tp.getTestStoryContent(), testStoryConfiguration, rootPath, tp, "plain");
 
     for (int i = 0; i < tp.getChildren().size(); i++) {
       Object child = tp.getChildren().get(i);
       if (child instanceof TestCaseGroup) {
-        generateTestPlanRBTestGroup(out, (TestCaseGroup) child, null, tp, testStoryConfigurationService, i + 1, profileService);
+        generateTestPlanRBTestGroup(out, (TestCaseGroup) child, rootPath, tp, testStoryConfigurationService, i + 1, profileService);
       } else if (child instanceof TestCase) {
-        generateTestPlanRBTestCase(out, (TestCase) child, null, tp, testStoryConfigurationService, i + 1, profileService);
+        generateTestPlanRBTestCase(out, (TestCase) child, rootPath, tp, testStoryConfigurationService, i + 1, profileService);
       }
     }
   }
@@ -961,7 +979,7 @@ public class ExportUtil {
     inTP.close();
   }
 
-  private void generateTestPlanJsonRB(ZipOutputStream out, TestPlan tp, int index)
+  private void generateTestPlanJsonRB(ZipOutputStream out, TestPlan tp, int index, String rootPath)
       throws IOException {
     JSONObject obj = new JSONObject();
     obj.put("id", tp.getLongId());
@@ -978,7 +996,7 @@ public class ExportUtil {
     obj.put("skip", false);
 
     byte[] buf = new byte[1024];
-    out.putNextEntry(new ZipEntry("Contextbased" + File.separator + tp.getName() + File.separator + "TestPlan.json"));
+    out.putNextEntry(new ZipEntry(rootPath + File.separator + "TestPlan.json"));
     InputStream inTP = IOUtils.toInputStream(obj.toString());
     int lenTP;
     while ((lenTP = inTP.read(buf)) > 0) {
@@ -1185,7 +1203,7 @@ public class ExportUtil {
   }
 
   private void generateTestPlanSummary(ZipOutputStream out, TestPlan tp,
-      TestStoryConfigurationService testStoryConfigurationService) throws IOException {
+      TestStoryConfigurationService testStoryConfigurationService, String rootPath) throws IOException {
     ClassLoader classLoader = getClass().getClassLoader();
     String testPlanSummaryStr = IOUtils
         .toString(classLoader.getResourceAsStream("rb" + File.separator + "TestPlanSummary.html"));
@@ -1246,7 +1264,7 @@ public class ExportUtil {
     testPlanSummaryStr = testPlanSummaryStr.replace("?contentsHTML?", contentsHTML);
 
     byte[] buf = new byte[1024];
-    out.putNextEntry(new ZipEntry("Contextbased" + File.separator + tp.getName() + File.separator + "TestPlanSummary.html"));
+    out.putNextEntry(new ZipEntry(rootPath + File.separator + "TestPlanSummary.html"));
     InputStream inTestPlanSummary = IOUtils.toInputStream(testPlanSummaryStr);
     int lenTestPlanSummary;
     while ((lenTestPlanSummary = inTestPlanSummary.read(buf)) > 0) {

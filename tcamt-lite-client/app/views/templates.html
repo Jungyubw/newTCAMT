@@ -145,35 +145,27 @@
             </md-toolbar>
             <md-dialog-content>
                 <div class="md-dialog-content">
-                    <div ng-show="!isSuperUser">
-                        <md-input-container style="width: 100%">
-                            <label>PASSCODE</label>
-                            <input ng-model="passcode" type="password" ng-change="checkPassCode()"/>
-                        </md-input-container>
-                    </div>
-                    <div ng-show="isSuperUser">
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <label for="profilePublicFile" class="custom-file-upload">
-                                    <i class="fa fa-cloud-upload"></i> Choose Profile XML File
-                                    <div id="errorMessageForPublicProfile"></div>
-                                </label>
-                                <input id="profilePublicFile" accept=".xml" onchange="angular.element(this).scope().validateForProfileXMLFile(this.files)" type="file" name="profilePublicFile" />
-                            </div>
-                            <div class="col-md-12">
-                                <label for="valueSetPublicFile" class="custom-file-upload">
-                                    <i class="fa fa-cloud-upload"></i> Choose ValueSet XML File
-                                    <div id="errorMessageForValueSetPublic"></div>
-                                </label>
-                                <input id="valueSetPublicFile" accept=".xml" onchange="angular.element(this).scope().validateForValueSetXMLFile(this.files)" type="file" name="valueSetPublicFile" />
-                            </div>
-                            <div class="col-md-12">
-                                <label for="constraintsPublicFile" class="custom-file-upload">
-                                    <i class="fa fa-cloud-upload"></i> Choose Constraints XML File
-                                    <div id="errorMessageForConstraintsPublic"></div>
-                                </label>
-                                <input id="constraintsPublicFile" accept=".xml" onchange="angular.element(this).scope().validateForConstraintsXMLFile(this.files)" type="file" name="constraintsPublicFile" />
-                            </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label for="profilePublicFile" class="custom-file-upload">
+                                <i class="fa fa-cloud-upload"></i> Choose Profile XML File
+                                <div id="errorMessageForPublicProfile"></div>
+                            </label>
+                            <input id="profilePublicFile" accept=".xml" onchange="angular.element(this).scope().validateForProfileXMLFile(this.files)" type="file" name="profilePublicFile" />
+                        </div>
+                        <div class="col-md-12">
+                            <label for="valueSetPublicFile" class="custom-file-upload">
+                                <i class="fa fa-cloud-upload"></i> Choose ValueSet XML File
+                                <div id="errorMessageForValueSetPublic"></div>
+                            </label>
+                            <input id="valueSetPublicFile" accept=".xml" onchange="angular.element(this).scope().validateForValueSetXMLFile(this.files)" type="file" name="valueSetPublicFile" />
+                        </div>
+                        <div class="col-md-12">
+                            <label for="constraintsPublicFile" class="custom-file-upload">
+                                <i class="fa fa-cloud-upload"></i> Choose Constraints XML File
+                                <div id="errorMessageForConstraintsPublic"></div>
+                            </label>
+                            <input id="constraintsPublicFile" accept=".xml" onchange="angular.element(this).scope().validateForConstraintsXMLFile(this.files)" type="file" name="constraintsPublicFile" />
                         </div>
                     </div>
                 </div>
@@ -358,35 +350,27 @@
             </md-toolbar>
             <md-dialog-content>
                 <div class="md-dialog-content">
-                    <div ng-show="!isSuperUser">
-                        <md-input-container style="width: 100%">
-                            <label>PASSCODE</label>
-                            <input ng-model="passcode" type="password" ng-change="checkPassCode()"/>
-                        </md-input-container>
-                    </div>
-                    <div ng-show="isSuperUser">
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <label for="replacePublicProfileXMLFile" class="custom-file-upload">
-                                    <i class="fa fa-cloud-upload"></i> Choose Profile XML File
-                                    <div id="errorMessageForReplacePublicProfile"></div>
-                                </label>
-                                <input id="replacePublicProfileXMLFile" accept=".xml" onchange="angular.element(this).scope().validateForProfileXMLFile(this.files)" type="file" name="replacePublicProfileXMLFile" />
-                            </div>
-                            <div class="col-md-12">
-                                <label for="replacePublicValueSetXMLFile" class="custom-file-upload">
-                                    <i class="fa fa-cloud-upload"></i> Choose ValueSet XML File
-                                    <div id="errorMessageForReplacePublicValueSet"></div>
-                                </label>
-                                <input id="replacePublicValueSetXMLFile" accept=".xml" onchange="angular.element(this).scope().validateForValueSetXMLFile(this.files)" type="file" name="replacePublicValueSetXMLFile" />
-                            </div>
-                            <div class="col-md-12">
-                                <label for="replacePublicConstraintsXMLFile" class="custom-file-upload">
-                                    <i class="fa fa-cloud-upload"></i> Choose Constraints XML File
-                                    <div id="errorMessageForReplacePublicConstraints"></div>
-                                </label>
-                                <input id="replacePublicConstraintsXMLFile" accept=".xml" onchange="angular.element(this).scope().validateForConstraintsXMLFile(this.files)" type="file" name="replacePublicConstraintsXMLFile" />
-                            </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <label for="replacePublicProfileXMLFile" class="custom-file-upload">
+                                <i class="fa fa-cloud-upload"></i> Choose Profile XML File
+                                <div id="errorMessageForReplacePublicProfile"></div>
+                            </label>
+                            <input id="replacePublicProfileXMLFile" accept=".xml" onchange="angular.element(this).scope().validateForProfileXMLFile(this.files)" type="file" name="replacePublicProfileXMLFile" />
+                        </div>
+                        <div class="col-md-12">
+                            <label for="replacePublicValueSetXMLFile" class="custom-file-upload">
+                                <i class="fa fa-cloud-upload"></i> Choose ValueSet XML File
+                                <div id="errorMessageForReplacePublicValueSet"></div>
+                            </label>
+                            <input id="replacePublicValueSetXMLFile" accept=".xml" onchange="angular.element(this).scope().validateForValueSetXMLFile(this.files)" type="file" name="replacePublicValueSetXMLFile" />
+                        </div>
+                        <div class="col-md-12">
+                            <label for="replacePublicConstraintsXMLFile" class="custom-file-upload">
+                                <i class="fa fa-cloud-upload"></i> Choose Constraints XML File
+                                <div id="errorMessageForReplacePublicConstraints"></div>
+                            </label>
+                            <input id="replacePublicConstraintsXMLFile" accept=".xml" onchange="angular.element(this).scope().validateForConstraintsXMLFile(this.files)" type="file" name="replacePublicConstraintsXMLFile" />
                         </div>
                     </div>
                 </div>
