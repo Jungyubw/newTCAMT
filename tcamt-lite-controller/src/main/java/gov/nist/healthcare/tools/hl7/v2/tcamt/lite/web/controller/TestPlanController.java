@@ -281,6 +281,7 @@ public class TestPlanController extends CommonController {
       @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
       throws Exception {
     host = GVT_URL;
+    host="http://localhost:8080/gvt/";
     User u = userService.getCurrentUser();
     Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 
@@ -351,6 +352,8 @@ public class TestPlanController extends CommonController {
 //	  host="http://129.6.229.97:8080/gvt/";
     
     host = GVT_URL;
+    host="http://localhost:8080/gvt/";
+
     try {
       SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
 
