@@ -322,7 +322,7 @@ public class TestPlanController extends CommonController {
         }
       }
 
-      testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, profileService);
+      testPlanIO = new ExportUtil().exportResourceBundlePushRBAsZip(tp, testStoryConfigurationService, profileService);
       testPlanIO.reset();
       client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN,scope);
       DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
