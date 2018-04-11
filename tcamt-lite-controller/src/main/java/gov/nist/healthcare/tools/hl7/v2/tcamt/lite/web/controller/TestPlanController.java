@@ -282,6 +282,8 @@ public class TestPlanController extends CommonController {
       throws Exception {
     host = GVT_URL;
     host="http://localhost:8080/gvt/";
+    host="https://hit-dev.nist.gov:8099/gvt/";
+
     User u = userService.getCurrentUser();
     Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 
@@ -353,6 +355,7 @@ public class TestPlanController extends CommonController {
     
     host = GVT_URL;
     host="http://localhost:8080/gvt/";
+    host="https://hit-dev.nist.gov:8099/gvt/";
 
     try {
       SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
