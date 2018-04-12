@@ -14,6 +14,17 @@ public class SegmentInstanceData {
   private String lineStr;
   
   private Segment segmentDef;
+  
+  
+  
+
+  @Override
+  public String toString() {
+    return "SegmentInstanceData [lineNum=" + lineNum + ", segmentName=" + segmentName
+        + ", positionPath=" + positionPath + ", positionIPath=" + positionIPath + ", path=" + path
+        + ", iPath=" + iPath + ", usagePath=" + usagePath + ", lineStr=" + lineStr + ", segmentDef="
+        + segmentDef + "]";
+  }
 
   public String getSegmentName() {
     return segmentName;
