@@ -1,14 +1,12 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
 import java.io.InputStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -16,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.bson.types.ObjectId;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -43,6 +40,8 @@ import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.GrandProfile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.GrandTestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseOrGroup;
@@ -50,6 +49,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlan;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanAbstract;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestPlanDataStr;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestStep;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.repo.TestPlanRepository;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestPlanDeleteException;
@@ -100,11 +100,11 @@ public class TestPlanController extends CommonController {
   @Autowired
   private SimpleMailMessage templateMessage;
 
-  
+
   @Value("${gvt.url}")
   private String GVT_URL;
-  
-  
+
+
   /**
    * 
    * @param type
@@ -254,7 +254,8 @@ public class TestPlanController extends CommonController {
       HttpServletResponse response) throws Exception {
     TestPlan tp = findTestPlan(id);
     InputStream content = null;
-    content = new ExportUtil().exportTestPackageAsHtml(tp, testStoryConfigurationService, profileService);
+    content =
+        new ExportUtil().exportTestPackageAsHtml(tp, testStoryConfigurationService, profileService);
     response.setContentType("text/html");
     response.setHeader("Content-disposition", "attachment;filename=" + escapeSpace(tp.getName())
         + "-" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_TestPackage.html");
@@ -269,20 +270,23 @@ public class TestPlanController extends CommonController {
     log.info("Exporting as zip file RB with id=" + id);
     TestPlan tp = findTestPlan(id);
     InputStream content = null;
-    content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService, profileService);
+    content = new ExportUtil().exportResourceBundleAsZip(tp, testStoryConfigurationService,
+        profileService);
     response.setContentType("application/zip");
     response.setHeader("Content-disposition", "attachment;filename=" + "resources.zip");
     FileCopyUtils.copy(content, response.getOutputStream());
 
   }
 
-  @RequestMapping(value = "/pushRB/{testplanId}/{scope}", method = RequestMethod.POST, produces = "application/json")
-  public void pushRB(@PathVariable("testplanId") String testplanId,@PathVariable("scope") Scope scope, @RequestBody String host,
+  @RequestMapping(value = "/pushRB/{testplanId}/{scope}", method = RequestMethod.POST,
+      produces = "application/json")
+  public void pushRB(@PathVariable("testplanId") String testplanId,
+      @PathVariable("scope") Scope scope, @RequestBody String host,
       @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
       throws Exception {
     host = GVT_URL;
-    host="http://localhost:8080/gvt/";
-    host="https://hit-dev.nist.gov:8099/gvt/";
+    host = "http://localhost:8080/gvt/";
+    host = "https://hit-dev.nist.gov:8099/gvt/";
 
     User u = userService.getCurrentUser();
     Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
@@ -290,26 +294,15 @@ public class TestPlanController extends CommonController {
     SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
     TestPlan tp = findTestPlan(testplanId);
     InputStream testPlanIO = null;
-    Map<String, String> ipidMap = new HashMap<String, String>();
+    Set<String> ipidSet = this.findAllProfileIdsInTestPlan(tp);
 
-    for (TestCaseOrGroup tcog : tp.getChildren()) {
-      if (tcog instanceof TestCaseGroup) {
-        TestCaseGroup group = (TestCaseGroup) tcog;
-        visitGroup(group, ipidMap);
-      } else if (tcog instanceof TestCase) {
-        TestCase tc = (TestCase) tcog;
-        for (TestStep ts : tc.getTeststeps()) {
-          addProfileId(ts, ipidMap);
-        }
-      }
-    }
 
     try {
       long range = 1234567L;
       Random r = new Random();
       Long rand = (long) (r.nextDouble() * range);
 
-      for (String id : ipidMap.keySet()) {
+      for (String id : ipidSet) {
         if (id != null && !id.isEmpty()) {
           InputStream[] xmlArrayIO = new InputStream[3];
           xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(id, profileService, rand);
@@ -324,13 +317,11 @@ public class TestPlanController extends CommonController {
         }
       }
 
-      testPlanIO = new ExportUtil().exportResourceBundlePushRBAsZip(tp, testStoryConfigurationService, profileService);
+      testPlanIO = new ExportUtil().exportResourceBundlePushRBAsZip(tp,
+          testStoryConfigurationService, profileService);
       testPlanIO.reset();
-      client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN,scope);
-      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+      client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN, scope);
 
-      tp.setGvtDate("This TestPlan was published on GVT at " + dateFormat.format(Calendar.getInstance().getTime()));
-      tp.setGvtPresence(true);
       testPlanRepository.save(tp);
 
       if (account == null) {
@@ -347,22 +338,41 @@ public class TestPlanController extends CommonController {
 
   }
 
+
+  private Set<String> findAllProfileIdsInTestPlan(TestPlan tp) {
+    Set<String> ipidSet = new HashSet<String>();
+
+    for (TestCaseOrGroup tcog : tp.getChildren()) {
+      if (tcog instanceof TestCaseGroup) {
+        TestCaseGroup group = (TestCaseGroup) tcog;
+        visitGroup(group, ipidSet);
+      } else if (tcog instanceof TestCase) {
+        TestCase tc = (TestCase) tcog;
+        for (TestStep ts : tc.getTeststeps()) {
+          addProfileId(ts, ipidSet);
+        }
+      }
+    }
+
+    return ipidSet;
+  }
+
   @RequestMapping(value = "/createSession", method = RequestMethod.POST,
       produces = "application/json")
   public Set<RegistredGrant> createSession(@RequestBody String host,
-      @RequestHeader("gvt-auth") String authorization) throws Exception{
-//	  host="http://129.6.229.97:8080/gvt/";
-    
+      @RequestHeader("gvt-auth") String authorization) throws Exception {
+    // host="http://129.6.229.97:8080/gvt/";
+
     host = GVT_URL;
-    host="http://localhost:8080/gvt/";
-    host="https://hit-dev.nist.gov:8099/gvt/";
+    host = "http://localhost:8080/gvt/";
+    host = "https://hit-dev.nist.gov:8099/gvt/";
 
     try {
       SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
 
       return client.validCredentials();
     } catch (Exception e) {
-    	throw new Exception();
+      throw new Exception();
     }
   }
 
@@ -373,42 +383,30 @@ public class TestPlanController extends CommonController {
     log.info("Exporting as zip files for TestPlan with id=" + tpid);
     TestPlan tp = findTestPlan(tpid);
 
-    Map<String, String> ipidMap = new HashMap<String, String>();
+    Set<String> ipidSet = this.findAllProfileIdsInTestPlan(tp);
 
-    for (TestCaseOrGroup tcog : tp.getChildren()) {
-      if (tcog instanceof TestCaseGroup) {
-        TestCaseGroup group = (TestCaseGroup) tcog;
-        visitGroup(group, ipidMap);
-      } else if (tcog instanceof TestCase) {
-        TestCase tc = (TestCase) tcog;
-        for (TestStep ts : tc.getTeststeps()) {
-          addProfileId(ts, ipidMap);
-        }
-      }
-    }
-    
     InputStream content = null;
-    content = new ExportUtil().exportProfileXMLZip(ipidMap.keySet(), profileService, 1234L);
+    content = new ExportUtil().exportProfileXMLZip(ipidSet, profileService, 1234L);
     response.setContentType("application/zip");
     response.setHeader("Content-disposition", "attachment;filename=" + "Global.zip");
     FileCopyUtils.copy(content, response.getOutputStream());
   }
 
-  private void addProfileId(TestStep ts, Map<String, String> ipidMap) {
+  private void addProfileId(TestStep ts, Set<String> ipidSet) {
     if (ts.getIntegrationProfileId() != null) {
-      ipidMap.put(ts.getIntegrationProfileId(), ts.getIntegrationProfileId());
+      ipidSet.add(ts.getIntegrationProfileId());
     }
   }
 
-  private void visitGroup(TestCaseGroup group, Map<String, String> ipidMap) {
+  private void visitGroup(TestCaseGroup group, Set<String> ipidSet) {
     for (TestCaseOrGroup child : group.getChildren()) {
       if (child instanceof TestCaseGroup) {
         TestCaseGroup childGroup = (TestCaseGroup) child;
-        visitGroup(childGroup, ipidMap);
+        visitGroup(childGroup, ipidSet);
       } else if (child instanceof TestCase) {
         TestCase childTestCase = (TestCase) child;
         for (TestStep ts : childTestCase.getTeststeps()) {
-          addProfileId(ts, ipidMap);
+          addProfileId(ts, ipidSet);
         }
       }
     }
@@ -434,9 +432,25 @@ public class TestPlanController extends CommonController {
   public void exportTestPlanJson(@PathVariable("id") String id, HttpServletRequest request,
       HttpServletResponse response) throws Exception {
     TestPlan tp = findTestPlan(id);
+    tp.setId(null);
+    Set<String> ipIds = this.findAllProfileIdsInTestPlan(tp);
+    Set<GrandProfile> grandProfiles = new HashSet<GrandProfile>();
+    for (String ipid : ipIds) {
+      GrandProfile gp = new GrandProfile();
+      ProfileData pd = profileService.findOne(ipid);
+      gp.setId(ipid);
+      gp.setProfileXMLStr(pd.getProfileXMLFileStr());
+      gp.setConstraintXMLStr(pd.getConstraintsXMLFileStr());
+      gp.setValueSetXMLStr(pd.getValueSetXMLFileStr());
+      grandProfiles.add(gp);
+    }
+    GrandTestPlan grandTestPlan = new GrandTestPlan();
+    grandTestPlan.setTestplan(tp);
+    grandTestPlan.setGrandProfiles(grandProfiles);
+
     InputStream content = null;
     ObjectMapper mapper = new ObjectMapper();
-    String jsonInString = mapper.writeValueAsString(tp);
+    String jsonInString = mapper.writeValueAsString(grandTestPlan);
     content = IOUtils.toInputStream(jsonInString, "UTF-8");
     response.setContentType("text/html");
     response.setHeader("Content-disposition", "attachment;filename=" + escapeSpace(tp.getName())
@@ -453,9 +467,70 @@ public class TestPlanController extends CommonController {
     }
 
     ObjectMapper mapper = new ObjectMapper();
-    TestPlan tp = mapper.readValue(tpds.getJsonTestPlanFileStr(), TestPlan.class);
-    tp.setId(ObjectId.get().toString());
+    GrandTestPlan grandTestPlan =
+        mapper.readValue(tpds.getJsonTestPlanFileStr(), GrandTestPlan.class);
+    TestPlan tp = grandTestPlan.getTestplan();
+
+
+    for (GrandProfile gp : grandTestPlan.getGrandProfiles()) {
+      ProfileData exsitProfileData = profileService.findOne(gp.getId());
+      if (exsitProfileData != null && exsitProfileData.getAccountId().equals(account.getId())) {
+
+      } else {
+        ProfileData p = new ProfileData();
+        p.setProfileXMLFileStr(gp.getProfileXMLStr());
+        p.setConstraintsXMLFileStr(gp.getConstraintXMLStr());
+        p.setValueSetXMLFileStr(gp.getValueSetXMLStr());
+        p.setAccountId(account.getId());
+        p.setLastUpdatedDate(new Date());
+        p.setSourceType("private");
+        String newProfileId = profileService.save(p).getId();
+        String oldProfileId = gp.getId();
+        this.updateProfileId(tp, oldProfileId, newProfileId);
+      }
+    }
+    tp.setAccountId(account.getId());
+
+    tp.setListOfIntegrationProfileIds(new ArrayList<String>());
+    tp.setGlobalTestGroupConfigId(null);
+    tp.setGlobalTestCaseConfigId(null);
+    tp.setGlobalManualTestStepConfigId(null);
+    tp.setGlobalAutoTestStepConfigId(null);
     testPlanService.save(tp);
+  }
+
+  private void updateProfileId(TestPlan tp, String oldProfileId, String newProfileId) {
+    for (TestCaseOrGroup tcog : tp.getChildren()) {
+      if (tcog instanceof TestCase) {
+        TestCase tc = (TestCase) tcog;
+        this.updateProfileIdCase(tc, oldProfileId, newProfileId);
+      } else if (tcog instanceof TestCaseGroup) {
+        TestCaseGroup tcg = (TestCaseGroup) tcog;
+        this.updateProfileIdGroup(tcg, oldProfileId, newProfileId);
+      }
+    }
+
+  }
+
+  private void updateProfileIdGroup(TestCaseGroup tcg, String oldProfileId, String newProfileId) {
+    for (TestCaseOrGroup tcog : tcg.getChildren()) {
+      if (tcog instanceof TestCase) {
+        TestCase tc = (TestCase) tcog;
+        this.updateProfileIdCase(tc, oldProfileId, newProfileId);
+      } else if (tcog instanceof TestCaseGroup) {
+        TestCaseGroup child = (TestCaseGroup) tcog;
+        this.updateProfileIdGroup(child, oldProfileId, newProfileId);
+      }
+    }
+  }
+
+  private void updateProfileIdCase(TestCase tc, String oldProfileId, String newProfileId) {
+    for (TestStep ts : tc.getTeststeps()) {
+      if (ts.getIntegrationProfileId() != null
+          && ts.getIntegrationProfileId().equals(oldProfileId)) {
+        ts.setIntegrationProfileId(newProfileId);
+      }
+    }
   }
 
   @RequestMapping(value = "/importOldJSON", method = RequestMethod.POST)
@@ -483,15 +558,15 @@ public class TestPlanController extends CommonController {
     tp.setVersion((int) obj.get("version") + "");
 
     JSONArray groups = (JSONArray) obj.get("testcasegroups");
-    
-    HashMap <Integer, JSONObject> groupMap= new HashMap<Integer, JSONObject>();
+
+    HashMap<Integer, JSONObject> groupMap = new HashMap<Integer, JSONObject>();
     for (int i = 0; i < groups.length(); i++) {
       JSONObject g = groups.getJSONObject(i);
-      groupMap.put((Integer)g.get("position"), g);
+      groupMap.put((Integer) g.get("position"), g);
     }
-    
+
     for (int i = 0; i < groups.length(); i++) {
-      JSONObject g = groupMap.get(i+1);
+      JSONObject g = groupMap.get(i + 1);
 
       TestCaseGroup tcg = new TestCaseGroup();
       tcg.setLongId((long) (r.nextDouble() * range));
@@ -500,13 +575,13 @@ public class TestPlanController extends CommonController {
       tcg.setType("testcasegroup");
 
       JSONArray testcases = (JSONArray) g.get("testcases");
-      
-      HashMap <Integer, JSONObject> testcaseMap= new HashMap<Integer, JSONObject>();
+
+      HashMap<Integer, JSONObject> testcaseMap = new HashMap<Integer, JSONObject>();
       for (int j = 0; j < testcases.length(); j++) {
         JSONObject c = testcases.getJSONObject(j);
-        testcaseMap.put((Integer)c.get("position"), c);
+        testcaseMap.put((Integer) c.get("position"), c);
       }
-      
+
       for (int j = 0; j < testcases.length(); j++) {
         JSONObject c = testcaseMap.get(j + 1);
 
@@ -522,17 +597,18 @@ public class TestPlanController extends CommonController {
         testcaseStoryContent.put("Pre-condition", (String) testCaseStory.get("preCondition"));
         testcaseStoryContent.put("Post-Condition", (String) testCaseStory.get("postCondition"));
         testcaseStoryContent.put("Test Objectives", (String) testCaseStory.get("testObjectives"));
-        testcaseStoryContent.put("Evaluation Criteria", (String) testCaseStory.get("evaluationCriteria"));
+        testcaseStoryContent.put("Evaluation Criteria",
+            (String) testCaseStory.get("evaluationCriteria"));
         testcaseStoryContent.put("Notes", (String) testCaseStory.get("notes"));
         tc.setTestStoryContent(testcaseStoryContent);
         tc.setType("testcase");
 
         JSONArray teststeps = (JSONArray) c.get("teststeps");
-        
-        HashMap <Integer, JSONObject> teststepMap= new HashMap<Integer, JSONObject>();
+
+        HashMap<Integer, JSONObject> teststepMap = new HashMap<Integer, JSONObject>();
         for (int k = 0; k < teststeps.length(); k++) {
           JSONObject s = teststeps.getJSONObject(k);
-          teststepMap.put((Integer)s.get("position"), s);
+          teststepMap.put((Integer) s.get("position"), s);
         }
         for (int k = 0; k < teststeps.length(); k++) {
           JSONObject s = teststepMap.get(k + 1);
@@ -640,7 +716,8 @@ public class TestPlanController extends CommonController {
     msg.setSubject("Your Test Plan is pushed to the GVT");
     msg.setTo(target.getEmail());
     msg.setText("Dear " + target.getUsername() + ", \n\n"
-        + "your Test Plan has been successfully pushed to GVT. Now you can test it at " + this.GVT_URL);
+        + "your Test Plan has been successfully pushed to GVT. Now you can test it at "
+        + this.GVT_URL);
     try {
       this.mailSender.send(msg);
 
@@ -653,7 +730,7 @@ public class TestPlanController extends CommonController {
     SimpleMailMessage msg = new SimpleMailMessage(this.templateMessage);
     msg.setSubject("Push Test Plan Faild");
     msg.setTo(target.getEmail());
-    String[] ccEmails = {"jungyub.woo@nist.gov", "abdelghani.elouakili@nist.gov"}; 
+    String[] ccEmails = {"jungyub.woo@nist.gov", "abdelghani.elouakili@nist.gov"};
     msg.setCc(ccEmails);
     msg.setText("Dear " + target.getUsername() + ", \n\n"
         + "We are sorry but we couldn't push your testplan to the " + host

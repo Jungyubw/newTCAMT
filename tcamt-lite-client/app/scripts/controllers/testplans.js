@@ -243,6 +243,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			fullscreen: false // Only for -xs, -sm breakpoints.
 		}).then(function() {
 			$scope.loadTestPlans();
+            $rootScope.loadProfiles();
 		}, function() {
 		});
 	};

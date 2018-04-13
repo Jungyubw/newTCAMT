@@ -1,12 +1,22 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.xml.sax.SAXException;
 
 import gov.nist.healthcare.nht.acmgt.dto.ResponseMessage;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
@@ -32,6 +43,14 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotF
 @RestController
 @RequestMapping("/profiles")
 public class ProfileController extends CommonController {
+
+  private static String profileXSDurl =
+      "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/Profile.xsd";
+  private static String valueSetXSDurl =
+      "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ValueSets.xsd";
+  private static String constraintXSDurl =
+      "https://raw.githubusercontent.com/Jungyubw/NIST_healthcare_hl7_v2_profile_schema/master/Schema/NIST%20Validation%20Schema/ConformanceContext.xsd";
+
   @Autowired
   UserService userService;
 
@@ -66,11 +85,11 @@ public class ProfileController extends CommonController {
         pa.setConformanceContextMetaData(p.getConformanceContext().getMetaData());
         pa.setIntegrationProfileMetaData(p.getIntegrationProfile().getIntegrationProfileMetaData());
         pa.setValueSetLibraryMetaData(p.getValueSetLibrary().getMetaData());
-        
-        for(ConformanceProfile cp : p.getIntegrationProfile().getConformanceProfiles()){
+
+        for (ConformanceProfile cp : p.getIntegrationProfile().getConformanceProfiles()) {
           pa.addConformanceProfileMetaData(cp.getConformanceProfileMetaData());
         }
-        
+
         abstractResult.add(pa);
       }
 
@@ -122,6 +141,44 @@ public class ProfileController extends CommonController {
     profileService.save(p);
   }
 
+  private XSDVerificationResult verifyXMLByXSD(String xsdURL, String xml) {
+    try {
+      URL schemaFile = new URL(xsdURL);
+      Source xmlFile = new StreamSource(new StringReader(xml));
+      SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+      Schema schema = schemaFactory.newSchema(schemaFile);
+      Validator validator = schema.newValidator();
+      validator.validate(xmlFile);
+      return new XSDVerificationResult(true, null);
+    } catch (SAXException e) {
+      return new XSDVerificationResult(false, e);
+    } catch (IOException e) {
+      return new XSDVerificationResult(false, e);
+    } catch (Exception e) {
+      return new XSDVerificationResult(false, e);
+    }
+  }
+
+  @RequestMapping(value = "/verifyProfileByXSD", method = RequestMethod.POST)
+  public XSDVerificationResult verifyProfileByXSD(@RequestBody XMLRequest profileXML)
+      throws MalformedURLException {
+    return this.verifyXMLByXSD(ProfileController.profileXSDurl, profileXML.getXml());
+  }
+
+  @RequestMapping(value = "/verifyValueSetByXSD", method = RequestMethod.POST)
+  public XSDVerificationResult verifyValueSetByXSD(@RequestBody XMLRequest valueSetXML)
+      throws Exception {
+    return this.verifyXMLByXSD(ProfileController.valueSetXSDurl, valueSetXML.getXml());
+  }
+
+  @RequestMapping(value = "/verifyConstraintByXSD", method = RequestMethod.POST)
+  public XSDVerificationResult verifyConstraintByXSD(@RequestBody XMLRequest constraintXML)
+      throws Exception {
+    return this.verifyXMLByXSD(ProfileController.constraintXSDurl, constraintXML.getXml());
+  }
+
+
+
   @RequestMapping(value = "/replaceXMLFiles/{id}", method = RequestMethod.POST)
   public void replaceXMLFiles(@RequestBody ProfileData pds, @PathVariable("id") String id)
       throws Exception {
@@ -153,36 +210,39 @@ public class ProfileController extends CommonController {
     p.setSourceType("public");
     profileService.save(p);
   }
-  
-  @RequestMapping(value = "/downloadProfileXML/{id}", method = RequestMethod.POST, produces = "text/xml",
-      consumes = "application/x-www-form-urlencoded; charset=UTF-8")
-  public void downloadProfileXML(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+  @RequestMapping(value = "/downloadProfileXML/{id}", method = RequestMethod.POST,
+      produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+  public void downloadProfileXML(@PathVariable("id") String id, HttpServletRequest request,
+      HttpServletResponse response) throws Exception {
     ProfileData data = profileService.findOne(id);
-    if(data != null && data.getProfileXMLFileStr() != null){
+    if (data != null && data.getProfileXMLFileStr() != null) {
       InputStream content = IOUtils.toInputStream(data.getProfileXMLFileStr());
       response.setContentType("text/html");
       response.setHeader("Content-disposition", "attachment;filename=" + "Profile.xml");
       FileCopyUtils.copy(content, response.getOutputStream());
     }
   }
-  
-  @RequestMapping(value = "/downloadConstraintXML/{id}", method = RequestMethod.POST, produces = "text/xml",
-      consumes = "application/x-www-form-urlencoded; charset=UTF-8")
-  public void downloadConstraintXML(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+  @RequestMapping(value = "/downloadConstraintXML/{id}", method = RequestMethod.POST,
+      produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+  public void downloadConstraintXML(@PathVariable("id") String id, HttpServletRequest request,
+      HttpServletResponse response) throws Exception {
     ProfileData data = profileService.findOne(id);
-    if(data != null && data.getConstraintsXMLFileStr() != null){
+    if (data != null && data.getConstraintsXMLFileStr() != null) {
       InputStream content = IOUtils.toInputStream(data.getConstraintsXMLFileStr());
       response.setContentType("text/html");
       response.setHeader("Content-disposition", "attachment;filename=" + "Constraints.xml");
       FileCopyUtils.copy(content, response.getOutputStream());
     }
   }
-  
-  @RequestMapping(value = "/downloadValueSetXML/{id}", method = RequestMethod.POST, produces = "text/xml",
-      consumes = "application/x-www-form-urlencoded; charset=UTF-8")
-  public void downloadValueSetXML(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+  @RequestMapping(value = "/downloadValueSetXML/{id}", method = RequestMethod.POST,
+      produces = "text/xml", consumes = "application/x-www-form-urlencoded; charset=UTF-8")
+  public void downloadValueSetXML(@PathVariable("id") String id, HttpServletRequest request,
+      HttpServletResponse response) throws Exception {
     ProfileData data = profileService.findOne(id);
-    if(data != null && data.getValueSetXMLFileStr() != null){
+    if (data != null && data.getValueSetXMLFileStr() != null) {
       InputStream content = IOUtils.toInputStream(data.getValueSetXMLFileStr());
       response.setContentType("text/html");
       response.setHeader("Content-disposition", "attachment;filename=" + "ValueSets.xml");

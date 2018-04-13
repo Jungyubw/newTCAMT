@@ -53,13 +53,18 @@ public class TestPlan implements Serializable, Cloneable {
   private String globalManualTestStepConfigId;
   private boolean emptyStoryContentIgnored;
 
-  private boolean gvtPresence = false;
-  private String gvtDate = null;
+  @Deprecated
+  private boolean gvtPresence;
+  
+  @Deprecated
+  private String gvtDate;
 
+  @Deprecated
   public boolean isGvtPresence() {
     return gvtPresence;
   }
 
+  @Deprecated
   public void setGvtPresence(boolean gvtPresence) {
     this.gvtPresence = gvtPresence;
   }
@@ -290,6 +295,7 @@ public class TestPlan implements Serializable, Cloneable {
     this.emptyStoryContentIgnored = emptyStoryContentIgnored;
   }
 
+  @Deprecated
   public String getGvtDate() {
     if (this.gvtDate == null) {
       return "This TestPlan is not published on GVT.";
@@ -299,6 +305,7 @@ public class TestPlan implements Serializable, Cloneable {
 
   }
 
+  @Deprecated
   public void setGvtDate(String gvtDate) {
     this.gvtDate = gvtDate;
   }
