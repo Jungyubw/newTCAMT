@@ -20,7 +20,7 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -65,6 +65,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAll
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 import gov.nist.hit.resources.deploy.client.SSLHL7v2ResourceClient;
+import gov.nist.hit.resources.deploy.model.Domain;
 import gov.nist.hit.resources.deploy.model.Payload;
 import gov.nist.hit.resources.deploy.model.RegistredGrant;
 import gov.nist.hit.resources.deploy.model.ResourceType;
@@ -100,10 +101,8 @@ public class TestPlanController extends CommonController {
   @Autowired
   private SimpleMailMessage templateMessage;
 
-
-  @Value("${gvt.url}")
-  private String GVT_URL;
-
+//  private static String GVT_URL = "https://hit-dev.nist.gov:8099/gvt/";
+   private static String GVT_URL = "https://hl7v2.gvt.nist.gov/gvt/";
 
   /**
    * 
@@ -284,9 +283,7 @@ public class TestPlanController extends CommonController {
       @PathVariable("scope") Scope scope, @RequestBody String host,
       @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
       throws Exception {
-    host = GVT_URL;
-    host = "http://localhost:8080/gvt/";
-    host = "https://hit-dev.nist.gov:8099/gvt/";
+    host = TestPlanController.GVT_URL;
 
     User u = userService.getCurrentUser();
     Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
@@ -311,16 +308,16 @@ public class TestPlanController extends CommonController {
           xmlArrayIO[1].reset();
           xmlArrayIO[2].reset();
 
-          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE, scope);
-          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET, scope);
-          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS, scope);
+//          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE, scope);
+//          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET, scope);
+//          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS, scope);
         }
       }
 
       testPlanIO = new ExportUtil().exportResourceBundlePushRBAsZip(tp,
           testStoryConfigurationService, profileService);
       testPlanIO.reset();
-      client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN, scope);
+//      client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN, scope);
 
       testPlanRepository.save(tp);
 
@@ -359,18 +356,16 @@ public class TestPlanController extends CommonController {
 
   @RequestMapping(value = "/createSession", method = RequestMethod.POST,
       produces = "application/json")
-  public Set<RegistredGrant> createSession(@RequestBody String host,
+  public ResponseGVTLogin createSession(@RequestBody String host,
       @RequestHeader("gvt-auth") String authorization) throws Exception {
-    // host="http://129.6.229.97:8080/gvt/";
-
-    host = GVT_URL;
-    host = "http://localhost:8080/gvt/";
-    host = "https://hit-dev.nist.gov:8099/gvt/";
+    host = TestPlanController.GVT_URL;
 
     try {
       SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
-
-      return client.validCredentials();
+      ResponseGVTLogin response = new ResponseGVTLogin();
+      response.setDomains(client.getDomainByUsername());
+      response.setRegisteredGrants(client.validCredentials());
+      return response;
     } catch (Exception e) {
       throw new Exception();
     }
@@ -717,7 +712,7 @@ public class TestPlanController extends CommonController {
     msg.setTo(target.getEmail());
     msg.setText("Dear " + target.getUsername() + ", \n\n"
         + "your Test Plan has been successfully pushed to GVT. Now you can test it at "
-        + this.GVT_URL);
+        + TestPlanController.GVT_URL);
     try {
       this.mailSender.send(msg);
 

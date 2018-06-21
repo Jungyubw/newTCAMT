@@ -95,14 +95,22 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
 
     };
 
-    $scope.login = function (username, password) {
+    $scope.login = function (hostUrl, username, password) {
         var delay = $q.defer();
         var httpHeaders = {};
         httpHeaders['Accept'] = 'application/json';
         var auth = base64.encode(username + ':' + password);
         httpHeaders['gvt-auth'] = auth;
-        $http.post('api/testplans/createSession', $rootScope.testingUrl, {headers: httpHeaders}).then(function (re) {
+        $http.post('api/testplans/createSession', hostUrl, {headers: httpHeaders}).then(function (re) {
             var response = angular.fromJson(re.data);
+
+            console.log(response);
+
+
+
+
+            /*
+
             $scope.user.roles = response;
             $scope.alert = false;
             if (!$scope.isAllowed( $scope.user)) {
@@ -119,6 +127,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
                 }
 
             }
+            */
 
         }, function (er) {
 
