@@ -107,9 +107,9 @@ public class ProfileServiceImpl implements ProfileService {
         for (int j = 0; j < messageElm.getChildNodes().getLength(); j++) {
           Node childNode = messageElm.getChildNodes().item(j);
           if (childNode.getNodeName() != null && childNode.getNodeName().equals("Segment")) {
-            conformanceProfile.addChild(this.parseSegmentRef((Element)childNode));
+            conformanceProfile.addChild(this.parseSegmentRef((Element) childNode));
           } else if (childNode.getNodeName() != null && childNode.getNodeName().equals("Group")) {
-            conformanceProfile.addChild(this.parseGroup((Element)childNode));
+            conformanceProfile.addChild(this.parseGroup((Element) childNode));
           }
         }
 
@@ -129,59 +129,82 @@ public class ProfileServiceImpl implements ProfileService {
           Node childNode = segmentElm.getChildNodes().item(j);
 
           if (childNode.getNodeName() != null && childNode.getNodeName().equals("Field")) {
-            Element childElm = (Element)childNode;
+            Element childElm = (Element) childNode;
             Field f = new Field();
-            if(childElm.getAttribute("Binding") != null && !childElm.getAttribute("Binding").equals("")) f.setBindingId(childElm.getAttribute("Binding"));
-            if(childElm.getAttribute("BindingLocation") != null && !childElm.getAttribute("BindingLocation").equals("")) f.setBindingLocation(childElm.getAttribute("BindingLocation"));
-            if(childElm.getAttribute("BindingStrength") != null && !childElm.getAttribute("BindingStrength").equals("")) f.setBindingStrength(BindingStrength.fromValue(childElm.getAttribute("BindingStrength")));
+            if (childElm.getAttribute("Binding") != null
+                && !childElm.getAttribute("Binding").equals(""))
+              f.setBindingId(childElm.getAttribute("Binding"));
+            if (childElm.getAttribute("BindingLocation") != null
+                && !childElm.getAttribute("BindingLocation").equals(""))
+              f.setBindingLocation(childElm.getAttribute("BindingLocation"));
+            if (childElm.getAttribute("BindingStrength") != null
+                && !childElm.getAttribute("BindingStrength").equals(""))
+              f.setBindingStrength(
+                  BindingStrength.fromValue(childElm.getAttribute("BindingStrength")));
             f.setDatatypeId(childElm.getAttribute("Datatype"));
             f.setMax(childElm.getAttribute("Max"));
             f.setMaxLength(childElm.getAttribute("MaxLength"));
             f.setMin(Integer.parseInt(childElm.getAttribute("Min")));
-            f.setMinLength(Integer.parseInt(childElm.getAttribute("MinLength")));
+
+
+            if (this.isInteger(childElm.getAttribute("MinLength"))) {
+              f.setMinLength(Integer.parseInt(childElm.getAttribute("MinLength")));              
+            }else {
+            }
+
             f.setName(childElm.getAttribute("Name"));
             f.setUsage(Usage.fromValue(childElm.getAttribute("Usage")));
-            if(childElm.getAttribute("Hide") != null && childElm.getAttribute("Hide").equals("true")) f.setHide(true);
-            else f.setHide(false);
+            if (childElm.getAttribute("Hide") != null
+                && childElm.getAttribute("Hide").equals("true"))
+              f.setHide(true);
+            else
+              f.setHide(false);
             segment.addField(f);
           }
         }
         NodeList dmList = segmentElm.getElementsByTagName("DynamicMapping");
-        
-        if(dmList != null && dmList.getLength() > 0){
-          Element dynamicMappingElm = (Element)dmList.item(0);
+
+        if (dmList != null && dmList.getLength() > 0) {
+          Element dynamicMappingElm = (Element) dmList.item(0);
           NodeList mappingList = dynamicMappingElm.getElementsByTagName("Mapping");
-          if(mappingList != null && mappingList.getLength() > 0){
-            Element mappingElm = (Element)mappingList.item(0);
-            
+          if (mappingList != null && mappingList.getLength() > 0) {
+            Element mappingElm = (Element) mappingList.item(0);
+
             NodeList caseList = mappingElm.getElementsByTagName("Case");
-            if(caseList != null && caseList.getLength() > 0){
-              
+            if (caseList != null && caseList.getLength() > 0) {
+
               DynamicMapping dynamicMapping = new DynamicMapping();
               DynamicMappingDef dynamicMappingDef = new DynamicMappingDef();
               dynamicMappingDef.setPostion(mappingElm.getAttribute("Position"));
               dynamicMappingDef.setReference(mappingElm.getAttribute("Reference"));
-              if(mappingElm.getAttribute("SecondReference") != null && !mappingElm.getAttribute("SecondReference").equals(""))
+              if (mappingElm.getAttribute("SecondReference") != null
+                  && !mappingElm.getAttribute("SecondReference").equals(""))
                 dynamicMappingDef.setSecondReference(mappingElm.getAttribute("SecondReference"));
               dynamicMapping.setDynamicMappingDef(dynamicMappingDef);
-              
-              for(int k = 0; k < caseList.getLength(); k++){
-                Element caseElm = (Element)caseList.item(k);
-                
+
+              for (int k = 0; k < caseList.getLength(); k++) {
+                Element caseElm = (Element) caseList.item(k);
+
                 DynamicMappingItem dynamicMappingItem = new DynamicMappingItem();
-                if(caseElm.getAttribute("Value") != null && !caseElm.getAttribute("Value").equals("")) dynamicMappingItem.setValue(caseElm.getAttribute("Value"));
-                if(caseElm.getAttribute("SecondValue") != null && !caseElm.getAttribute("SecondValue").equals("")) dynamicMappingItem.setSecondValue(caseElm.getAttribute("SecondValue"));
-                if(caseElm.getAttribute("Datatype") != null && !caseElm.getAttribute("Datatype").equals("")) dynamicMappingItem.setDatatypeId(caseElm.getAttribute("Datatype"));
-                
+                if (caseElm.getAttribute("Value") != null
+                    && !caseElm.getAttribute("Value").equals(""))
+                  dynamicMappingItem.setValue(caseElm.getAttribute("Value"));
+                if (caseElm.getAttribute("SecondValue") != null
+                    && !caseElm.getAttribute("SecondValue").equals(""))
+                  dynamicMappingItem.setSecondValue(caseElm.getAttribute("SecondValue"));
+                if (caseElm.getAttribute("Datatype") != null
+                    && !caseElm.getAttribute("Datatype").equals(""))
+                  dynamicMappingItem.setDatatypeId(caseElm.getAttribute("Datatype"));
+
                 dynamicMapping.addItem(dynamicMappingItem);
-                
+
               }
               segment.setDynamicMapping(dynamicMapping);
             }
-            
+
           }
         }
-        
+
         integrationProfile.addSegment(segment);
       }
 
@@ -198,18 +221,31 @@ public class ProfileServiceImpl implements ProfileService {
           Node childNode = datatypeElm.getChildNodes().item(j);
 
           if (childNode.getNodeName() != null && childNode.getNodeName().equals("Component")) {
-            Element childElm = (Element)childNode;
+            Element childElm = (Element) childNode;
             Component c = new Component();
-            if(childElm.getAttribute("Binding") != null && !childElm.getAttribute("Binding").equals("")) c.setBindingId(childElm.getAttribute("Binding"));
-            if(childElm.getAttribute("BindingLocation") != null && !childElm.getAttribute("BindingLocation").equals("")) c.setBindingLocation(childElm.getAttribute("BindingLocation"));
-            if(childElm.getAttribute("BindingStrength") != null && !childElm.getAttribute("BindingStrength").equals("")) c.setBindingStrength(BindingStrength.fromValue(childElm.getAttribute("BindingStrength")));
+            if (childElm.getAttribute("Binding") != null
+                && !childElm.getAttribute("Binding").equals(""))
+              c.setBindingId(childElm.getAttribute("Binding"));
+            if (childElm.getAttribute("BindingLocation") != null
+                && !childElm.getAttribute("BindingLocation").equals(""))
+              c.setBindingLocation(childElm.getAttribute("BindingLocation"));
+            if (childElm.getAttribute("BindingStrength") != null
+                && !childElm.getAttribute("BindingStrength").equals(""))
+              c.setBindingStrength(
+                  BindingStrength.fromValue(childElm.getAttribute("BindingStrength")));
             c.setDatatypeId(childElm.getAttribute("Datatype"));
             c.setMaxLength(childElm.getAttribute("MaxLength"));
-            c.setMinLength(Integer.parseInt(childElm.getAttribute("MinLength")));
+            if (this.isInteger(childElm.getAttribute("MinLength"))) {
+              c.setMinLength(Integer.parseInt(childElm.getAttribute("MinLength")));            
+            }else {
+            }
             c.setName(childElm.getAttribute("Name"));
             c.setUsage(Usage.fromValue(childElm.getAttribute("Usage")));
-            if(childElm.getAttribute("Hide") != null && childElm.getAttribute("Hide").equals("true")) c.setHide(true);
-            else c.setHide(false);
+            if (childElm.getAttribute("Hide") != null
+                && childElm.getAttribute("Hide").equals("true"))
+              c.setHide(true);
+            else
+              c.setHide(false);
             datatype.addComponent(c);
           }
         }
@@ -233,35 +269,38 @@ public class ProfileServiceImpl implements ProfileService {
           .setSpecificationName(valueSetMetaDataElm.getAttribute("SpecificationName"));
       valueSetLibraryMetaData.setVersion(valueSetMetaDataElm.getAttribute("Version"));
       valueSetLibrary.setMetaData(valueSetLibraryMetaData);
-      
+
       Element noValidationElm = (Element) valueSetDom.getElementsByTagName("NoValidation").item(0);
       NodeList noValidationNodeList = noValidationElm.getElementsByTagName("BindingIdentifier");
       for (int i = 0; i < noValidationNodeList.getLength(); i++) {
         Element noValidationItemElm = (Element) noValidationNodeList.item(i);
         valueSetLibrary.addNoValidation(noValidationItemElm.getTextContent());
       }
-      
-      NodeList valueSetDefinitionsNodeList = valueSetDom.getElementsByTagName("ValueSetDefinitions");
+
+      NodeList valueSetDefinitionsNodeList =
+          valueSetDom.getElementsByTagName("ValueSetDefinitions");
       for (int i = 0; i < valueSetDefinitionsNodeList.getLength(); i++) {
         Element valueSetDefinitionsElm = (Element) valueSetDefinitionsNodeList.item(i);
         String groupName = valueSetDefinitionsElm.getAttribute("Group");
         String order = valueSetDefinitionsElm.getAttribute("Order");
-        
-        NodeList valueSetDefinitionNodeList = valueSetDefinitionsElm.getElementsByTagName("ValueSetDefinition");
+
+        NodeList valueSetDefinitionNodeList =
+            valueSetDefinitionsElm.getElementsByTagName("ValueSetDefinition");
         for (int j = 0; j < valueSetDefinitionNodeList.getLength(); j++) {
           Element valueSetDefinitionElm = (Element) valueSetDefinitionNodeList.item(j);
           String bindingIdentifier = valueSetDefinitionElm.getAttribute("BindingIdentifier");
           String name = valueSetDefinitionElm.getAttribute("Name");
-          
+
           ValueSetDefinition valueSetDefinition = new ValueSetDefinition();
           valueSetDefinition.setName(name);
-          if(order != null && !order.equals("")) {
+          if (order != null && !order.equals("")) {
             valueSetDefinition.setOrder(Integer.parseInt(order));
           }
           valueSetDefinition.setGroup(groupName);
           valueSetDefinition.setBindingIdentifier(bindingIdentifier);
-          
-          NodeList valueElementNodeList = valueSetDefinitionElm.getElementsByTagName("ValueElement");
+
+          NodeList valueElementNodeList =
+              valueSetDefinitionElm.getElementsByTagName("ValueElement");
           for (int k = 0; k < valueElementNodeList.getLength(); k++) {
             Element valueElm = (Element) valueElementNodeList.item(k);
             ValueElement ve = new ValueElement();
@@ -286,34 +325,47 @@ public class ProfileServiceImpl implements ProfileService {
       conformanceContextMetaData.setId(conformanceContextElm.getAttribute("UUID"));
       conformanceContextMetaData.setName(constraintMetaDataElm.getAttribute("Name"));
       conformanceContextMetaData.setOrgName(constraintMetaDataElm.getAttribute("OrgName"));
-      conformanceContextMetaData.setSpecificationName(constraintMetaDataElm.getAttribute("SpecificationName"));
+      conformanceContextMetaData
+          .setSpecificationName(constraintMetaDataElm.getAttribute("SpecificationName"));
       conformanceContextMetaData.setVersion(constraintMetaDataElm.getAttribute("Version"));
       conformanceContext.setMetaData(conformanceContextMetaData);
-      
+
       Element predicatesElm = (Element) constraintDom.getElementsByTagName("Predicates").item(0);
-      Element predicateDatatypesElm = (Element) predicatesElm.getElementsByTagName("Datatype").item(0);
-      Element predicateSegmentsElm = (Element) predicatesElm.getElementsByTagName("Segment").item(0);
+      Element predicateDatatypesElm =
+          (Element) predicatesElm.getElementsByTagName("Datatype").item(0);
+      Element predicateSegmentsElm =
+          (Element) predicatesElm.getElementsByTagName("Segment").item(0);
       Element predicateGroupsElm = (Element) predicatesElm.getElementsByTagName("Group").item(0);
-      Element predicateMessagesElm = (Element) predicatesElm.getElementsByTagName("Message").item(0);
+      Element predicateMessagesElm =
+          (Element) predicatesElm.getElementsByTagName("Message").item(0);
       conformanceContext.setDatatypePredicates(this.convertPredicates(predicateDatatypesElm));
       conformanceContext.setSegmentPredicates(this.convertPredicates(predicateSegmentsElm));
       conformanceContext.setGroupPredicates(this.convertPredicates(predicateGroupsElm));
       conformanceContext.setMessagePredicates(this.convertPredicates(predicateMessagesElm));
-      
-      Element conformanceStatementsElm = (Element) constraintDom.getElementsByTagName("Constraints").item(0);
-      Element conformanceStatementDatatypesElm = (Element) conformanceStatementsElm.getElementsByTagName("Datatype").item(0);
-      Element conformanceStatementSegmentsElm = (Element) conformanceStatementsElm.getElementsByTagName("Segment").item(0);
-      Element conformanceStatementGroupsElm = (Element) conformanceStatementsElm.getElementsByTagName("Group").item(0);
-      Element conformanceStatementMessagesElm = (Element) conformanceStatementsElm.getElementsByTagName("Message").item(0);
-      conformanceContext.setDatatypeConformanceStatements(this.convertConformanceStatements(conformanceStatementDatatypesElm));
-      conformanceContext.setGroupConformanceStatements(this.convertConformanceStatements(conformanceStatementGroupsElm));
-      conformanceContext.setMessageConformanceStatements(this.convertConformanceStatements(conformanceStatementMessagesElm));
-      conformanceContext.setSegmentConformanceStatements(this.convertConformanceStatements(conformanceStatementSegmentsElm));
+
+      Element conformanceStatementsElm =
+          (Element) constraintDom.getElementsByTagName("Constraints").item(0);
+      Element conformanceStatementDatatypesElm =
+          (Element) conformanceStatementsElm.getElementsByTagName("Datatype").item(0);
+      Element conformanceStatementSegmentsElm =
+          (Element) conformanceStatementsElm.getElementsByTagName("Segment").item(0);
+      Element conformanceStatementGroupsElm =
+          (Element) conformanceStatementsElm.getElementsByTagName("Group").item(0);
+      Element conformanceStatementMessagesElm =
+          (Element) conformanceStatementsElm.getElementsByTagName("Message").item(0);
+      conformanceContext.setDatatypeConformanceStatements(
+          this.convertConformanceStatements(conformanceStatementDatatypesElm));
+      conformanceContext.setGroupConformanceStatements(
+          this.convertConformanceStatements(conformanceStatementGroupsElm));
+      conformanceContext.setMessageConformanceStatements(
+          this.convertConformanceStatements(conformanceStatementMessagesElm));
+      conformanceContext.setSegmentConformanceStatements(
+          this.convertConformanceStatements(conformanceStatementSegmentsElm));
 
       data.setConformanceContext(conformanceContext);
 
       ProfileData result = profileRepository.save(data);
-      
+
       return result;
     } catch (MongoException e) {
       throw new Exception(e);
@@ -321,7 +373,7 @@ public class ProfileServiceImpl implements ProfileService {
   }
 
   private Set<ConformanceStatement> convertConformanceStatements(Element elm) {
-    if(elm != null) {
+    if (elm != null) {
       Set<ConformanceStatement> conformanceStatements = new HashSet<ConformanceStatement>();
       NodeList byIdNodeList = elm.getElementsByTagName("ByID");
       NodeList byNameNodeList = elm.getElementsByTagName("ByName");
@@ -329,27 +381,30 @@ public class ProfileServiceImpl implements ProfileService {
         Element byIdElm = (Element) byIdNodeList.item(i);
         String id = byIdElm.getAttribute("ID");
         NodeList constraintNodeList = byIdElm.getElementsByTagName("Constraint");
-        
-        for(int j=0; j < constraintNodeList.getLength(); j++) {
-          conformanceStatements.add(this.convertConformanceStatement((Element)constraintNodeList.item(j), id, null));
+
+        for (int j = 0; j < constraintNodeList.getLength(); j++) {
+          conformanceStatements.add(
+              this.convertConformanceStatement((Element) constraintNodeList.item(j), id, null));
         }
       }
       for (int i = 0; i < byNameNodeList.getLength(); i++) {
         Element byNameElm = (Element) byNameNodeList.item(i);
         String name = byNameElm.getAttribute("Name");
         NodeList constraintNodeList = byNameElm.getElementsByTagName("Constraint");
-        for(int j=0; j < constraintNodeList.getLength(); j++) {
-          conformanceStatements.add(this.convertConformanceStatement((Element)constraintNodeList.item(j), null, name));
+        for (int j = 0; j < constraintNodeList.getLength(); j++) {
+          conformanceStatements.add(
+              this.convertConformanceStatement((Element) constraintNodeList.item(j), null, name));
         }
       }
-      if(conformanceStatements.size() > 0) return conformanceStatements;      
+      if (conformanceStatements.size() > 0)
+        return conformanceStatements;
     }
 
     return null;
   }
 
   private Set<Predicate> convertPredicates(Element elm) {
-    if(elm != null) {
+    if (elm != null) {
       Set<Predicate> predicates = new HashSet<Predicate>();
       NodeList byIdNodeList = elm.getElementsByTagName("ByID");
       NodeList byNameNodeList = elm.getElementsByTagName("ByName");
@@ -357,20 +412,21 @@ public class ProfileServiceImpl implements ProfileService {
         Element byIdElm = (Element) byIdNodeList.item(i);
         String id = byIdElm.getAttribute("ID");
         NodeList predicateNodeList = byIdElm.getElementsByTagName("Predicate");
-        
-        for(int j=0; j < predicateNodeList.getLength(); j++) {
-          predicates.add(this.convertPredicate((Element)predicateNodeList.item(j), id, null));
+
+        for (int j = 0; j < predicateNodeList.getLength(); j++) {
+          predicates.add(this.convertPredicate((Element) predicateNodeList.item(j), id, null));
         }
       }
       for (int i = 0; i < byNameNodeList.getLength(); i++) {
         Element byNameElm = (Element) byNameNodeList.item(i);
         String name = byNameElm.getAttribute("Name");
         NodeList predicateNodeList = byNameElm.getElementsByTagName("Predicate");
-        for(int j=0; j < predicateNodeList.getLength(); j++) {
-          predicates.add(this.convertPredicate((Element)predicateNodeList.item(j), null, name));
+        for (int j = 0; j < predicateNodeList.getLength(); j++) {
+          predicates.add(this.convertPredicate((Element) predicateNodeList.item(j), null, name));
         }
       }
-      if(predicates.size() > 0) return predicates;      
+      if (predicates.size() > 0)
+        return predicates;
     }
 
     return null;
@@ -387,7 +443,7 @@ public class ProfileServiceImpl implements ProfileService {
     p.setTarget(elm.getAttribute("Target"));
     return p;
   }
-  
+
   private ConformanceStatement convertConformanceStatement(Element elm, String id, String name) {
     ConformanceStatement cs = new ConformanceStatement();
     cs.setById(id);
@@ -413,9 +469,9 @@ public class ProfileServiceImpl implements ProfileService {
     for (int i = 0; i < groupElm.getChildNodes().getLength(); i++) {
       Node childNode = groupElm.getChildNodes().item(i);
       if (childNode.getNodeName() != null && childNode.getNodeName().equals("Segment")) {
-        group.addChild(this.parseSegmentRef((Element)childNode));
+        group.addChild(this.parseSegmentRef((Element) childNode));
       } else if (childNode.getNodeName() != null && childNode.getNodeName().equals("Group")) {
-        group.addChild(this.parseGroup((Element)childNode));
+        group.addChild(this.parseGroup((Element) childNode));
       }
     }
 
@@ -465,5 +521,18 @@ public class ProfileServiceImpl implements ProfileService {
     List<ProfileData> profiles =
         profileRepository.findByAccountIdAndSourceType(accountId, sourceType);
     return profiles;
+  }
+
+  private boolean isInteger(String s) {
+    boolean isValidInteger = false;
+    if(s != null) {
+      try {
+        Integer.parseInt(s);
+        isValidInteger = true;
+      } catch (NumberFormatException ex) {
+      }
+    }
+
+    return isValidInteger;
   }
 }
