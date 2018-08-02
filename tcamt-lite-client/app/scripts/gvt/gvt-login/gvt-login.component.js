@@ -1,9 +1,6 @@
-/**
- * Created by ena3 on 3/21/17.
- */
-angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$mdDialog', 'loginTestingToolSvc', 'base64', '$http', '$q', 'Notification', 'testplan','StorageService',function ($scope, $rootScope, $mdDialog, loginTestingToolSvc, base64, $http, $q, Notification, testplan,StorageService) {
-
-    $scope.exportStep = 'LOGIN_STEP';
+angular.module('tcl').controller('GVTLoginCtrl', function ($scope, $rootScope, $http, $cookies, ExportSvc, GVTSvc, $timeout, $window, $mdDialog, StorageService ,testplan
+) {
+    $scope.exportStep = 'MESSAGE_STEP';
     $scope.xmlFormat = 'Validation';
     $scope.selectedMessagesIDs = [];
     $scope.loading = false;
@@ -15,7 +12,6 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
     $scope.targetApps = $rootScope.appInfo.connectApps;
     $scope.targetDomains = null;
     $scope.error = null;
-    $scope.testplan=testplan;
 
     $scope.target = {
         url: null, domain: null
@@ -83,7 +79,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
     };
 
     $scope.login = function () {
-        loginTestingToolSvc.login($scope.user.username, $scope.user.password, $scope.target.url).then(function (auth) {
+        GVTSvc.login($scope.user.username, $scope.user.password, $scope.target.url).then(function (auth) {
             StorageService.setGvtUsername($scope.user.username);
             StorageService.setGvtPassword($scope.user.password);
             StorageService.setGVTBasicAuth(auth);
@@ -97,7 +93,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
         $scope.targetDomains = [];
         $scope.target.domain = null;
         if($scope.target.url != null) {
-            loginTestingToolSvc.getDomains($scope.target.url, StorageService.getGVTBasicAuth()).then(function (result) {
+            GVTSvc.getDomains($scope.target.url, StorageService.getGVTBasicAuth()).then(function (result) {
                 $scope.targetDomains = result;
                 var savedTargetDomain = StorageService.get($scope.target.url + "/EXT_TARGET_DOMAIN");
                 if (savedTargetDomain != null) {
@@ -162,7 +158,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
         var auth = StorageService.getGVTBasicAuth();
         if ($scope.target.url != null && $scope.target.domain != null && auth != null) {
             $scope.loading = true;
-            loginTestingToolSvc.pushRB( $scope.target.url,auth, $scope.target.domain).then(function (map) {
+            GVTSvc.exportToGVT($scope.igdocumentToSelect.id, $scope.selectedMessagesIDs, auth, $scope.target.url, $scope.target.domain).then(function (map) {
                 $scope.loading = false;
                 var response = angular.fromJson(map.data);
                 if (response.success === false) {
@@ -196,12 +192,11 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
 
 
     $scope.exportAsZIPToGVT = function () {
-        console.log("Calling ");
         $scope.loading = true;
         $scope.error = null;
         if ($scope.newDomain != null) {
             $scope.newDomain.key = $scope.newDomain.name.replace(/\s+/g, '-').toLowerCase();
-            loginTestingToolSvc.createDomain(StorageService.getGVTBasicAuth(), $scope.target.url, $scope.newDomain.key, $scope.newDomain.name, $scope.newDomain.homeTitle).then(function (domain) {
+            GVTSvc.createDomain(StorageService.getGVTBasicAuth(), $scope.target.url, $scope.newDomain.key, $scope.newDomain.name, $scope.newDomain.homeTitle).then(function (domain) {
                 $scope.loading = false;
                 $scope.target.domain = $scope.newDomain.key;
                 $scope.exportToGVT();
@@ -229,4 +224,6 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
         }
         $scope.selectTargetUrl();
     }
-}])
+
+});
+

@@ -1,19 +1,12 @@
 /**
- * Created by ena3 on 3/21/17.
+ * Created by haffo on 5/4/15.
  */
-angular.module('tcl').factory('loginTestingToolSvc',
-    ['$q','$modal', '$rootScope','base64','$http',function ($q,$modal,$rootScope,base64,$http) {
+
+angular.module('igl').factory('GVTSvc',
+    ['$q','$modal', '$rootScope', 'StorageService','base64','$http',function ($q,$modal,$rootScope,StorageService,base64,$http) {
 
         var svc = this;
 
-        svc.pushRB = function(host,auth,domain) {
-            var httpHeaders = {};
-            httpHeaders['Accept'] = 'application/json';
-            httpHeaders['gvt-auth'] = auth;
-            var testplanId = $rootScope.selectedTestPlan.id;
-            console.log($rootScope.selectedTestPlan);
-            return $http.post('api/testplans/pushRB/'+testplanId+'/'+domain,host,{headers:httpHeaders});
-        };
 
         svc.login = function(username, password,targetUrl) {
             var delay = $q.defer();
@@ -40,7 +33,7 @@ angular.module('tcl').factory('loginTestingToolSvc',
 
 
         svc.exportToGVT = function(id,mids, auth,targetUrl,targetDomain) {
-            var httpHeaders = {};
+             var httpHeaders = {};
             httpHeaders['target-auth'] = auth;
             httpHeaders['target-url'] = targetUrl;
             httpHeaders['target-domain'] = targetDomain;
@@ -68,7 +61,6 @@ angular.module('tcl').factory('loginTestingToolSvc',
             });
             return delay.promise;
         };
-
 
 
         return svc;

@@ -11,6 +11,11 @@ angular.module('tcl').factory('StorageService',
             TABLE_COLLAPSE_SETTINGS:'TABLE_COLLAPSE_SETTINGS',
             TABLE_READONLY_SETTINGS:'TABLE_READONLY_SETTINGS',
             IG_DOCUMENT:'IG_DOCUMENT',
+            GVT_BASIC_AUTH:'GVT_BASIC_AUTH',
+            GVT_USERNAME:'GVT_USERNAME',
+            GVT_PASSWORD:'GVT_PASSWORD',
+
+
             remove: function (key) {
                 return localStorageService.remove(key);
             },
@@ -39,6 +44,32 @@ angular.module('tcl').factory('StorageService',
             },
             getAppVersion: function () {
                 return this.get(this.APP_VERSION);
+            },
+            getIgDocument: function () {
+                return this.get(this.IG_DOCUMENT) != null ? angular.fromJson(this.get(this.IG_DOCUMENT)):null;
+            },
+            setIgDocument: function (igDocument) {
+                this.set(this.IG_DOCUMENT,igDocument != null ?  angular.toJson(igDocument):null);
+            },
+            getGVTBasicAuth: function () {
+                return this.get(this.GVT_BASIC_AUTH);
+            },
+            setGVTBasicAuth: function (value) {
+                this.set(this.GVT_BASIC_AUTH,value);
+            },
+            getGvtUsername: function () {
+                var value = this.get(this.GVT_USERNAME);
+                return  value != undefined ? value: null;
+            },
+            setGvtUsername: function (value) {
+                this.set(this.GVT_USERNAME,value);
+            },
+            getGvtPassword: function () {
+                var value =  this.get(this.GVT_PASSWORD);
+                return value != undefined ? value: null;
+            },
+            setGvtPassword: function (value) {
+                this.set(this.GVT_PASSWORD,value);
             }
         };
         return service;

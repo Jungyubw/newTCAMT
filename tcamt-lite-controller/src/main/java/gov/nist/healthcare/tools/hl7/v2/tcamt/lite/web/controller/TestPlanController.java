@@ -277,10 +277,10 @@ public class TestPlanController extends CommonController {
 
   }
 
-  @RequestMapping(value = "/pushRB/{testplanId}/{scope}", method = RequestMethod.POST,
+  @RequestMapping(value = "/pushRB/{testplanId}/{domain}", method = RequestMethod.POST,
       produces = "application/json")
   public void pushRB(@PathVariable("testplanId") String testplanId,
-      @PathVariable("scope") Scope scope, @RequestBody String host,
+      @PathVariable("domain") String domain, @RequestBody String host,
       @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
       throws Exception {
     host = TestPlanController.GVT_URL;
@@ -304,20 +304,19 @@ public class TestPlanController extends CommonController {
           InputStream[] xmlArrayIO = new InputStream[3];
           xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(id, profileService, rand);
 
-          xmlArrayIO[0].reset();
-          xmlArrayIO[1].reset();
-          xmlArrayIO[2].reset();
-
-//          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE, scope);
-//          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET, scope);
-//          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS, scope);
+//          xmlArrayIO[0].reset();
+//          xmlArrayIO[1].reset();
+//          xmlArrayIO[2].reset();
+//          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE,Scope.USER, domain);
+//          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET,Scope.USER, domain);
+//          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS,Scope.USER, domain);
         }
       }
 
       testPlanIO = new ExportUtil().exportResourceBundlePushRBAsZip(tp,
           testStoryConfigurationService, profileService);
-      testPlanIO.reset();
-//      client.addOrUpdate(new Payload(testPlanIO), ResourceType.TEST_PLAN, scope);
+//      testPlanIO.reset();
+      client.uploadZip(testPlanIO,domain);
 
       testPlanRepository.save(tp);
 
@@ -356,16 +355,14 @@ public class TestPlanController extends CommonController {
 
   @RequestMapping(value = "/createSession", method = RequestMethod.POST,
       produces = "application/json")
-  public ResponseGVTLogin createSession(@RequestBody String host,
+  public ResponseEntity<Domain[]> createSession(@RequestBody String host,
       @RequestHeader("gvt-auth") String authorization) throws Exception {
     host = TestPlanController.GVT_URL;
 
     try {
       SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
-      ResponseGVTLogin response = new ResponseGVTLogin();
-      response.setDomains(client.getDomainByUsername());
-      response.setRegisteredGrants(client.validCredentials());
-      return response;
+
+     return client.loginAndGetDomains();
     } catch (Exception e) {
       throw new Exception();
     }
