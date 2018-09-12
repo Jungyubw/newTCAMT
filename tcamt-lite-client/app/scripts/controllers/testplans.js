@@ -659,11 +659,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
     $scope.pushRB = function (testplan,mode) {
        $mdDialog.show({
-            templateUrl: 'views/testingConnection/loginTestingTool.html',
+            templateUrl: 'exportGVT.html',
             controller: 'loginTestingTool',
             locals: {
-                testplan:testplan,
-				mode:mode
+                testplan:testplan
 
             }
         });

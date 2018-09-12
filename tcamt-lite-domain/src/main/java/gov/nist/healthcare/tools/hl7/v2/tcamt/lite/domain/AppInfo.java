@@ -13,9 +13,15 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+
 
 /**
  * @author Harold Affo (NIST)
@@ -38,6 +44,29 @@ public class AppInfo implements Serializable {
 
 	@Value("${admin.email}")
 	private String adminEmail;
+	
+	@Value("${connect.apps}")
+	private String connectAppsString;
+	
+	public String getConnectAppsString() {
+		return connectAppsString;
+	}
+
+	public void setConnectAppsString(String connectAppsString) {
+		this.connectAppsString = connectAppsString;
+	}
+
+	public String getConnectUploadTokenContext() {
+		return connectUploadTokenContext;
+	}
+
+	public void setConnectUploadTokenContext(String connectUploadTokenContext) {
+		this.connectUploadTokenContext = connectUploadTokenContext;
+	}
+
+	@Value("${connect.uploadTokenContext}")
+	private String connectUploadTokenContext;
+
 
 	public String getVersion() {
 		return version;
@@ -70,5 +99,33 @@ public class AppInfo implements Serializable {
 	public void setUploadedImagesUrl(String uploadedImagesUrl) {
 		this.uploadedImagesUrl = uploadedImagesUrl;
 	}
+
+	  private Set<ConnectApp> connectApps = new HashSet<ConnectApp>();
+
+	  public Set<ConnectApp> getConnectApps() {
+		return connectApps;
+	}
+
+	public void setConnectApps(Set<ConnectApp> connectApps) {
+		this.connectApps = connectApps;
+	}
+
+	/**
+	   * 
+	   */
+	  @PostConstruct
+	  public void init() throws Exception {
+	    
+
+	    String[] apps = this.connectAppsString.split(";");
+	    if (apps != null && apps.length > 0) {
+	      for (String appStr : apps) {
+	        String[] prop = appStr.split(Pattern.quote("|"));
+	        this.connectApps.add(new ConnectApp(prop[0], prop[1]));
+	      }
+	    }
+
+
+	  }
 
 }
