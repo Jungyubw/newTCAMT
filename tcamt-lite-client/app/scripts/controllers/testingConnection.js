@@ -153,7 +153,6 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
         $scope.exportStep = 'ERROR_STEP';
 
     };
-
     $scope.exportToGVT = function () {
         $scope.info.text = null;
         $scope.info.show = false;
@@ -162,7 +161,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
         var auth = StorageService.getGVTBasicAuth();
         if ($scope.target.url != null && $scope.target.domain != null && auth != null) {
             $scope.loading = true;
-            loginTestingToolSvc.pushRB( $scope.target.url,auth, $scope.target.domain).then(function (map) {
+            loginTestingToolSvc.exportToGVT($scope.testplan.id, auth, $scope.target.url, $scope.target.domain).then(function (map) {
                 $scope.loading = false;
                 var response = angular.fromJson(map.data);
                 if (response.success === false) {
@@ -177,7 +176,9 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
                     $scope.info.text = 'gvtRedirectInProgress';
                     $scope.info.show = true;
                     $scope.info.type = 'info';
-                    $scope.redirectUrl = $scope.target.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&y=" + encodeURIComponent(auth) + "&d=" + encodeURIComponent($scope.target.domain);
+                   // $scope.redirectUrl = $scope.target.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&y=" + encodeURIComponent(auth) + "&d=" + encodeURIComponent($scope.target.domain);
+                    $scope.redirectUrl = $scope.target.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&d=" + encodeURIComponent($scope.target.domain);
+
                     $timeout(function () {
                         $scope.loading = false;
                         $window.open($scope.redirectUrl, "_target", "", false);

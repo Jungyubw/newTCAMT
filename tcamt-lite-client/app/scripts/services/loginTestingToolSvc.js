@@ -6,13 +6,14 @@ angular.module('tcl').factory('loginTestingToolSvc',
 
         var svc = this;
 
-        svc.pushRB = function(host,auth,domain) {
+
+
+        svc.exportToGVT = function(id, auth,targetUrl,targetDomain) {
             var httpHeaders = {};
-            httpHeaders['Accept'] = 'application/json';
-            httpHeaders['gvt-auth'] = auth;
-            var testplanId = $rootScope.selectedTestPlan.id;
-            console.log($rootScope.selectedTestPlan);
-            return $http.post('api/testplans/pushRB/'+testplanId+'/'+domain,host,{headers:httpHeaders});
+            httpHeaders['target-auth'] = auth;
+            httpHeaders['target-url'] = targetUrl;
+            httpHeaders['target-domain'] = targetDomain;
+            return $http.post('api/testplans/' + id + '/connect',{headers:httpHeaders});
         };
 
         svc.login = function(username, password,targetUrl) {
@@ -39,12 +40,12 @@ angular.module('tcl').factory('loginTestingToolSvc',
         };
 
 
-        svc.exportToGVT = function(id,mids, auth,targetUrl,targetDomain) {
+        svc.exportToGVT = function(id, auth,targetUrl,targetDomain) {
             var httpHeaders = {};
             httpHeaders['target-auth'] = auth;
             httpHeaders['target-url'] = targetUrl;
             httpHeaders['target-domain'] = targetDomain;
-            return $http.post('api/igdocuments/' + id + '/connect/messages',mids,{headers:httpHeaders});
+            return $http.post('api/testplans/' + id + '/connect',{},{headers:httpHeaders});
         };
 
         svc.exportToGVTForCompositeProfile = function(id, cids, auth,targetUrl,targetDomain) {

@@ -9,9 +9,11 @@ angular.module('tcl').controller('GVTLoginCtrl', function ($scope, $rootScope, $
     $scope.user = {username: StorageService.getGvtUsername(), password: StorageService.getGvtPassword()};
     $scope.appInfo = $rootScope.appInfo;
     $scope.selected = false;
+    $scope.testplan=testplan;
     $scope.targetApps = $rootScope.appInfo.connectApps;
     $scope.targetDomains = null;
     $scope.error = null;
+    //http://hit-dev.nist.gov:8099/gvt/#/saveCBTokens?x=TOKEN&d=DOMAIN
 
     $scope.target = {
         url: null, domain: null
@@ -40,31 +42,6 @@ angular.module('tcl').controller('GVTLoginCtrl', function ($scope, $rootScope, $
     };
 
 
-    $scope.trackSelections = function () {
-        $scope.selected = false;
-        for (var i in $scope.igdocumentToSelect.profile.messages.children) {
-            var message = $scope.igdocumentToSelect.profile.messages.children[i];
-            if (message.selected) $scope.selected = true;
-        }
-    };
-
-    $scope.selectionAll = function (bool) {
-        for (var i in $scope.igdocumentToSelect.profile.messages.children) {
-            var message = $scope.igdocumentToSelect.profile.messages.children[i];
-            message.selected = bool;
-        }
-        $scope.selected = bool;
-    };
-
-    $scope.generatedSelectedMessagesIDs = function () {
-        $scope.selectedMessagesIDs = [];
-        for (var i in $scope.igdocumentToSelect.profile.messages.children) {
-            var message = $scope.igdocumentToSelect.profile.messages.children[i];
-            if (message.selected) {
-                $scope.selectedMessagesIDs.push(message.id);
-            }
-        }
-    };
 
 
     $scope.goBack = function () {
@@ -158,7 +135,7 @@ angular.module('tcl').controller('GVTLoginCtrl', function ($scope, $rootScope, $
         var auth = StorageService.getGVTBasicAuth();
         if ($scope.target.url != null && $scope.target.domain != null && auth != null) {
             $scope.loading = true;
-            GVTSvc.exportToGVT($scope.igdocumentToSelect.id, $scope.selectedMessagesIDs, auth, $scope.target.url, $scope.target.domain).then(function (map) {
+            GVTSvc.exportToGVT($scope.testplan.id, auth, $scope.target.url, $scope.target.domain).then(function (map) {
                 $scope.loading = false;
                 var response = angular.fromJson(map.data);
                 if (response.success === false) {
@@ -173,7 +150,9 @@ angular.module('tcl').controller('GVTLoginCtrl', function ($scope, $rootScope, $
                     $scope.info.text = 'gvtRedirectInProgress';
                     $scope.info.show = true;
                     $scope.info.type = 'info';
-                    $scope.redirectUrl = $scope.target.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&y=" + encodeURIComponent(auth) + "&d=" + encodeURIComponent($scope.target.domain);
+                    $scope.redirectUrl = $scope.target.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&d=" + encodeURIComponent($scope.target.domain);
+
+                    //$scope.redirectUrl = $scope.target.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&y=" + encodeURIComponent(auth) + "&d=" + encodeURIComponent($scope.target.domain);
                     $timeout(function () {
                         $scope.loading = false;
                         $window.open($scope.redirectUrl, "_target", "", false);
@@ -181,7 +160,7 @@ angular.module('tcl').controller('GVTLoginCtrl', function ($scope, $rootScope, $
                 }
             }, function (error) {
                 $scope.info.text = "gvtExportFailed";
-                $scope.info['details'] = "Sorry, we couldn't push your profiles. Please contact the administrator for more information";
+                $scope.info['details'] = "Sorry, we couldn't push your Test Plan. Please contact the administrator for more information";
                 $scope.info.show = true;
                 $scope.info.type = 'danger';
                 $scope.loading = false;

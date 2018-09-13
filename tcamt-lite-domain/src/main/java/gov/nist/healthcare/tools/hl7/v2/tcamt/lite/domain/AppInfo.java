@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 
 
+
 /**
  * @author Harold Affo (NIST)
  * 
@@ -45,6 +46,19 @@ public class AppInfo implements Serializable {
 	@Value("${admin.email}")
 	private String adminEmail;
 	
+	@Value("${connect.uploadTokenContext}")
+	private String connectUploadTokenContext;
+	
+	private Set<ConnectApp> connectApps = new HashSet<ConnectApp>();
+	
+	public Set<ConnectApp> getConnectApps() {
+		return connectApps;
+	}
+
+	public void setConnectApps(Set<ConnectApp> connectApps) {
+		this.connectApps = connectApps;
+	}
+
 	@Value("${connect.apps}")
 	private String connectAppsString;
 	
@@ -63,9 +77,6 @@ public class AppInfo implements Serializable {
 	public void setConnectUploadTokenContext(String connectUploadTokenContext) {
 		this.connectUploadTokenContext = connectUploadTokenContext;
 	}
-
-	@Value("${connect.uploadTokenContext}")
-	private String connectUploadTokenContext;
 
 
 	public String getVersion() {
@@ -100,16 +111,6 @@ public class AppInfo implements Serializable {
 		this.uploadedImagesUrl = uploadedImagesUrl;
 	}
 
-	  private Set<ConnectApp> connectApps = new HashSet<ConnectApp>();
-
-	  public Set<ConnectApp> getConnectApps() {
-		return connectApps;
-	}
-
-	public void setConnectApps(Set<ConnectApp> connectApps) {
-		this.connectApps = connectApps;
-	}
-
 	/**
 	   * 
 	   */
@@ -124,7 +125,6 @@ public class AppInfo implements Serializable {
 	        this.connectApps.add(new ConnectApp(prop[0], prop[1]));
 	      }
 	    }
-
 
 	  }
 

@@ -32,21 +32,15 @@ angular.module('igl').factory('GVTSvc',
         };
 
 
-        svc.exportToGVT = function(id,mids, auth,targetUrl,targetDomain) {
+        svc.exportToGVT = function(id, auth,targetUrl,targetDomain) {
              var httpHeaders = {};
             httpHeaders['target-auth'] = auth;
             httpHeaders['target-url'] = targetUrl;
             httpHeaders['target-domain'] = targetDomain;
-            return $http.post('api/igdocuments/' + id + '/connect/messages',mids,{headers:httpHeaders});
+            return $http.post('api/testplans/' + id + '/connect',{headers:httpHeaders});
         };
 
-        svc.exportToGVTForCompositeProfile = function(id, cids, auth,targetUrl,targetDomain) {
-            var httpHeaders = {};
-            httpHeaders['target-auth'] = auth;
-            httpHeaders['target-url'] = targetUrl;
-            httpHeaders['target-domain'] = targetDomain;
-            return $http.post('api/igdocuments/' + id + '/connect/composites',cids,{headers:httpHeaders});
-        };
+
 
         svc.getDomains = function(targetUrl,auth) {
             var delay = $q.defer();

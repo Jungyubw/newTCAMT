@@ -37,33 +37,30 @@ import org.springframework.web.client.RestTemplate;
 
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.exception.GVTExportException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.exception.GVTLoginException;
+import gov.nist.hit.resources.deploy.client.Utils;
 
 
-
-/**
- * 
- * @author haffo
- *
- */
 @Service
 public class ConnectServiceImpl implements ConnectService {
 
 
-  @Value("${gvt.url}")
-  private String GVT_URL;
+	 @Value("${connect.exportEndpoint}")
+	  private String EXPORT_ENDPOINT;
 
-  @Value("${connect.loginEndpoint}")
-  private String LOGIN_ENDPOINT;
+	  @Value("${connect.loginEndpoint}")
+	  private String LOGIN_ENDPOINT;
 
-  @Value("${connect.domainsEndpoint}")
-  private String DOMAINS_ENDPOINT;
+	  @Value("${connect.domainsEndpoint}")
+	  private String DOMAINS_ENDPOINT;
+	  
+	  @Value("${connect.createDomainEndpoint}")
+	  private String CREATE_DOMAN_ENDPOINT;
+	  
   
-  @Value("${connect.createDomainEndpoint}")
-  private String CREATE_DOMAN_ENDPOINT;
   
-
+  
+  
  
-
   private RestTemplate restTemplate;
 
 
@@ -102,9 +99,26 @@ public class ConnectServiceImpl implements ConnectService {
   @Override
   public ResponseEntity<?> send(InputStream io, String authorization, String url,String domain)
       throws GVTExportException, IOException {
-//    
-return null;
-  }
+	  
+		HttpHeaders headers = new HttpHeaders();
+		   
+	    headers.add("Authorization", "Basic " + authorization);
+	    HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(multipart(io, domain), headers);
+	    
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		
+		return restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+	}
+	
+	private LinkedMultiValueMap<String, Object> multipart(InputStream file, String domain){
+		LinkedMultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+		File f = Utils.toFile(file, "bundle", ".zip");
+		parts.add("file", new FileSystemResource(f));
+		parts.add("domain", domain);
+		return parts;
+	}
+  
+  
   
   @Override
   public ResponseEntity<?> createDomain(String authorization, String url,String key, String name,String homeTitle)

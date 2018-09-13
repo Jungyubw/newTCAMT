@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -39,6 +40,7 @@ import gov.nist.healthcare.nht.acmgt.dto.ResponseMessage;
 import gov.nist.healthcare.nht.acmgt.dto.domain.Account;
 import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
+import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.IGDocument;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.GrandProfile;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.GrandTestPlan;
@@ -63,6 +65,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.TestPlanSaveResponse;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.config.TestPlanChangeCommand;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.OperationNotAllowException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.exception.UserAccountNotFoundException;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ConnectService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.ExportUtil;
 import gov.nist.hit.resources.deploy.client.SSLHL7v2ResourceClient;
 import gov.nist.hit.resources.deploy.model.Domain;
@@ -89,6 +92,9 @@ public class TestPlanController extends CommonController {
 
   @Autowired
   AccountRepository accountRepository;
+  
+  @Autowired
+  private ConnectService gvtService;
 
   @Autowired
   TestStoryConfigurationService testStoryConfigurationService;
@@ -98,6 +104,8 @@ public class TestPlanController extends CommonController {
   @Autowired
   private MailSender mailSender;
 
+
+ 
   @Autowired
   private SimpleMailMessage templateMessage;
 
@@ -277,62 +285,92 @@ public class TestPlanController extends CommonController {
 
   }
 
-  @RequestMapping(value = "/pushRB/{testplanId}/{domain}", method = RequestMethod.POST,
-      produces = "application/json")
-  public void pushRB(@PathVariable("testplanId") String testplanId,
-      @PathVariable("domain") String domain, @RequestBody String host,
-      @RequestHeader("gvt-auth") String authorization, HttpServletRequest request)
-      throws Exception {
-    host = TestPlanController.GVT_URL;
+//  @RequestMapping(value = "/connect/{testplanId}", method = RequestMethod.POST,
+//      produces = "application/json")
+//  public void pushRB(@PathVariable("testplanId") String testplanId,
+//    
+//    @RequestHeader("gvt-auth") String authorization,@RequestHeader("target-url") String host,@RequestHeader("target-domain") String domain, HttpServletRequest request)
+//      throws Exception {
+//
+//    User u = userService.getCurrentUser();
+//    Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+//
+//    SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
+//    TestPlan tp = findTestPlan(testplanId);
+//    InputStream testPlanIO = null;
+//    Set<String> ipidSet = this.findAllProfileIdsInTestPlan(tp);
+//
+//
+//    try {
+//      long range = 1234567L;
+//      Random r = new Random();
+//      Long rand = (long) (r.nextDouble() * range);
+//
+//      for (String id : ipidSet) {
+//        if (id != null && !id.isEmpty()) {
+//          InputStream[] xmlArrayIO = new InputStream[3];
+//          xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(id, profileService, rand);
+//
+////          xmlArrayIO[0].reset();
+////          xmlArrayIO[1].reset();
+////          xmlArrayIO[2].reset();
+////          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE,Scope.USER, domain);
+////          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET,Scope.USER, domain);
+////          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS,Scope.USER, domain);
+//        }
+//      }
+//
+//      testPlanIO = new ExportUtil().exportResourceBundlePushRBAsZip(tp,
+//          testStoryConfigurationService, profileService);
+////      testPlanIO.reset();
+//      client.uploadZip(testPlanIO,domain);
+//
+//      testPlanRepository.save(tp);
+//
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//      throw new PushRBException(e);
+//    }
+//
+//  }
+  
+  
+  
+  @RequestMapping(value = "/{id}/connect", method = RequestMethod.POST,
+	      produces = "application/json")
+	  public Map<String, Object> exportToGVT(@PathVariable("id") String id, @RequestHeader("target-auth") String authorization,@RequestHeader("target-url") String url,@RequestHeader("target-domain") String domain,
+	      HttpServletRequest request, HttpServletResponse response) throws PushRBException {
+	    try {
+	        TestPlan tp = findTestPlan(id);
+	        InputStream testPlanIO = null;
+	        Set<String> ipidSet = this.findAllProfileIdsInTestPlan(tp);
 
-    User u = userService.getCurrentUser();
-    Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
 
-    SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
-    TestPlan tp = findTestPlan(testplanId);
-    InputStream testPlanIO = null;
-    Set<String> ipidSet = this.findAllProfileIdsInTestPlan(tp);
+	          long range = 1234567L;
+	          Random r = new Random();
+	          Long rand = (long) (r.nextDouble() * range);
 
+	          for (String _id : ipidSet) {
+	            if (_id != null && !_id.isEmpty()) {
+	              InputStream[] xmlArrayIO = new InputStream[3];
+	              xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(_id, profileService, rand);
+	            }
+	          }
 
-    try {
-      long range = 1234567L;
-      Random r = new Random();
-      Long rand = (long) (r.nextDouble() * range);
+	          testPlanIO = new ExportUtil().exportResourceBundlePushRBAsZip(tp,
+	              testStoryConfigurationService, profileService);
+	          
+	          
+	      ResponseEntity<?> rsp = gvtService.send(testPlanIO, authorization, url,domain);
+	      Map<String, Object> res = (Map<String, Object>) rsp.getBody();
+          testPlanRepository.save(tp);
 
-      for (String id : ipidSet) {
-        if (id != null && !id.isEmpty()) {
-          InputStream[] xmlArrayIO = new InputStream[3];
-          xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(id, profileService, rand);
-
-//          xmlArrayIO[0].reset();
-//          xmlArrayIO[1].reset();
-//          xmlArrayIO[2].reset();
-//          client.addOrUpdate(new Payload(xmlArrayIO[0]), ResourceType.PROFILE,Scope.USER, domain);
-//          client.addOrUpdate(new Payload(xmlArrayIO[1]), ResourceType.VALUE_SET,Scope.USER, domain);
-//          client.addOrUpdate(new Payload(xmlArrayIO[2]), ResourceType.CONSTRAINTS,Scope.USER, domain);
-        }
-      }
-
-      testPlanIO = new ExportUtil().exportResourceBundlePushRBAsZip(tp,
-          testStoryConfigurationService, profileService);
-//      testPlanIO.reset();
-      client.uploadZip(testPlanIO,domain);
-
-      testPlanRepository.save(tp);
-
-      if (account == null) {
-        throw new UserAccountNotFoundException();
-      } else {
-        sendPushConfirmation(tp, account);
-      }
-
-    } catch (Exception e) {
-      this.sendPushFailConfirmation(tp, account, host, e);
-      e.printStackTrace();
-      throw new PushRBException(e);
-    }
-
-  }
+	      return res;
+	    }catch(Exception e){
+	    	throw new PushRBException(e.getLocalizedMessage());
+	    }
+	    
+	  } 
 
 
   private Set<String> findAllProfileIdsInTestPlan(TestPlan tp) {
