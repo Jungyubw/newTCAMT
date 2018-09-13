@@ -1,7 +1,7 @@
 /**
  * Created by ena3 on 3/21/17.
  */
-angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$mdDialog', 'loginTestingToolSvc', 'base64', '$http', '$q', 'Notification', 'testplan','StorageService',function ($scope, $rootScope, $mdDialog, loginTestingToolSvc, base64, $http, $q, Notification, testplan,StorageService) {
+angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$mdDialog', 'loginTestingToolSvc', 'base64', '$http', '$q', 'Notification', 'testplan','StorageService','$timeout','$window',function ($scope, $rootScope, $mdDialog, loginTestingToolSvc, base64, $http, $q, Notification, testplan,StorageService,$timeout,$window) {
 
     $scope.exportStep = 'LOGIN_STEP';
     $scope.xmlFormat = 'Validation';

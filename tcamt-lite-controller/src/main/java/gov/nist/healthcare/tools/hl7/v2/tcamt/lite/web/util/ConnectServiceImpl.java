@@ -99,15 +99,33 @@ public class ConnectServiceImpl implements ConnectService {
   @Override
   public ResponseEntity<?> send(InputStream io, String authorization, String url,String domain)
       throws GVTExportException, IOException {
-	  
-		HttpHeaders headers = new HttpHeaders();
-		   
+//	  
+//		HttpHeaders headers = new HttpHeaders();
+//		   
+//	    headers.add("Authorization", "Basic " + authorization);
+//	    HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(multipart(io, domain), headers);
+//	    
+//		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+//		
+//		return restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+//		
+	  LinkedMultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+	    File oFile = toFile(io);
+	    parts.add("file", new FileSystemResource(oFile));
+	    parts.add("domain",domain);
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 	    headers.add("Authorization", "Basic " + authorization);
-	    HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(multipart(io, domain), headers);
-	    
-		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+	    HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity =
+	        new HttpEntity<LinkedMultiValueMap<String, Object>>(parts, headers);
+	    ResponseEntity<?> response = restTemplate.exchange(url + EXPORT_ENDPOINT,
+	        HttpMethod.POST, requestEntity, Map.class);
 		
-		return restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+	    return response;
+
+		
+		
+		
 	}
 	
 	private LinkedMultiValueMap<String, Object> multipart(InputStream file, String domain){

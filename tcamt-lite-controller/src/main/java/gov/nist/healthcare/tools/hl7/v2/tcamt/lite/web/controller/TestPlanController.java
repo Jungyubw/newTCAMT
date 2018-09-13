@@ -357,7 +357,7 @@ public class TestPlanController extends CommonController {
 	            }
 	          }
 
-	          testPlanIO = new ExportUtil().exportResourceBundlePushRBAsZip(tp,
+	          testPlanIO = new ExportUtil().exportResourceBundleAsZip(tp,
 	              testStoryConfigurationService, profileService);
 	          
 	          
