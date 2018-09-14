@@ -20,7 +20,9 @@ import gov.nist.healthcare.nht.acmgt.repo.AccountRepository;
 import gov.nist.healthcare.nht.acmgt.service.UserService;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ValidationContainer;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.TestStepSupplementsParams;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.util.GenerationUtil;
 import gov.nist.healthcare.unified.enums.Context;
 import gov.nist.healthcare.unified.model.EnhancedReport;
 import gov.nist.healthcare.unified.proxy.ValidationProxy;
@@ -59,9 +61,15 @@ public class ValidationController {
       String profileXML = pData.getProfileXMLFileStr();
       String valueSetXML = pData.getValueSetXMLFileStr();
       String constraintsXML = pData.getConstraintsXMLFileStr();
-      String testStepConstraintXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-//          + System.getProperty("line.separator") + validationContainer.getConstraint();
-
+      
+      TestStepSupplementsParams params = new TestStepSupplementsParams();
+      params.setConformanceProfileId(validationContainer.getTs().getConformanceProfileId());
+      params.setEr7Message(validationContainer.getTs().getEr7Message());
+      params.setIntegrationProfileId(validationContainer.getTs().getIntegrationProfileId());
+      params.setTestDataCategorizationMap(validationContainer.getTs().getTestDataCategorizationMap());
+      ConstraintXMLOutPut constraintXMLOutPut = new GenerationUtil().getConstraintsXML(params, profileService.findOne(params.getIntegrationProfileId()));
+      String testStepConstraintXML = constraintXMLOutPut.getXmlStr();
+      
       System.out.println(message);
       System.out.println(profileXML);
       System.out.println(valueSetXML);

@@ -16,16 +16,13 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
     $scope.targetDomains = null;
     $scope.error = null;
     $scope.testplan=testplan;
-
+    $scope.target = {};
     $scope.target = {
-        url: null, domain: null
+        url: "https://hl7v2.gvt.nist.gov/gvt/", domain: null
     };
-
+    StorageService.set("EXT_TARGET_URL", $scope.target.url);
 
     $scope.newDomain = null;
-
-
-
 
     $scope.selectTargetUrl = function () {
         StorageService.set("EXT_TARGET_URL", $scope.target.url);

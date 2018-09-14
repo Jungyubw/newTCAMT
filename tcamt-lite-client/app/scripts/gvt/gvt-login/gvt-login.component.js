@@ -13,7 +13,6 @@ angular.module('tcl').controller('GVTLoginCtrl', function ($scope, $rootScope, $
     $scope.targetApps = $rootScope.appInfo.connectApps;
     $scope.targetDomains = null;
     $scope.error = null;
-    //http://hit-dev.nist.gov:8099/gvt/#/saveCBTokens?x=TOKEN&d=DOMAIN
 
     $scope.target = {
         url: null, domain: null
