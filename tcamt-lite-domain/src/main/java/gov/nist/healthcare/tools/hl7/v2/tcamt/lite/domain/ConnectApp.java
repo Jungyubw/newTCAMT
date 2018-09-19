@@ -3,7 +3,16 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 public class ConnectApp {
 
   String url;
-  String name;
+  int position;
+  public int getPosition() {
+	return position;
+}
+
+public void setPosition(int position) {
+	this.position = position;
+}
+
+String name;
 
   public String getUrl() {
     return url;
@@ -21,9 +30,10 @@ public class ConnectApp {
     this.name = name;
   }
 
-  public ConnectApp(String name, String url) {
+  public ConnectApp(String name, String url, int position) {
     this.name = name;
     this.url = url;
+    this.position=position;
   }
 
   public ConnectApp() {

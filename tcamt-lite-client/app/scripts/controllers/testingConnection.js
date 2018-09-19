@@ -12,10 +12,11 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
     $scope.user = {username: StorageService.getGvtUsername(), password: StorageService.getGvtPassword()};
     $scope.appInfo = $rootScope.appInfo;
     $scope.selected = false;
-    $scope.targetApps = $rootScope.appInfo.connectApps;
+    $scope.targetApps = _.sortBy($rootScope.appInfo.connectApps,'position');
     $scope.targetDomains = null;
     $scope.error = null;
     $scope.testplan=testplan;
+    $scope.app=  $scope.targetApps.length&&$scope.targetApps.length? $scope.targetApps[0]:null;
 
     $scope.target = {
         url: null, domain: null
@@ -28,7 +29,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
 
 
     $scope.selectTargetUrl = function () {
-        StorageService.set("EXT_TARGET_URL", $scope.target.url);
+        StorageService.set("EXT_TARGET_URL", $scope.app.url);
         $scope.loadingDomains = false;
         $scope.targetDomains = null;
         $scope.target.domain = null;
@@ -39,7 +40,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
     $scope.selectTargetDomain = function () {
         $scope.newDomain = null;
         if ($scope.target.domain != null) {
-            StorageService.set($scope.target.url + "/EXT_TARGET_DOMAIN", $scope.target.domain);
+            StorageService.set($scope.app.url + "/EXT_TARGET_DOMAIN", $scope.target.domain);
         }
     };
 
@@ -83,7 +84,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
     };
 
     $scope.login = function () {
-        loginTestingToolSvc.login($scope.user.username, $scope.user.password, $scope.target.url).then(function (auth) {
+        loginTestingToolSvc.login($scope.user.username, $scope.user.password, $scope.app.url).then(function (auth) {
             StorageService.setGvtUsername($scope.user.username);
             StorageService.setGvtPassword($scope.user.password);
             StorageService.setGVTBasicAuth(auth);
@@ -96,10 +97,10 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
     $scope.loadDomains = function () {
         $scope.targetDomains = [];
         $scope.target.domain = null;
-        if($scope.target.url != null) {
-            loginTestingToolSvc.getDomains($scope.target.url, StorageService.getGVTBasicAuth()).then(function (result) {
+        if($scope.app.url != null) {
+            loginTestingToolSvc.getDomains($scope.app.url, StorageService.getGVTBasicAuth()).then(function (result) {
                 $scope.targetDomains = result;
-                var savedTargetDomain = StorageService.get($scope.target.url + "/EXT_TARGET_DOMAIN");
+                var savedTargetDomain = StorageService.get($scope.app.url + "/EXT_TARGET_DOMAIN");
                 if (savedTargetDomain != null) {
                     for (var targetDomain in $scope.targetDomains) {
                         if (targetDomain.domain === savedTargetDomain) {
@@ -159,9 +160,9 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
         $scope.info.type = 'danger';
         $scope.info['details'] = null;
         var auth = StorageService.getGVTBasicAuth();
-        if ($scope.target.url != null && $scope.target.domain != null && auth != null) {
+        if ($scope.app.url != null && $scope.target.domain != null && auth != null) {
             $scope.loading = true;
-            loginTestingToolSvc.exportToGVT($scope.testplan.id, auth, $scope.target.url, $scope.target.domain).then(function (map) {
+            loginTestingToolSvc.exportToGVT($scope.testplan.id, auth, $scope.app.url, $scope.target.domain).then(function (map) {
                 $scope.loading = false;
                 var response = angular.fromJson(map.data);
                 if (response.success === false) {
@@ -176,8 +177,8 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
                     $scope.info.text = 'gvtRedirectInProgress';
                     $scope.info.show = true;
                     $scope.info.type = 'info';
-                   // $scope.redirectUrl = $scope.target.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&y=" + encodeURIComponent(auth) + "&d=" + encodeURIComponent($scope.target.domain);
-                    $scope.redirectUrl = $scope.target.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&d=" + encodeURIComponent($scope.target.domain);
+                   // $scope.redirectUrl = $scope.app.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&y=" + encodeURIComponent(auth) + "&d=" + encodeURIComponent($scope.target.domain);
+                    $scope.redirectUrl = $scope.app.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&d=" + encodeURIComponent($scope.target.domain);
 
                     $timeout(function () {
                         $scope.loading = false;
@@ -202,7 +203,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
         $scope.error = null;
         if ($scope.newDomain != null) {
             $scope.newDomain.key = $scope.newDomain.name.replace(/\s+/g, '-').toLowerCase();
-            loginTestingToolSvc.createDomain(StorageService.getGVTBasicAuth(), $scope.target.url, $scope.newDomain.key, $scope.newDomain.name, $scope.newDomain.homeTitle).then(function (domain) {
+            loginTestingToolSvc.createDomain(StorageService.getGVTBasicAuth(), $scope.app.url, $scope.newDomain.key, $scope.newDomain.name, $scope.newDomain.homeTitle).then(function (domain) {
                 $scope.loading = false;
                 $scope.target.domain = $scope.newDomain.key;
                 $scope.exportToGVT();
@@ -210,7 +211,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
                 $scope.loading = false;
                 $scope.error = error.text;
             });
-        } else if ($scope.target.url != null && $scope.target.domain != null) {
+        } else if ($scope.app.url != null && $scope.target.domain != null) {
             $scope.exportToGVT();
         }
     };
@@ -221,12 +222,12 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
         if (savedTargetUrl && savedTargetUrl != null) {
             for (var targetApp in $scope.targetApps) {
                 if (targetApp.url === savedTargetUrl) {
-                    $scope.target.url = targetApp.url;
+                    $scope.app.url = targetApp.url;
                     break;
                 }
             }
         } else if ($scope.targetApps.length == 1) {
-            $scope.target.url = $scope.targetApps[0].url;
+            $scope.app.url = $scope.targetApps[0].url;
         }
         $scope.selectTargetUrl();
     }

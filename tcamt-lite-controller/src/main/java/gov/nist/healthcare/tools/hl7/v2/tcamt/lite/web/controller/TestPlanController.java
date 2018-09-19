@@ -387,7 +387,6 @@ public class TestPlanController extends CommonController {
         }
       }
     }
-
     return ipidSet;
   }
 
