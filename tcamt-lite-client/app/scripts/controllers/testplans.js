@@ -1870,7 +1870,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		var message = $scope.er7MessageOnlineValidation;
 		var igDocumentId = $rootScope.selectedTestStep.integrationProfileId;
         var conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
-		// var cbConstraints = $rootScope.selectedTestStep.constraintsXML;
 		$scope.context=mode;
 		$scope.contextValidation=mode;
 		var context=mode;
@@ -1883,9 +1882,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		    params: { igDocumentId: igDocumentId, conformanceProfileId : conformanceProfileId , context:context}
 		    ,
 		    data:{
-				// constraint:cbConstraints, message: message
-
-                constraint:null, message: message
+                ts:$rootScope.selectedTestStep, message: message
 		    }
 		}
 

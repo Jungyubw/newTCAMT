@@ -399,7 +399,7 @@ public class TestPlanController extends CommonController {
     try {
       SSLHL7v2ResourceClient client = new SSLHL7v2ResourceClient(host, authorization);
 
-     return client.loginAndGetDomains();
+     return client.getDomainByUsername();
     } catch (Exception e) {
       throw new Exception();
     }

@@ -279,9 +279,8 @@ public class GenerationUtil {
 		String nistXMLStr = this.getXMLs(testStepXMLParams, profileData).getNistXML();
 		ClassLoader classLoader = getClass().getClassLoader();
 
-		if (params.getTdsXSL() != null) {
-			String xslStr = IOUtils
-					.toString(classLoader.getResourceAsStream("xsl" + File.separator + params.getTdsXSL() + ".xsl"));
+		if (params.getTdsXSL() != null && !params.getTdsXSL().equals("")) {
+			String xslStr = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + params.getTdsXSL() + ".xsl"));
 
 			if (xslStr != null && nistXMLStr != null) {
 				InputStream xsltInputStream = new ByteArrayInputStream(xslStr.getBytes());
@@ -299,9 +298,8 @@ public class GenerationUtil {
 			}
 		}
 
-		if (params.getJdXSL() != null) {
-			String xslStr = IOUtils
-					.toString(classLoader.getResourceAsStream("xsl" + File.separator + params.getJdXSL() + ".xsl"));
+		if (params.getJdXSL() != null && !params.getJdXSL().equals("")) {
+			String xslStr = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + params.getJdXSL() + ".xsl"));
 
 			if (xslStr != null && nistXMLStr != null) {
 				InputStream xsltInputStream = new ByteArrayInputStream(xslStr.getBytes());
@@ -319,8 +317,7 @@ public class GenerationUtil {
 		}
 
 		String mcXML = this.generateMessageContentXML(params, profileData);
-		String xslStr = IOUtils
-				.toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"));
+		String xslStr = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"));
 
 		if (xslStr != null && mcXML != null) {
 			InputStream xsltInputStream = new ByteArrayInputStream(xslStr.getBytes());
