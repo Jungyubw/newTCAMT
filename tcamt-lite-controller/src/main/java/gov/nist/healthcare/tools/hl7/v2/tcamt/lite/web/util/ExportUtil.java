@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -856,15 +857,21 @@ public class ExportUtil {
     inTP.close();
 
   }
+  
+ 
+  private long generateRandId() {
+    long range = Long.MAX_VALUE;
+    Random r = new Random();
+    return r.nextLong() * range;
+  }
 
   private void generateTestStepJsonRB(ZipOutputStream out, TestStep ts, TestPlan tp, String teststepPath, int index, ProfileService profileService) throws IOException {
     byte[] buf = new byte[1024];
     out.putNextEntry(new ZipEntry(teststepPath + File.separator + "TestStep.json"));
-
     InputStream inTP = null;
-
     JSONObject obj = new JSONObject();
-    obj.put("id", ts.getLongId());
+    
+    obj.put("id", this.generateRandId());
     obj.put("name", ts.getName());
     obj.put("description", ts.getDescription());
     obj.put("position", index);
@@ -944,7 +951,7 @@ public class ExportUtil {
     out.putNextEntry(new ZipEntry(testcasePath + File.separator + "TestCase.json"));
 
     JSONObject obj = new JSONObject();
-    obj.put("id", tc.getLongId());
+    obj.put("id", this.generateRandId());
     obj.put("name", tc.getName());
     obj.put("description", tc.getDescription());
     obj.put("position", index);
@@ -965,7 +972,7 @@ public class ExportUtil {
     out.putNextEntry(new ZipEntry(groupPath + File.separator + "TestCaseGroup.json"));
 
     JSONObject obj = new JSONObject();
-    obj.put("id", tg.getLongId());
+    obj.put("id", this.generateRandId());
     obj.put("name", tg.getName());
     obj.put("description", tg.getDescription());
     obj.put("position", index);
@@ -982,7 +989,7 @@ public class ExportUtil {
   private void generateTestPlanJsonRB(ZipOutputStream out, TestPlan tp, int index, String rootPath)
       throws IOException {
     JSONObject obj = new JSONObject();
-    obj.put("id", tp.getLongId());
+    obj.put("id", this.generateRandId());
     obj.put("name", tp.getName());
     obj.put("description", tp.getDescription());
     obj.put("position", index);
@@ -1292,7 +1299,7 @@ public class ExportUtil {
     return new ByteArrayInputStream(bytes);
   }
 
-  public InputStream[] exportProfileXMLArrayZip(String id, ProfileService profileService, Long rand)
+  public InputStream[] exportProfileXMLArrayZip(String id, ProfileService profileService)
       throws IOException {
     ByteArrayOutputStream outputStream0 = null;
     ByteArrayOutputStream outputStream1 = null;
@@ -1310,7 +1317,7 @@ public class ExportUtil {
     ZipOutputStream out1 = new ZipOutputStream(outputStream1);
     ZipOutputStream out2 = new ZipOutputStream(outputStream2);
 
-    this.generateProfileXML(out0, out1, out2, id, profileService, rand);
+    this.generateProfileXML(out0, out1, out2, id, profileService);
 
     out0.close();
     out1.close();
@@ -1330,7 +1337,7 @@ public class ExportUtil {
   
 
   private void generateProfileXML(ZipOutputStream out0, ZipOutputStream out1, ZipOutputStream out2,
-      String id, ProfileService profileService, Long rand) throws IOException {
+      String id, ProfileService profileService) throws IOException {
     ProfileData tcamtProfile = profileService.findOne(id);
 
     if (tcamtProfile != null) {

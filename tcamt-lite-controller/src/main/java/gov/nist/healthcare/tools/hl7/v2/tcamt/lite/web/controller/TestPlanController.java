@@ -353,7 +353,7 @@ public class TestPlanController extends CommonController {
 	          for (String _id : ipidSet) {
 	            if (_id != null && !_id.isEmpty()) {
 	              InputStream[] xmlArrayIO = new InputStream[3];
-	              xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(_id, profileService, rand);
+	              xmlArrayIO = new ExportUtil().exportProfileXMLArrayZip(_id, profileService);
 	            }
 	          }
 
