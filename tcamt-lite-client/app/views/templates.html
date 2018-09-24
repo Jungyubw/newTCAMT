@@ -593,8 +593,8 @@
                                             <md-select ng-model="target.domain" placeholder="Select Tool Scope"
                                                        ng-change="selectTargetDomain()"
                                                        id="targetDomain" ng-required="newDomain == null">
-                                                <md-option ng-value="dom.domain" ng-repeat="dom in targetDomains">{{
-                                                    dom.name }}
+                                                <md-option ng-value="dom.domain" ng-repeat="dom in targetDomains">
+                                                    {{ dom.name }}
                                                 </md-option>
                                             </md-select>
                                         </md-input-container>
@@ -697,15 +697,17 @@
 
                 <md-button ng-show="(exportStep === 'LOGIN_STEP')"
                            class="btn btn-raised btn-primary btn-sm"
+
+                           ng-disabled="gvtLoginForm.gvtPassword.$invalid || gvtLoginForm.gvtUsername.$invalid"
                            ng-click="goNext()"><span><i
-                        class="fa fa fa-arrow-right fa-fw"></i>Next</span></md-button>
+                        class="fa fa fa-arrow-right fa-fw"></i> Next </span></md-button>
 
 
 
 
-                <md-button ng-show=" exportStep === 'DOMAIN_STEP'" class="btn btn-raised btn-success btn-sm"
-                           ng-show="xmlFormat=== 'Validation'"
-                           ng-click="exportAsZIPToGVT()"><span><i
+                <md-button ng-if=" exportStep === 'DOMAIN_STEP'" class="btn btn-raised btn-success btn-sm"
+                           ng-click="exportAsZIPToGVT()"
+                           ng-disabled="loading  || ((newDomain == null || newDomain.homeTitle == null || newDomain.homeTitle == '' || newDomain.name == null  || newDomain.name == '') && target.domain == null)"><span><i
                         class="fa fa-paper-plane fa-fw"></i>SUBMIT</span></md-button>
 
             </md-dialog-actions>
