@@ -55,6 +55,7 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segment;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.SegmentRef;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.SegmentRefOrGroup;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Usage;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.ConstraintParams;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.SegmentInstanceData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.SegmentParams;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.TestStepParams;
@@ -1574,12 +1575,16 @@ public class GenerationUtil {
 				if (i == 0) {
 					if (position < splittedStr.length) {
 						result = splittedStr[position];
+					}else{
+					  result = "";
 					}
 					splittedStr = result.split("\\^");
 				} else if (i == 1) {
 					if (position - 1 < splittedStr.length) {
 						result = splittedStr[position - 1];
-					}
+					}else{
+                      result = "";
+                    }
 					splittedStr = result.split("\\&");
 				} else if (i == 2) {
 					if (position - 1 < splittedStr.length) {
@@ -1710,4 +1715,111 @@ public class GenerationUtil {
 			return this.findSegmentInfo(segmentName);
 		}
 	}
+
+  /**
+   * @param params
+   * @param findOne
+   * @return
+   */
+  public ConstraintXMLOutPut getConstraintsData(ConstraintParams params, ProfileData profileData) {
+    ConstraintXMLOutPut constraintXMLOutPut = new ConstraintXMLOutPut();
+
+    TestStepParams testStepParams = new TestStepParams();
+    testStepParams.setConformanceProfileId(params.getConformanceProfileId());
+    testStepParams.setEr7Message(params.getEr7Message());
+    testStepParams.setIntegrationProfileId(params.getIntegrationProfileId());
+    List<SegmentInstanceData> segmentList = this.popSegmentList(testStepParams, profileData);
+
+    if (segmentList != null) {
+
+        for (SegmentInstanceData instanceSegment : segmentList) {
+            Segment segment = instanceSegment.getSegmentDef();
+            String segName = instanceSegment.getSegmentName();
+            String segmentiPath = instanceSegment.getiPath();
+//            String segmentiPositionPath = instanceSegment.getPositionIPath();
+            String segUsagePath = instanceSegment.getUsagePath();
+
+            DynamicInfo dynamicInfo = this.findDynamicInfo(segment, instanceSegment.getLineStr());
+
+            for (int i = 0; i < segment.getChildren().size(); i++) {
+                Field field = segment.getChildren().get(i);
+                String wholeFieldStr = this.getFieldStrFromSegment(segName, instanceSegment, (i + 1));
+                int fieldRepeatIndex = 0;
+
+                String fieldUsagePath = segUsagePath + '-' + field.getUsage();
+                for (int j = 0; j < wholeFieldStr.split("\\~").length; j++) {
+                    String fieldStr = wholeFieldStr.split("\\~")[j];
+                    Datatype fieldDT = profileData.getIntegrationProfile().findDatatypeById(field.getDatatypeId());
+
+                    if (dynamicInfo != null && dynamicInfo.getDynamicMappingTarget() != null
+                            && dynamicInfo.getDynamicMappingTarget().equals("" + (i + 1))
+                            && dynamicInfo.getDynamicMappingDatatypeId() != null) {
+                        fieldDT = profileData.getIntegrationProfile()
+                                .findDatatypeById(dynamicInfo.getDynamicMappingDatatypeId());
+                    }
+
+                    if (segName == "MSH" && (i + 1) == 1) {
+                        fieldStr = "|";
+                    }
+                    if (segName == "MSH" && (i + 1) == 2) {
+                        fieldStr = "^~\\&";
+                    }
+                    fieldRepeatIndex = fieldRepeatIndex + 1;
+                    String fieldiPath = "." + (i + 1) + "[" + fieldRepeatIndex + "]";
+
+                    if (fieldDT == null || fieldDT.getChildren() == null || fieldDT.getChildren().size() == 0) {
+//                        Categorization cateOfField = params.getTestDataCategorizationMap()
+//                                .get(this.replaceDot2Dash(segmentiPath + fieldiPath));
+                        constraintXMLOutPut.getCategorizationsDataMap()
+                                .put(this.replaceDot2Dash(segmentiPath + fieldiPath), fieldStr);
+                        constraintXMLOutPut.getCategorizationsUsageMap()
+                                .put(this.replaceDot2Dash(segmentiPath + fieldiPath), fieldUsagePath);
+                    } else {
+                        for (int k = 0; k < fieldDT.getChildren().size(); k++) {
+                            Component c = fieldDT.getChildren().get(k);
+                            String componentUsagePath = fieldUsagePath + '-' + c.getUsage();
+                            String componentiPath = "." + (k + 1) + "[1]";
+
+                            String componentStr = this.getComponentStrFromField(fieldStr, (k + 1));
+                            Datatype componentDT = profileData.getIntegrationProfile()
+                                    .findDatatypeById(c.getDatatypeId());
+                            if (componentDT == null || componentDT.getChildren() == null
+                                    || componentDT.getChildren().size() == 0) {
+//                                Categorization cateOfComponent = params.getTestDataCategorizationMap()
+//                                        .get(this.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath));
+                                constraintXMLOutPut.getCategorizationsDataMap().put(
+                                        this.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath),
+                                        componentStr);
+                                constraintXMLOutPut.getCategorizationsUsageMap().put(
+                                        this.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath),
+                                        componentUsagePath);
+                            } else {
+                                for (int l = 0; l < componentDT.getChildren().size(); l++) {
+                                    Component sc = componentDT.getChildren().get(l);
+                                    String subComponentUsagePath = componentUsagePath + '-' + sc.getUsage();
+                                    String subcomponentiPath = "." + (l + 1) + "[1]";
+                                    String subcomponentStr = this.getSubComponentStrFromField(componentStr,
+                                            (l + 1));
+//                                    Categorization cateOfSubComponent = params.getTestDataCategorizationMap()
+//                                            .get(this.replaceDot2Dash(segmentiPath + fieldiPath + componentiPath
+//                                                    + subcomponentiPath));
+                                    constraintXMLOutPut.getCategorizationsDataMap()
+                                            .put(this.replaceDot2Dash(
+                                                    segmentiPath + fieldiPath + componentiPath + subcomponentiPath),
+                                                    subcomponentStr);
+                                    constraintXMLOutPut.getCategorizationsUsageMap()
+                                            .put(this.replaceDot2Dash(
+                                                    segmentiPath + fieldiPath + componentiPath + subcomponentiPath),
+                                                    subComponentUsagePath);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return constraintXMLOutPut;
+    }
+    return null;
+  }
 }

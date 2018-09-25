@@ -695,6 +695,124 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.recordChanged();
 		});
 	};
+
+	$scope.openOrderIndifferentTab = function(){
+        var newOIPattern = {};
+        newOIPattern.selectedSegments = [];
+
+        for(var i in $rootScope.segmentList){
+            if($rootScope.segmentList[i].isSelected) {
+                $rootScope.segmentList[i].isSelected = false;
+                var copy = angular.copy($rootScope.segmentList[i]);
+                copy.iPath = $scope.replaceDot2Dash(copy.iPath);
+                newOIPattern.selectedSegments.push(copy);
+            }
+        }
+
+        if(newOIPattern.selectedSegments.length > 0) {
+            var keys = newOIPattern.selectedSegments[0].iPath.split("-");
+            for(var i in newOIPattern.selectedSegments){
+            	console.log(newOIPattern.selectedSegments[i].iPath);
+                var newKey = "";
+            	var path = ""
+            	for(var j in keys){
+            		path = path + "-" + keys[j];
+            		console.log(path);
+
+            		if(newOIPattern.selectedSegments[i].iPath.startsWith(path.substring(1))) {
+                        newKey = path.substring(1);
+					}
+ 				}
+
+                keys = newKey.split("-");
+			}
+
+
+			if(keys[0] !== ""){
+                newOIPattern.keys = keys;
+
+                newOIPattern.keyString = newOIPattern.keys.join();
+                newOIPattern.keyString = $scope.replaceAll(newOIPattern.keyString, "," , ".");
+
+                var constraintParams = {};
+                constraintParams.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
+                constraintParams.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
+                constraintParams.er7Message = $rootScope.selectedTestStep.er7Message;
+                constraintParams.testDataCategorizationMap = $rootScope.selectedTestStep.testDataCategorizationMap;
+                $http.post('api/teststep/getConstraintsData', constraintParams).then(function (response) {
+                    var constraintSupplementData = angular.fromJson(response.data);
+                    var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){return i;});
+
+                    newOIPattern.listOfTDC = [];
+
+                    keys.forEach(function(key){
+                        var testDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[key];
+                        var usagePath = constraintSupplementData.categorizationsUsageMap[key];
+                        if(testDataCategorizationObj != undefined && testDataCategorizationObj != null && usagePath){
+                            if(testDataCategorizationObj.testDataCategorization && testDataCategorizationObj.testDataCategorization !== ''){
+                                var cate = {};
+                                cate.iPath = testDataCategorizationObj.iPath;
+                                cate.name = testDataCategorizationObj.name;
+                                cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
+                                cate.listData = testDataCategorizationObj.listData;
+                                cate.data = constraintSupplementData.categorizationsDataMap[key];
+                                cate.usagePath = usagePath;
+                                cate.constraints = [];
+                                var usageCheck = true;
+                                var usages = cate.usagePath.split("-");
+                                for(var i=0; i < usages.length; i++){
+                                    var u = usages[i];
+                                    if(u !== "R") {
+                                        usageCheck = false;
+                                    }
+                                }
+                                if(cate.testDataCategorization == 'NonPresence'){
+                                    cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL NOT be presented.');
+                                }else if(cate.testDataCategorization == 'Presence-Content Indifferent' ||
+                                    cate.testDataCategorization == 'Presence-Configuration' ||
+                                    cate.testDataCategorization == 'Presence-System Generated' ||
+                                    cate.testDataCategorization == 'Presence-Test Case Proper'){
+                                    if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+                                }else if(cate.testDataCategorization == 'Presence Length-Content Indifferent' ||
+                                    cate.testDataCategorization == 'Presence Length-Configuration' ||
+                                    cate.testDataCategorization == 'Presence Length-System Generated' ||
+                                    cate.testDataCategorization == 'Presence Length-Test Case Proper'){
+                                    if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+                                    cate.constraints.push('Length of ' + cate.iPath + ' (' + cate.name + ') SHALL be more than '+ cate.data.length);
+                                }else if(cate.testDataCategorization == 'Value-Test Case Fixed'){
+                                    if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+                                    cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be '+ cate.data);
+                                }else if(cate.testDataCategorization == 'Value-Test Case Fixed List'){
+                                    if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+                                    cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be one of '+ cate.listData);
+                                }
+
+                                if(cate.iPath.startsWith(newOIPattern.keyString)) newOIPattern.listOfTDC.push(cate);
+
+
+                            }
+                        }
+                    });
+
+                    newOIPattern.isOpen = true;
+                    $rootScope.orderIndifferentConstraintsPatterns.push(newOIPattern);
+                    console.log($rootScope.orderIndifferentConstraintsPatterns);
+                    $scope.testDataAccordi.segmentList = false;
+                    $scope.testDataAccordi.selectedSegment = false;
+                    $scope.testDataAccordi.constraintList = false;
+                    $scope.testDataAccordi.constraintListOI = true;
+                    waitingDialog.hide();
+                }, function (error) {
+                    waitingDialog.hide();
+                });
+
+			}
+
+
+		}
+
+	};
+
 	$scope.openApplyMessageTemplate = function(msgTemp) {
 		var modalInstance = $modal.open({
 			templateUrl: 'OpenApplyMessageTemplate.html',
@@ -1089,6 +1207,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             $rootScope.selectedTestCase = null;
             $rootScope.selectedTemplate=null;
             $rootScope.selectedSegmentNode =null;
+            $rootScope.orderIndifferentConstraintsPatterns = [];
             $scope.subview = "EditTestStepMetadata.html";
             $scope.selectedTestStepTab.tabNum = 0;
             $scope.initTestStepTab($scope.selectedTestStepTab.tabNum);
@@ -1251,6 +1370,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedSegmentNode = null;
         $rootScope.selectedSegment = null;
         $rootScope.segmentList = [];
+        $rootScope.orderIndifferentConstraintsPatterns = [];
         var data = {};
         data.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
         data.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
@@ -1269,6 +1389,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.testDataAccordi.segmentList = false;
 		$scope.testDataAccordi.selectedSegment = true;
 		$scope.testDataAccordi.constraintList = false;
+        $scope.testDataAccordi.constraintListOI = false;
 
         $rootScope.selectedSegmentNode = {};
         $rootScope.selectedSegment = segment;
@@ -1393,6 +1514,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.testDataAccordi = {};
 			$scope.testDataAccordi.selectedSegment = false;
 			$scope.testDataAccordi.constraintList = false;
+            $scope.testDataAccordi.constraintListOI = false;
 		}
 	};
 	$scope.segmentAccordionClicked = function () {
@@ -1400,72 +1522,110 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.testDataAccordi = {};
 			$scope.testDataAccordi.segmentList = false;
 			$scope.testDataAccordi.constraintList = false;
+            $scope.testDataAccordi.constraintListOI = false;
 		}
 	};
+
+	$scope.constraintOIAccordionClicked = function (){
+        if ($scope.testDataAccordi.constraintListOI === false) {
+            $scope.testDataAccordi = {};
+            $scope.testDataAccordi.segmentList = false;
+            $scope.testDataAccordi.selectedSegment = false;
+            $scope.testDataAccordi.constraintList = false;
+        }
+	};
+
 	$scope.constraintAccordionClicked = function () {
 		if($scope.testDataAccordi.constraintList === false){
 			$scope.testDataAccordi = {};
 			$scope.testDataAccordi.segmentList = false;
 			$scope.testDataAccordi.selectedSegment = false;
+            $scope.testDataAccordi.constraintListOI = false;
 
 
 			if($rootScope.selectedTestStep && $rootScope.selectedTestStep.testDataCategorizationMap){
 
-				var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
-						return i;
-				});
+                var constraintParams = {};
+                constraintParams.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
+                constraintParams.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
+                constraintParams.er7Message = $rootScope.selectedTestStep.er7Message;
+                constraintParams.testDataCategorizationMap = $rootScope.selectedTestStep.testDataCategorizationMap;
+                $http.post('api/teststep/getConstraintsData', constraintParams).then(function (response) {
+                    var constraintSupplementData = angular.fromJson(response.data);
 
-				$scope.listOfTDC = [];
+                    var keys = $.map($rootScope.selectedTestStep.testDataCategorizationMap, function(v, i){
+                        return i;
+                    });
 
-				keys.forEach(function(key){
-					var testDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[key];
-					var usagePath = $rootScope.categorizationsUsageMap[key]
+                    $scope.listOfTDC = [];
 
-					if(testDataCategorizationObj != undefined && testDataCategorizationObj != null && usagePath){
-						if(testDataCategorizationObj.testDataCategorization && testDataCategorizationObj.testDataCategorization !== ''){
-							var cate = {};
-							cate.iPath = testDataCategorizationObj.iPath;
-							cate.name = testDataCategorizationObj.name;
-							cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
-							cate.listData = testDataCategorizationObj.listData;
-							cate.data = $rootScope.categorizationsDataMap[key];
-							cate.usagePath = usagePath;
-							cate.constraints = [];
-							var usageCheck = true;
-							var usages = cate.usagePath.split("-");
-							for(var i=0; i < usages.length; i++){
-								var u = usages[i];
-								if(u !== "R") {
-									usageCheck = false;
-								}
-							}
-							if(cate.testDataCategorization == 'NonPresence'){
-								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL NOT be presented.');
-							}else if(cate.testDataCategorization == 'Presence-Content Indifferent' ||
-								cate.testDataCategorization == 'Presence-Configuration' ||
-								cate.testDataCategorization == 'Presence-System Generated' ||
-								cate.testDataCategorization == 'Presence-Test Case Proper'){
-								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
-							}else if(cate.testDataCategorization == 'Presence Length-Content Indifferent' ||
-								cate.testDataCategorization == 'Presence Length-Configuration' ||
-								cate.testDataCategorization == 'Presence Length-System Generated' ||
-								cate.testDataCategorization == 'Presence Length-Test Case Proper'){
-								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
-								cate.constraints.push('Length of ' + cate.iPath + ' (' + cate.name + ') SHALL be more than '+ cate.data.length);
-							}else if(cate.testDataCategorization == 'Value-Test Case Fixed'){
-								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
-								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be '+ cate.data);
-							}else if(cate.testDataCategorization == 'Value-Test Case Fixed List'){
-								if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
-								cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be one of '+ cate.listData);
-							}
-							$scope.listOfTDC.push(cate);
-						}
-					}
-				});
+                    keys.forEach(function(key){
+                        var testDataCategorizationObj = $rootScope.selectedTestStep.testDataCategorizationMap[key];
+                        var usagePath = constraintSupplementData.categorizationsUsageMap[key];
+
+                        if(testDataCategorizationObj != undefined && testDataCategorizationObj != null && usagePath){
+                            if(testDataCategorizationObj.testDataCategorization && testDataCategorizationObj.testDataCategorization !== ''){
+                                var cate = {};
+                                cate.iPath = testDataCategorizationObj.iPath;
+                                cate.name = testDataCategorizationObj.name;
+                                cate.testDataCategorization = testDataCategorizationObj.testDataCategorization;
+                                cate.listData = testDataCategorizationObj.listData;
+                                cate.data = constraintSupplementData.categorizationsDataMap[key];
+                                cate.usagePath = usagePath;
+                                cate.constraints = [];
+                                var usageCheck = true;
+                                var usages = cate.usagePath.split("-");
+                                for(var i=0; i < usages.length; i++){
+                                	var u = usages[i];
+                                	if(u !== "R") {
+                                		usageCheck = false;
+                                	}
+                                }
+                                if(cate.testDataCategorization == 'NonPresence'){
+                                    cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL NOT be presented.');
+                                }else if(cate.testDataCategorization == 'Presence-Content Indifferent' ||
+                                    cate.testDataCategorization == 'Presence-Configuration' ||
+                                    cate.testDataCategorization == 'Presence-System Generated' ||
+                                    cate.testDataCategorization == 'Presence-Test Case Proper'){
+                                    if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+                                }else if(cate.testDataCategorization == 'Presence Length-Content Indifferent' ||
+                                    cate.testDataCategorization == 'Presence Length-Configuration' ||
+                                    cate.testDataCategorization == 'Presence Length-System Generated' ||
+                                    cate.testDataCategorization == 'Presence Length-Test Case Proper'){
+                                    if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+                                    cate.constraints.push('Length of ' + cate.iPath + ' (' + cate.name + ') SHALL be more than '+ cate.data.length);
+                                }else if(cate.testDataCategorization == 'Value-Test Case Fixed'){
+                                    if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+                                    cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be '+ cate.data);
+                                }else if(cate.testDataCategorization == 'Value-Test Case Fixed List'){
+                                    if(!usageCheck) cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be presented.');
+                                    cate.constraints.push(cate.iPath + ' (' + cate.name + ') SHALL be one of '+ cate.listData);
+                                }
+
+
+                                if(!$scope.isOrderIndifferent(cate)) $scope.listOfTDC.push(cate);
+                            }
+                        }
+                    });
+                    waitingDialog.hide();
+                }, function (error) {
+                    waitingDialog.hide();
+                });
 			}
 		}
 	};
+
+	$scope.isOrderIndifferent = function(cate){
+        if($rootScope.orderIndifferentConstraintsPatterns && $rootScope.orderIndifferentConstraintsPatterns.length > 0){
+
+        	for(var i in $rootScope.orderIndifferentConstraintsPatterns){
+                if(cate.iPath.startsWith($rootScope.orderIndifferentConstraintsPatterns[i].keyString)) return true;
+			}
+        }
+
+        return false;
+	}
+
 	$scope.editorOptions = {
 		lineWrapping : false,
 		lineNumbers: true,

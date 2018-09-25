@@ -42,4 +42,15 @@ public class TestStepSupplementsParams extends TestStepXMLParams {
   public void setTestDataCategorizationMap(HashMap<String, Categorization> testDataCategorizationMap) {
     this.testDataCategorizationMap = testDataCategorizationMap;
   }
+
+  @Override
+  public String toString() {
+    return "TestStepSupplementsParams [testCaseName=" + testCaseName + ", tdsXSL=" + tdsXSL
+        + ", jdXSL=" + jdXSL + ", testDataCategorizationMap=" + testDataCategorizationMap
+        + ", getIntegrationProfileId()=" + getIntegrationProfileId()
+        + ", getConformanceProfileId()=" + getConformanceProfileId() + ", getEr7Message()="
+        + getEr7Message() + "]";
+  }
+  
+  
 }
