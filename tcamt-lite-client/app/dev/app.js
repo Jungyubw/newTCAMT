@@ -355,15 +355,35 @@ app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, u
         $rootScope.appInfo = appInfo;
         $rootScope.froalaEditorOptions = {
             placeholderText: '',
-            toolbarButtons:['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'emoticons', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'undo', 'redo', 'clearFormatting', 'selectAll', 'insertTable', 'insertLink','insertImage', 'insertFile'],
+            toolbarButtons: buttons,
+            toolbarButtonsMD: buttons,
+            toolbarButtonsSM: buttons,
             imageUploadURL: $rootScope.appInfo.uploadedImagesUrl + "/upload",
+            imageAllowedTypes: ['jpeg', 'jpg', 'png', 'gif'],
+            fileUploadURL: $rootScope.appInfo.uploadedImagesUrl + "/upload",
+            fileAllowedTypes: ['application/pdf', 'application/msword', 'application/x-pdf', 'text/plain', 'application/xml','text/xml'],
             charCounterCount: false,
-            quickInsertTags: 8,
+            quickInsertTags: [''],
+            immediateAngularModelUpdate:true,
             events: {
-                'froalaEditor.initialized': function() {
+                'froalaEditor.initialized': function () {
 
+                },
+                'froalaEditor.file.error': function(e, editor, error){
+                    $rootScope.msg().text= error.text;
+                    $rootScope.msg().type= error.type;
+                    $rootScope.msg().show= true;
+                },
+                'froalaEditor.image.error ':function(e, editor, error){
+                    $rootScope.msg().text= error.text;
+                    $rootScope.msg().type= error.type;
+                    $rootScope.msg().show= true;
                 }
-            }
+            },
+            key: 'Rg1Wb2KYd1Td1WIh1CVc2F==',
+            imageResize: true,
+            imageEditButtons: ['imageReplace', 'imageAlign', 'imageRemove', '|', 'imageLink', 'linkOpen', 'linkEdit', 'linkRemove', '-', 'imageAlt'],
+            pastePlain: true
         };
         httpHeaders.common['appVersion'] = appInfo.version;
         var prevVersion = StorageService.getAppVersion(StorageService.APP_VERSION);

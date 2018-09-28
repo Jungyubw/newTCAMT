@@ -562,12 +562,12 @@
                                 <div ng-show="target.url != null">
                                     <a ng-href="{{target.url}}#/forgotten" target="_blank"
                                        style="text-align:center">
-                                        <span msg key="gvt.login.forgotPwd"></span>
+                                        <span> Reset password</span>
                                     </a>
                                     <br/>
                                     <a ng-href="{{target.url}}#/registration" target="_blank"
                                        style="text-align:center">
-                                        <span msg key="gvt.login.newAccount"></span>
+                                        <span>Register</span>
                                     </a>
                                 </div>
                             </md-card-footer>
@@ -689,7 +689,7 @@
             </md-dialog-content>
             <md-dialog-actions layout="row">
                 <md-button
-                        ng-show="(exportStep === 'LOGIN_STEP' || exportStep === 'ERROR_STEP' || exportStep === 'DOMAIN_STEP')"
+                        ng-show="exportStep === 'ERROR_STEP' || exportStep === 'DOMAIN_STEP'"
                         class="btn btn-raised btn-primary btn-sm"
                         ng-click="goBack()"><span><i
                         class="fa fa-arrow-left fa-fw"></i>Back</span></md-button>
