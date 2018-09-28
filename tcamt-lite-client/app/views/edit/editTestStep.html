@@ -178,10 +178,10 @@ body {
 								<div class="col-md-6">
 									<span class="pull-right">
 										<div class="btn-group btn-group-sm" data-toggle="buttons">
-    										<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'All'}">
+    										<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();refreshPropfileTree(); " ng-class="{'active':usageViewFilter === 'All'}">
         										<input type="radio">All Usages</input>
 											</label>
-											<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();" ng-class="{'active':usageViewFilter === 'RREC'}">
+											<label class="btn btn-primary btn-xs" ng-click="changeUsageFilter();refreshTree();refreshPropfileTree();" ng-class="{'active':usageViewFilter === 'RREC'}">
         										<input type="radio">R/RE/C Only</input>
 											</label>
    										</div>
@@ -316,7 +316,7 @@ body {
 										<uib-accordion-heading>
 											<span ng-click="constraintAccordionClicked()" style="color: white !important;">
 												<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.constraintList, 'fa-caret-right': !testDataAccordi.constraintList}"></i>
-												<i class="fa fa-file-text-o fa-fw"></i> TestData Categorization List (Order-Specific)
+												<i class="fa fa-file-text-o fa-fw"></i> TestData Categorization List
 											</span>
 										</uib-accordion-heading>
 										<div ng-if="testDataAccordi.constraintList" class="col-md-12">
@@ -355,6 +355,31 @@ body {
 											</div>
 										</div>
 									</uib-accordion-group>
+									<uib-accordion-group is-open="testDataAccordi.constraintEditorTab">
+										<uib-accordion-heading>
+											<span ng-click="orderIndifferentConstraintsAccordionClicked()" style="color: white !important;">
+												<i class="fa" ng-class="{'fa-caret-down': testDataAccordi.constraintEditorTab, 'fa-caret-right': !testDataAccordi.constraintEditorTab}"></i>
+												<i class="fa fa-file-text-o fa-fw"></i> Order-Indifferent Constraints setting
+											</span>
+										</uib-accordion-heading>
+										<div ng-if="testDataAccordi.constraintEditorTab" class="col-md-12">
+											<div class="table-responsive">
+												<table tt-table tt-params="profileParams" class="table table-bordered table-condensed profile-table" id="profileTable">
+													<thead>
+													<tr class="tbl-header">
+														<th class="col-md-2">Name</th>
+														<th class="col-md-1">Usage</th>
+														<th class="col-md-1">Cardi.</th>
+														<th class="col-md-1">OrderIndifferent</th>
+														<th class="col-md-3">Trigger</th>
+													</tr>
+													</thead>
+													<tbody></tbody>
+												</table>
+											</div>
+										</div>
+									</uib-accordion-group>
+
 
 									<!--<uib-accordion-group is-open="testDataAccordi.constraintListOI">-->
 										<!--<uib-accordion-heading>-->
@@ -629,8 +654,161 @@ body {
 			</md-content>
 		</div>
 	</div>
-
 </script>
+
+<script type="text/ng-template" id="Group.html">
+	<tr tt-node is-branch="hasChildren(node)">
+		<td class="col-md-3">
+			<span class="label label-info label-icon">G</span> {{getGroupName(node.name)}}
+		</td>
+		<td class="col-md-1">
+			{{::node.usage}}
+		</td>
+		<td class="col-md-1">
+			[{{::node.min}}..{{::node.max}}]
+		</td>
+		<td class="col-md-1">
+			<div ng-show="node.max !== '1' &&  node.max !== '0'">
+				<input type="checkbox" ng-model="node.isOrderSpecific">
+			</div>
+		</td>
+		<td class="col-md-1">
+			<div ng-show="node.isOrderSpecific === true && node.triggerInfo.description">
+				<span ng-click="openTriggerDialog(node)">{{node.triggerInfo.description}} <i class="fa fa-pencil fa-fw"></i></span>
+			</div>
+			<div ng-show="node.isOrderSpecific === true && !node.triggerInfo.description">
+				<span ng-click="openTriggerDialog(node)"><i class="fa fa-pencil fa-fw"></i> Crerate Trigger</span>
+			</div>
+		</td>
+	</tr>
+</script>
+
+<script type="text/ng-template" id="Segment.html">
+	<tr tt-node is-branch="hasChildren(node)">
+		<td class="col-md-3">
+			<span class="label label-segment label-icon">S</span> {{getSegmentNameByRef(node.ref)}}
+		</td>
+		<td class="col-md-1">
+			{{::node.usage}}
+		</td>
+		<td class="col-md-1">
+			[{{::node.min}}..{{::node.max}}]
+		</td>
+		<td class="col-md-1">
+			<div ng-show="node.max !== '1' &&  node.max !== '0'">
+				<input type="checkbox" ng-model="node.isOrderSpecific">
+			</div>
+		</td>
+		<td class="col-md-1">
+			<div ng-show="node.isOrderSpecific === true && node.triggerInfo.description">
+				<span ng-click="openTriggerDialog(node)">{{node.triggerInfo.description}} <i class="fa fa-pencil fa-fw"></i></span>
+			</div>
+			<div ng-show="node.isOrderSpecific === true && !node.triggerInfo.description">
+				<span ng-click="openTriggerDialog(node)"><i class="fa fa-pencil fa-fw"></i> Crerate Trigger</span>
+			</div>
+		</td>
+	</tr>
+</script>
+
+<script type="text/ng-template" id="TriggerGroup.html">
+	<tr tt-node is-branch="hasChildren(node)">
+		<td class="col-md-3">
+			<span class="label label-info label-icon">G</span> {{getGroupName(node.name)}}
+		</td>
+		<td class="col-md-1">
+			{{::node.usage}}
+		</td>
+		<td class="col-md-1">
+			[{{::node.min}}..{{::node.max}}]
+		</td>
+		<td class="col-md-1">
+		</td>
+		<td class="col-md-1">
+		</td>
+		<td class="col-md-1">
+		</td>
+	</tr>
+</script>
+
+<script type="text/ng-template" id="TriggerSegment.html">
+	<tr tt-node is-branch="hasChildren(node)">
+		<td class="col-md-3">
+			<span class="label label-segment label-icon">S</span> {{getSegmentByRef(node.ref).label}}
+		</td>
+		<td class="col-md-1">
+			{{::node.usage}}
+		</td>
+		<td class="col-md-1">
+			[{{::node.min}}..{{::node.max}}]
+		</td>
+		<td class="col-md-1">
+		</td>
+		<td class="col-md-1">
+		</td>
+		<td class="col-md-1">
+		</td>
+	</tr>
+</script>
+
+<script type="text/ng-template" id="TriggerField.html">
+	<tr tt-node is-branch="hasChildren(node)">
+		<td class="col-md-3">
+			<span class="label label-field label-icon">F</span> {{node.position}}. {{::node.name}}
+		</td>
+		<td class="col-md-1">
+			{{::node.usage}}
+		</td>
+		<td class="col-md-1">
+			[{{::node.min}}..{{::node.max}}]
+		</td>
+		<td class="col-md-1">
+			{{::node.datatypeId}}
+		</td>
+		<td class="col-md-1">
+			[{{::node.minLength}}..{{::node.maxLength}}]
+		</td>
+		<td class="col-md-1">
+			<div ng-if="!hasChildren(node)">
+				<div ng-if="isSelectedNodeForTrigger(node.path)">
+					<span ng-click="unselectNodeForTrigger(node.path)"><i class="fa fa-check-circle"></i> Selected</span>
+				</div>
+				<div ng-if="!isSelectedNodeForTrigger(node.path)">
+					<span ng-click="selectNodeForTrigger(node.path, node.pathName)"><i class="fa fa-circle"></i> Not Selected</span>
+				</div>
+			</div>
+		</td>
+	</tr>
+</script>
+
+<script type="text/ng-template" id="TriggerComponent.html">
+	<tr tt-node is-branch="hasChildren(node)">
+		<td class="col-md-3">
+			<span class="label label-component label-icon">C</span> {{node.position}}. {{::node.name}}
+		</td>
+		<td class="col-md-1">
+			{{::node.usage}}
+		</td>
+		<td class="col-md-1">
+		</td>
+		<td class="col-md-1">
+			{{::node.datatypeId}}
+		</td>
+		<td class="col-md-1">
+			[{{::node.min}}..{{::node.max}}]
+		</td>
+		<td class="col-md-1">
+			<div ng-if="!hasChildren(node)">
+				<div ng-if="isSelectedNodeForTrigger(node.path)">
+					<span ng-click="unselectNodeForTrigger(node.path)"><i class="fa fa-check-circle"></i> Selected</span>
+				</div>
+				<div ng-if="!isSelectedNodeForTrigger(node.path)">
+					<span ng-click="selectNodeForTrigger(node.path, node.pathName)"><i class="fa fa-circle"></i> Not Selected</span>
+				</div>
+			</div>
+		</td>
+	</tr>
+</script>
+
 
 <script type="text/ng-template" id="FieldTree.html">
 	<tr tt-node is-branch="hasChildren(node)">
@@ -803,6 +981,50 @@ body {
 			</div>
 		</td>
     </tr>
+</script>
+
+
+<script type="text/ng-template" id="TriggerEditModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">Edit Trigger</h3>
+	</div>
+	<div class="modal-body">
+		<div class="table-responsive">
+			<table tt-table tt-params="triggerParams" class="table table-bordered table-condensed profile-table" id="triggerTable">
+				<thead>
+				<tr class="tbl-header">
+					<th class="col-md-2">Name</th>
+					<th class="col-md-1">Usage</th>
+					<th class="col-md-1">Cardi.</th>
+					<th class="col-md-1">Datatype</th>
+					<th class="col-md-1">Length</th>
+					<th class="col-md-1">Selection</th>
+				</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+
+		<div ng-if="selectedNode.triggerInfo && selectedNode.triggerInfo.list && selectedNode.triggerInfo.list.length > 1">
+			<form>
+				<label>You have multiple triggers. Please pick an Operation:</label>
+				<input type="radio" ng-model="selectedNode.triggerInfo.operation" ng-click="generateDescription()" value="AND">AND
+				<input type="radio" ng-model="selectedNode.triggerInfo.operation" ng-click="generateDescription()" value="OR">OR
+				<input type="radio" ng-model="selectedNode.triggerInfo.operation" ng-click="generateDescription()" value="XOR">XOR
+			</form>
+		</div>
+
+		<div ng-if="selectedNode.triggerInfo && selectedNode.triggerInfo.description">
+			<label>Trigger: </label> {{selectedNode.triggerInfo.description}}
+		</div>
+
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default btn-sm" ng-click="cancel()"><span><i class="fa fa-times fa-fw">&nbsp; </i>Cancel</span>
+		</button>
+		<button class="btn btn-info btn-sm" ng-click="saveTrigger()"><span><i class="fa fa-trash-o fa-fw">&nbsp; </i>Save</span>
+		</button>
+	</div>
 </script>
 
 <script type="text/ng-template" id="MessageTemplateCreationModal.html">

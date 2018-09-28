@@ -800,7 +800,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                     $scope.testDataAccordi.segmentList = false;
                     $scope.testDataAccordi.selectedSegment = false;
                     $scope.testDataAccordi.constraintList = false;
-                    $scope.testDataAccordi.constraintListOI = true;
+                    $scope.testDataAccordi.constraintEditorTab = true;
                     waitingDialog.hide();
                 }, function (error) {
                     waitingDialog.hide();
@@ -1389,7 +1389,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.testDataAccordi.segmentList = false;
 		$scope.testDataAccordi.selectedSegment = true;
 		$scope.testDataAccordi.constraintList = false;
-        $scope.testDataAccordi.constraintListOI = false;
+        $scope.testDataAccordi.constraintEditorTab = false;
 
         $rootScope.selectedSegmentNode = {};
         $rootScope.selectedSegment = segment;
@@ -1514,7 +1514,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.testDataAccordi = {};
 			$scope.testDataAccordi.selectedSegment = false;
 			$scope.testDataAccordi.constraintList = false;
-            $scope.testDataAccordi.constraintListOI = false;
+            $scope.testDataAccordi.constraintEditorTab = false;
 		}
 	};
 	$scope.segmentAccordionClicked = function () {
@@ -1522,25 +1522,69 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$scope.testDataAccordi = {};
 			$scope.testDataAccordi.segmentList = false;
 			$scope.testDataAccordi.constraintList = false;
-            $scope.testDataAccordi.constraintListOI = false;
+            $scope.testDataAccordi.constraintEditorTab = false;
 		}
 	};
 
-	$scope.constraintOIAccordionClicked = function (){
-        if ($scope.testDataAccordi.constraintListOI === false) {
+	$scope.orderIndifferentConstraintsAccordionClicked = function (){
+        if ($scope.testDataAccordi.constraintEditorTab === false) {
             $scope.testDataAccordi = {};
             $scope.testDataAccordi.segmentList = false;
             $scope.testDataAccordi.selectedSegment = false;
             $scope.testDataAccordi.constraintList = false;
         }
+
+        var constraintParams = {};
+        constraintParams.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
+        constraintParams.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
+        constraintParams.er7Message = $rootScope.selectedTestStep.er7Message;
+        constraintParams.testDataCategorizationMap = $rootScope.selectedTestStep.testDataCategorizationMap;
+        $http.post('api/teststep/getProfileData', constraintParams).then(function (response) {
+            $scope.profileData = angular.fromJson(response.data);
+            $scope.conformanceProfile = _.find($scope.profileData.integrationProfile.conformanceProfiles, function(cp){
+                return cp.conformanceProfileMetaData.id == $rootScope.selectedTestStep.conformanceProfileId;
+            });
+
+            console.log($scope.profileData);
+            console.log($scope.conformanceProfile);
+            $scope.refreshPropfileTree();
+        }, function (error) {
+            waitingDialog.hide();
+        });
 	};
+
+
+    $scope.openTriggerDialog  = function (node) {
+        var modalInstance = $modal.open({
+            templateUrl: 'TriggerEditModal.html',
+            controller: 'TriggerEditModalCtrl',
+            size: 'lg',
+            windowClass: 'my-modal-popup',
+            resolve: {
+                node: function () {
+                    return node;
+                },
+                profileData: function () {
+                    return $scope.profileData;
+                },
+                conformanceProfile: function () {
+                    return $scope.conformanceProfile;
+                }
+
+            }
+        });
+
+        modalInstance.result.then(function() {
+            $scope.recordChanged();
+        });
+    };
 
 	$scope.constraintAccordionClicked = function () {
 		if($scope.testDataAccordi.constraintList === false){
 			$scope.testDataAccordi = {};
 			$scope.testDataAccordi.segmentList = false;
 			$scope.testDataAccordi.selectedSegment = false;
-            $scope.testDataAccordi.constraintListOI = false;
+            $scope.testDataAccordi.constraintEditorTab = false;
 
 
 			if($rootScope.selectedTestStep && $rootScope.selectedTestStep.testDataCategorizationMap){
@@ -1636,6 +1680,13 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.segmentParams.refresh();
 		}
 	};
+
+    $scope.refreshPropfileTree = function () {
+        if ($scope.profileParams){
+            $scope.profileParams.refresh();
+        }
+    };
+
 	$scope.minimizePath = function (iPath) {
 		if($rootScope.selectedSegmentNode){
 			return $scope.replaceAll(iPath.replace($rootScope.selectedSegmentNode.iPath + "." ,""), "[1]","");
@@ -1648,6 +1699,18 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         }
 		return '';
 	};
+
+	$scope.getGroupName = function(groupName) {
+        var splitsName = groupName.split('.');
+        return splitsName[splitsName.length - 1];
+	};
+
+	$scope.getSegmentNameByRef = function(ref) {
+        return _.find($scope.profileData.integrationProfile.segments, function(seg){
+            return seg.id == ref;
+        }).label;
+	}
+
 	$scope.replaceAll = function(str, search, replacement) {
 		return str.split(search).join(replacement);
 	};
@@ -1663,40 +1726,79 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 		return false;
 	};
+
+    $scope.profileUsageFilter = function (node) {
+		if(node.usage === 'R') return true;
+		if(node.usage === 'RE') return true;
+		if(node.usage === 'C') return true;
+        return false;
+    };
+
+
 	$scope.changeUsageFilter = function () {
 		if($rootScope.usageViewFilter === 'All') $rootScope.usageViewFilter = 'RREC';
 		else $rootScope.usageViewFilter = 'All';
 	};
-	$scope.segmentParams = new ngTreetableParams({
+	$scope.profileParams = new ngTreetableParams({
 		getNodes: function (parent) {
 			if (parent && parent != null) {
 				if($rootScope.usageViewFilter != 'All'){
 					if(parent.children)
-						return parent.children.filter($scope.usageFilter);
+						return parent.children.filter($scope.profileUsageFilter);
 					else [];
 				}else {
 					return parent.children;
 				}
 			}else {
 				if($rootScope.usageViewFilter != 'All'){
-					if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.children) {
-						return $rootScope.selectedSegmentNode.children.filter($scope.usageFilter);
+					if($scope.conformanceProfile && $scope.conformanceProfile.children) {
+						return $scope.conformanceProfile.children.filter($scope.profileUsageFilter);
                     }else {
 						return [];
 					}
 				}else{
-					if($rootScope.selectedSegmentNode) return $rootScope.selectedSegmentNode.children;
+					if($scope.conformanceProfile) return $scope.conformanceProfile.children;
 				}
 			}
 			return [];
 		},
 		getTemplate: function (node) {
-			if(node.type == 'field') return 'FieldTree.html';
-			else if (node.type == 'component') return 'ComponentTree.html';
-			else if (node.type == 'subcomponent') return 'SubComponentTree.html';
-			else return 'FieldTree.html';
+			if(node.ref) return 'Segment.html';
+			else return 'Group.html';
 		}
 	});
+
+    $scope.segmentParams = new ngTreetableParams({
+        getNodes: function (parent) {
+            if (parent && parent != null) {
+                if($rootScope.usageViewFilter != 'All'){
+                    if(parent.children)
+                        return parent.children.filter($scope.usageFilter);
+                    else [];
+                }else {
+                    return parent.children;
+                }
+            }else {
+                if($rootScope.usageViewFilter != 'All'){
+                    if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.children) {
+                        return $rootScope.selectedSegmentNode.children.filter($scope.usageFilter);
+                    }else {
+                        return [];
+                    }
+                }else{
+                    if($rootScope.selectedSegmentNode) return $rootScope.selectedSegmentNode.children;
+                }
+            }
+            return [];
+        },
+        getTemplate: function (node) {
+            if(node.type == 'field') return 'FieldTree.html';
+            else if (node.type == 'component') return 'ComponentTree.html';
+            else if (node.type == 'subcomponent') return 'SubComponentTree.html';
+            else return 'FieldTree.html';
+        }
+    });
+
 	$scope.hasChildren = function (node) {
 		if(!node || !node.children || node.children.length === 0) return false;
 		return true;
@@ -3167,3 +3269,223 @@ angular.module('tcl').controller('OpenApplyMessageTemplate', function($scope, $m
 	};
 });
 
+angular.module('tcl').controller('TriggerEditModalCtrl', function($scope, $rootScope, $modalInstance, node, profileData, conformanceProfile, ngTreetableParams) {
+	$scope.selectedNode = node;
+    $scope.profileData = profileData;
+    $scope.conformanceProfile = conformanceProfile;
+
+    if($scope.selectedNode.ref) $scope.selectedNode.type = 'segment';
+    else $scope.selectedNode.type = 'group';
+
+    $scope.triggerParams = new ngTreetableParams({
+        getNodes: function (parent) {
+            if (parent && parent != null) {
+                if($rootScope.usageViewFilter != 'All'){
+                    if(parent.children && !parent.datatypeId)
+                        return $scope.markPosition(parent.children, parent).filter($scope.profileUsageFilter);
+                    else if(parent.ref && !parent.datatypeId){
+                        return $scope.markPosition(_.find($scope.profileData.integrationProfile.segments, function(seg){
+                            return seg.id == parent.ref;
+                        }).children, parent).filter($scope.profileUsageFilter);
+					}else if (parent.datatypeId) {
+                        return $scope.markPosition(_.find($scope.profileData.integrationProfile.datatypes, function(dt){
+                            return dt.id == parent.datatypeId;
+                        }).children, parent).filter($scope.profileUsageFilter);
+                    } else {
+                    	return [];
+					}
+                }else {
+                    if(parent.children && !parent.datatypeId)
+                        return $scope.markPosition(parent.children, parent);
+                    else if(parent.ref && !parent.datatypeId){
+                        return $scope.markPosition(_.find($scope.profileData.integrationProfile.segments, function(seg){
+                            return seg.id == parent.ref;
+                        }).children, parent);
+                    }else if (parent.datatypeId) {
+                        return $scope.markPosition(_.find($scope.profileData.integrationProfile.datatypes, function(dt){
+                            return dt.id == parent.datatypeId;
+                        }).children, parent);
+                    } else {
+                        return [];
+                    }
+                }
+            }else {
+                if($rootScope.usageViewFilter != 'All'){
+                    if($scope.selectedNode && $scope.selectedNode.children) {
+                        return $scope.markPosition($scope.selectedNode.children, null).filter($scope.profileUsageFilter);
+                    }else {
+                        return [];
+                    }
+                }else{
+                    if($scope.selectedNode) return $scope.markPosition($scope.selectedNode.children, null);
+                }
+            }
+            return [];
+        },
+        getTemplate: function (node) {
+            if(node.children && !node.datatypeId) return 'TriggerGroup.html';
+            else if(node.ref && !node.datatypeId) return 'TriggerSegment.html';
+            else if(node.datatypeId && node.max) {
+            	return 'TriggerField.html';
+            }
+            else return 'TriggerComponent.html';
+        }
+    });
+
+    $scope.markPosition = function (children, parent){
+    	if(children && children.length > 0){
+    		for (var i in children){
+                children[i].position = Number(i) + Number(1);
+
+                if(parent && parent != null){
+                    children[i].path = parent.path + '.' + children[i].position;
+                    if(parent.type === 'group'){
+                    	if(children[i].ref) children[i].type = "segment";
+                    	else children[i].type = "group";
+					}else if(parent.type === 'segment'){
+                        children[i].type = "field";
+                    }else if(parent.type === 'field'){
+                        children[i].type = "component";
+                    }else if(parent.type === 'component'){
+                        children[i].type = "subComponent";
+                    }
+
+                    if(children[i].type === "group"){
+                        children[i].pathName = parent.pathName + '.' + $scope.getGroupName(children[i].name);
+					}else if(children[i].type === "segment"){
+                        children[i].pathName = parent.pathName + '.' + $scope.getSegmentByRef(children[i].ref).name;
+                    }else{
+                        children[i].pathName = parent.pathName + '.' + children[i].position;
+                    }
+
+				} else {
+                    children[i].path = children[i].position;
+                    if(children[i].ref) {
+                    	children[i].type = "segment";
+                        children[i].pathName = $scope.getSegmentByRef(children[i].ref).name;
+                    }
+                    else {
+                    	children[i].type = "group";
+                        children[i].pathName = $scope.getGroupName(children[i].name);
+                    }
+
+
+				}
+			}
+			return children;
+		} else return [];
+	};
+
+    $scope.isSelectedNodeForTrigger = function (positionPath) {
+    	if($scope.selectedNode.triggerInfo) {
+    		for(var i in $scope.selectedNode.triggerInfo.list){
+                if($scope.selectedNode.triggerInfo.list[i].positionPath === positionPath) return true;
+			}
+		}
+
+    	return false;
+	};
+
+    $scope.unselectNodeForTrigger = function (positionPath) {
+        if($scope.selectedNode.triggerInfo && $scope.selectedNode.triggerInfo.list ) {
+            var index = -1;
+            for(var i in $scope.selectedNode.triggerInfo.list){
+                if($scope.selectedNode.triggerInfo.list[i].positionPath === positionPath) index = i;
+            }
+
+            if (index > -1) {
+                $scope.selectedNode.triggerInfo.list.splice(index, 1);
+            }
+        }
+
+        $scope.generateDescription();
+    };
+
+    $scope.selectNodeForTrigger = function (positionPath, namePath) {
+        if(!$scope.selectedNode.triggerInfo) $scope.selectedNode.triggerInfo = {};
+        if(!$scope.selectedNode.triggerInfo.list) $scope.selectedNode.triggerInfo.list = [];
+        $scope.selectedNode.triggerInfo.list.push(
+			{
+                positionPath : positionPath,
+                namePath : namePath
+			}
+		);
+
+        $scope.generateDescription();
+    };
+
+    $scope.generateDescription = function() {
+        if($scope.selectedNode.triggerInfo){
+            if($scope.selectedNode.triggerInfo.list && $scope.selectedNode.triggerInfo.list.length === 1){
+                $scope.selectedNode.triggerInfo.description = $scope.selectedNode.triggerInfo.list[0].namePath;
+            }else if($scope.selectedNode.triggerInfo.list && $scope.selectedNode.triggerInfo.list.length > 1){
+                if($scope.selectedNode.triggerInfo.operation) {
+                    $scope.selectedNode.triggerInfo.description = $scope.selectedNode.triggerInfo.operation + "('"
+
+                    for(var i in $scope.selectedNode.triggerInfo.list) {
+                        if(i === $scope.selectedNode.triggerInfo.list.length - 1) $scope.selectedNode.triggerInfo.description = $scope.selectedNode.triggerInfo.description + $scope.selectedNode.triggerInfo.list[i].namePath + "'";
+                        else $scope.selectedNode.triggerInfo.description = $scope.selectedNode.triggerInfo.description + $scope.selectedNode.triggerInfo.list[i].namePath + "',";
+                    }
+
+                    $scope.selectedNode.triggerInfo.description = $scope.selectedNode.triggerInfo.description + ")"
+                }else $scope.selectedNode.triggerInfo.description = null;
+            }else {
+                $scope.selectedNode.triggerInfo.description = null;
+            }
+		}
+
+	};
+
+    $scope.profileUsageFilter = function (node) {
+        if(node.usage === 'R') return true;
+        if(node.usage === 'RE') return true;
+        if(node.usage === 'C') return true;
+        return false;
+    };
+
+    $scope.hasChildren = function (node) {
+        if(node.children && !node.datatypeId) return true;
+        else if(node.ref && !node.datatypeId) return true;
+        else {
+            if (node.datatypeId) {
+                var dt = $scope.getDatatypeById(node.datatypeId);
+                if (!dt || !dt.children || dt.children.length === 0) return false;
+            }
+        }
+        return true;
+    };
+
+    $scope.getGroupName = function(groupName) {
+        var splitsName = groupName.split('.');
+        return splitsName[splitsName.length - 1];
+    };
+
+    $scope.getSegmentByRef = function(ref) {
+        return _.find($scope.profileData.integrationProfile.segments, function(seg){
+            return seg.id == ref;
+        });
+    };
+
+    $scope.getDatatypeById = function(id) {
+        return _.find($scope.profileData.integrationProfile.datatypes, function(dt){
+            return dt.id == id;
+        });
+    };
+
+    $scope.refreshTriggerTree = function () {
+        if ($scope.triggerParams){
+            $scope.triggerParams.refresh();
+        }
+    };
+
+    $scope.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.saveTrigger = function() {
+        $modalInstance.close();
+	};
+
+
+    $scope.refreshTriggerTree();
+});

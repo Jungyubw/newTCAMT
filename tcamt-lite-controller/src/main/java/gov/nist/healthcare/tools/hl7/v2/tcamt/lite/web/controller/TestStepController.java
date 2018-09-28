@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.internal.SegmentNode;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.ConstraintParams;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.SegmentInstanceData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view.SegmentParams;
@@ -67,5 +68,10 @@ public class TestStepController extends CommonController {
   public ConstraintXMLOutPut getConstraintsData(@RequestBody ConstraintParams params) throws Exception {
     return new GenerationUtil().getConstraintsData(params,
         profileService.findOne(params.getIntegrationProfileId()));
+  }
+  
+  @RequestMapping(value = "/getProfileData", method = RequestMethod.POST)
+  public ProfileData getProfileData(@RequestBody ConstraintParams params) throws Exception {
+    return profileService.findOne(params.getIntegrationProfileId());
   }
 }
