@@ -20,45 +20,52 @@ import org.springframework.core.annotation.Order;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class HTTPSecurityFilter implements Filter {
 
-	/*
-	 * flaw: Browser Mime Sniffing - fix: X-Content-Type-Options flaw: Cached
-	 * SSL Content - fix: Cache-Control flaw: Cross-Frame Scripting - fix:
-	 * X-Frame-Options flaw: Cross-Site Scripting - fix: X-XSS-Protection flaw:
-	 * Force SSL - fix: Strict-Transport-Security
-	 * 
-	 * assure no-cache for login page to prevent IE from caching
-	 */
+  /*
+   * flaw: Browser Mime Sniffing - fix: X-Content-Type-Options flaw: Cached SSL Content - fix:
+   * Cache-Control flaw: Cross-Frame Scripting - fix: X-Frame-Options flaw: Cross-Site Scripting -
+   * fix: X-XSS-Protection flaw: Force SSL - fix: Strict-Transport-Security
+   * 
+   * assure no-cache for login page to prevent IE from caching
+   */
 
-	protected final Log logger = LogFactory.getLog(getClass());
+  protected final Log logger = LogFactory.getLog(getClass());
 
-	private FilterConfig filterConfig;
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		this.filterConfig = filterConfig;
-	}
 
-	@Override
-	public void destroy() {
-		this.filterConfig = null;
-	}
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
+  @Override
+  public void destroy() {
+  }
 
-		if (response instanceof HttpServletResponse) {
-			HttpServletResponse httpResponse = (HttpServletResponse) response;
-			httpResponse.setHeader("X-Frame-Options", "SAMEORIGIN");
-			httpResponse.setHeader("Cache-Control",
-					"no-cache, no-store, must-revalidate");
-			httpResponse.setHeader("X-Content-Type-Options", "nosniff");
-			httpResponse.setHeader("X-XSS-Protection", "1; mode=block");
-			httpResponse.setHeader("Access-Control-Allow-Headers", "version");
-		}
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
 
-		chain.doFilter(request, response);
+    if (response instanceof HttpServletResponse) {
+      HttpServletResponse httpResponse = (HttpServletResponse) response;
+      httpResponse.setHeader("X-Frame-Options", "SAMEORIGIN");
+      httpResponse.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      httpResponse.setHeader("X-Content-Type-Options", "nosniff");
+      httpResponse.setHeader("X-XSS-Protection", "1; mode=block");
+      httpResponse.setHeader("Access-Control-Allow-Headers", "version,gvt-auth");
+      httpResponse.setHeader("Access-Control-Allow-Origin", "*"); 
+      httpResponse.setHeader("Access-Control-Allow-Methods",
+    		  "POST, GET, OPTIONS, DELETE");
+      httpResponse.setHeader("Access-Control-Max-Age", "3600");
+      httpResponse.setHeader("Access-Control-Allow-Headers",
+    		  "Origin, X-Requested-With, Content-Type, Accept, Authorization, authorization,version,gvt-auth");
 
-	}
+      System.out.println("Filter called ");
+    }
+
+    chain.doFilter(request, response);
+
+  }
+
+@Override
+public void init(FilterConfig filterConfig) throws ServletException {
+	// TODO Auto-generated method stub
+	
+}
 
 }

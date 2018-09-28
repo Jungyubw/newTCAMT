@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+/**
+ * @author Harold Affo (harold.affo@nist.gov) Apr 9, 2015
+ */
 public class CORSInterceptor extends HandlerInterceptorAdapter {
 
 	@Override

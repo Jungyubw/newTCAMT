@@ -74,9 +74,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
 
     $scope.goBack = function () {
         $scope.error = null;
-        if ($scope.exportStep === 'LOGIN_STEP') {
-            $scope.exportStep = 'MESSAGE_STEP';
-        } else if ($scope.exportStep === 'DOMAIN_STEP') {
+        if ($scope.exportStep === 'DOMAIN_STEP') {
             $scope.exportStep = 'LOGIN_STEP';
         } else if ($scope.exportStep === 'ERROR_STEP') {
             $scope.loadDomains();
@@ -131,8 +129,6 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
             $scope.exportToGVT();
         } else if ($scope.exportStep === 'ERROR_STEP') {
             $scope.loadDomains();
-        } else if ($scope.exportStep === 'MESSAGE_STEP') {
-            $scope.exportStep = 'LOGIN_STEP';
         }
     };
 
@@ -177,12 +173,12 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
                     $scope.info.text = 'gvtRedirectInProgress';
                     $scope.info.show = true;
                     $scope.info.type = 'info';
-                   // $scope.redirectUrl = $scope.app.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&y=" + encodeURIComponent(auth) + "&d=" + encodeURIComponent($scope.target.domain);
-                    $scope.redirectUrl = $scope.app.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&d=" + encodeURIComponent($scope.target.domain);
-
+                    $scope.redirectUrl = $scope.app.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&y=" + encodeURIComponent(auth) + "&d=" + encodeURIComponent($scope.target.domain);
+                   // $scope.redirectUrl = $scope.app.url + $rootScope.appInfo.connectUploadTokenContext + "?x=" + encodeURIComponent(token) + "&d=" + encodeURIComponent($scope.target.domain);
+                    console.log($scope.redirectUrl);
                     $timeout(function () {
                         $scope.loading = false;
-                        $window.open($scope.redirectUrl, "_target", "", false);
+                        $window.open($scope.redirectUrl, "_blank");
                     }, 1000);
                 }
             }, function (error) {
