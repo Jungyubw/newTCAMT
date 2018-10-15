@@ -662,7 +662,8 @@ public class ExportUtil {
       params.setJdXSL(ts.getJdXSL());
       params.setTdsXSL(ts.getTdsXSL());
       params.setTestDataCategorizationMap(ts.getTestDataCategorizationMap());
-      
+      params.setFieldOrderIndifferentInfoMap(ts.getFieldOrderIndifferentInfoMap());
+      params.setOrderIndifferentInfoMap(ts.getOrderIndifferentInfoMap());
       
       ConstraintXMLOutPut constraintXMLOutPut = new GenerationUtil().getConstraintsXML(params, profileService.findOne(params.getIntegrationProfileId()));
       if(constraintXMLOutPut != null && constraintXMLOutPut.getXmlStr() != null) this.generateConstraintsXML(out, constraintXMLOutPut.getXmlStr(), stepPath);

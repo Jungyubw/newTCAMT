@@ -1068,6 +1068,14 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.print = function (x) {
 		console.log(JSON.stringify(x));
     };
+
+	$scope.printTestStep = function(){
+		console.log($rootScope.selectedTestPlan);
+        console.log($rootScope.selectedTestCaseGroup);
+        console.log($rootScope.selectedTestCase);
+        console.log($rootScope.selectedTestStep);
+	};
+
     $scope.editTestPlan = function (testplan) {
         waitingDialog.show('Opening Test Plan...', {dialogSize: 'xs', progressType: 'info'});
         $rootScope.selectedTestPlan = testplan;
@@ -1555,30 +1563,31 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 
 	$scope.orderIndifferentConstraintsAccordionClicked = function (){
-        if ($scope.testDataAccordi.constraintEditorTab === false) {
+		if(!$scope.testDataAccordi.constraintEditorTab){
+            waitingDialog.show('OrderIndifferent reading ...', {dialogSize: 'xs', progressType: 'info'});
             $scope.testDataAccordi = {};
             $scope.testDataAccordi.segmentList = false;
             $scope.testDataAccordi.selectedSegment = false;
             $scope.testDataAccordi.constraintList = false;
-        }
 
-        var constraintParams = {};
-        constraintParams.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
-        constraintParams.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
-        constraintParams.er7Message = $rootScope.selectedTestStep.er7Message;
-        constraintParams.testDataCategorizationMap = $rootScope.selectedTestStep.testDataCategorizationMap;
-        $http.post('api/teststep/getProfileData', constraintParams).then(function (response) {
-            $scope.profileData = angular.fromJson(response.data);
-            $scope.conformanceProfile = _.find($scope.profileData.integrationProfile.conformanceProfiles, function(cp){
-                return cp.conformanceProfileMetaData.id == $rootScope.selectedTestStep.conformanceProfileId;
+
+            var constraintParams = {};
+            constraintParams.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
+            constraintParams.conformanceProfileId = $rootScope.selectedTestStep.conformanceProfileId;
+            constraintParams.er7Message = $rootScope.selectedTestStep.er7Message;
+            constraintParams.testDataCategorizationMap = $rootScope.selectedTestStep.testDataCategorizationMap;
+            $http.post('api/teststep/getProfileData', constraintParams).then(function (response) {
+                $scope.profileData = angular.fromJson(response.data);
+                $scope.conformanceProfile = _.find($scope.profileData.integrationProfile.conformanceProfiles, function(cp){
+                    return cp.conformanceProfileMetaData.id == $rootScope.selectedTestStep.conformanceProfileId;
+                });
+                $scope.refreshPropfileTree();
+                waitingDialog.hide();
+            }, function (error) {
+                waitingDialog.hide();
             });
+		}
 
-            console.log($scope.profileData);
-            console.log($scope.conformanceProfile);
-            $scope.refreshPropfileTree();
-        }, function (error) {
-            waitingDialog.hide();
-        });
 	};
 
 
@@ -1762,30 +1771,30 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         return false;
     };
 
-
 	$scope.changeUsageFilter = function () {
 		if($rootScope.usageViewFilter === 'All') $rootScope.usageViewFilter = 'RREC';
 		else $rootScope.usageViewFilter = 'All';
 	};
+
 	$scope.profileParams = new ngTreetableParams({
 		getNodes: function (parent) {
 			if (parent && parent != null) {
 				if($rootScope.usageViewFilter != 'All'){
 					if(parent.children)
-						return parent.children.filter($scope.profileUsageFilter);
+						return $scope.retrieveOrderIndifferentInfo(parent.children, parent.positionPath).filter($scope.profileUsageFilter);
 					else [];
 				}else {
-					return parent.children;
+					return $scope.retrieveOrderIndifferentInfo(parent.children, parent.positionPath);
 				}
 			}else {
 				if($rootScope.usageViewFilter != 'All'){
 					if($scope.conformanceProfile && $scope.conformanceProfile.children) {
-						return $scope.conformanceProfile.children.filter($scope.profileUsageFilter);
+						return $scope.retrieveOrderIndifferentInfo($scope.conformanceProfile.children, null).filter($scope.profileUsageFilter);
                     }else {
 						return [];
 					}
 				}else{
-					if($scope.conformanceProfile) return $scope.conformanceProfile.children;
+					if($scope.conformanceProfile) return $scope.retrieveOrderIndifferentInfo($scope.conformanceProfile.children, null);
 				}
 			}
 			return [];
@@ -1796,25 +1805,50 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	});
 
+    $scope.retrieveOrderIndifferentInfo = function (childrenNodes, parentPositionPath){
+        for(var i = 0; i < childrenNodes.length; i++){
+            if(parentPositionPath){
+                childrenNodes[i].positionPath = parentPositionPath + "-" + (i + 1);
+            }else {
+                childrenNodes[i].positionPath = "" + (i + 1);
+            }
+            if($rootScope.selectedTestStep){
+				if(!$rootScope.selectedTestStep.orderIndifferentInfoMap) $rootScope.selectedTestStep.orderIndifferentInfoMap = {};
+                var orderIndifferentInfo = $rootScope.selectedTestStep.orderIndifferentInfoMap[childrenNodes[i].positionPath];
+                if(orderIndifferentInfo){
+                    childrenNodes[i].orderIndifferentInfo = orderIndifferentInfo;
+				}else {
+                	if(childrenNodes[i].max !== '1' &&  childrenNodes[i].max !== '0'){
+						orderIndifferentInfo = {};
+                        orderIndifferentInfo.orderSpecific = false;
+                        $rootScope.selectedTestStep.orderIndifferentInfoMap[childrenNodes[i].positionPath] = orderIndifferentInfo;
+                        childrenNodes[i].orderIndifferentInfo = orderIndifferentInfo;
+					}
+				}
+            }
+        }
+    	return childrenNodes;
+	};
+
     $scope.segmentParams = new ngTreetableParams({
         getNodes: function (parent) {
             if (parent && parent != null) {
                 if($rootScope.usageViewFilter != 'All'){
                     if(parent.children)
-                        return parent.children.filter($scope.usageFilter);
+                        return $scope.retrieveFieldOrderIndifferentInfo(parent.children).filter($scope.usageFilter);
                     else [];
                 }else {
-                    return parent.children;
+                    return $scope.retrieveFieldOrderIndifferentInfo(parent.children);
                 }
             }else {
                 if($rootScope.usageViewFilter != 'All'){
                     if($rootScope.selectedSegmentNode && $rootScope.selectedSegmentNode.children) {
-                        return $rootScope.selectedSegmentNode.children.filter($scope.usageFilter);
+                        return $scope.retrieveFieldOrderIndifferentInfo($rootScope.selectedSegmentNode.children).filter($scope.usageFilter);
                     }else {
                         return [];
                     }
                 }else{
-                    if($rootScope.selectedSegmentNode) return $rootScope.selectedSegmentNode.children;
+                    if($rootScope.selectedSegmentNode) return $scope.retrieveFieldOrderIndifferentInfo($rootScope.selectedSegmentNode.children);
                 }
             }
             return [];
@@ -1826,6 +1860,29 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             else return 'FieldTree.html';
         }
     });
+
+    $scope.retrieveFieldOrderIndifferentInfo = function (childrenNodes){
+    	if(childrenNodes){
+            for(var i = 0; i < childrenNodes.length; i++){
+                if($rootScope.selectedTestStep && childrenNodes[i].type === 'field'){
+                    if(!$rootScope.selectedTestStep.fieldOrderIndifferentInfoMap) $rootScope.selectedTestStep.fieldOrderIndifferentInfoMap = {};
+                    var orderIndifferentInfo = $rootScope.selectedTestStep.fieldOrderIndifferentInfoMap[$scope.replaceDot2Dash(childrenNodes[i].iPath)];
+                    if(orderIndifferentInfo){
+                        childrenNodes[i].orderIndifferentInfo = orderIndifferentInfo;
+                    }else {
+                        if(childrenNodes[i].field.max !== '1' &&  childrenNodes[i].field.max !== '0'){
+                            orderIndifferentInfo = {};
+                            orderIndifferentInfo.orderSpecific = false;
+                            $rootScope.selectedTestStep.fieldOrderIndifferentInfoMap[$scope.replaceDot2Dash(childrenNodes[i].iPath)] = orderIndifferentInfo;
+                            childrenNodes[i].orderIndifferentInfo = orderIndifferentInfo;
+                        }
+                    }
+                }
+            }
+		}
+
+        return childrenNodes;
+	};
 
 	$scope.hasChildren = function (node) {
 		if(!node || !node.children || node.children.length === 0) return false;
@@ -3341,11 +3398,16 @@ angular.module('tcl').controller('TriggerEditModalCtrl', function($scope, $rootS
                 if($rootScope.usageViewFilter != 'All'){
                     if($scope.selectedNode && $scope.selectedNode.children) {
                         return $scope.markPosition($scope.selectedNode.children, null).filter($scope.profileUsageFilter);
-                    }else {
-                        return [];
+                    }else if($scope.selectedNode && $scope.selectedNode.ref){
+                        return $scope.markPosition($scope.getSegmentByRef($scope.selectedNode.ref).children, null).filter($scope.profileUsageFilter);
                     }
                 }else{
-                    if($scope.selectedNode) return $scope.markPosition($scope.selectedNode.children, null);
+                    if($scope.selectedNode && $scope.selectedNode.children) {
+                        return $scope.markPosition($scope.selectedNode.children, null);
+                    }else if($scope.selectedNode && $scope.selectedNode.ref){
+                        return $scope.markPosition($scope.getSegmentByRef($scope.selectedNode.ref).children, null);
+					}
+
                 }
             }
             return [];
@@ -3391,13 +3453,13 @@ angular.module('tcl').controller('TriggerEditModalCtrl', function($scope, $rootS
                     if(children[i].ref) {
                     	children[i].type = "segment";
                         children[i].pathName = $scope.getSegmentByRef(children[i].ref).name;
-                    }
-                    else {
+                    }else if(children[i].datatypeId){
+                        children[i].type = "field";
+                        children[i].pathName = children[i].position;
+					}else {
                     	children[i].type = "group";
                         children[i].pathName = $scope.getGroupName(children[i].name);
                     }
-
-
 				}
 			}
 			return children;
@@ -3405,9 +3467,9 @@ angular.module('tcl').controller('TriggerEditModalCtrl', function($scope, $rootS
 	};
 
     $scope.isSelectedNodeForTrigger = function (positionPath) {
-    	if($scope.selectedNode.triggerInfo) {
-    		for(var i in $scope.selectedNode.triggerInfo.list){
-                if($scope.selectedNode.triggerInfo.list[i].positionPath === positionPath) return true;
+    	if($scope.selectedNode.orderIndifferentInfo.triggerInfo) {
+    		for(var i in $scope.selectedNode.orderIndifferentInfo.triggerInfo.list){
+                if($scope.selectedNode.orderIndifferentInfo.triggerInfo.list[i].positionPath === positionPath) return true;
 			}
 		}
 
@@ -3415,14 +3477,14 @@ angular.module('tcl').controller('TriggerEditModalCtrl', function($scope, $rootS
 	};
 
     $scope.unselectNodeForTrigger = function (positionPath) {
-        if($scope.selectedNode.triggerInfo && $scope.selectedNode.triggerInfo.list ) {
+        if($scope.selectedNode.orderIndifferentInfo.triggerInfo && $scope.selectedNode.orderIndifferentInfo.triggerInfo.list ) {
             var index = -1;
-            for(var i in $scope.selectedNode.triggerInfo.list){
-                if($scope.selectedNode.triggerInfo.list[i].positionPath === positionPath) index = i;
+            for(var i in $scope.selectedNode.orderIndifferentInfo.triggerInfo.list){
+                if($scope.selectedNode.orderIndifferentInfo.triggerInfo.list[i].positionPath === positionPath) index = i;
             }
 
             if (index > -1) {
-                $scope.selectedNode.triggerInfo.list.splice(index, 1);
+                $scope.selectedNode.orderIndifferentInfo.triggerInfo.list.splice(index, 1);
             }
         }
 
@@ -3430,9 +3492,9 @@ angular.module('tcl').controller('TriggerEditModalCtrl', function($scope, $rootS
     };
 
     $scope.selectNodeForTrigger = function (positionPath, namePath) {
-        if(!$scope.selectedNode.triggerInfo) $scope.selectedNode.triggerInfo = {};
-        if(!$scope.selectedNode.triggerInfo.list) $scope.selectedNode.triggerInfo.list = [];
-        $scope.selectedNode.triggerInfo.list.push(
+        if(!$scope.selectedNode.orderIndifferentInfo.triggerInfo) $scope.selectedNode.orderIndifferentInfo.triggerInfo = {};
+        if(!$scope.selectedNode.orderIndifferentInfo.triggerInfo.list) $scope.selectedNode.orderIndifferentInfo.triggerInfo.list = [];
+        $scope.selectedNode.orderIndifferentInfo.triggerInfo.list.push(
 			{
                 positionPath : positionPath,
                 namePath : namePath
@@ -3443,22 +3505,38 @@ angular.module('tcl').controller('TriggerEditModalCtrl', function($scope, $rootS
     };
 
     $scope.generateDescription = function() {
-        if($scope.selectedNode.triggerInfo){
-            if($scope.selectedNode.triggerInfo.list && $scope.selectedNode.triggerInfo.list.length === 1){
-                $scope.selectedNode.triggerInfo.description = $scope.selectedNode.triggerInfo.list[0].namePath;
-            }else if($scope.selectedNode.triggerInfo.list && $scope.selectedNode.triggerInfo.list.length > 1){
-                if($scope.selectedNode.triggerInfo.operation) {
-                    $scope.selectedNode.triggerInfo.description = $scope.selectedNode.triggerInfo.operation + "('"
+        if($scope.selectedNode.orderIndifferentInfo.triggerInfo){
+            if($scope.selectedNode.orderIndifferentInfo.triggerInfo.list && $scope.selectedNode.orderIndifferentInfo.triggerInfo.list.length === 1){
+            	if($scope.selectedNode.type === 'segment'){
+                    $scope.selectedNode.orderIndifferentInfo.triggerInfo.description = "The value of " + this.getSegmentByRef($scope.selectedNode.ref).name + '-' + $scope.selectedNode.orderIndifferentInfo.triggerInfo.list[0].namePath;
+				}else if($scope.selectedNode.type === 'group'){
+                    $scope.selectedNode.orderIndifferentInfo.triggerInfo.description =  "The value of " + $scope.selectedNode.orderIndifferentInfo.triggerInfo.list[0].namePath;
+                }
+            }else if($scope.selectedNode.orderIndifferentInfo.triggerInfo.list && $scope.selectedNode.orderIndifferentInfo.triggerInfo.list.length > 1){
+                if($scope.selectedNode.orderIndifferentInfo.triggerInfo.operation) {
+                    var result = '';
 
-                    for(var i in $scope.selectedNode.triggerInfo.list) {
-                        if(i === $scope.selectedNode.triggerInfo.list.length - 1) $scope.selectedNode.triggerInfo.description = $scope.selectedNode.triggerInfo.description + $scope.selectedNode.triggerInfo.list[i].namePath + "'";
-                        else $scope.selectedNode.triggerInfo.description = $scope.selectedNode.triggerInfo.description + $scope.selectedNode.triggerInfo.list[i].namePath + "',";
+                    for(var i in $scope.selectedNode.orderIndifferentInfo.triggerInfo.list) {
+                    	if(i == 0) {
+                            console.log(i);
+                            if($scope.selectedNode.type === 'segment'){
+                                result = "[The value of " + this.getSegmentByRef($scope.selectedNode.ref).name + '-' + $scope.selectedNode.orderIndifferentInfo.triggerInfo.list[i].namePath + "]";
+                            }else if($scope.selectedNode.type === 'group'){
+                                result =  "[The value of " + $scope.selectedNode.orderIndifferentInfo.triggerInfo.list[i].namePath + "]";
+                            }
+						}else {
+                            console.log(i);
+                            if($scope.selectedNode.type === 'segment'){
+                                result = result + " " + $scope.selectedNode.orderIndifferentInfo.triggerInfo.operation + " [The value of " + this.getSegmentByRef($scope.selectedNode.ref).name + '-' + $scope.selectedNode.orderIndifferentInfo.triggerInfo.list[i].namePath + "]";
+                            }else if($scope.selectedNode.type === 'group'){
+                                result = result + " " + $scope.selectedNode.orderIndifferentInfo.triggerInfo.operation + " [The value of " + $scope.selectedNode.orderIndifferentInfo.triggerInfo.list[i].namePath + "]";
+                            }
+						}
                     }
-
-                    $scope.selectedNode.triggerInfo.description = $scope.selectedNode.triggerInfo.description + ")"
-                }else $scope.selectedNode.triggerInfo.description = null;
+                    $scope.selectedNode.orderIndifferentInfo.triggerInfo.description = result;
+                }else $scope.selectedNode.orderIndifferentInfo.triggerInfo.description = "Operator is not set";
             }else {
-                $scope.selectedNode.triggerInfo.description = null;
+                $scope.selectedNode.orderIndifferentInfo.triggerInfo.description = "Trigger is not set";
             }
 		}
 

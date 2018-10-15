@@ -47,12 +47,13 @@ public class TestStep implements Serializable, Cloneable {
 
   private String messageContentsXMLCode;
 
-  private HashMap<String, Categorization> testDataCategorizationMap =
-      new HashMap<String, Categorization>();
-
+  private HashMap<String, Categorization> testDataCategorizationMap = new HashMap<String, Categorization>();
+  
+  private HashMap<String, OrderIndifferentInfo> orderIndifferentInfoMap = new HashMap<String, OrderIndifferentInfo>();
+  
+  private HashMap<String, FieldOrderIndifferentInfo> fieldOrderIndifferentInfoMap = new HashMap<String, FieldOrderIndifferentInfo>();
+  
   private String testStoryConfigId;
-
-  private boolean manualTS;
 
   public TestStep(String id, String name, String description, Integer version) {
     super();
@@ -232,7 +233,21 @@ public class TestStep implements Serializable, Cloneable {
   }
 
   public void setManualTS(boolean manualTS) {
-    this.manualTS = manualTS;
   }
 
+  public HashMap<String, OrderIndifferentInfo> getOrderIndifferentInfoMap() {
+    return orderIndifferentInfoMap;
+  }
+
+  public void setOrderIndifferentInfoMap(HashMap<String, OrderIndifferentInfo> orderIndifferentInfoMap) {
+    this.orderIndifferentInfoMap = orderIndifferentInfoMap;
+  }
+
+  public HashMap<String, FieldOrderIndifferentInfo> getFieldOrderIndifferentInfoMap() {
+    return fieldOrderIndifferentInfoMap;
+  }
+
+  public void setFieldOrderIndifferentInfoMap(HashMap<String, FieldOrderIndifferentInfo> fieldOrderIndifferentInfoMap) {
+    this.fieldOrderIndifferentInfoMap = fieldOrderIndifferentInfoMap;
+  }
 }

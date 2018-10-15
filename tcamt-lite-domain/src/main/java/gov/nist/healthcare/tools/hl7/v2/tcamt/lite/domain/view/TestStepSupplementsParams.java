@@ -3,6 +3,8 @@ package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.view;
 import java.util.HashMap;
 
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.Categorization;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.FieldOrderIndifferentInfo;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.OrderIndifferentInfo;
 
 public class TestStepSupplementsParams extends TestStepXMLParams {
   private String testCaseName;
@@ -10,6 +12,8 @@ public class TestStepSupplementsParams extends TestStepXMLParams {
   private String jdXSL;
 
   private HashMap<String, Categorization> testDataCategorizationMap;
+  private HashMap<String, OrderIndifferentInfo> orderIndifferentInfoMap;
+  private HashMap<String, FieldOrderIndifferentInfo> fieldOrderIndifferentInfoMap;
 
   public String getTestCaseName() {
     return testCaseName;
@@ -50,6 +54,22 @@ public class TestStepSupplementsParams extends TestStepXMLParams {
         + ", getIntegrationProfileId()=" + getIntegrationProfileId()
         + ", getConformanceProfileId()=" + getConformanceProfileId() + ", getEr7Message()="
         + getEr7Message() + "]";
+  }
+
+  public HashMap<String, OrderIndifferentInfo> getOrderIndifferentInfoMap() {
+    return orderIndifferentInfoMap;
+  }
+
+  public void setOrderIndifferentInfoMap(HashMap<String, OrderIndifferentInfo> orderIndifferentInfoMap) {
+    this.orderIndifferentInfoMap = orderIndifferentInfoMap;
+  }
+
+  public HashMap<String, FieldOrderIndifferentInfo> getFieldOrderIndifferentInfoMap() {
+    return fieldOrderIndifferentInfoMap;
+  }
+
+  public void setFieldOrderIndifferentInfoMap(HashMap<String, FieldOrderIndifferentInfo> fieldOrderIndifferentInfoMap) {
+    this.fieldOrderIndifferentInfoMap = fieldOrderIndifferentInfoMap;
   }
   
   
