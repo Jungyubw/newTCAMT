@@ -24,7 +24,8 @@ public class SegmentInfo {
   public String toString() {
     return "SegmentInfo [name=" + name + ", positionPath=" + positionPath + ", path=" + path
         + ", iPositionPath=" + iPositionPath + ", iPath=" + iPath + ", anchor=" + anchor
-        + ", usage=" + usage + ", usagePath=" + usagePath + ", max=" + max + "]";
+        + ", usage=" + usage + ", usagePath=" + usagePath + ", max=" + max + ", segment=" + segment
+        + "]";
   }
 
   public String getName() {

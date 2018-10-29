@@ -23,17 +23,6 @@ public class TriggerPath {
   public String getPositionPath() {
     return positionPath;
   }
-  
-  public String getPositionIPath() {
-    if(positionPath != null){
-      String result = "";
-      for(String path :positionPath.split("\\.")){
-        result = result + "." + path + "[1]";
-      }
-      return result.substring(1);
-    }
-    return null;
-  }
 
   public void setPositionPath(String positionPath) {
     this.positionPath = positionPath;
@@ -46,6 +35,5 @@ public class TriggerPath {
   public void setNamePath(String namePath) {
     this.namePath = namePath;
   }
-
 
 }

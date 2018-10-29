@@ -127,13 +127,18 @@ public class GenerationUtil {
           int index = 0;
           for (SegmentRefOrGroup srog : cp.getChildren()) {
             index = index + 1;
-            this.analyzeSegmentRefOrGroup(srog, index, "", "", "", "", "", false, profileData);
+            if(index == 1){
+              this.analyzeSegmentRefOrGroup(srog, index, "", "", "", "", "", true, profileData);
+            }else {
+              this.analyzeSegmentRefOrGroup(srog, index, "", "", "", "", "", false, profileData);  
+            }
+            
           }
 
           currentPosition = 0;
 
           for (SegmentInstanceData sid : segmentInstanceDataList) {
-            SegmentInfo sInfo = this.findSegmentInfo(sid.getSegmentName());
+            SegmentInfo sInfo = this.findSegmentInfo(sid.getSegmentName(), null);
             if (sInfo != null) {
               sid.setiPath(sInfo.getiPath());
               sid.setPath(sInfo.getPath());
@@ -637,14 +642,14 @@ public class GenerationUtil {
   }
   
   private void popOneTriggerAssertion(Operation o, Element errorMessageElm, Element parent, TriggerPath triggerPath, String instancePath, List<SegmentInstanceData> segmentList){
-    String segmentStr = this.findTriggerSegmentString(instancePath, triggerPath.getNamePath(), triggerPath.getPositionIPath(), segmentList);
+    String segmentStr = this.findTriggerSegmentString(instancePath, triggerPath.getNamePath(), this.getPositionIPath(triggerPath.getPositionPath()), segmentList);
     
     Element andElm = parent.getOwnerDocument().createElement("AND");
     Element presenceElm = parent.getOwnerDocument().createElement("Presence");
-    presenceElm.setAttribute("Path", triggerPath.getPositionIPath());
+    presenceElm.setAttribute("Path", this.getPositionIPath(triggerPath.getPositionPath()));
     Element plainTextElm = parent.getOwnerDocument().createElement("PlainText");
     plainTextElm.setAttribute("IgnoreCase", "true");
-    plainTextElm.setAttribute("Path", triggerPath.getPositionIPath());
+    plainTextElm.setAttribute("Path", this.getPositionIPath(triggerPath.getPositionPath()));
     String value = this.findTriggerValue(segmentStr, triggerPath.getNamePath());
     plainTextElm.setAttribute("Text",value);
     andElm.appendChild(presenceElm);
@@ -656,6 +661,18 @@ public class GenerationUtil {
       if(existingErrorMessage == null || existingErrorMessage.equals("")) errorMessageElm.setTextContent("OrderIndifferent Trigger ERROR: " + "[" + triggerPath.getNamePath() + " = '"  +  value + "' is expected]");
       else errorMessageElm.setTextContent(existingErrorMessage + " " + o.toString() + " " + "[ERROR " + triggerPath.getNamePath() + " = '"  +  value + "' is expected]");
     }
+  }
+  
+  
+  private String getPositionIPath(String positionPath) {
+    if(positionPath != null){
+      String result = "";
+      for(String path :positionPath.split("\\.")){
+        result = result + "." + path + "[1]";
+      }
+      return result.substring(1);
+    }
+    return null;
   }
 
   /**
@@ -2081,8 +2098,15 @@ public class GenerationUtil {
         int index = 0;
         for (SegmentRefOrGroup child : g.getChildren()) {
           index = index + 1;
-          this.analyzeSegmentRefOrGroup(child, index, positionPath, iPositionPath, path, iPath,
-              usagePath, false, profileData);
+          if(index == 1){
+            this.analyzeSegmentRefOrGroup(child, index, positionPath, iPositionPath, path, iPath,
+                usagePath, true, profileData);            
+          }else {
+            this.analyzeSegmentRefOrGroup(child, index, positionPath, iPositionPath, path, iPath,
+                usagePath, false, profileData);
+          }
+          
+
         }
       } else {
         for (int i = 1; i < this.repeatedNum + 1; i++) {
@@ -2153,16 +2177,50 @@ public class GenerationUtil {
     return sInfo;
   }
 
-  private SegmentInfo findSegmentInfo(String segmentName) {
+  private SegmentInfo findSegmentInfo(String segmentName, SegmentInfo anchor) {
     if (currentPosition >= this.segmentsInfoList.size())
       return null;
     SegmentInfo sInfo = this.segmentsInfoList.get(this.currentPosition);
-    this.currentPosition = this.currentPosition + 1;
-    if (sInfo.getName().equals(segmentName)) {
-      return sInfo;
-    } else {
-      return this.findSegmentInfo(segmentName);
+    if(anchor != null){
+      if(isYourAnchor(anchor, sInfo)) {
+        this.currentPosition = this.currentPosition + 1;
+        return this.findSegmentInfo(segmentName, anchor);
+      }
     }
+    if (sInfo.getName().equals(segmentName)) {
+      this.currentPosition = this.currentPosition + 1;
+      return sInfo;    
+    } else {
+      this.currentPosition = this.currentPosition + 1;
+      if(sInfo.isAnchor()) return this.findSegmentInfo(segmentName, sInfo);
+      else return this.findSegmentInfo(segmentName, anchor);
+    }
+  }
+
+  /**
+   * @param anchor
+   * @param sInfo
+   * @return
+   */
+  private boolean isYourAnchor(SegmentInfo anchor, SegmentInfo current) {
+    if(current.getiPositionPath().startsWith(this.removeLastPath(anchor.getiPositionPath()))) return true;
+    return false;
+  }
+
+  /**
+   * @param getiPositionPath
+   * @return
+   */
+  private String removeLastPath(String iPositionPath) {
+    String [] splits = iPositionPath.split("\\.");
+    String result = "";
+    
+    if(splits.length > 1){
+      for(int i = 0 ; i < splits.length - 1; i++){
+        result = result + "." + splits[i];
+      }
+    }
+    return result.substring(1);
   }
 
   /**
