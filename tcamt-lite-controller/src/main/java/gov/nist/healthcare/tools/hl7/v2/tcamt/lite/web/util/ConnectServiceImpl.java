@@ -151,6 +151,8 @@ public class ConnectServiceImpl implements ConnectService {
     HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(params, headers);
     ResponseEntity<?> response = restTemplate.postForEntity(url + CREATE_DOMAN_ENDPOINT,
          request, Map.class);
+    
+    System.out.println("DEBUG");
     return response;
   }
   

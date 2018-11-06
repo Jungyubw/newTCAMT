@@ -55,7 +55,6 @@ public class HTTPSecurityFilter implements Filter {
       httpResponse.setHeader("Access-Control-Allow-Headers",
     		  "Origin, X-Requested-With, Content-Type, Accept, Authorization, authorization,version,gvt-auth");
 
-      System.out.println("Filter called ");
     }
 
     chain.doFilter(request, response);

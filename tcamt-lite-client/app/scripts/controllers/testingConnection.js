@@ -16,7 +16,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
     $scope.targetDomains = null;
     $scope.error = null;
     $scope.testplan=testplan;
-    $scope.app=  $scope.targetApps.length&&$scope.targetApps.length? $scope.targetApps[0]:null;
+    $scope.app= $scope.targetApps.length && $scope.targetApps.length? $scope.targetApps[0]:null;
 
     $scope.target = {
         url: null, domain: null
@@ -25,10 +25,26 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
 
     $scope.newDomain = null;
 
+    $scope.toggleCustom=function (customURl) {
+
+
+        if(customURl) {
+
+            $scope.targetApps = _.sortBy($rootScope.appInfo.connectApps, 'position');
+
+            $scope.app = $scope.targetApps.length && $scope.targetApps.length ? $scope.targetApps[0] : null;
+
+        }else{
+            $scope.app={url:""};
+
+        }
+    };
 
 
 
     $scope.selectTargetUrl = function () {
+        console.log("Target URL Change");
+        console.log($scope.app.url);
         StorageService.set("EXT_TARGET_URL", $scope.app.url);
         $scope.loadingDomains = false;
         $scope.targetDomains = null;
@@ -115,6 +131,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
                 $scope.selectTargetDomain();
                 $scope.loadingDomains = false;
             }, function (error) {
+
                 $scope.loadingDomains = false;
             });
         }
@@ -122,6 +139,7 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
 
 
     $scope.goNext = function () {
+        console.log($scope.gvtLoginForm);
         $scope.error = null;
         if ($scope.exportStep === 'LOGIN_STEP') {
             $scope.login();
@@ -202,10 +220,14 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
             loginTestingToolSvc.createDomain(StorageService.getGVTBasicAuth(), $scope.app.url, $scope.newDomain.key, $scope.newDomain.name, $scope.newDomain.homeTitle).then(function (domain) {
                 $scope.loading = false;
                 $scope.target.domain = $scope.newDomain.key;
+
                 $scope.exportToGVT();
             }, function (error) {
+                console.log("ERROR");
+                console.log(error);
+
                 $scope.loading = false;
-                $scope.error = error.text;
+                $scope.error = error.data;
             });
         } else if ($scope.app.url != null && $scope.target.domain != null) {
             $scope.exportToGVT();

@@ -502,9 +502,13 @@
 
                                     <div>
 
+
+                                        <md-checkbox ng-model="customURl" ng-click="toggleCustom(customURl)"> <label>custom URL</label></md-checkbox>
+
                                         <md-input-container class="md-block" md-no-float
-                                                            style="margin-bottom: 30px">
-                                            <label>Target Url</label>
+                                                            style="margin-bottom: 30px" ng-show="!customURl">
+
+                                            <label>Select Target Url </label>
                                             <md-select ng-model="app"
                                                        placeholder="Select the Target Url"
                                                        ng-change="selectTargetUrl()"
@@ -516,6 +520,17 @@
                                             </md-select>
                                         </md-input-container>
 
+
+
+
+                                        <md-input-container class="md-block" md-no-float ng-show="customURl">
+                                            <label>Custom URL</label>
+                                            <input autocomplete="off" autofocus
+                                                   id="testURl"
+                                                   name="testURL"
+                                                   placeholder="Enter your Test URL"
+                                                   type="url" ng-model="app.url" ng-required="customURl">
+                                        </md-input-container>
 
                                         <md-input-container class="md-block" md-no-float>
                                             <label>Username</label>
@@ -698,7 +713,7 @@
                 <md-button ng-show="(exportStep === 'LOGIN_STEP')"
                            class="btn btn-raised btn-primary btn-sm"
 
-                           ng-disabled="gvtLoginForm.gvtPassword.$invalid || gvtLoginForm.gvtUsername.$invalid"
+                           ng-disabled="gvtLoginForm.gvtPassword.$invalid || gvtLoginForm.gvtUsername.$invalid||gvtLoginForm.testURL.$invalid"
                            ng-click="goNext()"><span><i
                         class="fa fa fa-arrow-right fa-fw"></i> Next </span></md-button>
 
