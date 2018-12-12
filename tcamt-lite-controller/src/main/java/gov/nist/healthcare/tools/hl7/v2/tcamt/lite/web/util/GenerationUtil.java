@@ -87,18 +87,13 @@ public class GenerationUtil {
     this.currentPosition = 0;
 
     if (params.getIntegrationProfileId() != null) {
-      if (profileData != null && profileData.getIntegrationProfile() != null
-          && params.getConformanceProfileId() != null) {
+      if (profileData != null && profileData.getIntegrationProfile() != null && params.getConformanceProfileId() != null) {
 
-        ConformanceProfile cp = profileData.getIntegrationProfile()
-            .findConformanceProfileById(params.getConformanceProfileId());
-
-        if (cp != null && params.getEr7Message() != null
-            && params.getEr7Message().startsWith("MSH")) {
+        ConformanceProfile cp = profileData.getIntegrationProfile().findConformanceProfileById(params.getConformanceProfileId());
+        if (cp != null && params.getEr7Message() != null && params.getEr7Message().startsWith("MSH")) {
 
           List<SegmentInstanceData> segmentInstanceDataList = new ArrayList<SegmentInstanceData>();
           Map<String, Integer> segmantCountMap = new HashMap<String, Integer>();
-
           String[] listLineOfMessage = params.getEr7Message().split("\n");
           int lineNum = 0;
 
@@ -111,8 +106,7 @@ public class GenerationUtil {
             segmentInstanceDataList.add(segmentInstanceData);
 
             if (segmantCountMap.containsKey(segmentInstanceData.getSegmentName())) {
-              segmantCountMap.put(segmentInstanceData.getSegmentName(),
-                  segmantCountMap.get(segmentInstanceData.getSegmentName()) + 1);
+              segmantCountMap.put(segmentInstanceData.getSegmentName(), segmantCountMap.get(segmentInstanceData.getSegmentName()) + 1);
             } else {
               segmantCountMap.put(segmentInstanceData.getSegmentName(), 1);
             }
@@ -134,18 +128,28 @@ public class GenerationUtil {
             }
             
           }
-
+          
+          for(SegmentInfo si:segmentsInfoList){
+            System.out.println(si);
+          }
+          
           currentPosition = 0;
 
           for (SegmentInstanceData sid : segmentInstanceDataList) {
             SegmentInfo sInfo = this.findSegmentInfo(sid.getSegmentName(), null);
             if (sInfo != null) {
+              System.out.println(sid);
+              System.out.println(currentPosition);
               sid.setiPath(sInfo.getiPath());
               sid.setPath(sInfo.getPath());
               sid.setPositionIPath(sInfo.getiPositionPath());
               sid.setPositionPath(sInfo.getPositionPath());
               sid.setSegmentDef(sInfo.getSegment());
               sid.setUsagePath(sInfo.getUsagePath());
+            }else {
+              System.out.println("NULL FOUND");
+              System.out.println(sid);
+              System.out.println(currentPosition);
             }
           }
 
@@ -2068,7 +2072,7 @@ public class GenerationUtil {
     if (srog instanceof SegmentRef) {
       SegmentRef sr = (SegmentRef) srog;
       Segment s = profileData.getIntegrationProfile().findSegemntById(sr.getRef());
-      if (sr.getMax().equals("1")) {
+      if (sr.getMax().equals("1") || isAnchor) {
         int index = 1;
         this.segmentsInfoList.add(this.generateSegmentInfo(index, s, sr, position, positionPath,
             iPositionPath, path, iPath, usagePath, isAnchor));
@@ -2081,7 +2085,7 @@ public class GenerationUtil {
     } else if (srog instanceof Group) {
       Group g = (Group) srog;
       String groupName = g.getName().split("\\.")[g.getName().split("\\.").length - 1];
-      if (g.getMax().equals("1")) {
+      if (g.getMax().equals("1") || isAnchor) {
         if (positionPath.equals("")) {
           positionPath = "" + position;
           iPositionPath = "" + position + "[1]";
@@ -2177,23 +2181,49 @@ public class GenerationUtil {
     return sInfo;
   }
 
-  private SegmentInfo findSegmentInfo(String segmentName, SegmentInfo anchor) {
-    if (currentPosition >= this.segmentsInfoList.size())
-      return null;
+  private SegmentInfo findSegmentInfo(String segmentName, SegmentInfo anchor) {    
+    if (currentPosition >= this.segmentsInfoList.size()) return null;    
     SegmentInfo sInfo = this.segmentsInfoList.get(this.currentPosition);
-    if(anchor != null){
-      if(isYourAnchor(anchor, sInfo)) {
-        this.currentPosition = this.currentPosition + 1;
-        return this.findSegmentInfo(segmentName, anchor);
-      }
-    }
-    if (sInfo.getName().equals(segmentName)) {
+
+    
+//    if(anchor != null){
+//      if(isYourAnchor(anchor, sInfo)) {
+//        this.currentPosition = this.currentPosition + 1;
+////        return this.findSegmentInfo(segmentName, anchor);
+//        if(sInfo.isAnchor()) return this.findSegmentInfo(segmentName, sInfo);
+//        else return this.findSegmentInfo(segmentName, anchor);
+//      }
+//    }
+    if (sInfo.getName().equals(segmentName)) {      
       this.currentPosition = this.currentPosition + 1;
       return sInfo;    
     } else {
       this.currentPosition = this.currentPosition + 1;
-      if(sInfo.isAnchor()) return this.findSegmentInfo(segmentName, sInfo);
-      else return this.findSegmentInfo(segmentName, anchor);
+      if(sInfo.isAnchor()) {
+        System.out.println("-----Missing Anchor----------");
+        
+        
+        
+        System.out.println(this.currentPosition);
+        System.out.println(sInfo);        
+        
+        skipChildren(sInfo);
+        
+        
+        return this.findSegmentInfo(segmentName, sInfo);
+      }else return this.findSegmentInfo(segmentName, anchor);
+    }
+  }
+
+  /**
+   * @param sInfo
+   */
+  private void skipChildren(SegmentInfo parent) {
+    if (currentPosition >= this.segmentsInfoList.size()) return;   
+    SegmentInfo child = this.segmentsInfoList.get(this.currentPosition);
+    if(isYourChild(parent, child)){
+      this.currentPosition = this.currentPosition + 1;
+      skipChildren(parent);
     }
   }
 
@@ -2202,7 +2232,7 @@ public class GenerationUtil {
    * @param sInfo
    * @return
    */
-  private boolean isYourAnchor(SegmentInfo anchor, SegmentInfo current) {
+  private boolean isYourChild(SegmentInfo anchor, SegmentInfo current) {
     if(current.getiPositionPath().startsWith(this.removeLastPath(anchor.getiPositionPath()))) return true;
     return false;
   }
