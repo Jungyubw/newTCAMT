@@ -99,6 +99,8 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
 
     $scope.login = function () {
         loginTestingToolSvc.login($scope.user.username, $scope.user.password, $scope.app.url).then(function (auth) {
+
+            console.log($scope.user);
             StorageService.setGvtUsername($scope.user.username);
             StorageService.setGvtPassword($scope.user.password);
             StorageService.setGVTBasicAuth(auth);
@@ -226,8 +228,14 @@ angular.module('tcl').controller('loginTestingTool', ['$scope', '$rootScope', '$
                 console.log("ERROR");
                 console.log(error);
 
+
                 $scope.loading = false;
-                $scope.error = error.data;
+                if(error.data){
+                    $scope.error= error.data.text?error.data.text: error.data;
+                }else {
+                    $scope.error=error;
+                }
+
             });
         } else if ($scope.app.url != null && $scope.target.domain != null) {
             $scope.exportToGVT();

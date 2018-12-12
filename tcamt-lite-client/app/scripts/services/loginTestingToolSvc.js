@@ -17,14 +17,22 @@ angular.module('tcl').factory('loginTestingToolSvc',
         };
 
         svc.login = function(username, password,targetUrl) {
+
             var delay = $q.defer();
             var httpHeaders = {};
             httpHeaders['Accept'] = 'application/json';
             var auth =  base64.encode(username + ':' + password);
             httpHeaders['target-auth'] = 'Basic ' + auth;
             httpHeaders['target-url'] = targetUrl;
+            console.log(targetUrl);
+            console.log(username);
+            console.log(password);
+            console.log(auth);
             $http.get('api/connect/login', {headers:httpHeaders}).then(function (res) {
+
+                console.log(auth);
                 delay.resolve(auth);
+
             }, function(er){
                 delay.reject(er);
             });

@@ -56,10 +56,6 @@ public class ConnectServiceImpl implements ConnectService {
 	  @Value("${connect.createDomainEndpoint}")
 	  private String CREATE_DOMAN_ENDPOINT;
 	  
-  
-  
-  
-  
  
   private RestTemplate restTemplate;
 
