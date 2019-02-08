@@ -36,5 +36,11 @@ public class OrderIndifferentInfo {
     this.orderSpecific = orderSpecific;
   }
 
+  @Override
+  public String toString() {
+    return "OrderIndifferentInfo [orderSpecific=" + orderSpecific + ", triggerInfo=" + triggerInfo
+        + "]";
+  }
+
 
 }

@@ -438,10 +438,7 @@ public class GenerationUtil {
               segUsagePath, params);
         }
       }
-
       this.normalizeXML(rootElement);
-
-
       constraintXMLOutPut.setXmlStr(XMLManager.docToString(xmlDoc));
       return constraintXMLOutPut;
     }
@@ -475,7 +472,7 @@ public class GenerationUtil {
         if (constraintElm.getChildNodes() == null
             || constraintElm.getChildNodes().getLength() == 0) {
           Element patternElm = (Element) constraintElm.getParentNode();
-          patternElm.getParentNode().removeChild(patternElm);
+          patternElm.removeChild(constraintElm);
           i = i - 1;
         }
       }
@@ -522,8 +519,12 @@ public class GenerationUtil {
         instancePath = instancePath + "." + positionPath;
         String profileCurrentPath = positionPath.substring(0, positionPath.indexOf("["));
         profilePath = profilePath + "-" + profileCurrentPath;
+        
+
         OrderIndifferentInfo orderIndifferentInfo =
             orderIndifferentInfoMap.get(profilePath.substring(1));
+        
+        
         if (orderIndifferentInfo != null) {
           if (orderIndifferentInfo.isOrderSpecific()) {
             contextPath = contextPath + "." + profileCurrentPath + "[*]";
