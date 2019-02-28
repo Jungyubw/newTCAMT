@@ -54,10 +54,10 @@
                     </div>
                     <div ng-if="isAdmin() && isEditMode()" class="col-md-2">
                         <label>User Guide</label>
-                        <ul dnd-list="userGuide.slides">
+                        <ul dnd-list="tcamtDocument.userGuide.slides">
                             <li ng-repeat="slide in tcamtDocument.userGuide.slides"
                                 dnd-draggable="slide"
-                                dnd-moved="userGuide.slides.splice($index, 1)"
+                                dnd-moved="tcamtDocument.userGuide.slides.splice($index, 1)"
                                 dnd-effect-allowed="move"
                                 dnd-selected="selectSlide(slide)"
                                 ng-class="{'selected': selected === slide}">
