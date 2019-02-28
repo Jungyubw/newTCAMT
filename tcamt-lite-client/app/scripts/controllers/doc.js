@@ -1,18 +1,43 @@
 
-angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $document, $templateCache, Restangular, $http, $filter, $mdDialog) {
-
+angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $document, $templateCache, Restangular, $http, Notification, $sce) {
     $scope.selected = null;
     $scope.isChanged = false;
-
-    $scope.userGuide = {};
-    $scope.userGuide.slides = [];
-
-
+    $scope.editMode = true;
 
     $scope.addSlide = function(event) {
-        $scope.userGuide.slides.push({
-            title: "TITLE-" + ($scope.userGuide.slides.length + 1),
+        $scope.isChanged = true;
+        $rootScope.tcamtDocument.userGuide.slides.push({
+            title: "TITLE-" + ($rootScope.tcamtDocument.userGuide.slides.length + 1),
             contents : ""
+        });
+    };
+
+    $scope.deleteSlide = function() {
+        if($scope.selected) {
+            $scope.isChanged = true;
+            var index = $rootScope.tcamtDocument.userGuide.slides.indexOf($scope.selected);
+            if (index > -1) {
+                $rootScope.tcamtDocument.userGuide.slides.splice(index, 1);
+            }
+        }
+    };
+
+    $scope.changeMode = function() {
+        $scope.editMode = !$scope.editMode;
+    };
+
+    $scope.save = function() {
+        for(var i in $rootScope.tcamtDocument.userGuide.slides){
+            $rootScope.tcamtDocument.userGuide.slides[i].position = i;
+        }
+
+        $http.post('api/tcamtdocument/save', $rootScope.tcamtDocument).then(function (response) {
+            $scope.selected = null;
+            $scope.isChanged = false;
+            Notification.success({message:"Document saved", delay: 1000});
+        }, function (error) {
+            $rootScope.saved = false;
+            Notification.error({message:"Failed to save", delay:1000});
         });
     };
 
@@ -26,6 +51,8 @@ angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $docum
 
 
     $scope.initDoc = function () {
+        if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+
         $rootScope.froalaEditorOptions = {
             placeholderText: '',
             imageUploadURL: $rootScope.appInfo.uploadedImagesUrl + "/upload",
@@ -56,13 +83,23 @@ angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $docum
         };
     };
 
+    $scope.isEditMode = function () {
+        return $scope.editMode;
+    };
 
     $scope.isSelected = function () {
         if($scope.selected) {
             return true;
         }
-
         return false;
     };
+
+    $scope.getHtml = function () {
+        if($scope.selected){
+            return $sce.trustAsHtml($scope.selected.contents);
+        }else {
+            return null;
+        }
+    }
 
 });

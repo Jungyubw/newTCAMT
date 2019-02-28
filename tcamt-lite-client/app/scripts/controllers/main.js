@@ -19,6 +19,31 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
             }
         };
 
+        $rootScope.loadDocument = function () {
+            if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
+                waitingDialog.show('Loading ...', {dialogSize: 'xs', progressType: 'info'});
+                $http.get('api/tcamtdocument').then(function(response) {
+                    console.log(response);
+                    $rootScope.tcamtDocument = angular.fromJson(response.data);
+                    $rootScope.tcamtDocument.userGuide.slides.sort($rootScope.compare);
+                    waitingDialog.hide();
+                }, function(error) {
+                    waitingDialog.hide();
+                });
+            }else{
+            }
+        };
+
+
+        $rootScope.compare = function (a,b) {
+            if (a.position < b.position)
+                return -1;
+            if (a.position > b.position)
+                return 1;
+            return 0;
+        }
+
+
         $rootScope.testDataCategorizations = ['Indifferent', 'Presence-Content Indifferent', 'Presence-Configuration',
             'Presence-System Generated', 'Presence-Test Case Proper', 'Presence Length-Content Indifferent',
             'Presence Length-Configuration', 'Presence Length-System Generated', 'Presence Length-Test Case Proper',
