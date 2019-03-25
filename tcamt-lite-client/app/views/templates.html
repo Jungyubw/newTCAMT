@@ -717,9 +717,6 @@
                            ng-click="goNext()"><span><i
                         class="fa fa fa-arrow-right fa-fw"></i> Next </span></md-button>
 
-
-
-
                 <md-button ng-if=" exportStep === 'DOMAIN_STEP'" class="btn btn-raised btn-success btn-sm"
                            ng-click="exportAsZIPToGVT()"
                            ng-disabled="loading  || ((newDomain == null || newDomain.homeTitle == null || newDomain.homeTitle == '' || newDomain.name == null  || newDomain.name == '') && target.domain == null)"><span><i

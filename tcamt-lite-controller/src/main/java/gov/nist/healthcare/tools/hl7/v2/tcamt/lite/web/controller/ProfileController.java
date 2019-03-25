@@ -188,10 +188,11 @@ public class ProfileController extends CommonController {
       throw new Exception();
     }
 
-    ProfileData p = pds;
-    p.setId(id);
-    p.setAccountId(account.getId());
+    ProfileData p = profileService.findOne(id);
     p.setLastUpdatedDate(new Date());
+    p.setProfileXMLFileStr(pds.getProfileXMLFileStr());
+    p.setConstraintsXMLFileStr(pds.getConstraintsXMLFileStr());
+    p.setValueSetXMLFileStr(pds.getValueSetXMLFileStr());
     profileService.save(p);
   }
 
