@@ -207,9 +207,7 @@ public class ProfileController extends CommonController {
 
     ProfileData p = profileService.findOne(pa.getId());
     p.setLastUpdatedDate(new Date());
-    
     p.setProfileXMLFileStr(p.getProfileXMLFileStr().replace("Name=\"" + p.getIntegrationProfile().getIntegrationProfileMetaData().getName() + "\"", "Name=\"" + pa.getIntegrationProfileMetaData().getName() + "\""));
-
     profileService.save(p);
   }
 
