@@ -28,11 +28,9 @@
                                             <thead>
                                             <tr class="tbl-header">
                                                 <th st-ratio="5">#</th>
-                                                <th st-ratio="10" st-sort="integrationProfileMetaData.name">Profile XML Name</th>
-                                                <th st-ratio="10">Constraints XML name</th>
-                                                <th st-ratio="10">ValueSet XML name</th>
-                                                <th st-ratio="10" st-sort="integrationProfileMetaData.hl7Version">HL7Version</th>
-                                                <th st-ratio="10" st-sort="date">Uploaded Date</th>
+                                                <th st-ratio="40" st-sort="integrationProfileMetaData.name">Profile XML Name</th>
+                                                <th st-ratio="5" st-sort="integrationProfileMetaData.hl7Version">HL7Version</th>
+                                                <th st-ratio="5" st-sort="date">Uploaded Date</th>
                                                 <th st-ratio="45">Conformance Profiles</th>
                                                 <th st-ratio="10">Actions</th>
                                             </tr>
@@ -40,19 +38,24 @@
                                             <tbody>
                                             <tr ng-repeat="row in tmpPrivateProfiles | orderBy:'row.metaData.date'">
                                                 <td st-ratio="5">{{$index + 1}}</td>
-                                                <td st-ratio="10" ng-bind="row.integrationProfileMetaData.name"></td>
-                                                <td st-ratio="10" ng-bind="row.conformanceContextMetaData.name"></td>
-                                                <td st-ratio="10" ng-bind="row.valueSetLibraryMetaData.name"></td>
-                                                <td st-ratio="10" ng-bind="row.integrationProfileMetaData.hl7Version"></td>
-                                                <td st-ratio="10">{{row.lastUpdatedDate | date:dateFormat}}</td>
+                                                <td st-ratio="40">
+                                                    <input class="form-control" type="text" ng-model="row.integrationProfileMetaData.name"/>
+                                                </td>
+                                                <td st-ratio="5" ng-bind="row.integrationProfileMetaData.hl7Version"></td>
+                                                <td st-ratio="5">{{row.lastUpdatedDate | date:dateFormat}}</td>
                                                 <td st-ratio="45">
                                                     <li ng-repeat="m in row.conformanceProfileMetaDataSet">{{m.name}} [{{m.type}}^{{m.event}}^{{m.structId}}, {{m.identifier}}]</li>
                                                 </td>
                                                 <td st-ratio="10">
-                                                    <button title="Replace Profile"
+                                                    <button title="Replace Profile XML file"
                                                             type="button" class="btn btn-xs btn-info no-margin"
                                                             ng-click="openDialogForReplacePrivateProfile($event, row);">
                                                         <span><i class="fa fa-repeat fa-fw"></i> Update</span>
+                                                    </button>
+                                                    <button title="Update Profile Name"
+                                                            type="button" class="btn btn-xs btn-info no-margin"
+                                                            ng-click="saveProfileName(row);">
+                                                        <span><i class="fa fa-save fa-fw"></i> Update</span>
                                                     </button>
                                                     <button title="Delete" type="button" class="btn btn-xs btn-danger no-margin"
                                                             ng-click="confirmDeletePrivateProfile($event, row)">
@@ -77,11 +80,9 @@
                                             <thead>
                                             <tr class="tbl-header">
                                                 <th st-ratio="5">#</th>
-                                                <th st-ratio="10" st-sort="integrationProfileMetaData.name">Profile XML Name</th>
-                                                <th st-ratio="10">Constraints XML name</th>
-                                                <th st-ratio="10">ValueSet XML name</th>
-                                                <th st-ratio="10" st-sort="integrationProfileMetaData.hl7Version">HL7Version</th>
-                                                <th st-ratio="10" st-sort="date">Uploaded Date</th>
+                                                <th st-ratio="40" st-sort="integrationProfileMetaData.name">Profile XML Name</th>
+                                                <th st-ratio="5" st-sort="integrationProfileMetaData.hl7Version">HL7Version</th>
+                                                <th st-ratio="5" st-sort="date">Uploaded Date</th>
                                                 <th st-ratio="45">Conformance Profiles</th>
                                                 <th st-ratio="10" ng-if="isAdmin()">Actions</th>
                                             </tr>
@@ -89,11 +90,11 @@
                                             <tbody>
                                             <tr ng-repeat="row in tmpPublicProfiles | orderBy:'row.metaData.date'">
                                                 <td st-ratio="5">{{$index + 1}}</td>
-                                                <td st-ratio="10" ng-bind="row.integrationProfileMetaData.name"></td>
-                                                <td st-ratio="10" ng-bind="row.conformanceContextMetaData.name"></td>
-                                                <td st-ratio="10" ng-bind="row.valueSetLibraryMetaData.name"></td>
-                                                <td st-ratio="10" ng-bind="row.integrationProfileMetaData.hl7Version"></td>
-                                                <td st-ratio="10">{{row.lastUpdatedDate | date:dateFormat}}</td>
+                                                <td st-ratio="40">
+                                                    <input class="form-control" type="text" ng-model="row.integrationProfileMetaData.name"/>
+                                                </td>
+                                                <td st-ratio="5" ng-bind="row.integrationProfileMetaData.hl7Version"></td>
+                                                <td st-ratio="5">{{row.lastUpdatedDate | date:dateFormat}}</td>
                                                 <td st-ratio="45">
                                                     <li ng-repeat="m in row.conformanceProfileMetaDataSet">{{m.name}} [{{m.type}}^{{m.event}}^{{m.structId}}, {{m.identifier}}]</li>
                                                 </td>
@@ -102,6 +103,11 @@
                                                             type="button" class="btn btn-xs btn-info no-margin"
                                                             ng-click="openDialogForReplacePublicProfile($event, row);">
                                                         <span><i class="fa fa-repeat fa-fw"></i> Update</span>
+                                                    </button>
+                                                    <button title="Update Profile Name"
+                                                            type="button" class="btn btn-xs btn-info no-margin"
+                                                            ng-click="saveProfileName(row);">
+                                                        <span><i class="fa fa-save fa-fw"></i> Update</span>
                                                     </button>
                                                     <button title="Delete" type="button" class="btn btn-xs btn-danger no-margin"
                                                             ng-click="confirmDeletePublicProfile($event, row)">

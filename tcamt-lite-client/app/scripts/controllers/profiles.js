@@ -93,6 +93,16 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 		});
 	};
 
+	$scope.saveProfileName = function(profile) {
+        $http.post('api/profiles/saveProfileMeta', profile).then(function (response) {
+            var result = response.data;
+            if(result.success){
+                $scope.checkLoadAll();
+            }
+        }, function (e) {
+        });
+    }
+
 	$scope.openDialogForReplacePublicProfile = function (ev, profile) {
 		$rootScope.toBeReplaceProfileId = profile.id;
 		$mdDialog.show({

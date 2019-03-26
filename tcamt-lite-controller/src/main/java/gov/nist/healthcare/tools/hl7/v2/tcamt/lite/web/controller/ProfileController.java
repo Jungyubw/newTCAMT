@@ -195,7 +195,23 @@ public class ProfileController extends CommonController {
     p.setValueSetXMLFileStr(pds.getValueSetXMLFileStr());
     profileService.save(p);
   }
+  
+  @RequestMapping(value = "/saveProfileMeta", method = RequestMethod.POST)
+  public void saveProfileMeta(@RequestBody ProfileAbstract pa)
+      throws Exception {
+    User u = userService.getCurrentUser();
+    Account account = accountRepository.findByTheAccountsUsername(u.getUsername());
+    if (account == null) {
+      throw new Exception();
+    }
 
+    ProfileData p = profileService.findOne(pa.getId());
+    p.setLastUpdatedDate(new Date());
+    
+    p.setProfileXMLFileStr(p.getProfileXMLFileStr().replace("Name=\"" + p.getIntegrationProfile().getIntegrationProfileMetaData().getName() + "\"", "Name=\"" + pa.getIntegrationProfileMetaData().getName() + "\""));
+
+    profileService.save(p);
+  }
 
   @RequestMapping(value = "/importXMLFilesForPublic", method = RequestMethod.POST)
   public void importXMLFilesForPublic(@RequestBody ProfileData pds) throws Exception {
