@@ -52,7 +52,7 @@ body {
 											</md-select>
 										</md-input-container>
 									</div>
-									<div ng-if="selectedTestStep.type" class="col-md-6">
+									<div ng-if="selectedTestStep.type && selectedTestStep.type != 'DATAINSTANCE'" class="col-md-6">
 										<img src="images/{{selectedTestStep.type}}.png">
 									</div>
 								</div>

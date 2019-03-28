@@ -93,9 +93,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.nistStd.nist = true;
 	$scope.nistStd.std = false;
 	$rootScope.changesMap={};
-	$rootScope.tocHeigh=300;
-	$rootScope.igHeigh=300;
-	$rootScope.templateHeigh=300;
+	$rootScope.tocHeigh = 700;
+	$rootScope.templateHeigh = 300;
 	$(document).keydown(function(e) {
 		var nodeName = e.target.nodeName.toLowerCase();
 
@@ -326,16 +325,6 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 			$rootScope.tocHeigh=$rootScope.tocHeigh-50;
 		}else{
 			$rootScope.tocHeigh=$rootScope.tocHeigh;
-		}
-	};
-	$scope.incrementIg=function(){
-		$rootScope.igHeigh=$rootScope.igHeigh+50;
-	};
-	$scope.decrementIg=function(){
-		if($rootScope.igHeigh>50){
-			$rootScope.igHeigh=$rootScope.igHeigh-50;
-		}else{
-			$rootScope.igHeigh=$rootScope.igHeigh;
 		}
 	};
 	$scope.incrementTemplate=function(){
@@ -980,7 +969,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                     readOnly: false,
                     showCursorWhenSelecting: true
                 });
-                $scope.editor.setSize("100%", $rootScope.igHeigh+$rootScope.templateHeigh+$rootScope.tocHeigh);
+                $scope.editor.setSize("100%", $rootScope.templateHeigh+$rootScope.tocHeigh);
                 $scope.editor.refresh();
                 $scope.editor.on("change", function () {
                     $scope.updateEr7Message($scope.editor.getValue());
@@ -1004,7 +993,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                     readOnly: false,
                     showCursorWhenSelecting: true
                 });
-                $scope.editorValidation.setSize("100%", $rootScope.igHeigh+$rootScope.templateHeigh+$rootScope.tocHeigh);
+                $scope.editorValidation.setSize("100%", $rootScope.templateHeigh+$rootScope.tocHeigh);
                 $scope.editorValidation.refresh();
 
                 $scope.editorValidation.on("change", function () {
@@ -1451,6 +1440,8 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             }, function (error) {
                 waitingDialog.hide();
             });
+		}else {
+            waitingDialog.hide();
 		}
 	};
 	$scope.selectSegment = function (segment) {

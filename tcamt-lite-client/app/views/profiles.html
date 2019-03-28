@@ -39,7 +39,12 @@
                                             <tr ng-repeat="row in tmpPrivateProfiles | orderBy:'row.metaData.date'">
                                                 <td st-ratio="5">{{$index + 1}}</td>
                                                 <td st-ratio="40">
-                                                    <input class="form-control" type="text" ng-model="row.integrationProfileMetaData.name"/>
+                                                    <div class="col-md-11">
+                                                        <input class="form-control" type="text" ng-model="row.integrationProfileMetaData.name"/>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <i class="fa fa-floppy-o fa-fw" ng-click="saveProfileName(row);"></i>
+                                                    </div>
                                                 </td>
                                                 <td st-ratio="5" ng-bind="row.integrationProfileMetaData.hl7Version"></td>
                                                 <td st-ratio="5">{{row.lastUpdatedDate | date:dateFormat}}</td>
@@ -51,11 +56,6 @@
                                                             type="button" class="btn btn-xs btn-info no-margin"
                                                             ng-click="openDialogForReplacePrivateProfile($event, row);">
                                                         <span><i class="fa fa-repeat fa-fw"></i> Update</span>
-                                                    </button>
-                                                    <button title="Update Profile Name"
-                                                            type="button" class="btn btn-xs btn-info no-margin"
-                                                            ng-click="saveProfileName(row);">
-                                                        <span><i class="fa fa-save fa-fw"></i> Update</span>
                                                     </button>
                                                     <button title="Delete" type="button" class="btn btn-xs btn-danger no-margin"
                                                             ng-click="confirmDeletePrivateProfile($event, row)">
@@ -91,7 +91,12 @@
                                             <tr ng-repeat="row in tmpPublicProfiles | orderBy:'row.metaData.date'">
                                                 <td st-ratio="5">{{$index + 1}}</td>
                                                 <td st-ratio="40">
-                                                    <input class="form-control" type="text" ng-model="row.integrationProfileMetaData.name"/>
+                                                    <div class="col-md-11">
+                                                        <input class="form-control" type="text" ng-model="row.integrationProfileMetaData.name"/>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <i class="fa fa-floppy-o fa-fw" ng-click="saveProfileName(row);"></i>
+                                                    </div>
                                                 </td>
                                                 <td st-ratio="5" ng-bind="row.integrationProfileMetaData.hl7Version"></td>
                                                 <td st-ratio="5">{{row.lastUpdatedDate | date:dateFormat}}</td>
@@ -103,11 +108,6 @@
                                                             type="button" class="btn btn-xs btn-info no-margin"
                                                             ng-click="openDialogForReplacePublicProfile($event, row);">
                                                         <span><i class="fa fa-repeat fa-fw"></i> Update</span>
-                                                    </button>
-                                                    <button title="Update Profile Name"
-                                                            type="button" class="btn btn-xs btn-info no-margin"
-                                                            ng-click="saveProfileName(row);">
-                                                        <span><i class="fa fa-save fa-fw"></i> Update</span>
                                                     </button>
                                                     <button title="Delete" type="button" class="btn btn-xs btn-danger no-margin"
                                                             ng-click="confirmDeletePublicProfile($event, row)">
