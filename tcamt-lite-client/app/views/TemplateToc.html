@@ -37,7 +37,7 @@
             </div>
 
             <div ui-tree-handle style="margin-left: 20px;">
-                <i data-nodrag ng-click="switcherEr7Message()" class="fa" ng-class="{'fa-caret-right': Er7MessageCollapsed, 'fa-caret-down': !Er7MessageCollapsed}"></i> Er7 Message Templates
+                <i data-nodrag ng-click="switcherEr7Message()" class="fa" ng-class="{'fa-caret-right': Er7MessageCollapsed, 'fa-caret-down': !Er7MessageCollapsed}"></i> ER7 Message Templates
             </div>
             <ol ui-tree-nodes="" ng-model="template.er7Templates" ng-if="!Er7MessageCollapsed">
                 <li ng-repeat="er7Tmp in template.er7Templates" ui-tree-node>
@@ -49,7 +49,7 @@
             </ol>
 
             <div ui-tree-handle style="margin-left: 20px;">
-                <i data-nodrag ng-click="switcherEr7Segment()" class="fa" ng-class="{'fa-caret-right': Er7SegmentCollapsed, 'fa-caret-down': !Er7SegmentCollapsed}"></i> Segment Line Templates
+                <i data-nodrag ng-click="switcherEr7Segment()" class="fa" ng-class="{'fa-caret-right': Er7SegmentCollapsed, 'fa-caret-down': !Er7SegmentCollapsed}"></i> ER7 Segment Line Templates
             </div>
             <ol ui-tree-nodes="" ng-model="template.er7segmentTemplates" data-nodrag ng-if="!Er7SegmentCollapsed">
                 <li ng-repeat="er7Tmp in template.er7segmentTemplates" ui-tree-node data-nodrag>
@@ -230,7 +230,7 @@
         </div>
     </form>
     <div class="page-header">
-        <span class="header4">Er7 Message</span>
+        <span class="header4">ER7 Message</span>
     </div>
 
     <div class="col-md-12">

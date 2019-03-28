@@ -29,6 +29,7 @@
 	<sec:http pattern="/api/igdocuments/config" security="none" />
 	<sec:http pattern="/api/datatype-library/config" security="none" />
 	<sec:http pattern="/api/appInfo" security="none" />
+	<sec:http pattern="/api/tcamtdocument" security="none" />
 	<sec:http pattern="/api/uploaded_files/file" security="none" />
 
 	<sec:http create-session="ifRequired" use-expressions="true">

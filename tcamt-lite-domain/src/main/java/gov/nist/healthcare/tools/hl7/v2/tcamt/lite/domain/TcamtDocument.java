@@ -1,6 +1,7 @@
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.Id;
 
@@ -18,6 +19,8 @@ public class TcamtDocument implements Serializable, Cloneable {
   private String id;
 
   private UserGuide userGuide;
+  
+  private Set<GeneralDocument> generalDocuments;
 
   public String getId() {
     return id;
@@ -33,6 +36,14 @@ public class TcamtDocument implements Serializable, Cloneable {
 
   public void setUserGuide(UserGuide userGuide) {
     this.userGuide = userGuide;
+  }
+
+  public Set<GeneralDocument> getGeneralDocuments() {
+    return generalDocuments;
+  }
+
+  public void setGeneralDocuments(Set<GeneralDocument> generalDocuments) {
+    this.generalDocuments = generalDocuments;
   }
 
 

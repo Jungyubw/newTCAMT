@@ -45,41 +45,7 @@
                 <label class="badge" ng-click="decrementToc()"><i class="fa fa-caret-up" aria-hidden="true"></i></label>
                 </span>
                 </div>
-                
-                <span>
-                  <label style="margin-left:4px;">Hide IG List:
-    				<input type="checkbox" ng-model="ighidden">
-   				</label>
-   				  <label style="margin-left:4px;">Hide Templates List:
-    				<input type="checkbox" ng-model="templateHidden">
-   				</label>
-         		</span>
-	
-				<div class="panel panel-primary" ng-if="!ighidden">
-				   <div class="panel-heading panel-heading-collapsable" style="background-color:#395286;">
-				<span>
-				 <i class="glyphicon glyphicon-list"></i>
-				
-				    <span class=""><strong >IG Documents Tree</strong></span>
-				    <span layout="row" layout-align="center center">
-						<input flex="40" type="text" class="input input-sm form-control" placeholder="Filter by structure ID" ng-model="sr.structId" style="margin-right: 2px;"></input>
-						<input flex="40" type="text" class="input input-sm form-control" placeholder="Filter by Name" ng-model="sr.name" style="margin-right: 2px;"></input>
-						<input flex="40" type="text" class="input input-sm form-control" placeholder="Filter by Identifier" ng-model="sr.identifier"></input>
-					</span>
-				 </span>
-				</div>
-				<div class="panel-body" style="height:{{igHeigh}}px;">
-					<div class="">
-						<div ng-include="'views/IgToc.html'"></div>
-					</div>
-				</div>
-                </div>
-                <div style="text-align: center;" ng-if="!ighidden">
-				<span>
-              	<label class="badge" ng-click="incrementIg()"><i class="fa fa-caret-down" aria-hidden="true"></i></label>
-                <label class="badge" ng-click="decrementIg()"><i class="fa fa-caret-up" aria-hidden="true"></i></label>
-                </span>
-                </div>
+
                 <div class="panel panel-primary" ng-if="!templateHidden">
                 <div class="panel-heading panel-heading-collapsable" style="background-color:#4c70bb;">
                     <i class="glyphicon glyphicon-list"></i> <strong>Templates</strong>

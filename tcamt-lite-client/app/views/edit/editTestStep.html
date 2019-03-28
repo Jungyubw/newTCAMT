@@ -42,15 +42,18 @@ body {
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
 											<label>Type</label>
-											<md-select ng-model="selectedTestStep.type" ng-change="recordChanged(selectedTestStep);">
-												<md-option value="TA_INITIATOR">TA_INITIATOR</md-option>
-												<md-option value="TA_RESPONDER">TA_RESPONDER</md-option>
-												<md-option value="SUT_INITIATOR">SUT_INITIATOR</md-option>
-												<md-option value="SUT_RESPONDER">SUT_RESPONDER</md-option>
+											<md-select ng-model="selectedTestStep.type" ng-change="recordChanged(selectedTestStep);handleTestStepType();">
+												<md-option value="TA_INITIATOR">(Profilebased)TA_INITIATOR</md-option>
+												<md-option value="TA_RESPONDER">(Profilebased)TA_RESPONDER</md-option>
+												<md-option value="SUT_INITIATOR">(Profilebased)SUT_INITIATOR</md-option>
+												<md-option value="SUT_RESPONDER">(Profilebased)SUT_RESPONDER</md-option>
 												<md-option value="SUT_MANUAL">SUT_MANUAL</md-option>
 												<md-option value="TA_MANUAL">TA_MANUAL</md-option>
 											</md-select>
 										</md-input-container>
+									</div>
+									<div ng-if="selectedTestStep.type" class="col-md-6">
+										<img src="images/{{selectedTestStep.type}}.png">
 									</div>
 								</div>
 							</div>
@@ -60,8 +63,9 @@ body {
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
 											<label>Type</label>
-											<md-select ng-model="selectedTestStep.type" ng-change="recordChanged(selectedTestStep);">
-												<md-option value="DATAINSTANCE">DATAINSTANCE</md-option>
+											<md-select ng-model="selectedTestStep.type" ng-change="recordChanged(selectedTestStep);handleTestStepType();">
+												<md-option value="DATAINSTANCE">Profilebased</md-option>
+												<md-option value="SUT_MANUAL">MANUAL</md-option>
 											</md-select>
 										</md-input-container>
 									</div>
@@ -69,24 +73,22 @@ body {
 							</div>
 
 							<div class="row" ng-if="isNotManualTestStep()">
-								<div class="col-md-12">
-									<button title="Delete Profile" type="button" class="btn btn-danger btn-xs" ng-click="deleteProfile();">
-										<span><i class="fa fa-cross fa-fw"></i> Delete Profile (Make Manual TestStep)</span>
-									</button>
-								</div>
-
 								<div class="col-md-12" style="margin-top:35px">
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
-											<label>Integration Profile</label>
-											<input ng-model="selectedTestStep.integrationProfileId" disabled type="text"/>
+											<label>Conformance Profile</label>
+											<md-select ng-model="selectedTestStep.profileIds" ng-change="assignProfile();recordChanged(selectedTestStep);">
+												<md-optgroup label="{{ip.integrationProfileMetaData.name}}" ng-repeat="ip in integrationAbstractProfiles">
+													<md-option ng-value="cp.id+'@'+ip.id" ng-repeat="cp in ip.conformanceProfileMetaDataSet">{{cp.name}}</md-option>
+												</md-optgroup>
+											</md-select>
 										</md-input-container>
+
 									</div>
 
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
-											<label>Conformance Profile</label>
-											<input ng-model="selectedTestStep.conformanceProfileId" disabled type="text"/>
+											<label title="{{getIntegrationProfileName()}}">{{getIntegrationProfileName()}}</label>
 										</md-input-container>
 									</div>
 								</div>
@@ -148,7 +150,7 @@ body {
 							<div class="col-md-12">
 								<span class="pull-left">
 									<button type="button" class="btn btn-info btn-sm" ng-click="openCreateEr7TemplateModal()"><i class="fa fa-plus"></i>
-                        				New Er7 Message Template
+                        				New ER7 Message Template
                     				</button>
 								</span>
 							</div>
@@ -250,7 +252,7 @@ body {
                         								New TestData Categorization Template For Segment
                     								</button>
 													<button type="button" class="btn btn-info btn-sm" ng-click="openCreateEr7SegmentTemplateModal()"><i class="fa fa-plus"></i>
-                        								New Segment Line Template
+                        								New ER7 Segment Line Template
                     								</button>
 												</span>
 
@@ -541,17 +543,6 @@ body {
 										<ng-bind-html ng-bind-html="jurorDocumentsHTML"/>
 									</uib-accordion-group>
 								</uib-accordion>
-							</div>
-						</md-content>
-					</md-tab>
-					<md-tab label="Debug">
-						<md-content class="md-padding">
-							<div class="col-md-12">
-								<span class="pull-left">
-									<button type="button" class="btn btn-info btn-sm" ng-click="printTestStep()"><i class="fa fa-plus"></i>
-                        				print!!
-                    				</button>
-								</span>
 							</div>
 						</md-content>
 					</md-tab>
@@ -986,7 +977,7 @@ body {
 </script>
 <script type="text/ng-template" id="Er7TemplateCreationModal.html">
 	<div class="modal-header">
-		<h3 class="modal-title">Set Name of Er7 Template</h3>
+		<h3 class="modal-title">Set Name of ER7 Template</h3>
 	</div>
 	<div class="modal-body">
 		<div class="row" style="margin:12px">

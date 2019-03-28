@@ -250,6 +250,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	$scope.TestPlanCreationModalCtrl = function($scope,$mdDialog,$http) {
 		$scope.newTestPlan = {};
 		$scope.newTestPlan.accountId = userInfoService.getAccountID();
+		$scope.newTestPlan.type = 'DataInstance';
         $scope.newTestPlan.longId = Math.random() * 1000000000;
 		$scope.privateProfiles = $rootScope.privateProfiles;
 		$scope.publicProfiles = $rootScope.publicProfiles;
@@ -626,14 +627,42 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 		return false;
 	};
-    $scope.deleteProfile = function (){
-        $rootScope.selectedTestStep.integrationProfileId = null;
-        $rootScope.selectedTestStep.conformanceProfileId = null;
-    };
+
+    $scope.handleTestStepType = function () {
+    	if($rootScope.selectedTestStep.type.includes('MANUAL')) {
+			$rootScope.selectedTestStep.integrationProfileId = null;
+			$rootScope.selectedTestStep.conformanceProfileId = null;
+			$rootScope.selectedTestStep.profileIds = null;
+		}
+	}
 	$scope.isNotManualTestStep = function(){
-		if($rootScope.selectedTestStep == null || $rootScope.selectedTestStep.integrationProfileId == null) return false;
+		if($rootScope.selectedTestStep == null || $rootScope.selectedTestStep.type.includes('MANUAL')) {
+			return false;
+		}
 		return true;
 	};
+
+    $scope.getIntegrationProfileName = function(){
+    	if($rootScope.selectedTestStep.integrationProfileId){
+    		for(var ip of $rootScope.integrationAbstractProfiles){
+				if(ip.id === $rootScope.selectedTestStep.integrationProfileId){
+					return ip.integrationProfileMetaData.name;
+				}
+			}
+		}
+    	return null;
+	}
+
+	$scope.assignProfile = function() {
+		if($rootScope.selectedTestStep.profileIds){
+			var res = $rootScope.selectedTestStep.profileIds.split("@");
+			if(res.length == 2) {
+				$rootScope.selectedTestStep.integrationProfileId = res[1];
+				$rootScope.selectedTestStep.conformanceProfileId = res[0];
+			}
+		}
+	};
+
     $scope.hasValidEr7Message = function(){
         if($rootScope.selectedTestStep !== null && $rootScope.selectedTestStep.er7Message && $rootScope.selectedTestStep.er7Message.startsWith('MSH'))
             return true;
@@ -1160,10 +1189,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 	};
 	$scope.selectTestCaseGroup = function (testCaseGroup) {
 		if (testCaseGroup != null) {
-			waitingDialog.show('Opening Test Case Group...', {dialogSize: 'xs', progressType: 'info'});
+			waitingDialog.show('Opening Test Group...', {dialogSize: 'xs', progressType: 'info'});
 			$timeout(function () {
 				$rootScope.selectedTestCaseGroup = testCaseGroup;
-				$scope.updateCurrentTitle("Test Case Group", $rootScope.selectedTestCaseGroup.name);
+				$scope.updateCurrentTitle("Test Group", $rootScope.selectedTestCaseGroup.name);
 				$scope.subview = "EditTestCaseGroupMetadata.html";
 			}, 0);
 			$timeout(function() {
@@ -1237,6 +1266,10 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		if (testStep != null) {
 			waitingDialog.show('Opening Test Step ...', {dialogSize: 'xs', progressType: 'info'});
             $rootScope.selectedTestStep = testStep;
+            if($rootScope.selectedTestStep.conformanceProfileId && $rootScope.selectedTestStep.integrationProfileId) {
+				$rootScope.selectedTestStep.profileIds = $rootScope.selectedTestStep.conformanceProfileId + '@' + $rootScope.selectedTestStep.integrationProfileId;
+			}
+
             $scope.updateCurrentTitle("Test Step", $rootScope.selectedTestStep.name);
 
             $rootScope.selectedTestCaseGroup=null;
@@ -2459,7 +2492,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				id: caseId,
                 longId: Math.random() * 1000000000,
 				type : "testcasegroup",
-				name: "New Test Case Group",
+				name: "New Test Group",
 				isChanged:true,
 				position: $itemScope.$nodeScope.$modelValue.children.length+1,
 				children:[]
@@ -2505,6 +2538,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
                 id: stepId,
                 longId: Math.random() * 1000000000,
                 name : "New Test Step",
+				type : "SUT_MANUAL",
 				isChanged : true,
                 position : $itemScope.$nodeScope.$modelValue.teststeps.length+1,
                 testStepStory: {}
@@ -2942,7 +2976,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.editor = null;
 		$scope.editorValidation = null;
 
-		$rootScope.CurrentTitle= "Er7 Segment Line Template: " + er7temp.name;
+		$rootScope.CurrentTitle= "ER7 Segment Line Template: " + er7temp.name;
 
 		$rootScope.er7SegmentTemplate=er7temp;
 		$scope.er7SegmentTemplate=er7temp;
@@ -3251,7 +3285,7 @@ angular.module('tcl').controller('Er7TemplateCreationModalCtrl', function($scope
         $scope.newEr7Template = {};
         $scope.newEr7Template.id = new ObjectId().toString();
         $rootScope.changesMap[$scope.newEr7Template.id]=true;
-        $scope.newEr7Template.name = 'new Er7 Template for ' + cpMeta.structId;
+        $scope.newEr7Template.name = 'new ER7 Template for ' + cpMeta.structId;
         $scope.newEr7Template.descrption = 'No Desc';
         $scope.newEr7Template.date = new Date();
         $scope.newEr7Template.integrationProfileId = $rootScope.selectedTestStep.integrationProfileId;
@@ -3280,7 +3314,7 @@ angular.module('tcl').controller('Er7SegmentTemplateCreationModalCtrl', function
 	$scope.newEr7SegmentTemplate.date = new Date();
 	$scope.newEr7SegmentTemplate.content=$rootScope.selectedSegmentNode.segmentStr;
 	$scope.newEr7SegmentTemplate.segmentName = $rootScope.selectedSegmentNode.segmentName;
-	$scope.newEr7SegmentTemplate.name = 'new Er7 Template for '+$scope.newEr7SegmentTemplate.segmentName;
+	$scope.newEr7SegmentTemplate.name = 'new ER7 Template for '+$scope.newEr7SegmentTemplate.segmentName;
 
 
 	$scope.createEr7SegmentTemplate = function() {

@@ -20,18 +20,15 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
         };
 
         $rootScope.loadDocument = function () {
-            if (userInfoService.isAuthenticated() && !userInfoService.isPending()) {
-                waitingDialog.show('Loading ...', {dialogSize: 'xs', progressType: 'info'});
-                $http.get('api/tcamtdocument').then(function(response) {
-                    console.log(response);
-                    $rootScope.tcamtDocument = angular.fromJson(response.data);
-                    $rootScope.tcamtDocument.userGuide.slides.sort($rootScope.compare);
-                    waitingDialog.hide();
-                }, function(error) {
-                    waitingDialog.hide();
-                });
-            }else{
-            }
+            waitingDialog.show('Loading ...', {dialogSize: 'xs', progressType: 'info'});
+            $http.get('api/tcamtdocument').then(function(response) {
+                console.log(response);
+                $rootScope.tcamtDocument = angular.fromJson(response.data);
+                $rootScope.tcamtDocument.userGuide.slides.sort($rootScope.compare);
+                waitingDialog.hide();
+            }, function(error) {
+                waitingDialog.hide();
+            });
         };
 
 
