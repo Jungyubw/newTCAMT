@@ -336,6 +336,7 @@ public class GenerationUtil {
     }
 
     String mcXML = this.generateMessageContentXML(params, profileData);
+    System.out.println(mcXML);
     String xslStr = IOUtils
         .toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"));
 

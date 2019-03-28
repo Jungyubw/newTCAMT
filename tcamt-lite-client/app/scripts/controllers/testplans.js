@@ -1527,6 +1527,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         data.testCaseName = $scope.findTestCaseNameOfTestStep();
         data.tdsXSL = $rootScope.selectedTestStep.tdsXSL;
         data.jdXSL = $rootScope.selectedTestStep.jdXSL;
+        data.testDataCategorizationMap = $rootScope.selectedTestStep.testDataCategorizationMap;
 
         $http.post('api/teststep/getSupplements', data).then(function (response) {
             var result = angular.fromJson(response.data);
