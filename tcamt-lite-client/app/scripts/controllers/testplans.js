@@ -110,6 +110,29 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
 	});
 
+	$scope.addIGForFilter = function (id) {
+        if(!$scope.selectedTestPlan.listOfIntegrationProfileIds) {
+            $scope.selectedTestPlan.listOfIntegrationProfileIds = [];
+		}
+
+        $scope.selectedTestPlan.listOfIntegrationProfileIds.push(id);
+        $scope.recordChangeForGroup($scope.selectedTestPlan.listOfIntegrationProfileIds,$scope.selectedTestPlan);
+        $scope.updateListOfIntegrationAbstractProfiles();
+	};
+
+    $scope.removeIGForFilter = function (id) {
+        if(!$scope.selectedTestPlan.listOfIntegrationProfileIds) {
+            $scope.selectedTestPlan.listOfIntegrationProfileIds = [];
+        }
+
+        var index = $scope.selectedTestPlan.listOfIntegrationProfileIds.indexOf(id);
+        if (index > -1) {
+            $scope.selectedTestPlan.listOfIntegrationProfileIds.splice(index, 1);
+        }
+        $scope.recordChangeForGroup($scope.selectedTestPlan.listOfIntegrationProfileIds,$scope.selectedTestPlan);
+        $scope.updateListOfIntegrationAbstractProfiles();
+    };
+
 
 	$scope.findConfig = function (configId) {
         return _.find($rootScope.testStoryConfigs, function(config){ return config.id == configId; });
@@ -531,7 +554,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		}
     };
 	$scope.applyConformanceProfile = function (igid, mid) {
-        waitingDialog.show('Apply Conformance Profile...', {dialogSize: 'xs', progressType: 'info'});
+        waitingDialog.show('Apply Message Profile...', {dialogSize: 'xs', progressType: 'info'});
 		$rootScope.selectedTestStep.integrationProfileId = igid;
 		$rootScope.selectedTestStep.conformanceProfileId = mid;
 		waitingDialog.hide();
@@ -1541,7 +1564,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$scope.editor = null;
 		$scope.editorValidation = null;
 
-		$rootScope.CurrentTitle="Conformance Profile:"+ msg.name;
+		$rootScope.CurrentTitle="Message Profile:"+ msg.name;
 		$rootScope.selectedMessage = msg;
 
 		$scope.subview = "ViewMessageMetaData.html";

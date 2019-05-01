@@ -51,7 +51,7 @@ body {
 						<md-content class="md-padding">
 							<div class="row">
 								<md-input-container style="width: 100%;">
-									<label>TestCase Test Story Configuration</label>
+									<label>TestCase Test Story Template</label>
 									<md-select ng-model="selectedTestCase.testStoryConfigId" ng-change="recordChanged(selectedTestCase);updateTestStoryConfigForTestCase();">
 										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>
 									</md-select>

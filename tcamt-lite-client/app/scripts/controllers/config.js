@@ -52,7 +52,7 @@ angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $roo
     	if(!$rootScope.selectedTestStoryConfig){
             $scope.selectedTestStoryConfig =  angular.copy(_.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; }));
             $scope.selectedTestStoryConfig.id = new ObjectId().toString();
-            $scope.selectedTestStoryConfig.name = 'NewTestStoryConfig';
+            $scope.selectedTestStoryConfig.name = 'NewTestStoryTemplate';
             $scope.selectedTestStoryConfig.accountId = userInfoService.getAccountID();
     	}else{
             $scope.selectedTestStoryConfig = $rootScope.selectedTestStoryConfig;

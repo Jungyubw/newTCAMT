@@ -43,10 +43,10 @@ body {
 										<md-input-container style="width: 100%;">
 											<label>Type</label>
 											<md-select ng-model="selectedTestStep.type" ng-change="recordChanged(selectedTestStep);handleTestStepType();">
-												<md-option value="TA_INITIATOR">(Profilebased)TA_INITIATOR</md-option>
-												<md-option value="TA_RESPONDER">(Profilebased)TA_RESPONDER</md-option>
-												<md-option value="SUT_INITIATOR">(Profilebased)SUT_INITIATOR</md-option>
-												<md-option value="SUT_RESPONDER">(Profilebased)SUT_RESPONDER</md-option>
+												<md-option value="TA_INITIATOR">(Profile Based)TA_INITIATOR</md-option>
+												<md-option value="TA_RESPONDER">(Profile Based)TA_RESPONDER</md-option>
+												<md-option value="SUT_INITIATOR">(Profile Based)SUT_INITIATOR</md-option>
+												<md-option value="SUT_RESPONDER">(Profile Based)SUT_RESPONDER</md-option>
 												<md-option value="SUT_MANUAL">SUT_MANUAL</md-option>
 												<md-option value="TA_MANUAL">TA_MANUAL</md-option>
 											</md-select>
@@ -64,10 +64,17 @@ body {
 										<md-input-container style="width: 100%;">
 											<label>Type</label>
 											<md-select ng-model="selectedTestStep.type" ng-change="recordChanged(selectedTestStep);handleTestStepType();">
-												<md-option value="DATAINSTANCE">Profilebased</md-option>
-												<md-option value="SUT_MANUAL">MANUAL</md-option>
+												<md-option value="DATAINSTANCE">Profile Based</md-option>
+												<md-option value="MANUAL">MANUAL</md-option>
 											</md-select>
 										</md-input-container>
+									</div>
+									<div ng-if="selectedTestStep.type && selectedTestStep.type === 'MANUAL'" class="col-md-6">
+										<img src="images/{{selectedTestStep.type}}.png">
+									</div>
+
+									<div ng-if="selectedTestStep.type && selectedTestStep.type === 'DATAINSTANCE'" class="col-md-6">
+										<img src="images/{{selectedTestStep.type}}.png">
 									</div>
 								</div>
 							</div>
@@ -76,20 +83,19 @@ body {
 								<div class="col-md-12" style="margin-top:35px">
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
-											<label>Conformance Profile</label>
+											<label>Message Profile*</label>
 											<md-select ng-model="selectedTestStep.profileIds" ng-change="assignProfile();recordChanged(selectedTestStep);">
 												<md-optgroup label="{{ip.integrationProfileMetaData.name}}" ng-repeat="ip in integrationAbstractProfiles">
 													<md-option ng-value="cp.id+'@'+ip.id" ng-repeat="cp in ip.conformanceProfileMetaDataSet">{{cp.name}}</md-option>
 												</md-optgroup>
 											</md-select>
+											<span ng-if="!selectedTestStep.conformanceProfileId" style="color: red">Message Profile is required!</span>
+											<span ng-if="selectedTestStep.conformanceProfileId" style="color: grey">in {{getIntegrationProfileName()}}</span>
 										</md-input-container>
 
 									</div>
 
 									<div class="col-md-6">
-										<md-input-container style="width: 100%;">
-											<label title="{{getIntegrationProfileName()}}">{{getIntegrationProfileName()}}</label>
-										</md-input-container>
 									</div>
 								</div>
 
@@ -124,7 +130,7 @@ body {
 						<md-content class="md-padding">
 							<div class="row">
 								<md-input-container style="width: 100%;">
-									<label>TestStep Test Story Configuration</label>
+									<label>TestStep Test Story Template</label>
 									<md-select ng-model="selectedTestStep.testStoryConfigId" ng-change="recordChanged(selectedTestStep);updateTestStoryConfigForTestStep();">
 										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs track by config.id">{{::config.name}}</md-option>
 									</md-select>

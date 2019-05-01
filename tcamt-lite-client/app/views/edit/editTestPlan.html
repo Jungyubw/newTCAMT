@@ -70,52 +70,127 @@ body {
 							</div>
 						</div>
 
-						<div class="col-md-12">
-							<div class="col-md-6">
-								<md-input-container style="width: 100%;">
-									<label>Integration Profiles</label>
-									<md-select multiple ng-init="print('INIT'); print(selectedTestPlan.listOfIntegrationProfileIds)" ng-model="selectedTestPlan.listOfIntegrationProfileIds" md-on-close="print('CHANGED'); print(selectedTestPlan.listOfIntegrationProfileIds);recordChangeForGroup(selectedTestPlan.listOfIntegrationProfileIds,selectedTestPlan);updateListOfIntegrationAbstractProfiles();">
-										<md-optgroup label="My Profiles">
-											<md-option  ng-value="p.id" ng-repeat="p in privateProfiles track by $index">{{p.integrationProfileMetaData.name}}</md-option>
-										</md-optgroup>
-										<md-optgroup label="Public Profiles">
-											<md-option ng-value="p.id" ng-repeat="p in publicProfiles track by $index">{{p.integrationProfileMetaData.name}}</md-option>
-										</md-optgroup>
-									</md-select>
-								</md-input-container>
-							</div>
+						<!--<div class="col-md-12">-->
+							<!--<div class="col-md-6">-->
+								<!--<md-input-container style="width: 100%;">-->
+									<!--<label>Implementation Guides</label>-->
+									<!--<md-select multiple ng-init="print('INIT'); print(selectedTestPlan.listOfIntegrationProfileIds)" ng-model="selectedTestPlan.listOfIntegrationProfileIds" md-on-close="print('CHANGED'); print(selectedTestPlan.listOfIntegrationProfileIds);recordChangeForGroup(selectedTestPlan.listOfIntegrationProfileIds,selectedTestPlan);updateListOfIntegrationAbstractProfiles();">-->
+										<!--<md-optgroup label="My Implementation Guides">-->
+											<!--<md-option  ng-value="p.id" ng-repeat="p in privateProfiles track by $index">{{p.integrationProfileMetaData.name}}</md-option>-->
+										<!--</md-optgroup>-->
+										<!--<md-optgroup label="Public Implementation Guides">-->
+											<!--<md-option ng-value="p.id" ng-repeat="p in publicProfiles track by $index">{{p.integrationProfileMetaData.name}}</md-option>-->
+										<!--</md-optgroup>-->
+									<!--</md-select>-->
+								<!--</md-input-container>-->
+							<!--</div>-->
 
+						<!--</div>-->
+					</div>
+
+					<div class="page-header">
+						<span class="header5">Implementation Guide Filter</span>
+					</div>
+					<div class="row">
+						<div class="col-md-12" ng-show="privateProfiles.length > 0">
+							<label>My Implementation Guides</label>
+							<table st-table="tmpPrivateProfiles" st-safe-src="privateProfiles" class="smart-table table table-striped table-bordered">
+								<thead>
+								<tr class="tbl-header">
+									<th st-ratio="5">Included</th>
+									<th st-ratio="40" st-sort="integrationProfileMetaData.name">IG Name</th>
+									<th st-ratio="5" st-sort="integrationProfileMetaData.hl7Version">HL7Version</th>
+									<th st-ratio="5" st-sort="date">Uploaded Date</th>
+									<th st-ratio="45">Message Profiles</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr ng-repeat="row in tmpPrivateProfiles | orderBy:'row.metaData.date'">
+									<td st-ratio="5">
+										<div ng-show="selectedTestPlan.listOfIntegrationProfileIds && selectedTestPlan.listOfIntegrationProfileIds.indexOf(row.id) > -1">
+											<i class="fa fa-check-square-o" ng-click="removeIGForFilter(row.id)" />
+										</div>
+
+										<div ng-show="!selectedTestPlan.listOfIntegrationProfileIds || selectedTestPlan.listOfIntegrationProfileIds.indexOf(row.id) < 0">
+											<i class="fa fa-square-o" ng-click="addIGForFilter(row.id)" />
+										</div>
+									</td>
+									<td st-ratio="40">
+										{{row.integrationProfileMetaData.name}}
+									</td>
+									<td st-ratio="5" ng-bind="row.integrationProfileMetaData.hl7Version"></td>
+									<td st-ratio="5">{{row.lastUpdatedDate | date:dateFormat}}</td>
+									<td st-ratio="45">
+										<div ng-show="row.showMessages">
+											<i class="fa fa-minus" ng-click="row.showMessages = false;"> Hide List</i>
+											<li ng-repeat="m in row.conformanceProfileMetaDataSet">{{m.name}} [{{m.type}}^{{m.event}}^{{m.structId}}, {{m.identifier}}]</li>
+										</div>
+										<div ng-show="!row.showMessages">
+											<i class="fa fa-plus" ng-click="row.showMessages = true;"> Show List of </i>
+											{{row.conformanceProfileMetaDataSet.length}} message profiles
+										</div>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
+
+						<div class="col-md-12" ng-show="publicProfiles.length > 0">
+							<label>Public Implementation Guides</label>
+							<table st-table="tmpPublicPofiles" st-safe-src="publicProfiles" class="smart-table table table-striped table-bordered">
+								<thead>
+								<tr class="tbl-header">
+									<th st-ratio="5">#</th>
+									<th st-ratio="40" st-sort="integrationProfileMetaData.name">IG Name</th>
+									<th st-ratio="5" st-sort="integrationProfileMetaData.hl7Version">HL7Version</th>
+									<th st-ratio="5" st-sort="date">Uploaded Date</th>
+									<th st-ratio="45">Message Profiles</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr ng-repeat="row in tmpPublicPofiles | orderBy:'row.metaData.date'">
+									<td st-ratio="5">{{$index + 1}}</td>
+									<td st-ratio="40">
+										{{row.integrationProfileMetaData.name}}
+									</td>
+									<td st-ratio="5" ng-bind="row.integrationProfileMetaData.hl7Version"></td>
+									<td st-ratio="5">{{row.lastUpdatedDate | date:dateFormat}}</td>
+									<td st-ratio="45">
+										<div ng-show="row.showMessages">
+											<i class="fa fa-minus" ng-click="row.showMessages = false;"> Hide List</i>
+											<li ng-repeat="m in row.conformanceProfileMetaDataSet">{{m.name}} [{{m.type}}^{{m.event}}^{{m.structId}}, {{m.identifier}}]</li>
+										</div>
+										<div ng-show="!row.showMessages">
+											<i class="fa fa-plus" ng-click="row.showMessages = true;"> Show List of </i>
+											{{row.conformanceProfileMetaDataSet.length}} message profiles
+										</div>
+									</td>
+								</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 
 					<div class="page-header">
-						<span class="header5">Test Story Configuration</span>
+						<span class="header5">Test Story Template</span>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="col-md-6">
 								<md-input-container style="width: 100%;">
-									<label>Empty Content in TestStory</label>
-									<md-switch ng-model="selectedTestPlan.emptyStoryContentIgnored" ng-change="recordChanged(selectedTestPlan);">
-										<div ng-if="selectedTestPlan.emptyStoryContentIgnored">will be ignored</div>
-										<div ng-if="!selectedTestPlan.emptyStoryContentIgnored">will be contained</div>
-									</md-switch>
-								</md-input-container>
-							</div>
-							<div class="col-md-6">
-								<md-input-container style="width: 100%;">
-									<label>TestPlan Test Story Configuration</label>
+									<label>TestPlan Test Story Template</label>
 									<md-select ng-model="selectedTestPlan.testStoryConfigId" ng-change="recordChanged(selectedTestPlan);updateGlobalTestStoryConfigForTestPlan();">
 										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>
 									</md-select>
 								</md-input-container>
 							</div>
+							<div class="col-md-6"></div>
 						</div>
 
 						<div class="col-md-12">
 							<div class="col-md-6">
 								<md-input-container style="width: 100%;">
-									<label>TestGroup Test Story Configuration</label>
+									<label>TestGroup Test Story Template</label>
 									<md-select ng-model="selectedTestPlan.globalTestGroupConfigId" ng-change="recordChanged(selectedTestPlan);updateGlobalTestStoryConfigForTestGroup();">
 										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>
 									</md-select>
@@ -123,7 +198,7 @@ body {
 							</div>
 							<div class="col-md-6">
 								<md-input-container style="width: 100%;">
-									<label>TestCase Test Story Configuration</label>
+									<label>TestCase Test Story Template</label>
 									<md-select ng-model="selectedTestPlan.globalTestCaseConfigId" ng-change="recordChanged(selectedTestPlan);updateGlobalTestStoryConfigForTestCase();">
 										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>
 									</md-select>
@@ -134,7 +209,7 @@ body {
 						<div class="col-md-12">
 							<div class="col-md-6">
 								<md-input-container style="width: 100%;">
-									<label>TestStep (Manual) Test Story Configuration</label>
+									<label>TestStep (Manual) Test Story Template</label>
 									<md-select ng-model="selectedTestPlan.globalManualTestStepConfigId" ng-change="recordChanged(selectedTestPlan);updateGlobalManualTestStoryConfigForTestStep();">
 										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>
 									</md-select>
@@ -142,11 +217,24 @@ body {
 							</div>
 							<div class="col-md-6">
 								<md-input-container style="width: 100%;">
-									<label>TestStep (Auto) Test Story Configuration</label>
+									<label>TestStep (Auto) Test Story Template</label>
 									<md-select ng-model="selectedTestPlan.globalAutoTestStepConfigId" ng-change="recordChanged(selectedTestPlan);updateGlobalAutoTestStoryConfigForTestStep();">
 										<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>
 									</md-select>
 								</md-input-container>
+							</div>
+						</div>
+
+						<div class="col-md-12">
+							<div class="col-md-6">
+								<md-input-container style="width: 100%;">
+									<md-switch ng-model="selectedTestPlan.emptyStoryContentIgnored" ng-change="recordChanged(selectedTestPlan);">
+										<div ng-if="selectedTestPlan.emptyStoryContentIgnored">Empty section in test story will NOT be included</div>
+										<div ng-if="!selectedTestPlan.emptyStoryContentIgnored">Empty section in test story will be included</div>
+									</md-switch>
+								</md-input-container>
+							</div>
+							<div class="col-md-6">
 							</div>
 						</div>
 					</div>
@@ -193,7 +281,7 @@ body {
 				<md-content class="md-padding">
 					<div class="row">
 						<md-input-container style="width: 100%;">
-							<label>TestPlan Test Story Configuration</label>
+							<label>TestPlan Test Story Template</label>
 							<md-select ng-model="selectedTestPlan.testStoryConfigId" ng-change="print('top');recordChanged(selectedTestPlan);updateGlobalTestStoryConfigForTestPlan();">
 								<md-option ng-value="config.id" ng-repeat="config in testStoryConfigs">{{config.name}}</md-option>
 							</md-select>

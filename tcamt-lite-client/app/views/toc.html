@@ -72,12 +72,20 @@
                         <li ng-repeat="step in child.teststeps" ui-tree-node data-type="step" ng-if="!collapsed">
                             <div ui-tree-handle style="margin-left:21px;">
                                 <div context-menu="testStepOptions">
-
-
-                                    <span class="label label-segment label-icon draggable"> <i title="manual test step" ng-if="!this.$modelValue.conformanceProfileId" class="fa fa-hand-paper-o" aria-hidden="true"></i>
-TS</span>
+                                    <span class="label label-segment label-icon draggable">
+                                        <i title="manual test step" ng-if="!this.$modelValue.type || this.$modelValue.type.includes('MANUAL')" class="fa fa-hand-paper-o" aria-hidden="true"></i>
+                                        <span title="TA_INITIATOR" ng-if="this.$modelValue.type && this.$modelValue.type === 'TA_INITIATOR'" style="font-weight: bold; font-size: large;">→</span>
+                                        <span title="TA_INITIATOR" ng-if="this.$modelValue.type && this.$modelValue.type === 'TA_RESPONDER'" style="font-weight: bold; font-size: large;">⇢</span>
+                                        <span title="TA_INITIATOR" ng-if="this.$modelValue.type && this.$modelValue.type === 'SUT_INITIATOR'" style="font-weight: bold; font-size: large;">←</span>
+                                        <span title="TA_INITIATOR" ng-if="this.$modelValue.type && this.$modelValue.type === 'SUT_RESPONDER'" style="font-weight: bold; font-size: large;">⇠</span>
+                                        <i title="TA_INITIATOR" ng-if="this.$modelValue.type && this.$modelValue.type === 'DATAINSTANCE'" class="fa fa-file" aria-hidden="true"></i>
+                                        TS
+                                    </span>
                                     <span data-nodrag ng-click="Activate(this); selectTestStep(step);" ng-class="{selected1 : this.$modelValue===activeModel, used : this.$modelValue.conformanceProfileId===message.id||this.$modelValue.integrationProfileId===igdocument.id || this.$modelValue.conformanceProfileId===selectedTemplate.conformanceProfileId, unsaved:changesMap[step.id]} ">
-												[{{$index+1}}] {{step.name}} </span>
+                                        [{{$index+1}}] {{step.name}}
+                                    </span>
+                                    <span title="Test Step Type missing Error" ng-if="!this.$modelValue.type" style="font-weight: bold; font-size: large; color: red">!</span>
+                                    <span title="Message Profile missing Error" ng-if="this.$modelValue.type && !this.$modelValue.type.includes('MANUAL') && !this.$modelValue.conformanceProfileId" style="font-weight: bold; font-size: large; color: red">!</span>
                                 </div>
                             </div>
                         </li>
