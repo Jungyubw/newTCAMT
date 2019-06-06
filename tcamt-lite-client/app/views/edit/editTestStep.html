@@ -37,7 +37,7 @@ body {
 								</div>
 							</div>
 
-							<div class="row" ng-if="selectedTestPlan.transport">
+							<div class="row" ng-if="selectedTestPlan.type === 'Isolated'">
 								<div class="col-md-12">
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
@@ -51,6 +51,8 @@ body {
 												<md-option value="TA_MANUAL">TA_MANUAL</md-option>
 											</md-select>
 										</md-input-container>
+										<div ng-if="!selectedTestStep.type"><p style ="color:red;"> TestStep Type is not selected. Please check.</p></div>
+										<div ng-if="selectedTestStep.type && (selectedTestStep.type === 'MANUAL' || selectedTestStep.type === 'DATAINSTANCE')"><p style ="color:red;"> TestStep Type is {{selectedTestStep.type}}, that is for DataInstance Test Plan. Please check.</p></div>
 									</div>
 									<div ng-if="selectedTestStep.type && selectedTestStep.type != 'DATAINSTANCE'" class="col-md-6">
 										<img src="images/{{selectedTestStep.type}}.png">
@@ -58,7 +60,7 @@ body {
 								</div>
 							</div>
 
-							<div class="row" ng-if="!selectedTestPlan.transport">
+							<div class="row" ng-if="selectedTestPlan.type === 'DataInstance'">
 								<div class="col-md-12">
 									<div class="col-md-6">
 										<md-input-container style="width: 100%;">
@@ -68,6 +70,8 @@ body {
 												<md-option value="MANUAL">MANUAL</md-option>
 											</md-select>
 										</md-input-container>
+										<div ng-if="!selectedTestStep.type"><p style ="color:red;"> TestStep Type is not selected. Please check.</p></div>
+										<div ng-if="selectedTestStep.type && (selectedTestStep.type === 'TA_INITIATOR' || selectedTestStep.type === 'TA_RESPONDER' || selectedTestStep.type === 'SUT_INITIATOR' || selectedTestStep.type === 'SUT_RESPONDER' || selectedTestStep.type === 'SUT_MANUAL' || selectedTestStep.type === 'TA_MANUAL')"><p style ="color:red;"> TestStep Type is {{selectedTestStep.type}}, that is for Isolated Test Plan. Please check.</p></div>
 									</div>
 									<div ng-if="selectedTestStep.type && selectedTestStep.type === 'MANUAL'" class="col-md-6">
 										<img src="images/{{selectedTestStep.type}}.png">

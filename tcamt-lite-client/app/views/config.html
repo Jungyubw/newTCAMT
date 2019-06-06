@@ -16,7 +16,7 @@
                 <div ng-cloak>
                     <md-content>
                         <md-tabs md-dynamic-height md-border-bottom>
-                            <md-tab label="Test Story Template">
+                            <md-tab label="Test Story Templates">
                                 <md-content class="md-padding">
                                     <div class="col-md-12">
                                         <div class="pull-right">
@@ -43,6 +43,9 @@
                                                 <td st-ratio="5">
                                                     <button ng-show="row.accountId != 0" type="button" class="btn btn-info btn-sm" ng-click="openDialogForEditTestStoryConfig($event, row);"><i class="fa fa-pencil"></i>
                                                         Edit
+                                                    </button>
+                                                    <button ng-show="row.accountId != 0" type="button" class="btn btn-warning btn-sm" ng-click="deleteTestStoryConfig($event, row);"><i class="fa fa-times"></i>
+                                                        Del
                                                     </button>
                                                 </td>
                                             </tr>

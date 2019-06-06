@@ -3006,7 +3006,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.changesMap[clone.id]=true;
 		$scope.recordChanged(clone);
 		return clone;
-	}
+	};
 	$scope.cloneTestCase= function(testCase){
 		var clone= angular.copy(testCase);
 		clone.name= testCase.name+" Copy";
@@ -3036,7 +3036,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 				}
 			});
 		}
-	}
+	};
 	
 	$scope.deleteCase=function(testCase){
 		if(testCase.id&&testCase.id===$scope.activeModel.id){
@@ -3059,11 +3059,12 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 		$rootScope.selectedConformanceProfileId="";
 		$rootScope.integrationProfileId="";
 		$rootScope.selectedTestStep=null;
-	}
+        $scope.updateCurrentTitle("Error", "Not found!");
+	};
 	
 	$scope.initValidation=function(){
 		$scope.validationResult=$scope.validationResult1;
-	}
+	};
 	
 	$scope.getAllValue=function(obj){
 		var table=[];

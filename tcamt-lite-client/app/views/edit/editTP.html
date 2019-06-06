@@ -70,10 +70,13 @@
     
     	<div ng-class="{'col-md-9': !hideToc, 'col-md-11 col-98-5-percent':hideToc}">
         	<div class="panel panel-primary" style="margin-bottom:5px;">
-            	<div class="panel-heading" style="background-color:#293856"><strong>{{CurrentTitle}}</strong></div>
+            	<div class="panel-heading" style="background-color:#293856">
+					<strong ng-if="subview === null||subview===undefined|| !subview">No Element Selected</strong>
+					<strong ng-if="subview !== null && subview !== undefined && subview">{{CurrentTitle}}</strong>
+				</div>
             	<div class="panel-body" style="padding-bottom:100px;height:{{igHeigh+templateHeigh+tocHeigh+158}}px;">
             		<div class="col-md-12" ng-if="subview === null||subview===undefined|| !subview">
-            			<p> No Element Selected </p>
+            			<p> Please select any element. </p>
             		</div>
 
                 	<div id="edit" ng-if="subview !== undefined" style="width:100%">
