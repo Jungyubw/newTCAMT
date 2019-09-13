@@ -25,6 +25,12 @@ angular.module('tcl').controller('MainCtrl', ['$scope', '$rootScope', 'i18n', '$
                 console.log(response);
                 $rootScope.tcamtDocument = angular.fromJson(response.data);
                 $rootScope.tcamtDocument.userGuide.slides.sort($rootScope.compare);
+                if($rootScope.tcamtDocument.generalDocuments) {
+                    for(var i in $rootScope.tcamtDocument.generalDocuments){
+                        $rootScope.tcamtDocument.generalDocuments[i].slides.sort($rootScope.compare);
+                    }
+                }
+
                 waitingDialog.hide();
             }, function(error) {
                 waitingDialog.hide();

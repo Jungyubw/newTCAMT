@@ -12,8 +12,19 @@
 <div class="container" ng-controller="DocCtrl" ng-init="initDoc()">
     <div class="">
         <div class="row">
-            <div ng-if="isAdmin()" class="col-md-12">
+            <div class="col-md-2">
+                <md-input-container style="width: 100%;">
+                    <select class="form-control" ng-model="selectedDocTitle" ng-change="changeDoc(selectedDocTitle);">
+                        <option value="UserGuide">User Guide</option>
+                        <option ng-if="tcamtDocument" ng-repeat="doc in tcamtDocument.generalDocuments" value="{{doc.title}}">{{doc.title}}</option>
+                    </select>
+                </md-input-container>
+            </div>
+            <div ng-if="isAdmin()" class="col-md-10">
                 <div class="pull-right">
+                    <button type="button" ng-show="editMode" class="btn btn-info btn-sm" ng-click="addDocument($event);"><i class="fa fa-plus"></i>
+                        Add Document
+                    </button>
                     <button type="button" ng-show="editMode" class="btn btn-info btn-sm" ng-click="addSlide($event);"><i class="fa fa-plus"></i>
                         Add Slide
                     </button>
@@ -31,9 +42,13 @@
                     </button>
                 </div>
             </div>
+            <div ng-if="!isAdmin()" class="col-md-10"></div>
+        </div>
+        <div ng-if="selectedDocument" class="row">
             <div ng-if="!isAdmin() || !isEditMode()" class="col-md-2">
-                <h1>User Guide</h1>
-                <div ng-repeat="slide in tcamtDocument.userGuide.slides">
+                <h1 ng-if="tcamtDocument && selectedDocument === tcamtDocument.userGuide">User Guide</h1>
+                <h1 ng-if="tcamtDocument && selectedDocument !== tcamtDocument.userGuide">{{selectedDocument.title}}</h1>
+                <div ng-repeat="slide in selectedDocument.slides">
                     <label ng-click="selectSlide(slide)" ng-class="{'selected': selected === slide}">
                         {{slide.title}}
                     </label>
@@ -48,9 +63,10 @@
                 </div>
             </div>
             <div ng-if="isAdmin() && isEditMode()" class="col-md-2">
-                <h1>User Guide</h1>
+                <h1 ng-if="tcamtDocument && selectedDocument === tcamtDocument.userGuide">User Guide</h1>
+                <input ng-if="tcamtDocument && selectedDocument !== tcamtDocument.userGuide" class="form-control" ng-model="selectedDocument.title" ng-change="changeTitle(selectedDocument.title)" type="text"/>
                 <div dnd-list="tcamtDocument.userGuide.slides">
-                    <div ng-repeat="slide in tcamtDocument.userGuide.slides">
+                    <div ng-repeat="slide in selectedDocument.slides">
                         <label
                                 dnd-draggable="slide"
                                 dnd-moved="tcamtDocument.userGuide.slides.splice($index, 1)"

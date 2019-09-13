@@ -3,21 +3,58 @@ angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $docum
     $scope.selected = null;
     $scope.isChanged = false;
     $scope.editMode = true;
+    $scope.selectedDocTitle = null;
+    $scope.selectedDocument = null;
 
     $scope.addSlide = function(event) {
         $scope.isChanged = true;
-        $rootScope.tcamtDocument.userGuide.slides.push({
-            title: "TITLE-" + ($rootScope.tcamtDocument.userGuide.slides.length + 1),
+        $scope.selectedDocument.slides.push({
+            title: "Slide-" + ($scope.selectedDocument.slides.length + 1),
             contents : ""
         });
+    };
+
+    $scope.addDocument = function(event) {
+        $scope.selectedDocTitle = null;
+        $scope.isChanged = true;
+        if (!$rootScope.tcamtDocument.generalDocuments) $rootScope.tcamtDocument.generalDocuments = [];
+
+        var newDoc = {
+            title: "New Document_" + ($rootScope.tcamtDocument.generalDocuments.length + 1),
+            slides : [{
+                title: "Slide-1",
+                contents : ""
+            }]
+        };
+        $scope.selectedDocument = newDoc;
+        $scope.selectedDocTitle = newDoc.title;
+        $rootScope.tcamtDocument.generalDocuments.push(newDoc);
+
+        console.log($scope.selectedDocTitle);
+    };
+
+    $scope.changeDoc = function(value) {
+        console.log(value);
+        if(value === 'UserGuide') {
+            $scope.selectedDocument = $rootScope.tcamtDocument.userGuide;
+        } else {
+            for(var i in $rootScope.tcamtDocument.generalDocuments){
+                if ($rootScope.tcamtDocument.generalDocuments[i].title === value)
+                    $scope.selectedDocument = $rootScope.tcamtDocument.generalDocuments[i];
+            }
+        }
+    };
+
+    $scope.deleteDocument = function(event) {
+
     };
 
     $scope.deleteSlide = function() {
         if($scope.selected) {
             $scope.isChanged = true;
-            var index = $rootScope.tcamtDocument.userGuide.slides.indexOf($scope.selected);
+            var index = $scope.selectedDocument.slides.indexOf($scope.selected);
             if (index > -1) {
-                $rootScope.tcamtDocument.userGuide.slides.splice(index, 1);
+                $scope.selectedDocument.slides.splice(index, 1);
             }
         }
     };
@@ -29,6 +66,12 @@ angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $docum
     $scope.save = function() {
         for(var i in $rootScope.tcamtDocument.userGuide.slides){
             $rootScope.tcamtDocument.userGuide.slides[i].position = i;
+        }
+
+        for(var i in $rootScope.tcamtDocument.generalDocuments){
+            for(var j in $rootScope.tcamtDocument.generalDocuments[i].slides) {
+                $rootScope.tcamtDocument.generalDocuments[i].slides[j].position = j;
+            }
         }
 
         $http.post('api/tcamtdocument/save', $rootScope.tcamtDocument).then(function (response) {
@@ -100,6 +143,11 @@ angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $docum
         }else {
             return null;
         }
+    }
+
+    $scope.changeTitle = function () {
+        $scope.isChanged = true;
+        $scope.selectedDocTitle = $scope.selectedDocument.title;
     }
 
 });
