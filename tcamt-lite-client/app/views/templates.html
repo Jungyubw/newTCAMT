@@ -89,7 +89,7 @@
                 </div>
             </md-toolbar>
             <md-dialog-content>
-                <div class="md-dialog-content">
+                <div ng-show="!needHelp" class="md-dialog-content">
                     <md-input-container style="width: 100%;">
                         <label>Name</label>
                         <input ng-model="newTestPlan.name" type="text"/>
@@ -117,10 +117,16 @@
                         </md-select>
                     </md-input-container>
                 </div>
+                <div ng-show="needHelp" class="md-dialog-content">
+                    <div style="width: 100%" ng-bind-html="getHtml()"></div>
+                </div>
             </md-dialog-content>
             <md-dialog-actions layout="row">
-                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
-                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                <md-button ng-show="!needHelp" class="btn btn-default btn-sm" ng-click="showHelp()">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Show Help
+                </md-button>
+                <md-button ng-show="needHelp" class="btn btn-default btn-sm" ng-click="needHelp = false;">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Hide Help
                 </md-button>
                 <span flex></span>
                 <md-button class="btn btn-default btn-sm" ng-click="cancel()">
@@ -238,7 +244,7 @@
         <form ng-cloak>
             <md-toolbar>
                 <div class="md-toolbar-tools">
-                    <h2>Import Implementation Guide (XML) XML</h2>
+                    <h2>Import Implementation Guide (XML)</h2>
                     <span flex></span>
                 </div>
             </md-toolbar>

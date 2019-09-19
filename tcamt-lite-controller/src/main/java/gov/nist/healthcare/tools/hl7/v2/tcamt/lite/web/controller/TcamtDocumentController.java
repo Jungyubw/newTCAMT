@@ -36,6 +36,43 @@ public class TcamtDocumentController extends CommonController {
       slide.setTitle("New Slide");
       result.getUserGuide().getSlides().add(slide);
       
+      result.setHelpGuide(new UserGuide());
+      result.getHelpGuide().setSlides(new HashSet<Slide>());
+      Slide helpSlide0 = new Slide();
+      helpSlide0.setPosition(0);
+      helpSlide0.setTitle("Create New TestPlan");
+      result.getHelpGuide().getSlides().add(helpSlide0);
+      
+      Slide helpSlide1 = new Slide();
+      helpSlide1.setPosition(1);
+      helpSlide1.setTitle("Import Public Profile");
+      result.getHelpGuide().getSlides().add(helpSlide1);
+      
+      Slide helpSlide2 = new Slide();
+      helpSlide2.setPosition(2);
+      helpSlide2.setTitle("Import TestPlan JSON");
+      result.getHelpGuide().getSlides().add(helpSlide2);
+      
+      Slide helpSlide3 = new Slide();
+      helpSlide3.setPosition(3);
+      helpSlide3.setTitle("Import Implementation Guide (XML)");
+      result.getHelpGuide().getSlides().add(helpSlide3);
+      
+      Slide helpSlide4 = new Slide();
+      helpSlide4.setPosition(4);
+      helpSlide4.setTitle("Replace XML Profile");
+      result.getHelpGuide().getSlides().add(helpSlide4);
+      
+      Slide helpSlide5 = new Slide();
+      helpSlide5.setPosition(5);
+      helpSlide5.setTitle("Replace Public Profile");
+      result.getHelpGuide().getSlides().add(helpSlide5);
+      
+      Slide helpSlide6 = new Slide();
+      helpSlide6.setPosition(6);
+      helpSlide6.setTitle("Edit Test Story Template");
+      result.getHelpGuide().getSlides().add(helpSlide6);
+      
       return result;
     }
   }

@@ -19,6 +19,7 @@ public class TcamtDocument implements Serializable, Cloneable {
   private String id;
 
   private UserGuide userGuide;
+  private UserGuide helpGuide;
   
   private Set<GeneralDocument> generalDocuments;
 
@@ -44,6 +45,14 @@ public class TcamtDocument implements Serializable, Cloneable {
 
   public void setGeneralDocuments(Set<GeneralDocument> generalDocuments) {
     this.generalDocuments = generalDocuments;
+  }
+
+  public UserGuide getHelpGuide() {
+    return helpGuide;
+  }
+
+  public void setHelpGuide(UserGuide helpGuide) {
+    this.helpGuide = helpGuide;
   }
 
 

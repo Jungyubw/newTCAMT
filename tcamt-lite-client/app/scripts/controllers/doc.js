@@ -37,6 +37,8 @@ angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $docum
         console.log(value);
         if(value === 'UserGuide') {
             $scope.selectedDocument = $rootScope.tcamtDocument.userGuide;
+        } else if(value === 'HelpGuide') {
+            $scope.selectedDocument = $rootScope.tcamtDocument.helpGuide;
         } else {
             for(var i in $rootScope.tcamtDocument.generalDocuments){
                 if ($rootScope.tcamtDocument.generalDocuments[i].title === value)
@@ -66,6 +68,10 @@ angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $docum
     $scope.save = function() {
         for(var i in $rootScope.tcamtDocument.userGuide.slides){
             $rootScope.tcamtDocument.userGuide.slides[i].position = i;
+        }
+
+        for(var i in $rootScope.tcamtDocument.helpGuide.slides){
+            $rootScope.tcamtDocument.helpGuide.slides[i].position = i;
         }
 
         for(var i in $rootScope.tcamtDocument.generalDocuments){

@@ -12,9 +12,20 @@
             </div>
             <ol ui-tree-nodes="" ng-model="template.messageTemplates" ng-if="!messagetempCollapsed">
                 <li ng-repeat="msgTmp in template.messageTemplates" ui-tree-node>
-                    <div ui-tree-handle ng-click="Activate(this);OpenMsgTemplateMetadata(msgTmp)" ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[msgTmp.id]}">
-                        <span class="MenuEnabled" ng-show="messageTemplateApplicable(msgTmp)" context-menu="MessageOptions"><span class="label label-success label-icon">MT</span>[{{msgTmp.structID}}]{{msgTmp.name}}</span>
-                        <span class="MenuDisabled" ng-show="!messageTemplateApplicable(msgTmp)" context-menu="MessageOptionsDisabled"><span class="label label-success label-icon">MT</span>[{{msgTmp.structID}}]{{msgTmp.name}}</span>
+                    <div ui-tree-handle ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[msgTmp.id]}">
+                        <span class="MenuEnabled" ng-show="messageTemplateApplicable(msgTmp)">
+                            <span class="label label-success label-icon">MT</span>
+                            <span ng-click="Activate(this);OpenMsgTemplateMetadata(msgTmp)">[{{msgTmp.structID}}]{{msgTmp.name}}</span>
+                            <span class="label label-primary label-icon" ng-click="openMessageTemplate(msgTmp);">APPLY</span>
+                            <span class="label label-info label-icon" ng-click="copyMessageTemplate(msgTmp)">COPY</span>
+                            <span class="label label-warning label-icon" ng-click="deleteMessageTemplate(msgTmp)">DEL</span>
+                        </span>
+                        <span class="MenuDisabled" ng-show="!messageTemplateApplicable(msgTmp)">
+                            <span class="label label-success label-icon">MT</span>
+                            <span ng-click="Activate(this);OpenMsgTemplateMetadata(msgTmp)">[{{msgTmp.structID}}]{{msgTmp.name}}</span>
+                            <span class="label label-info label-icon" ng-click="copyMessageTemplate(msgTmp)">COPY</span>
+                            <span class="label label-warning label-icon" ng-click="deleteMessageTemplate(msgTmp)">DEL</span>
+                        </span>
                     </div>
                 </li>
             </ol>
@@ -23,9 +34,20 @@
             </div>
             <ol ui-tree-nodes="" ng-model="template.segmentTemplates" ng-if="!segmenttempCollapsed">
                 <li ng-repeat="segTmp in template.segmentTemplates" ui-tree-node ng-if="selectedSegmentNode===null ||selectedSegmentNode.segmentName===segTmp.segmentName">
-                    <div ui-tree-handle ng-click="Activate(this);OpenSegmentTemplateMetadata(segTmp)" ng-class="{selected : this.$modelValue===activeModel,'unsaved':changesMap[segTmp.id]}">
-                        <span class="MenuEnabled" ng-show="segmentTemplateApplicable(segTmp)" context-menu="SegmentOptions"><span class=" label label-success label-icon">ST</span>[{{segTmp.segmentName}}]{{segTmp.name}}</span>
-                        <span class="MenuDisabled" ng-show="!segmentTemplateApplicable(segTmp)"  context-menu="SegmentOptionsDisabled" ><span class=" label label-success label-icon">ST</span>[{{segTmp.segmentName}}]{{segTmp.name}}</span>
+                    <div ui-tree-handle ng-class="{selected : this.$modelValue===activeModel,'unsaved':changesMap[segTmp.id]}">
+                        <span class="MenuEnabled" ng-show="segmentTemplateApplicable(segTmp)">
+                            <span class="label label-success label-icon">ST</span>
+                            <span ng-click="Activate(this);OpenSegmentTemplateMetadata(segTmp)">[{{segTmp.segmentName}}]{{segTmp.name}}</span>
+                            <span class="label label-primary label-icon" ng-click="openSegmentTemplate(segTmp);">APPLY</span>
+                            <span class="label label-info label-icon" ng-click="copySegmentTemplate(segTmp)">COPY</span>
+                            <span class="label label-warning label-icon" ng-click="deleteSegmentTemplate(segTmp)">DEL</span>
+                        </span>
+                        <span class="MenuDisabled" ng-show="!segmentTemplateApplicable(segTmp)">
+                            <span class="label label-success label-icon">ST</span>
+                            <span ng-click="Activate(this);OpenSegmentTemplateMetadata(segTmp)">[{{segTmp.segmentName}}]{{segTmp.name}}</span>
+                            <span class="label label-info label-icon" ng-click="copySegmentTemplate(segTmp)">COPY</span>
+                            <span class="label label-warning label-icon" ng-click="deleteSegmentTemplate(segTmp)">DEL</span>
+                        </span>
                     </div>
                 </li>
             </ol>
@@ -35,15 +57,25 @@
             <div ui-tree-handle>
                 ER7 Templates
             </div>
-
             <div ui-tree-handle style="margin-left: 20px;">
                 <i data-nodrag ng-click="switcherEr7Message()" class="fa" ng-class="{'fa-caret-right': Er7MessageCollapsed, 'fa-caret-down': !Er7MessageCollapsed}"></i> ER7 Message Templates
             </div>
             <ol ui-tree-nodes="" ng-model="template.er7Templates" ng-if="!Er7MessageCollapsed">
                 <li ng-repeat="er7Tmp in template.er7Templates" ui-tree-node>
-                    <div ui-tree-handle ng-click="Activate(this);OpenEr7TemplatesMetadata(er7Tmp)" ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[er7Tmp.id]}">
-                        <span ng-show="messageTemplateApplicable(er7Tmp)" class="MenuEnabled"  context-menu="Er7Options"><span class="label label-success label-icon">ET</span>[{{er7Tmp.structID}}]{{er7Tmp.name}}</span>
-                        <span ng-show="!messageTemplateApplicable(er7Tmp)" class="MenuDisabled" context-menu="Er7OptionsDisabled" ><span class=" label label-success label-icon">ET</span>[{{er7Tmp.structID}}]{{er7Tmp.name}}</span>
+                    <div ui-tree-handle ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[er7Tmp.id]}">
+                        <span ng-show="messageTemplateApplicable(er7Tmp)" class="MenuEnabled">
+                            <span class="label label-success label-icon">ET</span>
+                            <span ng-click="Activate(this);OpenEr7TemplatesMetadata(er7Tmp)">[{{er7Tmp.structID}}]{{er7Tmp.name}}</span>
+                            <span class="label label-primary label-icon" ng-click="applyEr7Message(er7Tmp);">APPLY</span>
+                            <span class="label label-info label-icon" ng-click="copyER7Template(er7Tmp)">COPY</span>
+                            <span class="label label-warning label-icon" ng-click="deleteER7Template(er7Tmp)">DEL</span>
+                        </span>
+                        <span ng-show="!messageTemplateApplicable(er7Tmp)" class="MenuDisabled">
+                            <span class=" label label-success label-icon">ET</span>
+                            <span>[{{er7Tmp.structID}}]{{er7Tmp.name}}</span>
+                            <span class="label label-info label-icon" ng-click="copyER7Template(er7Tmp)">COPY</span>
+                            <span class="label label-warning label-icon" ng-click="deleteER7Template(er7Tmp)">DEL</span>
+                        </span>
                     </div>
                 </li>
             </ol>
@@ -53,9 +85,20 @@
             </div>
             <ol ui-tree-nodes="" ng-model="template.er7segmentTemplates" data-nodrag ng-if="!Er7SegmentCollapsed">
                 <li ng-repeat="er7Tmp in template.er7segmentTemplates" ui-tree-node data-nodrag>
-                    <div ui-tree-handle ng-click="Activate(this);OpenEr7SegmentTemplatesMetadata(er7Tmp)" ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[er7Tmp.id]}">
-                        <span ng-show="segmentTemplateApplicable(er7Tmp)" class="MenuEnabled" context-menu="Er7SegmentOptions"><span class="label label-success label-icon">SL</span>[{{er7Tmp.segmentName}}]{{er7Tmp.name}}</span>
-                        <span ng-show="!segmentTemplateApplicable(er7Tmp)" class="MenuDisabled" context-menu="Er7SegmentOptionsDisabled"><span class=" label label-success label-icon">SL</span>[{{er7Tmp.segmentName}}]{{er7Tmp.name}}</span>
+                    <div ui-tree-handle ng-class="{'selected' : this.$modelValue===activeModel,'unsaved':changesMap[er7Tmp.id]}">
+                        <span ng-show="segmentTemplateApplicable(er7Tmp)" class="MenuEnabled">
+                            <span class="label label-success label-icon">SL</span>
+                            <span ng-click="Activate(this);OpenEr7SegmentTemplatesMetadata(er7Tmp)">[{{er7Tmp.segmentName}}]{{er7Tmp.name}}</span>
+                            <span class="label label-primary label-icon" ng-click="applyEr7Segment(er7Tmp);">APPLY</span>
+                            <span class="label label-info label-icon" ng-click="copyER7SegmentTemplate(er7Tmp)">COPY</span>
+                            <span class="label label-warning label-icon" ng-click="deleteER7SegmentTemplate(er7Tmp)">DEL</span>
+                        </span>
+                        <span ng-show="!segmentTemplateApplicable(er7Tmp)" class="MenuDisabled">
+                            <span class=" label label-success label-icon">SL</span>
+                            <span>[{{er7Tmp.segmentName}}]{{er7Tmp.name}}</span>
+                            <span class="label label-info label-icon" ng-click="copyER7SegmentTemplate(er7Tmp)">COPY</span>
+                            <span class="label label-warning label-icon" ng-click="deleteER7SegmentTemplate(er7Tmp)">DEL</span>
+                        </span>
                     </div>
                 </li>
             </ol>
