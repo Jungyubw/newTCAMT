@@ -320,7 +320,58 @@
                 </div>
             </md-toolbar>
             <md-dialog-content>
-                ....
+                <md-content class="md-padding">
+                    <div class="page-header">
+                        <span class="header5">Conformance Profile Metadata</span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4">
+                                <md-input-container style="width: 100%;">
+                                    <label>Name</label>
+                                    <input ng-model="m.name" ng-disabled="true" type="text"/>
+                                </md-input-container>
+                            </div>
+                            <div class="col-md-4">
+                                <md-input-container style="width: 100%;">
+                                    <label>Identifier</label>
+                                    <input ng-model="m.identifier" ng-disabled="true" type="text"/>
+                                </md-input-container>
+                            </div>
+                            <div class="col-md-4">
+                                <md-input-container style="width: 100%;">
+                                    <label>Description</label>
+                                    <input ng-model="m.description" ng-disabled="true" type="text"/>
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-4">
+                                <md-input-container style="width: 100%;">
+                                    <label>Type</label>
+                                    <input ng-model="m.type" ng-disabled="true" type="text"/>
+                                </md-input-container>
+                            </div>
+                            <div class="col-md-4">
+                                <md-input-container style="width: 100%;">
+                                    <label>Event</label>
+                                    <input ng-model="m.event" ng-disabled="true" type="text"/>
+                                </md-input-container>
+                            </div>
+                            <div class="col-md-4">
+                                <md-input-container style="width: 100%;">
+                                    <label>StructId</label>
+                                    <input ng-model="m.structId" ng-disabled="true" type="text"/>
+                                </md-input-container>
+                            </div>
+                        </div>
+                    </div>
+                </md-content>
+                <md-content class="md-padding">
+                    <div class="page-header">
+                        <span class="header5">Conformance Profile Structure Viewer</span>
+                    </div>
+                </md-content>
             </md-dialog-content>
             <md-dialog-actions layout="row">
                 <span flex></span>
