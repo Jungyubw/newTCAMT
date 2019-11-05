@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog) {
+angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $sce) {
 	$scope.loading = false;
 
 	$scope.initProfiles= function () {
@@ -134,7 +134,26 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 	};
 
 	$scope.ImportXMLPublicProfileModalCtrl = function($scope, $mdDialog, $http) {
+        $scope.needHelp = false;
 		$scope.xmlFilesData = {};
+
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+
+
+        };
+
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
+
+
 		$scope.cancel = function() {
 			$mdDialog.hide();
 		};
@@ -251,6 +270,18 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 	};
 
 	$scope.ReplacePublicProfileModalCtrl = function($scope, $mdDialog, $http) {
+        $scope.needHelp = false;
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+        };
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
 		$scope.xmlFilesData = {};
 		$scope.cancel = function() {
 			$mdDialog.hide();
@@ -369,6 +400,19 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 	};
 
 	$scope.ReplaceXMLProfileModalCtrl  = function($scope, $mdDialog, $http) {
+        $scope.needHelp = false;
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+        };
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
 		$scope.xmlFilesData = {};
 		$scope.cancel = function() {
 			$mdDialog.hide();
@@ -487,6 +531,21 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 	};
 
 	$scope.ImportXMLProfileModalCtrl = function($scope, $mdDialog, $http) {
+        $scope.needHelp = false;
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+
+
+        };
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
 		$scope.xmlFilesData = {};
 		$scope.cancel = function() {
 			$mdDialog.hide();

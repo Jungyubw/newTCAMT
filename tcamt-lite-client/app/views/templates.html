@@ -118,7 +118,7 @@
                     </md-input-container>
                 </div>
                 <div ng-show="needHelp" class="md-dialog-content">
-                    <div style="width: 100%" ng-bind-html="getHtml()"></div>
+                    <div style="width: 100%" ng-bind-html="getHtml(0)"></div>
                 </div>
             </md-dialog-content>
             <md-dialog-actions layout="row">
@@ -126,13 +126,13 @@
                     <i class="fa fa-question fa-fw">&nbsp; </i> Show Help
                 </md-button>
                 <md-button ng-show="needHelp" class="btn btn-default btn-sm" ng-click="needHelp = false;">
-                    <i class="fa fa-question fa-fw">&nbsp; </i> Hide Help
+                    <i class="fa fa-arrow-left fa-fw">&nbsp; </i> Back to create new TestPlan
                 </md-button>
                 <span flex></span>
                 <md-button class="btn btn-default btn-sm" ng-click="cancel()">
                     <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
                 </md-button>
-                <md-button class="btn btn-primary btn-sm" ng-disabled="!newTestPlan.name" ng-click="createNewTestPlan()">
+                <md-button ng-show="!needHelp" class="btn btn-primary btn-sm" ng-disabled="!newTestPlan.name" ng-click="createNewTestPlan()">
                     <i class="fa fa-plus fa-fw">&nbsp; </i> Create
                 </md-button>
             </md-dialog-actions>
@@ -150,7 +150,7 @@
                 </div>
             </md-toolbar>
             <md-dialog-content>
-                <div class="md-dialog-content">
+                <div ng-show="!needHelp" class="md-dialog-content">
                     <div class="form-group">
                         <div class="col-md-12">
                             <label for="profilePublicFile" class="custom-file-upload">
@@ -175,16 +175,22 @@
                         </div>
                     </div>
                 </div>
+                <div ng-show="needHelp" class="md-dialog-content">
+                    <div style="width: 100%" ng-bind-html="getHtml(1)"></div>
+                </div>
             </md-dialog-content>
             <md-dialog-actions layout="row">
-                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
-                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                <md-button ng-show="!needHelp" class="btn btn-default btn-sm" ng-click="showHelp()">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Show Help
+                </md-button>
+                <md-button ng-show="needHelp" class="btn btn-default btn-sm" ng-click="needHelp = false;">
+                    <i class="fa fa-arrow-left fa-fw">&nbsp; </i> Back to Import Public Profile
                 </md-button>
                 <span flex></span>
                 <md-button class="btn btn-default btn-sm" ng-click="cancel()">
                     <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
                 </md-button>
-                <md-button id="importPublicProfileButton" class="btn btn-primary btn-sm" disabled ng-click="importProfileXML();">
+                <md-button ng-show="!needHelp" id="importPublicProfileButton" class="btn btn-primary btn-sm" disabled ng-click="importProfileXML();">
                     <i class="fa fa-plus fa-fw">&nbsp; </i> Import
                 </md-button>
             </md-dialog-actions>
@@ -203,7 +209,7 @@
                 </div>
             </md-toolbar>
             <md-dialog-content>
-                <div class="md-dialog-content">
+                <div ng-show="!needHelp" class="md-dialog-content">
                     <div class="form-group">
                         <div class="col-md-12">
                             <label>Type</label>
@@ -221,16 +227,22 @@
                         </div>
                     </div>
                 </div>
+                <div ng-show="needHelp" class="md-dialog-content">
+                    <div style="width: 100%" ng-bind-html="getHtml(2)"></div>
+                </div>
             </md-dialog-content>
             <md-dialog-actions layout="row">
-                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
-                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                <md-button ng-show="!needHelp" class="btn btn-default btn-sm" ng-click="showHelp()">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Show Help
+                </md-button>
+                <md-button ng-show="needHelp" class="btn btn-default btn-sm" ng-click="needHelp = false;">
+                    <i class="fa fa-arrow-left fa-fw">&nbsp; </i> Back to Import TestPlan JSON
                 </md-button>
                 <span flex></span>
                 <md-button class="btn btn-default btn-sm" ng-click="cancel()">
                     <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
                 </md-button>
-                <md-button id="importTestPlanButton" class="btn btn-primary btn-sm" disabled ng-click="importTestPlanJson();">
+                <md-button ng-show="!needHelp" id="importTestPlanButton" class="btn btn-primary btn-sm" disabled ng-click="importTestPlanJson();">
                     <i class="fa fa-plus fa-fw">&nbsp; </i> Import
                 </md-button>
             </md-dialog-actions>
@@ -249,7 +261,7 @@
                 </div>
             </md-toolbar>
             <md-dialog-content>
-                <div class="md-dialog-content">
+                <div ng-show="!needHelp" class="md-dialog-content">
                     <div class="form-group">
                         <div class="col-md-12">
                             <label for="profileXMLFile" class="custom-file-upload">
@@ -274,16 +286,22 @@
                         </div>
                     </div>
                 </div>
+                <div ng-show="needHelp" class="md-dialog-content">
+                    <div style="width: 100%" ng-bind-html="getHtml(3)"></div>
+                </div>
             </md-dialog-content>
             <md-dialog-actions layout="row">
-                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
-                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                <md-button ng-show="!needHelp" class="btn btn-default btn-sm" ng-click="showHelp()">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Show Help
+                </md-button>
+                <md-button ng-show="needHelp" class="btn btn-default btn-sm" ng-click="needHelp = false;">
+                    <i class="fa fa-arrow-left fa-fw">&nbsp; </i> Back to Import Implementation Guide (XML)
                 </md-button>
                 <span flex></span>
                 <md-button class="btn btn-default btn-sm" ng-click="cancel()">
                     <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
                 </md-button>
-                <md-button id="importProfileButton" class="btn btn-primary btn-sm" disabled ng-click="importProfileXML();">
+                <md-button ng-show="!needHelp" id="importProfileButton" class="btn btn-primary btn-sm" disabled ng-click="importProfileXML();">
                     <i class="fa fa-plus fa-fw">&nbsp; </i> Import
                 </md-button>
             </md-dialog-actions>
@@ -302,7 +320,7 @@
                 </div>
             </md-toolbar>
             <md-dialog-content>
-                <div class="md-dialog-content">
+                <div ng-show="!needHelp" class="md-dialog-content">
                     <div class="form-group">
                         <div class="col-md-12">
                             <label for="replaceProfileXMLFile" class="custom-file-upload">
@@ -327,16 +345,22 @@
                         </div>
                     </div>
                 </div>
+                <div ng-show="needHelp" class="md-dialog-content">
+                    <div style="width: 100%" ng-bind-html="getHtml(4)"></div>
+                </div>
             </md-dialog-content>
             <md-dialog-actions layout="row">
-                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
-                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                <md-button ng-show="!needHelp" class="btn btn-default btn-sm" ng-click="showHelp()">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Show Help
+                </md-button>
+                <md-button ng-show="needHelp" class="btn btn-default btn-sm" ng-click="needHelp = false;">
+                    <i class="fa fa-arrow-left fa-fw">&nbsp; </i> Back to Replace XML Profile
                 </md-button>
                 <span flex></span>
                 <md-button class="btn btn-default btn-sm" ng-click="cancel()">
                     <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
                 </md-button>
-                <md-button id="replaceProfileButton" class="btn btn-primary btn-sm" disabled ng-click="replaceProfileXML();">
+                <md-button ng-show="!needHelp" id="replaceProfileButton" class="btn btn-primary btn-sm" disabled ng-click="replaceProfileXML();">
                     <i class="fa fa-repeat fa-fw">&nbsp; </i> Replace
                 </md-button>
             </md-dialog-actions>
@@ -355,7 +379,7 @@
                 </div>
             </md-toolbar>
             <md-dialog-content>
-                <div class="md-dialog-content">
+                <div ng-show="!needHelp" class="md-dialog-content">
                     <div class="form-group">
                         <div class="col-md-12">
                             <label for="replacePublicProfileXMLFile" class="custom-file-upload">
@@ -380,16 +404,22 @@
                         </div>
                     </div>
                 </div>
+                <div ng-show="needHelp" class="md-dialog-content">
+                    <div style="width: 100%" ng-bind-html="getHtml(5)"></div>
+                </div>
             </md-dialog-content>
             <md-dialog-actions layout="row">
-                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
-                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                <md-button ng-show="!needHelp" class="btn btn-default btn-sm" ng-click="showHelp()">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Show Help
+                </md-button>
+                <md-button ng-show="needHelp" class="btn btn-default btn-sm" ng-click="needHelp = false;">
+                    <i class="fa fa-arrow-left fa-fw">&nbsp; </i> Replace Public Profile
                 </md-button>
                 <span flex></span>
                 <md-button class="btn btn-default btn-sm" ng-click="cancel()">
                     <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
                 </md-button>
-                <md-button id="replacePublicProfileButton" class="btn btn-primary btn-sm" disabled ng-click="replaceProfileXML();">
+                <md-button ng-show="!needHelp" id="replacePublicProfileButton" class="btn btn-primary btn-sm" disabled ng-click="replaceProfileXML();">
                     <i class="fa fa-repeat fa-fw">&nbsp; </i> Replace
                 </md-button>
             </md-dialog-actions>
@@ -408,7 +438,7 @@
                 </div>
             </md-toolbar>
             <md-dialog-content style="width:1000px;">
-                <div class="md-dialog-content">
+                <div ng-show="!needHelp" class="md-dialog-content">
                     <md-input-container style="width: 100%;">
                         <label>Name</label>
                         <input ng-model="selectedTestStoryConfig.name" type="text"/>
@@ -443,16 +473,22 @@
                     </div>
                     <button class="btn btn-sm btn-info" ng-click="addField()"><i class="fa fa-plus"></i> Add Field</button>
                 </div>
+                <div ng-show="needHelp" class="md-dialog-content">
+                    <div style="width: 100%" ng-bind-html="getHtml(6)"></div>
+                </div>
             </md-dialog-content>
             <md-dialog-actions layout="row">
-                <md-button class="btn btn-default btn-sm" href="#/help" target="_blank">
-                    <i class="fa fa-question fa-fw">&nbsp; </i> Help
+                <md-button ng-show="!needHelp" class="btn btn-default btn-sm" ng-click="showHelp()">
+                    <i class="fa fa-question fa-fw">&nbsp; </i> Show Help
+                </md-button>
+                <md-button ng-show="needHelp" class="btn btn-default btn-sm" ng-click="needHelp = false;">
+                    <i class="fa fa-arrow-left fa-fw">&nbsp; </i> Edit Test Story Template
                 </md-button>
                 <span flex></span>
                 <md-button class="btn btn-default btn-sm" ng-click="cancel()">
                     <i class="fa fa-times fa-fw">&nbsp; </i> Cancel
                 </md-button>
-                <md-button class="btn btn-primary btn-sm" ng-click="saveTestStoryConfig();">
+                <md-button ng-show="!needHelp" class="btn btn-primary btn-sm" ng-click="saveTestStoryConfig();">
                     <i class="fa fa-repeat fa-fw">&nbsp; </i> Save
                 </md-button>
             </md-dialog-actions>

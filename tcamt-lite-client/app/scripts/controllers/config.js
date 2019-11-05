@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q) {
+angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, $sce) {
 	$scope.loading = false;
 
 
@@ -49,6 +49,21 @@ angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $roo
     };
 
     $scope.editTestStoryConfigModalCtrl = function($scope, $mdDialog, $http, userInfoService) {
+        $scope.needHelp = false;
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+
+
+        };
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
     	if(!$rootScope.selectedTestStoryConfig){
             $scope.selectedTestStoryConfig =  angular.copy(_.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; }));
             $scope.selectedTestStoryConfig.id = new ObjectId().toString();

@@ -151,9 +151,4 @@ angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $docum
         }
     }
 
-    $scope.changeTitle = function () {
-        $scope.isChanged = true;
-        $scope.selectedDocTitle = $scope.selectedDocument.title;
-    }
-
 });

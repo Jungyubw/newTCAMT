@@ -287,11 +287,9 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
 
         };
 
-        $scope.getHtml = function () {
+        $scope.getHtml = function (index) {
             if($rootScope.tcamtDocument){
-                console.log($rootScope.tcamtDocument);
-                console.log($rootScope.tcamtDocument.helpGuide.slides[0]);
-                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[0].contents);
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
             }else {
                 return null;
             }
@@ -315,8 +313,27 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         };
     };
     $scope.TestPlanImportModalCtrl = function($scope,$mdDialog,$http) {
+        $scope.needHelp = false;
         $scope.jsonFilesData = {};
         $scope.type = 'old';
+
+
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+
+
+        };
+
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
+
         $scope.cancel = function() {
             $mdDialog.hide();
         };
