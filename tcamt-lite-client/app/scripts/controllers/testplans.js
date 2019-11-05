@@ -701,7 +701,7 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
             }
         }
         return null;
-    }
+    };
 
     $scope.assignProfile = function() {
         if($rootScope.selectedTestStep.profileIds){

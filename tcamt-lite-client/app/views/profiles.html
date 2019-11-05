@@ -50,7 +50,7 @@
                                                 <td st-ratio="5" ng-bind="row.integrationProfileMetaData.hl7Version"></td>
                                                 <td st-ratio="5">{{row.lastUpdatedDate | date:dateFormat}}</td>
                                                 <td st-ratio="45">
-                                                    <li ng-repeat="m in row.conformanceProfileMetaDataSet">{{m.name}} [{{m.type}}^{{m.event}}^{{m.structId}}, {{m.identifier}}]</li>
+                                                    <li ng-repeat="m in row.conformanceProfileMetaDataSet" ng-click="openDialogToShowProfile($event, row, m)">{{m.name}} [{{m.type}}^{{m.event}}^{{m.structId}}, {{m.identifier}}]</li>
                                                 </td>
                                                 <td st-ratio="10">
                                                     <button title="Replace Profile XML file"

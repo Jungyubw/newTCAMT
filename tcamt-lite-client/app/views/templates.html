@@ -310,6 +310,29 @@
 
 </script>
 
+<script type="text/ng-template" id="ShowProfileModal.html">
+    <md-dialog aria-label="Profile Viewer">
+        <form ng-cloak>
+            <md-toolbar>
+                <div class="md-toolbar-tools">
+                    <h2>Profile Viewer</h2>
+                    <span flex></span>
+                </div>
+            </md-toolbar>
+            <md-dialog-content>
+                ....
+            </md-dialog-content>
+            <md-dialog-actions layout="row">
+                <span flex></span>
+                <md-button class="btn btn-default btn-sm" ng-click="cancel()">
+                    <i class="fa fa-times fa-fw">&nbsp; </i> Close
+                </md-button>
+            </md-dialog-actions>
+        </form>
+    </md-dialog>
+
+</script>
+
 <script type="text/ng-template" id="ReplaceXMLProfileModal.html">
     <md-dialog aria-label="Replace XML Profile">
         <form ng-cloak>

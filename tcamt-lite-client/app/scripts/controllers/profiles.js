@@ -93,6 +93,35 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 		});
 	};
 
+    $scope.openDialogToShowProfile = function (ev, profile, m) {
+        $mdDialog.show({
+            controller: $scope.ShowProfileModalCtrl,
+            templateUrl: 'ShowProfileModal.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose:false,
+            fullscreen: true, // Only for -xs, -sm breakpoints.
+            locals: {
+                profile: profile,
+                m : m
+            },
+        }).then(function() {
+        }, function() {
+        });
+    };
+
+    $scope.ShowProfileModalCtrl = function($scope,$mdDialog,$http, profile, m) {
+        $scope.profile = profile;
+        $scope.m = m;
+
+        console.log(profile);
+        console.log(m);
+        $scope.cancel = function() {
+            $mdDialog.hide();
+        };
+
+    };
+
 	$scope.saveProfileName = function(profile) {
         $http.post('api/profiles/saveProfileMeta', profile).then(function (response) {
             var result = response.data;
