@@ -61,6 +61,17 @@ angular.module('tcl').controller('DocCtrl', function ($scope, $rootScope, $docum
         }
     };
 
+    $scope.deleteDocument = function() {
+        if($scope.selectedDocument) {
+            var index = $rootScope.tcamtDocument.generalDocuments.indexOf($scope.selectedDocument);
+            if (index > -1) {
+                $scope.isChanged = true;
+                $rootScope.tcamtDocument.generalDocuments.splice(index, 1);
+            }
+
+        }
+    };
+
     $scope.changeMode = function() {
         $scope.editMode = !$scope.editMode;
     };
