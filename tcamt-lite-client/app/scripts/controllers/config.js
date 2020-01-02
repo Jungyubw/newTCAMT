@@ -48,6 +48,25 @@ angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $roo
         });
     };
 
+    $scope.deleteTestStoryConfig = function (ev, tsc) {
+        $rootScope.selectedTestStoryConfig = tsc;
+
+        $http.post('api/config/' + $rootScope.selectedTestStoryConfig.id + '/delete').then(function (response) {
+            $rootScope.msg().text = "testplanDeleteSuccess";
+            $rootScope.msg().type = "success";
+            $rootScope.msg().show = true;
+            $rootScope.manualHandle = true;
+
+            var idxP = _.findIndex($rootScope.testStoryConfigs, function (child) {
+                return child.id === $rootScope.selectedTestStoryConfig.id;
+            });
+            $rootScope.testStoryConfigs.splice(idxP, 1);
+
+        }, function (error) {
+            $scope.error = error;
+        });
+    };
+
     $scope.editTestStoryConfigModalCtrl = function($scope, $mdDialog, $http, userInfoService) {
         $scope.needHelp = false;
         $scope.showHelp = function () {

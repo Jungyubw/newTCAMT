@@ -31,4 +31,6 @@ public interface TestStoryConfigurationService {
 	public List<TestStoryConfiguration> findByAccountId(Long accountId);
 	
 	public TestStoryConfiguration findById(String id);
+	
+	public void delete(String id);
 }
