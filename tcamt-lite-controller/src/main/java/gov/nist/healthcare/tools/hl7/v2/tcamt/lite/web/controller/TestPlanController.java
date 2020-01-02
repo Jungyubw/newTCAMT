@@ -191,13 +191,8 @@ public class TestPlanController extends CommonController {
       if (account == null)
         throw new UserAccountNotFoundException();
       log.info("Delete TestPlan with id=" + id);
-      TestPlan tp = findTestPlan(id);
-      if (tp.getAccountId() == account.getId()) {
-        testPlanService.delete(id);
-        return new ResponseMessage(ResponseMessage.Type.success, "testPlanDeletedSuccess", null);
-      } else {
-        throw new OperationNotAllowException("delete");
-      }
+      testPlanService.delete(id);
+      return new ResponseMessage(ResponseMessage.Type.success, "testPlanDeletedSuccess", null);
     } catch (RuntimeException e) {
       throw new TestPlanDeleteException(e);
     } catch (Exception e) {
