@@ -61,32 +61,32 @@ public class JsonExceptionHandler implements HandlerExceptionResolver {
 				logger.error("ERROR: document not found", ex);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				mapper.writeValue(response.getWriter(), new ResponseMessage(
-						ResponseMessage.Type.danger, "IGDocumentNotFound"));
+						ResponseMessage.Type.danger, "TestPlanNotFoundException"));
 			} else if (ex instanceof TestPlanSaveException) {
 				logger.error("ERROR: Access Denied", ex);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				mapper.writeValue(response.getWriter(), new ResponseMessage(
-						ResponseMessage.Type.danger, "igDocumentNotSaved"));
+						ResponseMessage.Type.danger, "TestPlanSaveException"));
 			} else if (ex instanceof TestPlanDeleteException) {
 				logger.error("ERROR: Access Denied", ex);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				mapper.writeValue(response.getWriter(), new ResponseMessage(
-						ResponseMessage.Type.danger, "igDocumentNotDeleted"));
+						ResponseMessage.Type.danger, "TestPlanDeleteException"));
 			} else if (ex instanceof OperationNotAllowException) {
 				logger.error("ERROR: Access Denied", ex);
 				response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				mapper.writeValue(response.getWriter(), new ResponseMessage(
-						ResponseMessage.Type.danger, "operationNotAllow"));
+						ResponseMessage.Type.danger, "OperationNotAllowException"));
 			} else if (ex instanceof TestPlanException) {
 				logger.error("ERROR: Access Denied", ex);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				mapper.writeValue(response.getWriter(), new ResponseMessage(
-						ResponseMessage.Type.danger, "igDocumentIssue"));
+						ResponseMessage.Type.danger, "TestPlanException"));
 			} else if (ex instanceof TestPlanListException) {
 				logger.error("ERROR: Access Denied", ex);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 				mapper.writeValue(response.getWriter(), new ResponseMessage(
-						ResponseMessage.Type.danger, "igDocumentListFailed"));
+						ResponseMessage.Type.danger, "TestPlanListException"));
 			} else {
 				logger.error("ERROR: " + ex.getMessage(), ex);
 				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
