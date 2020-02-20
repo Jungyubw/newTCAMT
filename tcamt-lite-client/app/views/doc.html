@@ -47,7 +47,7 @@
                 <uib-accordion close-others="true">
                     <uib-accordion-group ng-click="changeDoc('UserGuide');">
                         <uib-accordion-heading>
-                            <span>User Guide</span>
+                            <span style="color:#f6f6f6">User Guide</span>
                         </uib-accordion-heading>
                         <div class="col-md-12">
                             <div ng-if="!isAdmin() || !isEditMode()" ng-repeat="slide in selectedDocument.slides">
@@ -71,7 +71,7 @@
                     </uib-accordion-group>
                     <uib-accordion-group ng-click="changeDoc('HelpGuide');">
                         <uib-accordion-heading>
-                            <span>Help Guide</span>
+                            <span style="color:#f6f6f6">Help Guide</span>
                         </uib-accordion-heading>
                         <div class="col-md-12">
                             <div ng-repeat="slide in selectedDocument.slides">
@@ -84,7 +84,7 @@
                     <uib-accordion-group ng-if="tcamtDocument" ng-repeat="doc in tcamtDocument.generalDocuments" ng-click="changeDoc(doc.title);">
                         <uib-accordion-heading>
                             <input ng-if="isAdmin() && isEditMode()" class="form-control" ng-model="doc.title" ng-change="recordChanged();" type="text"/>
-                            <span ng-if="!isAdmin() || !isEditMode()">{{doc.title}}</span>
+                            <span ng-if="!isAdmin() || !isEditMode()" style="color:#f6f6f6">{{doc.title}}</span>
                         </uib-accordion-heading>
                         <div class="col-md-12">
                             <div ng-if="!isAdmin() || !isEditMode()" ng-repeat="slide in selectedDocument.slides">

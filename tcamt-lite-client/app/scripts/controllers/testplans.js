@@ -2003,10 +2003,23 @@ angular.module('tcl').controller('TestPlanCtrl', function ($document, $scope, $r
         });
     };
 
-    $scope.updateTestDataCategorizationListData = function (node) {
+    $scope.updateTestDataCategorizationListData = function (node, value, index, action) {
+        if(action === 'change') {
+            node.testDataCategorizationListData[index] = value;
+        }else if(action === 'delete') {
+            const i = node.testDataCategorizationListData.indexOf(value);
+            if (i > -1) {
+                node.testDataCategorizationListData.splice(i, 1);
+            }
+        }else if(action === 'add') {
+            node.testDataCategorizationListData.push(value);
+        }
+
         var cate = $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(node.iPath)];
         cate.listData = node.testDataCategorizationListData;
         $rootScope.selectedTestStep.testDataCategorizationMap[$scope.replaceDot2Dash(node.iPath)] = cate;
+
+
     };
 
     $scope.updateTestDataCategorization = function (node) {
