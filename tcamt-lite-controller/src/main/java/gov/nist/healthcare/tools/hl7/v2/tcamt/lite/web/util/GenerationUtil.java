@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -80,6 +82,9 @@ public class GenerationUtil {
   private List<SegmentInfo> segmentsInfoList = new ArrayList<SegmentInfo>();
   private int repeatedNum = 1;
   private int currentPosition = 0;
+  
+  final String OLD_FORMAT = "yyyyMMdd";
+  final String NEW_FORMAT = "MM/dd/yyyy";
 
   public List<SegmentInstanceData> popSegmentList(TestStepParams params, ProfileData profileData) {
     this.segmentsInfoList = new ArrayList<SegmentInfo>();
@@ -129,17 +134,17 @@ public class GenerationUtil {
             
           }
           
-          for(SegmentInfo si:segmentsInfoList){
-            System.out.println(si);
-          }
+//          for(SegmentInfo si:segmentsInfoList){
+//            System.out.println(si);
+//          }
           
           currentPosition = 0;
 
           for (SegmentInstanceData sid : segmentInstanceDataList) {
             SegmentInfo sInfo = this.findSegmentInfo(sid.getSegmentName(), null);
             if (sInfo != null) {
-              System.out.println(sid);
-              System.out.println(currentPosition);
+//              System.out.println(sid);
+//              System.out.println(currentPosition);
               sid.setiPath(sInfo.getiPath());
               sid.setPath(sInfo.getPath());
               sid.setPositionIPath(sInfo.getiPositionPath());
@@ -147,9 +152,9 @@ public class GenerationUtil {
               sid.setSegmentDef(sInfo.getSegment());
               sid.setUsagePath(sInfo.getUsagePath());
             }else {
-              System.out.println("NULL FOUND");
-              System.out.println(sid);
-              System.out.println(currentPosition);
+//              System.out.println("NULL FOUND");
+//              System.out.println(sid);
+//              System.out.println(currentPosition);
             }
           }
 
@@ -317,26 +322,204 @@ public class GenerationUtil {
     }
 
     if (params.getJdXSL() != null && !params.getJdXSL().equals("")) {
-      String xslStr = IOUtils.toString(
-          classLoader.getResourceAsStream("xsl" + File.separator + params.getJdXSL() + ".xsl"));
+      if(params.getJdXSL().equals("IZ52-IZ33NF-IZ33TM-IZ33PD-JurorDocument")) {
+        String testCaseName = params.getTestCaseName();
+        Document nistXMLDom = XMLManager.stringToDom(nistXMLStr);
+        String qak2 = this.findDataByPath(nistXMLDom, "QAK.2");
+          
+        if(qak2.equals("OK")) {
+          String jdTemplate = IOUtils.toString(classLoader.getResourceAsStream("jdTemplates" + File.separator + "JD_OK.txt"));
+          jdTemplate = jdTemplate.replace("$testcasename$", testCaseName);
 
-      if (xslStr != null && nistXMLStr != null) {
-        InputStream xsltInputStream = new ByteArrayInputStream(xslStr.getBytes());
-        InputStream sourceInputStream = new ByteArrayInputStream(nistXMLStr.getBytes());
+          String patientIdentifier = this.findDataByPath(nistXMLDom, "PID.3.1");
+          jdTemplate = jdTemplate.replace("$patientIdentifier$", patientIdentifier);         
+          
+          String firstPatientName = this.findDataByPath(nistXMLDom, "PID.5.2");
+          String middlePatientName = this.findDataByPath(nistXMLDom, "PID.5.3");
+          String lastPatientName = this.findDataByPath(nistXMLDom, "PID.5.1.1");
+          jdTemplate = jdTemplate.replace("$PatientName$", firstPatientName + " " + middlePatientName + " " + lastPatientName);
+          
+          String dob = this.findDataByPath(nistXMLDom, "PID.7.1");
+          jdTemplate = jdTemplate.replace("$DOB$", dob);  
+          
+          String gender = this.findDataByPath(nistXMLDom, "PID.8");
+          jdTemplate = jdTemplate.replace("$Gender$", gender);  
+          
+          String immunizationScheduleUsed = this.findDataByPathAndCondition(nistXMLDom, "OBX", "OBX.3.1", "59779-9", "OBX.5.2", 0);
+          jdTemplate = jdTemplate.replace("$immunizationScheduleUsed$", immunizationScheduleUsed);
+          
+          
+          String immunizationHistory = "";
+          String immunizationForecast = "";
+          
+          NodeList orderGroups = nistXMLDom.getElementsByTagName("RSP_K11.ORDER");
+          if(orderGroups != null && orderGroups.getLength() > 0) {
+            for(int i=0; i<orderGroups.getLength(); i++) {
+              Element orderGroup = (Element)orderGroups.item(i);
+              
+              String value_RXA_5_1 = this.findDataByPath(orderGroup, "RXA.5.1");
+              
+              
+              if(value_RXA_5_1.equals("998")) {
 
-        Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-        Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
+                String immunizationForecastVaccineGroup = "";
+                String immunizationForecastDueDate = "";
+                String immunizationForecastEarliestDatetoGive = "";
+                String immunizationForecastLatestDatetoGive = "";
+                
+                NodeList obxSegments = orderGroup.getElementsByTagName("OBX");
+                
+                if(obxSegments != null && obxSegments.getLength() > 0) {
+                  for(int j=obxSegments.getLength() - 1 ; j>-1; j--) {
+                    Element obxSegment = (Element)obxSegments.item(j);
+                    if(this.findDataByPath(obxSegment, "OBX.3.1").equals("30956-7")) {
+                      immunizationForecastVaccineGroup = this.findDataByPath(obxSegment, "OBX.5.2");
+                      String trHTML = "<tr>";                
+                      if(immunizationForecastVaccineGroup.equals("NOT_Found") || immunizationForecastVaccineGroup.equals("")) {
+                        trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                      } else {
+                        trHTML = trHTML + "<td style=\"text-align: center;\">" + immunizationForecastVaccineGroup + "</td>";
+                      }
+                      if(immunizationForecastDueDate.equals("NOT_Found") || immunizationForecastDueDate.equals("")) {
+                        trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                      } else {
+                        trHTML = trHTML + "<td style=\"text-align: center;\">" + this.changeDateFormat(immunizationForecastDueDate) + "</td>";
+                      }
+                      if(immunizationForecastEarliestDatetoGive.equals("NOT_Found") || immunizationForecastEarliestDatetoGive.equals("")) {
+                        trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                      } else {
+                        trHTML = trHTML + "<td style=\"text-align: center;\">" + this.changeDateFormat(immunizationForecastEarliestDatetoGive) + "</td>";
+                      }
+                      if(immunizationForecastLatestDatetoGive.equals("NOT_Found") || immunizationForecastLatestDatetoGive.equals("")) {
+                        trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                      } else {
+                        trHTML = trHTML + "<td style=\"text-align: center;\">" + this.changeDateFormat(immunizationForecastLatestDatetoGive) + "</td>";
+                      }
+                      trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#F2F2F2\"><textarea maxlength=\"100\" rows=\"1\" style=\"width: 100%; height: 100%; border: 1px; background: 1px  #F2F2F2; resize:vertical; overflow-y:hidden \"></textarea></td>";
+                      trHTML = trHTML + "</tr>";
+                      immunizationForecastVaccineGroup = "";
+                      immunizationForecastDueDate = "";
+                      immunizationForecastEarliestDatetoGive = "";
+                      immunizationForecastLatestDatetoGive = "";
+                      immunizationForecast = trHTML + immunizationForecast;                      
+                    } else if(this.findDataByPath(obxSegment, "OBX.3.1").equals("30980-7")) {
+                      immunizationForecastDueDate = this.findDataByPath(obxSegment, "OBX.5.1");
+                    } else if(this.findDataByPath(obxSegment, "OBX.3.1").equals("30981-5")) {
+                      immunizationForecastEarliestDatetoGive = this.findDataByPath(obxSegment, "OBX.5.1");
+                    } else if(this.findDataByPath(obxSegment, "OBX.3.1").equals("59777-3")) {
+                      immunizationForecastLatestDatetoGive = this.findDataByPath(obxSegment, "OBX.5.1");
+                    }
+                  }
+                }
+              } else {                
+                String immunizationHistoryVaccineGroup = "";
+                String immunizationHistoryVaccineAdministered = this.findDataByPath(orderGroup, "RXA.5.2");
+                String immunizationHistoryDateAdministered = this.findDataByPath(orderGroup, "RXA.3.1");
+                String immunizationHistoryValidDose = "";
+                String immunizationHistoryValidityReason = "";
+                String immunizationHistoryCompletionStatus = this.findDataByPath(orderGroup, "RXA.20");
+                
+                NodeList obxSegments = orderGroup.getElementsByTagName("OBX");
+                
+                if(obxSegments != null && obxSegments.getLength() > 0) {
+                  for(int j=obxSegments.getLength() - 1 ; j>-1; j--) {
+                    Element obxSegment = (Element)obxSegments.item(j);
+                    if(this.findDataByPath(obxSegment, "OBX.3.1").equals("30956-7")) {
+                      immunizationHistoryVaccineGroup = this.findDataByPath(obxSegment, "OBX.5.2");
+                      String trHTML = "<tr>";
+                      
+                      if(immunizationHistoryVaccineGroup.equals("NOT_Found") || immunizationHistoryVaccineGroup.equals("")) {
+                        trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                      } else {
+                        trHTML = trHTML + "<td style=\"text-align: center;\">" + immunizationHistoryVaccineGroup + "</td>";
+                      }
+                      
+                      if(immunizationHistoryVaccineAdministered.equals("NOT_Found") || immunizationHistoryVaccineAdministered.equals("")) {
+                        trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                      } else {
+                        trHTML = trHTML + "<td style=\"text-align: center;\">" + immunizationHistoryVaccineAdministered + "</td>";
+                      }
+                      
+                      if(immunizationHistoryDateAdministered.equals("NOT_Found") || immunizationHistoryDateAdministered.equals("")) {
+                        trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                      } else {
+                        trHTML = trHTML + "<td style=\"text-align: center;\">" + this.changeDateFormat(immunizationHistoryDateAdministered) + "</td>";
+                      }
+                      
+                      if(immunizationHistoryValidDose.equals("NOT_Found") || immunizationHistoryValidDose.equals("")) {
+                        trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                      } else {
+                        if(immunizationHistoryValidDose.equals("Y")) {
+                          trHTML = trHTML + "<td style=\"text-align: center;\">" + "YES" + "</td>";                    
+                        } else if(immunizationHistoryValidDose.equals("N")) {
+                          trHTML = trHTML + "<td style=\"text-align: center;\">" + "NO" + "</td>";                    
+                        } else {
+                          trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                        }
+                      }
+                      
+                      if(immunizationHistoryValidityReason.equals("NOT_Found") || immunizationHistoryValidityReason.equals("")) {
+                        trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                      } else {
+                        trHTML = trHTML + "<td style=\"text-align: center;\">" + immunizationHistoryValidityReason + "</td>";
+                      }
+                      
+                      if(immunizationHistoryCompletionStatus.equals("NOT_Found") || immunizationHistoryCompletionStatus.equals("")) {
+                        trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                      } else {
+                        if(immunizationHistoryCompletionStatus.equals("CP")) {
+                          trHTML = trHTML + "<td style=\"text-align: center;\">" + "Complete" + "</td>";                    
+                        } else if(immunizationHistoryCompletionStatus.equals("RE")) {
+                          trHTML = trHTML + "<td style=\"text-align: center;\">" + "Refused" + "</td>";                    
+                        } else if(immunizationHistoryCompletionStatus.equals("NA")) {
+                          trHTML = trHTML + "<td style=\"text-align: center;\">" + "Not Administered" + "</td>";                    
+                        } else if(immunizationHistoryCompletionStatus.equals("PA")) {
+                          trHTML = trHTML + "<td style=\"text-align: center;\">" + "Partially Administered" + "</td>";                    
+                        } else {
+                          trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                        }
+                      }
+                      trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#F2F2F2\"><textarea maxlength=\"100\" rows=\"1\" style=\"width: 100%; height: 100%; border: 1px; background: 1px  #F2F2F2; resize:vertical; overflow-y:hidden \"></textarea></td>";
+                      trHTML = trHTML + "</tr>";
+                      immunizationHistoryVaccineGroup = "";
+                      immunizationHistoryValidDose = "";
+                      immunizationHistoryValidityReason = "";
+                      
+                      immunizationHistory =  immunizationHistory + trHTML;
+                    }else if(this.findDataByPath(obxSegment, "OBX.3.1").equals("59781-5")) {
+                      immunizationHistoryValidDose = this.findDataByPath(obxSegment, "OBX.5.1");
+                    } else if(this.findDataByPath(obxSegment, "OBX.3.1").equals("30982-3")) {
+                      immunizationHistoryValidityReason = this.findDataByPath(obxSegment, "OBX.5.1");
+                    } 
+                  }
+                }
+              }
+            }
+          }
+          jdTemplate = jdTemplate.replace("$immunizationHistory$", immunizationHistory);
+          jdTemplate = jdTemplate.replace("$immunizationForecast$", immunizationForecast);
+          result.setJurorDocument(jdTemplate);
+        }
+      } else {
+        String xslStr = IOUtils.toString(classLoader.getResourceAsStream("xsl" + File.separator + params.getJdXSL() + ".xsl"));
 
-        String xsltStr = IOUtils.toString(xsltReader);
-        String sourceStr = IOUtils.toString(sourceReader);
+        if (xslStr != null && nistXMLStr != null) {
+          InputStream xsltInputStream = new ByteArrayInputStream(xslStr.getBytes());
+          InputStream sourceInputStream = new ByteArrayInputStream(nistXMLStr.getBytes());
 
-        result.setJurorDocument(GenerationUtil.parseXmlByXSLT(sourceStr, xsltStr));
-        result.setJurorDocument(result.getJurorDocument().replace("accordion", "uib-accordion"));
+          Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
+          Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
+
+          String xsltStr = IOUtils.toString(xsltReader);
+          String sourceStr = IOUtils.toString(sourceReader);
+
+          result.setJurorDocument(GenerationUtil.parseXmlByXSLT(sourceStr, xsltStr));
+          result.setJurorDocument(result.getJurorDocument().replace("accordion", "uib-accordion"));
+        } 
       }
     }
 
     String mcXML = this.generateMessageContentXML(params, profileData);
-    System.out.println(mcXML);
     String xslStr = IOUtils
         .toString(classLoader.getResourceAsStream("xsl" + File.separator + "MessageContents.xsl"));
 
@@ -355,6 +538,159 @@ public class GenerationUtil {
     }
 
     return result;
+  }
+
+  /**
+   * @param immunizationHistoryDateAdministered
+   * @return
+   */
+  private String changeDateFormat(String date) {
+    String oldDateString = date;
+    SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT);
+    Date d;
+    try {
+      d = sdf.parse(oldDateString);
+      sdf.applyPattern(NEW_FORMAT);
+      return sdf.format(d);
+    } catch (ParseException e) {
+      return "Wrong Formatted Date";
+    }
+  }
+
+  /**
+   * @param orderGroup
+   * @param path
+   * @param path2
+   * @param value
+   * @param target
+   * @param index
+   * @return
+   */
+  private String findDataByPathAndCondition(Element elm, String path, String path2, String value, String target, int index) {
+    if (elm != null && path != null) {
+      NodeList founds = elm.getElementsByTagName(path);
+      if(founds != null) {
+        for(int i = 0; i < founds.getLength(); i++) {
+          Element found = (Element)founds.item(i);
+          
+          NodeList secondFounds = found.getElementsByTagName(path2);
+          
+          if(secondFounds != null && secondFounds.getLength() > 0) {
+            Element secondfound = (Element)secondFounds.item(0);
+            
+            if(secondfound != null) {
+              if(secondfound.getChildNodes() != null && secondfound.getChildNodes().item(0) != null) {
+                if(secondfound.getChildNodes().item(0).getNodeValue().equals(value)) {
+                  
+                  NodeList targets = found.getElementsByTagName(target);
+                  
+                  if(targets != null && targets.getLength() > index) {
+                    if(targets.item(index).getChildNodes() != null && targets.item(index).getChildNodes().item(0) != null) {
+                      return targets.item(index).getChildNodes().item(0).getNodeValue();
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return "NOT_Found";
+  }
+
+  /**
+   * @param nistXMLDom
+   * @param string
+   * @param string2
+   * @param string3
+   * @param string4
+   * @param i
+   * @return
+   */
+  private String findDataByPathAndCondition(Document nistXMLDom, String path, String path2, String value, String target, int index) {
+    if (nistXMLDom != null && path != null) {
+      NodeList founds = nistXMLDom.getElementsByTagName(path);
+      if(founds != null) {
+        for(int i = 0; i < founds.getLength(); i++) {
+          Element found = (Element)founds.item(i);
+          
+          NodeList secondFounds = found.getElementsByTagName(path2);
+          
+          if(secondFounds != null && secondFounds.getLength() > 0) {
+            Element secondfound = (Element)secondFounds.item(0);
+            
+            if(secondfound != null) {
+              if(secondfound.getChildNodes() != null && secondfound.getChildNodes().item(0) != null) {
+                if(secondfound.getChildNodes().item(0).getNodeValue().equals(value)) {
+                  
+                  NodeList targets = found.getElementsByTagName(target);
+                  
+                  if(targets != null && targets.getLength() > index) {
+                    if(targets.item(index).getChildNodes() != null && targets.item(index).getChildNodes().item(0) != null) {
+                      return targets.item(index).getChildNodes().item(0).getNodeValue();
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return "NOT_Found";
+  }
+
+  /**
+   * @param nistXMLDom
+   * @param string
+   * @return
+   */
+  private String findDataByPath(Document nistXMLDom, String path) {
+    List<String> results = new ArrayList<String>();
+    
+    if (nistXMLDom != null && path != null) {
+      NodeList founds = nistXMLDom.getElementsByTagName(path);
+      if(founds != null) {
+        for(int i = 0; i < founds.getLength(); i++) {
+          Element found = (Element)founds.item(i);
+          if(found.getChildNodes() != null && found.getChildNodes().item(0) != null) {
+            results.add(found.getChildNodes().item(0).getNodeValue());            
+          }
+        }
+      }
+    }
+    if(results.size() > 0) {
+      return results.get(0);
+    }
+    return "NOT_Found";
+  }
+  
+  /**
+   * @param orderGroup
+   * @param path
+   * @return
+   */
+  private String findDataByPath(Element elm, String path) {
+    List<String> results = new ArrayList<String>();
+    
+    if (elm != null && path != null) {
+      NodeList founds = elm.getElementsByTagName(path);
+      if(founds != null) {
+        for(int i = 0; i < founds.getLength(); i++) {
+          Element found = (Element)founds.item(i);
+          if(found.getChildNodes() != null && found.getChildNodes().item(0) != null) {
+            results.add(found.getChildNodes().item(0).getNodeValue());            
+          }
+        }
+      }
+    }
+    if(results.size() > 0) {
+      return results.get(0);
+    }
+    return "NOT_Found";
   }
 
   public TestStepSupplementXMLsOutput getSupplementXMLs(
@@ -2202,12 +2538,12 @@ public class GenerationUtil {
     } else {
       this.currentPosition = this.currentPosition + 1;
       if(sInfo.isAnchor()) {
-        System.out.println("-----Missing Anchor----------");
-        
-        
-        
-        System.out.println(this.currentPosition);
-        System.out.println(sInfo);        
+//        System.out.println("-----Missing Anchor----------");
+//        
+//        
+//        
+//        System.out.println(this.currentPosition);
+//        System.out.println(sInfo);        
         
         skipChildren(sInfo);
         
