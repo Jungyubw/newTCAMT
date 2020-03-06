@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <html>
-    <head>
+    <head> 
       <style type="text/css">
          @media screen{
          
@@ -131,10 +131,9 @@
          color:#0840F8;
          }
       </style>
-      </head>
-<body>      
-
-<div class="jurordocument">
+ 	 </head>
+ 	 <body>
+      <div class="jurordocument">
          <table>
             <thead>
                <tr>
@@ -174,11 +173,11 @@
                   <th style="text-align: left;" width="30%" class="note">Inspection Settlement (Pass/Fail)</th>
                   <td width="30%" style="text-align: right;">Pass</td>
                   <td width="5%" style="text-align: center; background: 1px #F2F2F2;">
-                     <input type="checkbox" value="" />
+                     <input type="checkbox" value="">
                   </td>
                   <td width="30%" style="text-align: right;">Fail</td>
                   <td width="5%" style="text-align: center; background: 1px #F2F2F2;">
-                     <input type="checkbox" value=""/>
+                     <input type="checkbox" value="">
                   </td>
                </tr>
                <tr>
@@ -204,9 +203,9 @@
             </thead>
             <tbody>
                <td>
-                  <p class="note">This Test Case-specific Juror Document provides a checklist for the Tester to use during certification testing for assessing the EHR technology's ability to display required core data elements from the information received in the Immunization History with Forecast IZ52r1.0 response message. Additional data from the message or from the EHR are permitted to be displayed by the EHR. Grayed-out fields in the Juror Document indicate where no data for the data element indicated were included in the IZ52r1.0 message for the given Test Case.</p>
+                  <p class="note">This Test Case-specific Juror Document provides a checklist for the Tester to use during certification testing for assessing the EHR technology's ability to display information notifying the HIT user that a Return Acknowledgement with No Person Records IZ33r1.0 message was received (in response to an Immunization History with Forecast IZ54r1.0 query message). Additional data from the message or from the EHR are permitted to be displayed by the EHR.</p>
                   <p class="note">The format of this Juror Document is for ease-of-use by the Tester and does not indicate how the EHR display must be designed.</p>
-                  <p class="note">The Immunization History with Immunization Forecast data shown in this Juror Document are derived from the IZ52r1.0 message provided with the given Test Case; equivalent data are permitted to be displayed by the EHR. The column headings are meant to convey the kind of data to be displayed; equivalent labels/column headings are permitted to be displayed by the EHR.</p>
+                  <p class="note">The data shown in this Juror Document are derived from the test data provided with the given Test Case; equivalent data are permitted to be displayed by the EHR. The column headings are meant to convey the kind of data to be displayed; equivalent labels/column headings are permitted to be displayed by the EHR.</p>
                </td>
             </tbody>
          </table>
@@ -226,16 +225,16 @@
                   <th>Tester Comment</th>
                </tr>
                <tr>
-                   <td style="text-align: center;">$patientIdentifier$</td>
-                   <td style="text-align: center;">$PatientName$</td>
-                   <td style="text-align: center;">$DOB$</td>
-                   <td style="text-align: center;">$Gender$</td>
+                  <td style="text-align: center;">$patientIdentifier$</td>
+                  <td style="text-align: center;">$PatientName$</td>
+                  <td style="text-align: center;">$DOB$</td>
+                  <td style="text-align: center;">$Gender$</td>
                   <td style="text-align: center;" bgcolor="#F2F2F2">
                      <textarea maxlength="100" rows="1" style="width: 100%; height: 100%; border: 1px; background: 1px  #F2F2F2; resize:vertical; overflow-y:hidden "></textarea>
                   </td>
                </tr>
                <tr>
-                  <td colspan="5" class="note">When displayed in the EHR with the Immunization History with Immunization Forecast, these patient demographics data may be derived from either the received immunization message or the EHR patient record. When displaying demographics from the patient record, the EHR must be able to demonstrate a linkage between the demographics in the message (primarily the patient ID in PID-3.1) and the patient record used for display to ensure that the message was associated with the appropriate patient.</td>
+                  <td colspan="5" class="note">When displayed in the EHR with the notification indicating that a Return Acknowledgement with No Person Records IZ33r1.0 message was received, these patient demographics data are derived from the EHR patient record.</td>
                </tr>
             </tbody>
          </table>
@@ -244,68 +243,19 @@
          <table>
             <thead>
                <tr>
-                  <th>Immunization History with Forecast</th>
+                  <th>Immunization History with Immunization Forecast</th>
                </tr>
             </thead>
-         </table>
-
-         <table>
             <tbody>
                <tr>
-                  <th>Immunization Schedule Used</th>
-                  <th>Tester Comment</th>
-               </tr>
-               <tr>
-                   <td style="text-align: center;">$immunizationScheduleUsed$</td>
-                  <td bgcolor="#F2F2F2">
-                     <textarea maxlength="100" rows="1" style="width: 100%; height: 100%; border: 1px; background: 1px  #F2F2F2; resize:vertical; overflow-y:hidden"></textarea>
+                  <td style="text-align: center;">
+                     <p class="note">The EHR shall display a notification indicating that the</p>
+                     <p class="note">query for an Immunization History with Forecast</p>
+                     <p class="note">is complete with no errors, but too many matching records were found for the person in the query</p>
                   </td>
                </tr>
-            </tbody>
-         </table>
-         <br><br>
-         <table>
-            <thead>
-               <tr>
-                  <th colspan="7">Immunization History</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <th>Vaccine Group</th>
-                  <th>Vaccine Administered</th>
-                  <th>Date Administered</th>
-                  <th>Valid Dose</th>
-                  <th>Validity Reason</th>
-                  <th>Completion Status*</th>
-                  <th>Tester Comment</th>
-               </tr>
-                $immunizationHistory$
-               <tr>
-                  <td colspan="7" class="note">* "Completion Status" refers to the status of the dose of vaccine administered on the indicated date and may be interpreted as "Dose Status". A status of "Complete" means that the vaccine dose was "completely administered" as opposed to "partially administered".
-                  </td>
-               </tr>
-            </tbody>
-         </table>
-         <br></br><br></br>
-         <table>
-            <thead>
-               <tr>
-                  <th colspan="5">Immunization Forecast</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <th>Vaccine Group</th>
-                  <th>Due Date</th>
-                  <th>Earliest Date To Give</th>
-                  <th>Latest Date to Give</th>
-                  <th>Tester Comment</th>
-               </tr>
-                $immunizationForecast$
             </tbody>
          </table>
       </div>
-    
-</body>
-</html>
+	  </body>
+	  </html>

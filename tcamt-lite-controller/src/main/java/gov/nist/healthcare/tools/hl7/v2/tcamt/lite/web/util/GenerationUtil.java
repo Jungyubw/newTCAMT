@@ -340,10 +340,12 @@ public class GenerationUtil {
           jdTemplate = jdTemplate.replace("$PatientName$", firstPatientName + " " + middlePatientName + " " + lastPatientName);
           
           String dob = this.findDataByPath(nistXMLDom, "PID.7.1");
-          jdTemplate = jdTemplate.replace("$DOB$", dob);  
+          jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
           
           String gender = this.findDataByPath(nistXMLDom, "PID.8");
-          jdTemplate = jdTemplate.replace("$Gender$", gender);  
+          if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
+          else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
+          else jdTemplate = jdTemplate.replace("$Gender$", gender);  
           
           String immunizationScheduleUsed = this.findDataByPathAndCondition(nistXMLDom, "OBX", "OBX.3.1", "59779-9", "OBX.5.2", 0);
           jdTemplate = jdTemplate.replace("$immunizationScheduleUsed$", immunizationScheduleUsed);
@@ -498,6 +500,66 @@ public class GenerationUtil {
           }
           jdTemplate = jdTemplate.replace("$immunizationHistory$", immunizationHistory);
           jdTemplate = jdTemplate.replace("$immunizationForecast$", immunizationForecast);
+          result.setJurorDocument(jdTemplate);
+        } else if (qak2.equals("NF")) {
+          String jdTemplate = IOUtils.toString(classLoader.getResourceAsStream("jdTemplates" + File.separator + "JD_NF.txt"));
+          jdTemplate = jdTemplate.replace("$testcasename$", testCaseName);
+          String patientIdentifier = this.findDataByPath(nistXMLDom, "QPD.3.1");
+          jdTemplate = jdTemplate.replace("$patientIdentifier$", patientIdentifier);         
+          
+          String firstPatientName = this.findDataByPath(nistXMLDom, "QPD.4.2");
+          String middlePatientName = this.findDataByPath(nistXMLDom, "QPD.4.3");
+          String lastPatientName = this.findDataByPath(nistXMLDom, "QPD.4.1.1");
+          jdTemplate = jdTemplate.replace("$PatientName$", firstPatientName + " " + middlePatientName + " " + lastPatientName);
+
+          String dob = this.findDataByPath(nistXMLDom, "QPD.6.1");
+          jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
+          
+          String gender = this.findDataByPath(nistXMLDom, "QPD.7");
+          if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
+          else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
+          else jdTemplate = jdTemplate.replace("$Gender$", gender); 
+          
+          result.setJurorDocument(jdTemplate);
+        } else if (qak2.equals("PD")) {
+          String jdTemplate = IOUtils.toString(classLoader.getResourceAsStream("jdTemplates" + File.separator + "JD_PD.txt"));
+          jdTemplate = jdTemplate.replace("$testcasename$", testCaseName);
+          String patientIdentifier = this.findDataByPath(nistXMLDom, "QPD.3.1");
+          jdTemplate = jdTemplate.replace("$patientIdentifier$", patientIdentifier);         
+          
+          String firstPatientName = this.findDataByPath(nistXMLDom, "QPD.4.2");
+          String middlePatientName = this.findDataByPath(nistXMLDom, "QPD.4.3");
+          String lastPatientName = this.findDataByPath(nistXMLDom, "QPD.4.1.1");
+          jdTemplate = jdTemplate.replace("$PatientName$", firstPatientName + " " + middlePatientName + " " + lastPatientName);
+
+          String dob = this.findDataByPath(nistXMLDom, "QPD.6.1");
+          jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
+          
+          String gender = this.findDataByPath(nistXMLDom, "QPD.7");
+          if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
+          else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
+          else jdTemplate = jdTemplate.replace("$Gender$", gender); 
+          
+          result.setJurorDocument(jdTemplate);
+        } else if (qak2.equals("TM")) {
+          String jdTemplate = IOUtils.toString(classLoader.getResourceAsStream("jdTemplates" + File.separator + "JD_TM.txt"));
+          jdTemplate = jdTemplate.replace("$testcasename$", testCaseName);
+          String patientIdentifier = this.findDataByPath(nistXMLDom, "QPD.3.1");
+          jdTemplate = jdTemplate.replace("$patientIdentifier$", patientIdentifier);         
+          
+          String firstPatientName = this.findDataByPath(nistXMLDom, "QPD.4.2");
+          String middlePatientName = this.findDataByPath(nistXMLDom, "QPD.4.3");
+          String lastPatientName = this.findDataByPath(nistXMLDom, "QPD.4.1.1");
+          jdTemplate = jdTemplate.replace("$PatientName$", firstPatientName + " " + middlePatientName + " " + lastPatientName);
+
+          String dob = this.findDataByPath(nistXMLDom, "QPD.6.1");
+          jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
+          
+          String gender = this.findDataByPath(nistXMLDom, "QPD.7");
+          if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
+          else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
+          else jdTemplate = jdTemplate.replace("$Gender$", gender); 
+          
           result.setJurorDocument(jdTemplate);
         }
       } else {
