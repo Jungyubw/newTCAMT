@@ -243,7 +243,7 @@
          <table>
             <thead>
                <tr>
-                  <th>Immunization History with Immunization Forecast</th>
+                  <th>Evaluated Immunization History and Immunization Forecast</th>
                </tr>
             </thead>
             <tbody>

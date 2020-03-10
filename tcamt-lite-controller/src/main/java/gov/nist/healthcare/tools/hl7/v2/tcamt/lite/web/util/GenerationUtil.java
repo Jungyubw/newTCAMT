@@ -342,7 +342,7 @@ public class GenerationUtil {
           String dob = this.findDataByPath(nistXMLDom, "PID.7");
           jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
           
-          String gender = this.findDataByPath(nistXMLDom, "PID.8");
+          String gender = this.findDataByPath(nistXMLDom, "PID.8.1");
           if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
           else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
           else jdTemplate = jdTemplate.replace("$Gender$", gender);  
@@ -516,7 +516,7 @@ public class GenerationUtil {
           String dob = this.findDataByPath(nistXMLDom, "QPD.6");
           jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
           
-          String gender = this.findDataByPath(nistXMLDom, "QPD.7");
+          String gender = this.findDataByPath(nistXMLDom, "QPD.7.1");
           if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
           else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
           else jdTemplate = jdTemplate.replace("$Gender$", gender); 
@@ -536,7 +536,7 @@ public class GenerationUtil {
           String dob = this.findDataByPath(nistXMLDom, "QPD.6");
           jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
           
-          String gender = this.findDataByPath(nistXMLDom, "QPD.7");
+          String gender = this.findDataByPath(nistXMLDom, "QPD.7.1");
           if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
           else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
           else jdTemplate = jdTemplate.replace("$Gender$", gender); 
@@ -556,7 +556,7 @@ public class GenerationUtil {
           String dob = this.findDataByPath(nistXMLDom, "QPD.6");
           jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
           
-          String gender = this.findDataByPath(nistXMLDom, "QPD.7");
+          String gender = this.findDataByPath(nistXMLDom, "QPD.7.1");
           if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
           else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
           else jdTemplate = jdTemplate.replace("$Gender$", gender); 
