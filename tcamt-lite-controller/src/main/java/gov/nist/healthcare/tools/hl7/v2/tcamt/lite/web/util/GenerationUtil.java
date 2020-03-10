@@ -337,9 +337,9 @@ public class GenerationUtil {
           String firstPatientName = this.findDataByPath(nistXMLDom, "PID.5.2");
           String middlePatientName = this.findDataByPath(nistXMLDom, "PID.5.3");
           String lastPatientName = this.findDataByPath(nistXMLDom, "PID.5.1.1");
-          jdTemplate = jdTemplate.replace("$PatientName$", firstPatientName + " " + middlePatientName + " " + lastPatientName);
+          jdTemplate = jdTemplate.replace("$PatientName$", this.generateName(firstPatientName, middlePatientName, lastPatientName));
           
-          String dob = this.findDataByPath(nistXMLDom, "PID.7.1");
+          String dob = this.findDataByPath(nistXMLDom, "PID.7");
           jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
           
           String gender = this.findDataByPath(nistXMLDom, "PID.8");
@@ -354,13 +354,14 @@ public class GenerationUtil {
           String immunizationHistory = "";
           String immunizationForecast = "";
           
-          NodeList orderGroups = nistXMLDom.getElementsByTagName("RSP_K11.ORDER");
-          if(orderGroups != null && orderGroups.getLength() > 0) {
-            for(int i=0; i<orderGroups.getLength(); i++) {
-              Element orderGroup = (Element)orderGroups.item(i);
+          NodeList COMPLETE_HISTORYGroups = nistXMLDom.getElementsByTagName("RSP_K11.COMPLETE_HISTORY");
+          if(COMPLETE_HISTORYGroups != null && COMPLETE_HISTORYGroups.getLength() > 0) {
+            for(int i=0; i<COMPLETE_HISTORYGroups.getLength(); i++) {
+              Element COMPLETE_HISTORYGroup = (Element)COMPLETE_HISTORYGroups.item(i);
               
-              String value_RXA_5_1 = this.findDataByPath(orderGroup, "RXA.5.1");
+              String value_RXA_5_1 = this.findDataByPath(COMPLETE_HISTORYGroup, "RXA.5.1");
               
+              System.out.println(value_RXA_5_1);
               
               if(value_RXA_5_1.equals("998")) {
 
@@ -369,7 +370,7 @@ public class GenerationUtil {
                 String immunizationForecastEarliestDatetoGive = "";
                 String immunizationForecastLatestDatetoGive = "";
                 
-                NodeList obxSegments = orderGroup.getElementsByTagName("OBX");
+                NodeList obxSegments = COMPLETE_HISTORYGroup.getElementsByTagName("OBX");
                 
                 if(obxSegments != null && obxSegments.getLength() > 0) {
                   for(int j=obxSegments.getLength() - 1 ; j>-1; j--) {
@@ -415,13 +416,13 @@ public class GenerationUtil {
                 }
               } else {                
                 String immunizationHistoryVaccineGroup = "";
-                String immunizationHistoryVaccineAdministered = this.findDataByPath(orderGroup, "RXA.5.2");
-                String immunizationHistoryDateAdministered = this.findDataByPath(orderGroup, "RXA.3.1");
+                String immunizationHistoryVaccineAdministered = this.findDataByPath(COMPLETE_HISTORYGroup, "RXA.5.2");
+                String immunizationHistoryDateAdministered = this.findDataByPath(COMPLETE_HISTORYGroup, "RXA.3");
                 String immunizationHistoryValidDose = "";
                 String immunizationHistoryValidityReason = "";
-                String immunizationHistoryCompletionStatus = this.findDataByPath(orderGroup, "RXA.20");
+                String immunizationHistoryCompletionStatus = this.findDataByPath(COMPLETE_HISTORYGroup, "RXA.20");
                 
-                NodeList obxSegments = orderGroup.getElementsByTagName("OBX");
+                NodeList obxSegments = COMPLETE_HISTORYGroup.getElementsByTagName("OBX");
                 
                 if(obxSegments != null && obxSegments.getLength() > 0) {
                   for(int j=obxSegments.getLength() - 1 ; j>-1; j--) {
@@ -510,9 +511,9 @@ public class GenerationUtil {
           String firstPatientName = this.findDataByPath(nistXMLDom, "QPD.4.2");
           String middlePatientName = this.findDataByPath(nistXMLDom, "QPD.4.3");
           String lastPatientName = this.findDataByPath(nistXMLDom, "QPD.4.1.1");
-          jdTemplate = jdTemplate.replace("$PatientName$", firstPatientName + " " + middlePatientName + " " + lastPatientName);
+          jdTemplate = jdTemplate.replace("$PatientName$", this.generateName(firstPatientName, middlePatientName, lastPatientName));
 
-          String dob = this.findDataByPath(nistXMLDom, "QPD.6.1");
+          String dob = this.findDataByPath(nistXMLDom, "QPD.6");
           jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
           
           String gender = this.findDataByPath(nistXMLDom, "QPD.7");
@@ -530,9 +531,9 @@ public class GenerationUtil {
           String firstPatientName = this.findDataByPath(nistXMLDom, "QPD.4.2");
           String middlePatientName = this.findDataByPath(nistXMLDom, "QPD.4.3");
           String lastPatientName = this.findDataByPath(nistXMLDom, "QPD.4.1.1");
-          jdTemplate = jdTemplate.replace("$PatientName$", firstPatientName + " " + middlePatientName + " " + lastPatientName);
+          jdTemplate = jdTemplate.replace("$PatientName$", this.generateName(firstPatientName, middlePatientName, lastPatientName));
 
-          String dob = this.findDataByPath(nistXMLDom, "QPD.6.1");
+          String dob = this.findDataByPath(nistXMLDom, "QPD.6");
           jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
           
           String gender = this.findDataByPath(nistXMLDom, "QPD.7");
@@ -550,9 +551,9 @@ public class GenerationUtil {
           String firstPatientName = this.findDataByPath(nistXMLDom, "QPD.4.2");
           String middlePatientName = this.findDataByPath(nistXMLDom, "QPD.4.3");
           String lastPatientName = this.findDataByPath(nistXMLDom, "QPD.4.1.1");
-          jdTemplate = jdTemplate.replace("$PatientName$", firstPatientName + " " + middlePatientName + " " + lastPatientName);
+          jdTemplate = jdTemplate.replace("$PatientName$", this.generateName(firstPatientName, middlePatientName, lastPatientName));
 
-          String dob = this.findDataByPath(nistXMLDom, "QPD.6.1");
+          String dob = this.findDataByPath(nistXMLDom, "QPD.6");
           jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
           
           String gender = this.findDataByPath(nistXMLDom, "QPD.7");
@@ -603,6 +604,19 @@ public class GenerationUtil {
   }
 
   /**
+   * @param firstPatientName
+   * @param middlePatientName
+   * @param lastPatientName
+   * @return
+   */
+  private String generateName(String firstPatientName, String middlePatientName,String lastPatientName) {
+    if(middlePatientName == null || middlePatientName.equals("NOT_Found")) {
+      return firstPatientName + " " + lastPatientName;
+    }
+    return firstPatientName + " " + middlePatientName + " " + lastPatientName;
+  }
+
+  /**
    * @param immunizationHistoryDateAdministered
    * @return
    */
@@ -617,49 +631,6 @@ public class GenerationUtil {
     } catch (ParseException e) {
       return "Wrong Formatted Date";
     }
-  }
-
-  /**
-   * @param orderGroup
-   * @param path
-   * @param path2
-   * @param value
-   * @param target
-   * @param index
-   * @return
-   */
-  private String findDataByPathAndCondition(Element elm, String path, String path2, String value, String target, int index) {
-    if (elm != null && path != null) {
-      NodeList founds = elm.getElementsByTagName(path);
-      if(founds != null) {
-        for(int i = 0; i < founds.getLength(); i++) {
-          Element found = (Element)founds.item(i);
-          
-          NodeList secondFounds = found.getElementsByTagName(path2);
-          
-          if(secondFounds != null && secondFounds.getLength() > 0) {
-            Element secondfound = (Element)secondFounds.item(0);
-            
-            if(secondfound != null) {
-              if(secondfound.getChildNodes() != null && secondfound.getChildNodes().item(0) != null) {
-                if(secondfound.getChildNodes().item(0).getNodeValue().equals(value)) {
-                  
-                  NodeList targets = found.getElementsByTagName(target);
-                  
-                  if(targets != null && targets.getLength() > index) {
-                    if(targets.item(index).getChildNodes() != null && targets.item(index).getChildNodes().item(0) != null) {
-                      return targets.item(index).getChildNodes().item(0).getNodeValue();
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    return "NOT_Found";
   }
 
   /**

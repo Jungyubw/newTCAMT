@@ -7,7 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -17,6 +22,9 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCase;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.TestCaseGroup;
@@ -34,6 +42,8 @@ import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.util.XMLManager;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.web.controller.ConstraintXMLOutPut;
 
 public class ExportUtil {
+  final String OLD_FORMAT = "yyyyMMdd";
+  final String NEW_FORMAT = "MM/dd/yyyy";
 
   public static String str(String value) {
     return value != null ? value : "";
@@ -219,24 +229,364 @@ public class ExportUtil {
         }
 
         if (ts.getJdXSL() != null && !ts.getJdXSL().equals("")) {
-          String jdXSL = IOUtils.toString(
-              classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl"));
-          InputStream xsltInputStream = new ByteArrayInputStream(jdXSL.getBytes());
-          InputStream sourceInputStream = new ByteArrayInputStream(testStepSupplementXMLsOutput.getNistXMLStr().getBytes());
-          Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
-          Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
-          String xsltStr = IOUtils.toString(xsltReader);
-          String sourceStr = IOUtils.toString(sourceReader);
+          
+          if(params.getJdXSL().equals("IZ52-IZ33NF-IZ33TM-IZ33PD-JurorDocument")) {
+            Document nistXMLDom = XMLManager.stringToDom(testStepSupplementXMLsOutput.getNistXMLStr());
+            String qak2 = this.findDataByPath(nistXMLDom, "QAK.2");
+              
+            if(qak2.equals("OK")) {
+              String jdTemplate = IOUtils.toString(classLoader.getResourceAsStream("jdTemplates" + File.separator + "JD_OK.txt"));
+              jdTemplate = jdTemplate.replace("$testcasename$", testCaseName);
 
-          String jurorDocumentHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
-          packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>"
-              + System.getProperty("line.separator");
-          packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jurorDocumentHTMLStr);
+              String patientIdentifier = this.findDataByPath(nistXMLDom, "PID.3.1");
+              jdTemplate = jdTemplate.replace("$patientIdentifier$", patientIdentifier);         
+              
+              String firstPatientName = this.findDataByPath(nistXMLDom, "PID.5.2");
+              String middlePatientName = this.findDataByPath(nistXMLDom, "PID.5.3");
+              String lastPatientName = this.findDataByPath(nistXMLDom, "PID.5.1.1");
+              jdTemplate = jdTemplate.replace("$PatientName$", this.generateName(firstPatientName, middlePatientName, lastPatientName));
+              
+              String dob = this.findDataByPath(nistXMLDom, "PID.7");
+              jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
+              
+              String gender = this.findDataByPath(nistXMLDom, "PID.8");
+              if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
+              else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
+              else jdTemplate = jdTemplate.replace("$Gender$", gender);  
+              
+              String immunizationScheduleUsed = this.findDataByPathAndCondition(nistXMLDom, "OBX", "OBX.3.1", "59779-9", "OBX.5.2", 0);
+              jdTemplate = jdTemplate.replace("$immunizationScheduleUsed$", immunizationScheduleUsed);
+              
+              
+              String immunizationHistory = "";
+              String immunizationForecast = "";
+              
+              NodeList COMPLETE_HISTORYGroups = nistXMLDom.getElementsByTagName("RSP_K11.COMPLETE_HISTORY");
+              if(COMPLETE_HISTORYGroups != null && COMPLETE_HISTORYGroups.getLength() > 0) {
+                for(int i=0; i<COMPLETE_HISTORYGroups.getLength(); i++) {
+                  Element COMPLETE_HISTORYGroup = (Element)COMPLETE_HISTORYGroups.item(i);
+                  
+                  String value_RXA_5_1 = this.findDataByPath(COMPLETE_HISTORYGroup, "RXA.5.1");
+                  
+                  System.out.println(value_RXA_5_1);
+                  
+                  if(value_RXA_5_1.equals("998")) {
+
+                    String immunizationForecastVaccineGroup = "";
+                    String immunizationForecastDueDate = "";
+                    String immunizationForecastEarliestDatetoGive = "";
+                    String immunizationForecastLatestDatetoGive = "";
+                    
+                    NodeList obxSegments = COMPLETE_HISTORYGroup.getElementsByTagName("OBX");
+                    
+                    if(obxSegments != null && obxSegments.getLength() > 0) {
+                      for(int j=obxSegments.getLength() - 1 ; j>-1; j--) {
+                        Element obxSegment = (Element)obxSegments.item(j);
+                        if(this.findDataByPath(obxSegment, "OBX.3.1").equals("30956-7")) {
+                          immunizationForecastVaccineGroup = this.findDataByPath(obxSegment, "OBX.5.2");
+                          String trHTML = "<tr>";                
+                          if(immunizationForecastVaccineGroup.equals("NOT_Found") || immunizationForecastVaccineGroup.equals("")) {
+                            trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                          } else {
+                            trHTML = trHTML + "<td style=\"text-align: center;\">" + immunizationForecastVaccineGroup + "</td>";
+                          }
+                          if(immunizationForecastDueDate.equals("NOT_Found") || immunizationForecastDueDate.equals("")) {
+                            trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                          } else {
+                            trHTML = trHTML + "<td style=\"text-align: center;\">" + this.changeDateFormat(immunizationForecastDueDate) + "</td>";
+                          }
+                          if(immunizationForecastEarliestDatetoGive.equals("NOT_Found") || immunizationForecastEarliestDatetoGive.equals("")) {
+                            trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                          } else {
+                            trHTML = trHTML + "<td style=\"text-align: center;\">" + this.changeDateFormat(immunizationForecastEarliestDatetoGive) + "</td>";
+                          }
+                          if(immunizationForecastLatestDatetoGive.equals("NOT_Found") || immunizationForecastLatestDatetoGive.equals("")) {
+                            trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                          } else {
+                            trHTML = trHTML + "<td style=\"text-align: center;\">" + this.changeDateFormat(immunizationForecastLatestDatetoGive) + "</td>";
+                          }
+                          trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#F2F2F2\"><textarea maxlength=\"100\" rows=\"1\" style=\"width: 100%; height: 100%; border: 1px; background: 1px  #F2F2F2; resize:vertical; overflow-y:hidden \"></textarea></td>";
+                          trHTML = trHTML + "</tr>";
+                          immunizationForecastVaccineGroup = "";
+                          immunizationForecastDueDate = "";
+                          immunizationForecastEarliestDatetoGive = "";
+                          immunizationForecastLatestDatetoGive = "";
+                          immunizationForecast = trHTML + immunizationForecast;                      
+                        } else if(this.findDataByPath(obxSegment, "OBX.3.1").equals("30980-7")) {
+                          immunizationForecastDueDate = this.findDataByPath(obxSegment, "OBX.5.1");
+                        } else if(this.findDataByPath(obxSegment, "OBX.3.1").equals("30981-5")) {
+                          immunizationForecastEarliestDatetoGive = this.findDataByPath(obxSegment, "OBX.5.1");
+                        } else if(this.findDataByPath(obxSegment, "OBX.3.1").equals("59777-3")) {
+                          immunizationForecastLatestDatetoGive = this.findDataByPath(obxSegment, "OBX.5.1");
+                        }
+                      }
+                    }
+                  } else {                
+                    String immunizationHistoryVaccineGroup = "";
+                    String immunizationHistoryVaccineAdministered = this.findDataByPath(COMPLETE_HISTORYGroup, "RXA.5.2");
+                    String immunizationHistoryDateAdministered = this.findDataByPath(COMPLETE_HISTORYGroup, "RXA.3");
+                    String immunizationHistoryValidDose = "";
+                    String immunizationHistoryValidityReason = "";
+                    String immunizationHistoryCompletionStatus = this.findDataByPath(COMPLETE_HISTORYGroup, "RXA.20");
+                    
+                    NodeList obxSegments = COMPLETE_HISTORYGroup.getElementsByTagName("OBX");
+                    
+                    if(obxSegments != null && obxSegments.getLength() > 0) {
+                      for(int j=obxSegments.getLength() - 1 ; j>-1; j--) {
+                        Element obxSegment = (Element)obxSegments.item(j);
+                        if(this.findDataByPath(obxSegment, "OBX.3.1").equals("30956-7")) {
+                          immunizationHistoryVaccineGroup = this.findDataByPath(obxSegment, "OBX.5.2");
+                          String trHTML = "<tr>";
+                          
+                          if(immunizationHistoryVaccineGroup.equals("NOT_Found") || immunizationHistoryVaccineGroup.equals("")) {
+                            trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                          } else {
+                            trHTML = trHTML + "<td style=\"text-align: center;\">" + immunizationHistoryVaccineGroup + "</td>";
+                          }
+                          
+                          if(immunizationHistoryVaccineAdministered.equals("NOT_Found") || immunizationHistoryVaccineAdministered.equals("")) {
+                            trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                          } else {
+                            trHTML = trHTML + "<td style=\"text-align: center;\">" + immunizationHistoryVaccineAdministered + "</td>";
+                          }
+                          
+                          if(immunizationHistoryDateAdministered.equals("NOT_Found") || immunizationHistoryDateAdministered.equals("")) {
+                            trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                          } else {
+                            trHTML = trHTML + "<td style=\"text-align: center;\">" + this.changeDateFormat(immunizationHistoryDateAdministered) + "</td>";
+                          }
+                          
+                          if(immunizationHistoryValidDose.equals("NOT_Found") || immunizationHistoryValidDose.equals("")) {
+                            trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                          } else {
+                            if(immunizationHistoryValidDose.equals("Y")) {
+                              trHTML = trHTML + "<td style=\"text-align: center;\">" + "YES" + "</td>";                    
+                            } else if(immunizationHistoryValidDose.equals("N")) {
+                              trHTML = trHTML + "<td style=\"text-align: center;\">" + "NO" + "</td>";                    
+                            } else {
+                              trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                            }
+                          }
+                          
+                          if(immunizationHistoryValidityReason.equals("NOT_Found") || immunizationHistoryValidityReason.equals("")) {
+                            trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                          } else {
+                            trHTML = trHTML + "<td style=\"text-align: center;\">" + immunizationHistoryValidityReason + "</td>";
+                          }
+                          
+                          if(immunizationHistoryCompletionStatus.equals("NOT_Found") || immunizationHistoryCompletionStatus.equals("")) {
+                            trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                          } else {
+                            if(immunizationHistoryCompletionStatus.equals("CP")) {
+                              trHTML = trHTML + "<td style=\"text-align: center;\">" + "Complete" + "</td>";                    
+                            } else if(immunizationHistoryCompletionStatus.equals("RE")) {
+                              trHTML = trHTML + "<td style=\"text-align: center;\">" + "Refused" + "</td>";                    
+                            } else if(immunizationHistoryCompletionStatus.equals("NA")) {
+                              trHTML = trHTML + "<td style=\"text-align: center;\">" + "Not Administered" + "</td>";                    
+                            } else if(immunizationHistoryCompletionStatus.equals("PA")) {
+                              trHTML = trHTML + "<td style=\"text-align: center;\">" + "Partially Administered" + "</td>";                    
+                            } else {
+                              trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#D2D2D2\"></td>";
+                            }
+                          }
+                          trHTML = trHTML + "<td style=\"text-align: center;\" bgcolor=\"#F2F2F2\"><textarea maxlength=\"100\" rows=\"1\" style=\"width: 100%; height: 100%; border: 1px; background: 1px  #F2F2F2; resize:vertical; overflow-y:hidden \"></textarea></td>";
+                          trHTML = trHTML + "</tr>";
+                          immunizationHistoryVaccineGroup = "";
+                          immunizationHistoryValidDose = "";
+                          immunizationHistoryValidityReason = "";
+                          
+                          immunizationHistory =  immunizationHistory + trHTML;
+                        }else if(this.findDataByPath(obxSegment, "OBX.3.1").equals("59781-5")) {
+                          immunizationHistoryValidDose = this.findDataByPath(obxSegment, "OBX.5.1");
+                        } else if(this.findDataByPath(obxSegment, "OBX.3.1").equals("30982-3")) {
+                          immunizationHistoryValidityReason = this.findDataByPath(obxSegment, "OBX.5.1");
+                        } 
+                      }
+                    }
+                  }
+                }
+              }
+              jdTemplate = jdTemplate.replace("$immunizationHistory$", immunizationHistory);
+              jdTemplate = jdTemplate.replace("$immunizationForecast$", immunizationForecast);
+              packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>" + System.getProperty("line.separator");
+              packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jdTemplate);
+            } else if (qak2.equals("NF")) {
+              String jdTemplate = IOUtils.toString(classLoader.getResourceAsStream("jdTemplates" + File.separator + "JD_NF.txt"));
+              jdTemplate = jdTemplate.replace("$testcasename$", testCaseName);
+              String patientIdentifier = this.findDataByPath(nistXMLDom, "QPD.3.1");
+              jdTemplate = jdTemplate.replace("$patientIdentifier$", patientIdentifier);         
+              
+              String firstPatientName = this.findDataByPath(nistXMLDom, "QPD.4.2");
+              String middlePatientName = this.findDataByPath(nistXMLDom, "QPD.4.3");
+              String lastPatientName = this.findDataByPath(nistXMLDom, "QPD.4.1.1");
+              jdTemplate = jdTemplate.replace("$PatientName$", this.generateName(firstPatientName, middlePatientName, lastPatientName));
+
+              String dob = this.findDataByPath(nistXMLDom, "QPD.6");
+              jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
+              
+              String gender = this.findDataByPath(nistXMLDom, "QPD.7");
+              if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
+              else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
+              else jdTemplate = jdTemplate.replace("$Gender$", gender); 
+              
+              packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>" + System.getProperty("line.separator");
+              packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jdTemplate);
+            } else if (qak2.equals("PD")) {
+              String jdTemplate = IOUtils.toString(classLoader.getResourceAsStream("jdTemplates" + File.separator + "JD_PD.txt"));
+              jdTemplate = jdTemplate.replace("$testcasename$", testCaseName);
+              String patientIdentifier = this.findDataByPath(nistXMLDom, "QPD.3.1");
+              jdTemplate = jdTemplate.replace("$patientIdentifier$", patientIdentifier);         
+              
+              String firstPatientName = this.findDataByPath(nistXMLDom, "QPD.4.2");
+              String middlePatientName = this.findDataByPath(nistXMLDom, "QPD.4.3");
+              String lastPatientName = this.findDataByPath(nistXMLDom, "QPD.4.1.1");
+              jdTemplate = jdTemplate.replace("$PatientName$", this.generateName(firstPatientName, middlePatientName, lastPatientName));
+
+              String dob = this.findDataByPath(nistXMLDom, "QPD.6");
+              jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
+              
+              String gender = this.findDataByPath(nistXMLDom, "QPD.7");
+              if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
+              else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
+              else jdTemplate = jdTemplate.replace("$Gender$", gender); 
+              
+              packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>" + System.getProperty("line.separator");
+              packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jdTemplate);
+            } else if (qak2.equals("TM")) {
+              String jdTemplate = IOUtils.toString(classLoader.getResourceAsStream("jdTemplates" + File.separator + "JD_TM.txt"));
+              jdTemplate = jdTemplate.replace("$testcasename$", testCaseName);
+              String patientIdentifier = this.findDataByPath(nistXMLDom, "QPD.3.1");
+              jdTemplate = jdTemplate.replace("$patientIdentifier$", patientIdentifier);         
+              
+              String firstPatientName = this.findDataByPath(nistXMLDom, "QPD.4.2");
+              String middlePatientName = this.findDataByPath(nistXMLDom, "QPD.4.3");
+              String lastPatientName = this.findDataByPath(nistXMLDom, "QPD.4.1.1");
+              jdTemplate = jdTemplate.replace("$PatientName$", this.generateName(firstPatientName, middlePatientName, lastPatientName));
+
+              String dob = this.findDataByPath(nistXMLDom, "QPD.6");
+              jdTemplate = jdTemplate.replace("$DOB$", this.changeDateFormat(dob));  
+              
+              String gender = this.findDataByPath(nistXMLDom, "QPD.7");
+              if(gender.equals("M")) jdTemplate = jdTemplate.replace("$Gender$", "Male"); 
+              else if(gender.equals("F")) jdTemplate = jdTemplate.replace("$Gender$", "Female"); 
+              else jdTemplate = jdTemplate.replace("$Gender$", gender); 
+
+              packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>" + System.getProperty("line.separator");
+              packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jdTemplate);  
+            }
+          } else {
+            String jdXSL = IOUtils.toString(
+                classLoader.getResourceAsStream("xsl" + File.separator + ts.getJdXSL() + ".xsl"));
+            InputStream xsltInputStream = new ByteArrayInputStream(jdXSL.getBytes());
+            InputStream sourceInputStream = new ByteArrayInputStream(testStepSupplementXMLsOutput.getNistXMLStr().getBytes());
+            Reader xsltReader = new InputStreamReader(xsltInputStream, "UTF-8");
+            Reader sourceReader = new InputStreamReader(sourceInputStream, "UTF-8");
+            String xsltStr = IOUtils.toString(xsltReader);
+            String sourceStr = IOUtils.toString(sourceReader);
+
+            String jurorDocumentHTMLStr = XMLManager.parseXmlByXSLT(sourceStr, xsltStr);
+            packageBodyHTML = packageBodyHTML + "<h3>" + "Juror Document" + "</h3>" + System.getProperty("line.separator");
+            packageBodyHTML = packageBodyHTML + this.retrieveBodyContent(jurorDocumentHTMLStr);            
+          }
         }
       }
     }
     packageBodyHTML = packageBodyHTML + "<p style=\"page-break-after:always;\"></p>";
     return packageBodyHTML;
+  }
+  
+  private String findDataByPathAndCondition(Document nistXMLDom, String path, String path2, String value, String target, int index) {
+    if (nistXMLDom != null && path != null) {
+      NodeList founds = nistXMLDom.getElementsByTagName(path);
+      if(founds != null) {
+        for(int i = 0; i < founds.getLength(); i++) {
+          Element found = (Element)founds.item(i);
+          
+          NodeList secondFounds = found.getElementsByTagName(path2);
+          
+          if(secondFounds != null && secondFounds.getLength() > 0) {
+            Element secondfound = (Element)secondFounds.item(0);
+            
+            if(secondfound != null) {
+              if(secondfound.getChildNodes() != null && secondfound.getChildNodes().item(0) != null) {
+                if(secondfound.getChildNodes().item(0).getNodeValue().equals(value)) {
+                  
+                  NodeList targets = found.getElementsByTagName(target);
+                  
+                  if(targets != null && targets.getLength() > index) {
+                    if(targets.item(index).getChildNodes() != null && targets.item(index).getChildNodes().item(0) != null) {
+                      return targets.item(index).getChildNodes().item(0).getNodeValue();
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return "NOT_Found";
+  }
+  
+  private String findDataByPath(Document nistXMLDom, String path) {
+    List<String> results = new ArrayList<String>();
+    
+    if (nistXMLDom != null && path != null) {
+      NodeList founds = nistXMLDom.getElementsByTagName(path);
+      if(founds != null) {
+        for(int i = 0; i < founds.getLength(); i++) {
+          Element found = (Element)founds.item(i);
+          if(found.getChildNodes() != null && found.getChildNodes().item(0) != null) {
+            results.add(found.getChildNodes().item(0).getNodeValue());            
+          }
+        }
+      }
+    }
+    if(results.size() > 0) {
+      return results.get(0);
+    }
+    return "NOT_Found";
+  }
+  
+  private String findDataByPath(Element elm, String path) {
+    List<String> results = new ArrayList<String>();
+    
+    if (elm != null && path != null) {
+      NodeList founds = elm.getElementsByTagName(path);
+      if(founds != null) {
+        for(int i = 0; i < founds.getLength(); i++) {
+          Element found = (Element)founds.item(i);
+          if(found.getChildNodes() != null && found.getChildNodes().item(0) != null) {
+            results.add(found.getChildNodes().item(0).getNodeValue());            
+          }
+        }
+      }
+    }
+    if(results.size() > 0) {
+      return results.get(0);
+    }
+    return "NOT_Found";
+  }
+  
+  private String changeDateFormat(String date) {
+    String oldDateString = date;
+    SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT);
+    Date d;
+    try {
+      d = sdf.parse(oldDateString);
+      sdf.applyPattern(NEW_FORMAT);
+      return sdf.format(d);
+    } catch (ParseException e) {
+      return "Wrong Formatted Date";
+    }
+  }
+  
+  private String generateName(String firstPatientName, String middlePatientName,String lastPatientName) {
+    if(middlePatientName == null || middlePatientName.equals("NOT_Found")) {
+      return firstPatientName + " " + lastPatientName;
+    }
+    return firstPatientName + " " + middlePatientName + " " + lastPatientName;
   }
 
   private String genPackagePages(TestPlan tp,
