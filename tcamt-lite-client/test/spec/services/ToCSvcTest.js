@@ -70,7 +70,7 @@ describe("toc service", function () {
 	});
 		
 	it("Do we have valid messages?", function() {
-		var label = "Conformance Profiles";
+		var label = "Message Profiles";
 		var rval = ToCSvc.getTopEntry("3.1", "3", label, document.profile.segments);		
 
 		expect(_.has(rval, 'id')).toBeTruthy();

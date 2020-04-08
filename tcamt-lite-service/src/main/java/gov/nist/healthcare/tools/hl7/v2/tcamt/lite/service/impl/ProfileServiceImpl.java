@@ -1,12 +1,13 @@
 /**
- * This software was developed at the National Institute of Standards and Technology by employees
- * of the Federal Government in the course of their official duties. Pursuant to title 17 Section 105 of the
- * United States Code this software is not subject to copyright protection and is in the public domain.
- * This is an experimental system. NIST assumes no responsibility whatsoever for its use by other parties,
- * and makes no guarantees, expressed or implied, about its quality, reliability, or any other characteristic.
- * We would appreciate acknowledgement if the software is used. This software can be redistributed and/or
- * modified freely provided that any derivative works bear some notice that they are derived from it, and any
- * modified versions bear some notice that they have been modified.
+ * This software was developed at the National Institute of Standards and Technology by employees of
+ * the Federal Government in the course of their official duties. Pursuant to title 17 Section 105
+ * of the United States Code this software is not subject to copyright protection and is in the
+ * public domain. This is an experimental system. NIST assumes no responsibility whatsoever for its
+ * use by other parties, and makes no guarantees, expressed or implied, about its quality,
+ * reliability, or any other characteristic. We would appreciate acknowledgement if the software is
+ * used. This software can be redistributed and/or modified freely provided that any derivative
+ * works bear some notice that they are derived from it, and any modified versions bear some notice
+ * that they have been modified.
  */
 
 /**
@@ -17,29 +18,10 @@
 
 package gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.impl;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,907 +32,507 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.mongodb.MongoException;
 
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Code;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Component;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ContentDefinition;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Datatype;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DatatypeLink;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DynamicMappingDefinition;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.DynamicMappingItem;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Extensibility;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Field;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Group;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Message;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ProfileMetaData;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Segment;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentLink;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRef;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.SegmentRefOrGroup;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Stability;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Table;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.Usage;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.ValueSetBinding;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.VariesMapItem;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByID;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByName;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ByNameOrByID;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.ConformanceStatement;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Constraint;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Constraints;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Context;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Predicate;
-import gov.nist.healthcare.tools.hl7.v2.igamt.lite.domain.constraints.Reference;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.ProfileDataStr;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatypes;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Messages;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Profile;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segments;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Tables;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.BindingStrength;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Component;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceContext;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceContextMetaData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceProfile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceProfileMetaData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ConformanceStatement;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Datatype;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.DynamicMapping;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.DynamicMappingDef;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.DynamicMappingItem;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Field;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Group;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.IntegrationProfile;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.IntegrationProfileMetaData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Predicate;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ProfileData;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Segment;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.SegmentRef;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.Usage;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ValueElement;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ValueSetDefinition;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ValueSetLibrary;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.domain.profile.ValueSetLibraryMetaData;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.repo.ProfileRepository;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileClone;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileException;
-import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileSaveException;
 import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.ProfileService;
+import gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.util.XMLManager;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
-	private HashMap<String, Datatype> datatypesMap;
-	private HashMap<String, Segment> segmentsMap;
-	private Constraints conformanceStatements;
-	private Constraints predicates;
-	
-	Logger log = LoggerFactory.getLogger(ProfileServiceImpl.class);
-	@Autowired
-	private ProfileRepository profileRepository;
-
-	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public Profile save(Profile p) throws ProfileException {
-		try {
-			return profileRepository.save(p);
-		} catch (MongoException e) {
-			throw new ProfileException(e);
-		}
-	}
-
-	@Override
-	@Transactional
-	public void delete(String id) {
-		profileRepository.delete(id);
-	}
-
-	@Override
-	public Profile findOne(String id) {
-		Profile p = profileRepository.findOne(id);
-		return p;
-	}
-
-	@Override
-	public List<Profile> findAll() {
-		List<Profile> profiles = profileRepository.findAll();
-		log.info("profiles=" + profiles.size());
-		return profiles;
-	}
-
-	@Override
-	public List<Profile> findByAccountId(Long accountId) {
-		List<Profile> profiles = profileRepository.findByAccountId(accountId);
-		return profiles;
-	}
-
-	@Override
-	public List<Profile> findByAccountIdAndSourceType(Long accountId, String sourceType) {
-		List<Profile> profiles = profileRepository.findByAccountIdAndSourceType(accountId, sourceType);
-		return profiles;
-	}
-	
-	@Override
-	public Profile clone(Profile p) throws CloneNotSupportedException {
-		return new ProfileClone().clone(p);
-	}
-
-	@Override
-	public Profile apply(Profile p) throws ProfileSaveException {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		p.getMetaData().setDate(dateFormat.format(Calendar.getInstance().getTime()));
-		profileRepository.save(p);
-		return p;
-	}
-
-	@Override
-	public Profile readXML2Profile(ProfileDataStr pds) throws ProfileException {
-		return deserializeXMLToProfile(pds.getProfileXMLFileStr(), pds.getValueSetXMLFileStr(),
-				pds.getConstraintsXMLFileStr()); 
-	}
-
-	private Profile deserializeXMLToProfile(String xmlContentsProfile, String xmlValueSet, String xmlConstraints) {
-		Document profileDoc = this.stringToDom(xmlContentsProfile);
-		Element elmConformanceProfile = (Element) profileDoc.getElementsByTagName("ConformanceProfile").item(0);
-
-		// Read Profile Meta
-		Profile profile = new Profile();
-		profile.setMetaData(new ProfileMetaData());
-		this.deserializeMetaData(profile, elmConformanceProfile);
-		this.deserializeEncodings(profile, elmConformanceProfile);
-
-		// Read Profile Libs
-		profile.setSegments(new Segments());
-		profile.setDatatypes(new Datatypes());
-
-		profile.setTables(this.deserializeXMLToTableLibrary(xmlValueSet, profile.getMetaData().getHl7Version()));
-
-		this.conformanceStatements = this.deserializeXMLToConformanceStatements(xmlConstraints);
-		this.predicates = this.deserializeXMLToPredicates(xmlConstraints);
-
-		this.constructDatatypesMap((Element) elmConformanceProfile.getElementsByTagName("Datatypes").item(0), profile);
-
-		Datatypes datatypes = new Datatypes();
-		for (String key : datatypesMap.keySet()) {
-			datatypes.addDatatype(datatypesMap.get(key));
-		}
-		profile.setDatatypes(datatypes);
-
-		this.segmentsMap = this.constructSegmentsMap(
-				(Element) elmConformanceProfile.getElementsByTagName("Segments").item(0), profile);
-
-		Segments segments = new Segments();
-		for (String key : segmentsMap.keySet()) {
-			segments.addSegment(segmentsMap.get(key));
-		}
-		profile.setSegments(segments);
-
-		// Read Profile Messages
-		this.deserializeMessages(profile, elmConformanceProfile);
-
-		return profile;
-	}
-	
-	private void deserializeMessages(Profile profile, Element elmConformanceProfile) {
-		NodeList nodes = elmConformanceProfile.getElementsByTagName("Message");
-		if (nodes != null && nodes.getLength() != 0) {
-			Messages messagesObj = new Messages();
-			messagesObj.setId(ObjectId.get().toString());
-			for (int i = 0; i < nodes.getLength(); i++) {
-				Message messageObj = new Message();
-				messageObj.setId(ObjectId.get().toString());
-				Element elmMessage = (Element) nodes.item(i);
-				messageObj.setMessageID(elmMessage.getAttribute("ID"));
-				messageObj.setIdentifier(elmMessage.getAttribute("Identifier"));
-				messageObj.setName(elmMessage.getAttribute("Name"));
-				messageObj.setMessageType(elmMessage.getAttribute("Type"));
-				messageObj.setEvent(elmMessage.getAttribute("Event"));
-				messageObj.setStructID(elmMessage.getAttribute("StructID"));
-				messageObj.setDescription(elmMessage.getAttribute("Description"));
-				
-				messageObj.setPredicates(this.findPredicates(this.predicates.getMessages(), elmMessage.getAttribute("ID"), elmMessage.getAttribute("StructID")));
-				messageObj.setConformanceStatements(this.findConformanceStatement(this.conformanceStatements.getMessages(), elmMessage.getAttribute("ID"), elmMessage.getAttribute("StructID")));
-
-				this.deserializeSegmentRefOrGroups(elmConformanceProfile, messageObj, elmMessage, profile.getSegments(), profile.getDatatypes());
-				messagesObj.addMessage(messageObj);
-			}
-			profile.setMessages(messagesObj);
-		}
-	}
-	
-	private void deserializeSegmentRefOrGroups(Element elmConformanceProfile,
-			Message messageObj, Element elmMessage, Segments segments,
-			Datatypes datatypes) {
-		List<SegmentRefOrGroup> segmentRefOrGroups = new ArrayList<SegmentRefOrGroup>();
-		NodeList nodes = elmMessage.getChildNodes();
-
-		int index = 0;
-		for (int i = 0; i < nodes.getLength(); i++) {
-			if (nodes.item(i).getNodeName().equals("Segment")) {
-				index = index + 1;
-				this.deserializeSegmentRef(elmConformanceProfile, segmentRefOrGroups, (Element) nodes.item(i), segments, datatypes, index);
-			} else if (nodes.item(i).getNodeName().equals("Group")) {
-				index = index + 1;
-				this.deserializeGroup(elmConformanceProfile, segmentRefOrGroups, (Element) nodes.item(i), segments, datatypes, index);
-			}
-		}
-
-		messageObj.setChildren(segmentRefOrGroups);
-
-	}
-	
-	private void deserializeGroup(Element elmConformanceProfile, List<SegmentRefOrGroup> segmentRefOrGroups, Element groupElm, Segments segments, Datatypes datatypes, int position) {
-		Group groupObj = new Group();
-		groupObj.setId(ObjectId.get().toString());
-		groupObj.setMax(groupElm.getAttribute("Max"));
-		groupObj.setMin(new Integer(groupElm.getAttribute("Min")));
-		groupObj.setName(groupElm.getAttribute("Name"));
-		groupObj.setUsage(Usage.fromValue(groupElm.getAttribute("Usage")));
-		groupObj.setPredicates(this.findPredicates(this.predicates.getGroups(), groupElm.getAttribute("ID"), groupElm.getAttribute("Name")));
-		groupObj.setConformanceStatements(this.findConformanceStatement(this.conformanceStatements.getGroups(), groupElm.getAttribute("ID"), groupElm.getAttribute("Name")));
-		groupObj.setPosition(position);
-
-		List<SegmentRefOrGroup> childSegmentRefOrGroups = new ArrayList<SegmentRefOrGroup>();
-
-		NodeList nodes = groupElm.getChildNodes();
-		int index = 0;
-		for (int i = 0; i < nodes.getLength(); i++) {
-			if (nodes.item(i).getNodeName().equals("Segment")) {
-				index = index + 1;
-				this.deserializeSegmentRef(elmConformanceProfile,
-						childSegmentRefOrGroups, (Element) nodes.item(i),
-						segments, datatypes, index);
-			} else if (nodes.item(i).getNodeName().equals("Group")) {
-				index = index + 1;
-				this.deserializeGroup(elmConformanceProfile,
-						childSegmentRefOrGroups, (Element) nodes.item(i),
-						segments, datatypes, index);
-			}
-		}
-
-		groupObj.setChildren(childSegmentRefOrGroups);
-
-		segmentRefOrGroups.add(groupObj);
-	}
-	
-	private void deserializeSegmentRef(Element elmConformanceProfile,
-			List<SegmentRefOrGroup> segmentRefOrGroups, Element segmentElm,
-			Segments segments, Datatypes datatypes, int position) {
-		SegmentRef segmentRefObj = new SegmentRef();
-		segmentRefObj.setId(ObjectId.get().toString());
-		segmentRefObj.setMax(segmentElm.getAttribute("Max"));
-		segmentRefObj.setMin(new Integer(segmentElm.getAttribute("Min")));
-		segmentRefObj.setUsage(Usage.fromValue(segmentElm.getAttribute("Usage")));
-		segmentRefObj.setPosition(position);
-		Segment s = this.segmentsMap.get(segmentElm.getAttribute("Ref"));
-		SegmentLink sl = new SegmentLink();
-		sl.setExt(s.getExt());
-		sl.setId(s.getId());
-		sl.setName(s.getName());
-		
-		segmentRefObj.setRef(sl);
-		segmentRefOrGroups.add(segmentRefObj);
-	}
-	
-	private HashMap<String, Segment> constructSegmentsMap(Element elmSegments, Profile profile) {
-		HashMap<String, Segment> segmentsMap = new HashMap<String, Segment>();
-		NodeList segmentNodeList = elmSegments.getElementsByTagName("Segment");
-
-		for (int i = 0; i < segmentNodeList.getLength(); i++) {
-			Element elmSegment = (Element) segmentNodeList.item(i);
-			segmentsMap.put(elmSegment.getAttribute("ID"),
-					this.deserializeSegment(elmSegment, profile));
-		}
-
-		return segmentsMap;
-	}
-	
-	private Segment deserializeSegment(Element segmentElm, Profile profile) {
-		Segment segmentObj = new Segment();
-		segmentObj.setId(ObjectId.get().toString());
-		segmentObj.setDescription(segmentElm.getAttribute("Description"));
-		if(segmentElm.getAttribute("Label") != null && !segmentElm.getAttribute("Label").equals("")){
-			segmentObj.setLabel(segmentElm.getAttribute("Label"));
-			segmentObj.setExt(segmentElm.getAttribute("Label").replace(segmentElm.getAttribute("Name") + "_", ""));
-		}else{
-			segmentObj.setLabel(segmentElm.getAttribute("Name"));
-		}
-		segmentObj.setName(segmentElm.getAttribute("Name"));
-		segmentObj.setPredicates(this.findPredicates(this.predicates.getSegments(), segmentElm.getAttribute("ID"), segmentElm.getAttribute("Name")));
-		segmentObj.setConformanceStatements(this.findConformanceStatement(this.conformanceStatements.getSegments(), segmentElm.getAttribute("ID"), segmentElm.getAttribute("Name")));
-		segmentObj.setHl7Version(profile.getMetaData().getHl7Version());
-		
-		NodeList dynamicMapping = segmentElm.getElementsByTagName("Mapping");
-		DynamicMappingDefinition dynamicMappingObj = null;
-		if(dynamicMapping.getLength() > 0){
-			dynamicMappingObj = new DynamicMappingDefinition();
-		}
-		
-		for (int i = 0; i < dynamicMapping.getLength(); i++) {
-			Element mappingElm = (Element)dynamicMapping.item(i);
-			VariesMapItem mappingStructure = new VariesMapItem();
-			mappingStructure.setHl7Version(segmentObj.getHl7Version());
-			mappingStructure.setReferenceLocation(mappingElm.getAttribute("Reference"));
-			mappingStructure.setSegmentName(segmentObj.getName());
-			mappingStructure.setTargetLocation(mappingElm.getAttribute("Position"));
-			dynamicMappingObj.setMappingStructure(mappingStructure);
-			
-			NodeList cases = mappingElm.getElementsByTagName("Case");
-			List<DynamicMappingItem> dynamicMappingItems = new ArrayList<DynamicMappingItem>();
-			for(int j = 0; j < cases.getLength(); j++) {
-				Element caseElm = (Element)cases.item(j);
-				DynamicMappingItem dynamicMappingItem = new DynamicMappingItem();
-				dynamicMappingItem.setDatatypeId(this.findDatatype(caseElm.getAttribute("Datatype"), profile).getId());
-				dynamicMappingItem.setFirstReferenceValue(caseElm.getAttribute("Value"));
-				dynamicMappingItems.add(dynamicMappingItem);
-				
-			}
-			dynamicMappingObj.setDynamicMappingItems(dynamicMappingItems);
-		}
-		if(dynamicMappingObj != null) segmentObj.setDynamicMappingDefinition(dynamicMappingObj);
-		
-		NodeList fields = segmentElm.getElementsByTagName("Field");
-		for (int i = 0; i < fields.getLength(); i++) {
-			Element fieldElm = (Element) fields.item(i);
-			segmentObj.addField(this.deserializeField(fieldElm, segmentObj, profile, segmentElm.getAttribute("ID"), (i + 1)));
-		}
-		return segmentObj;
-	}
-	
-	private Field deserializeField(Element fieldElm, Segment segment,
-			Profile profile, String segmentId, int position) {
-		Field fieldObj = new Field();
-		fieldObj.setId(ObjectId.get().toString());
-
-		fieldObj.setName(fieldElm.getAttribute("Name"));
-		fieldObj.setUsage(Usage.fromValue(fieldElm.getAttribute("Usage")));
-		Datatype d = this.findDatatype(fieldElm.getAttribute("Datatype"), profile);
-		DatatypeLink dl = new DatatypeLink();
-		dl.setExt(d.getExt());
-		dl.setId(d.getId());
-		dl.setName(d.getName());
-		fieldObj.setPosition(position);
-		
-		fieldObj.setDatatype(dl);
-		fieldObj.setMinLength(new Integer(fieldElm.getAttribute("MinLength")));
-		if(fieldElm.getAttribute("MaxLength") != null){
-			fieldObj.setMaxLength(fieldElm.getAttribute("MaxLength"));
-		}
-		if(fieldElm.getAttribute("ConfLength") != null){
-			fieldObj.setConfLength(fieldElm.getAttribute("ConfLength"));
-		}
-		
-		if (fieldElm.getAttribute("Binding") != null) {
-			ValueSetBinding vsb = new ValueSetBinding();
-			String id = findTableIdByMappingId(fieldElm.getAttribute("Binding"), profile.getTables());
-
-			if(id != null){
-				vsb.setTableId(id);
-				vsb.setId(ObjectId.get().toString());
-				vsb.setLocation(fieldObj.getPosition() + "");
-				
-				if (fieldElm.getAttribute("BindingStrength") != null) {
-					vsb.setBindingStrength(fieldElm.getAttribute("BindingStrength"));
-				}
-				if (fieldElm.getAttribute("BindingLocation") != null) {
-					String bindingLocation = fieldElm.getAttribute("BindingLocation");
-					bindingLocation = bindingLocation.replaceAll(":", " or ");
-					vsb.setBindingLocation(bindingLocation);
-				}
-				vsb.setUsage(fieldObj.getUsage());
-				
-				segment.addValueSetBinding(vsb);
-			}
-		}
-		
-		
-		if(fieldElm.getAttribute("Hide") != null && fieldElm.getAttribute("Hide").equals("true") ){
-			fieldObj.setHide(true);
-		}else{
-			fieldObj.setHide(false);
-		}
-		fieldObj.setMin(new Integer(fieldElm.getAttribute("Min")));
-		fieldObj.setMax(fieldElm.getAttribute("Max"));
-		if(fieldElm.getAttribute("ItemNo") != null){
-			fieldObj.setItemNo(fieldElm.getAttribute("ItemNo"));
-		}
-		return fieldObj;
-	}
-	
-	private Datatype findDatatype(String key, Profile profile) {
-		if (datatypesMap.get(key) != null)
-			return datatypesMap.get(key);
-		throw new IllegalArgumentException("Datatype " + key + " not found");
-	}
-	
-	private void constructDatatypesMap(Element elmDatatypes, Profile profile) {
-		this.datatypesMap = new HashMap<String, Datatype>();
-		NodeList datatypeNodeList = elmDatatypes.getElementsByTagName("Datatype");
-
-		for (int i = 0; i < datatypeNodeList.getLength(); i++) {
-			Element elmDatatype = (Element) datatypeNodeList.item(i);
-			if (!datatypesMap.keySet().contains(elmDatatype.getAttribute("ID"))) {
-				datatypesMap.put(elmDatatype.getAttribute("ID"), this.deserializeDatatype(elmDatatype, profile,elmDatatypes));
-			}
-		}
-	}
-	
-	private Datatype deserializeDatatype(Element elmDatatype, Profile profile, Element elmDatatypes) {
-		String ID = elmDatatype.getAttribute("ID");
-		if (!datatypesMap.keySet().contains(ID)) {
-			Datatype datatypeObj = new Datatype();
-			datatypeObj.setId(ObjectId.get().toString());
-			datatypeObj.setHl7Version(profile.getMetaData().getHl7Version());
-			datatypeObj.setDescription(elmDatatype.getAttribute("Description"));
-			if(elmDatatype.getAttribute("Label") != null &&  !elmDatatype.getAttribute("Label").equals("")){
-				datatypeObj.setLabel(elmDatatype.getAttribute("Label"));
-				datatypeObj.setExt(elmDatatype.getAttribute("Label").replace(elmDatatype.getAttribute("Name")+ "_", ""));
-			}else{
-				datatypeObj.setLabel(elmDatatype.getAttribute("Name"));
-			}
-			datatypeObj.setName(elmDatatype.getAttribute("Name"));
-			datatypeObj.setPredicates(this.findPredicates(this.predicates.getDatatypes(), ID, elmDatatype.getAttribute("Name")));
-			datatypeObj.setConformanceStatements(this.findConformanceStatement(this.conformanceStatements.getDatatypes(), ID, elmDatatype.getAttribute("Name")));
-
-			NodeList nodes = elmDatatype.getChildNodes();
-			int componentPosition = 0;
-			for (int i = 0; i < nodes.getLength(); i++) {
-				if (nodes.item(i).getNodeName().equals("Component")) {
-					componentPosition = componentPosition + 1;
-					Element elmComponent = (Element) nodes.item(i);
-					Component componentObj = new Component();
-					componentObj.setId(ObjectId.get().toString());
-					componentObj.setName(elmComponent.getAttribute("Name"));
-					componentObj.setUsage(Usage.fromValue(elmComponent.getAttribute("Usage")));
-					Element elmDt = getDatatypeElement(elmDatatypes, elmComponent.getAttribute("Datatype"));
-					Datatype datatype = this.deserializeDatatype(elmDt, profile, elmDatatypes);
-					DatatypeLink dl = new DatatypeLink();
-					dl.setId(datatype.getId());
-					dl.setName(datatype.getName());
-					dl.setExt(datatype.getExt());
-					componentObj.setDatatype(dl);
-					componentObj.setPosition(componentPosition);
-					componentObj.setMinLength(new Integer(elmComponent.getAttribute("MinLength")));
-					if (elmComponent.getAttribute("MaxLength") != null) {
-						componentObj.setMaxLength(elmComponent.getAttribute("MaxLength"));
-					}
-					if (elmComponent.getAttribute("ConfLength") != null) {
-						componentObj.setConfLength(elmComponent.getAttribute("ConfLength"));
-					}
-
-					if (elmComponent.getAttribute("Binding") != null) {
-						ValueSetBinding vsb = new ValueSetBinding();
-						String id = findTableIdByMappingId(elmComponent.getAttribute("Binding"), profile.getTables());
-	
-						if(id != null){
-							vsb.setTableId(id);
-							vsb.setId(ObjectId.get().toString());
-							vsb.setLocation(componentObj.getPosition() + "");
-							
-							if (elmComponent.getAttribute("BindingStrength") != null) {
-								vsb.setBindingStrength(elmComponent.getAttribute("BindingStrength"));
-							}
-							if (elmComponent.getAttribute("BindingLocation") != null) {
-								String bindingLocation = elmComponent.getAttribute("BindingLocation");
-								bindingLocation = bindingLocation.replaceAll(":", " or ");
-								vsb.setBindingLocation(bindingLocation);
-							}
-							vsb.setUsage(componentObj.getUsage());
-							
-							datatypeObj.addValueSetBinding(vsb);
-						}
-					}
-					if(elmComponent.getAttribute("Hide") != null && elmComponent.getAttribute("Hide").equals("true") ){
-						componentObj.setHide(true);
-					}else{
-						componentObj.setHide(false);
-					}
-					datatypeObj.addComponent(componentObj);
-				}
-			}
-			datatypesMap.put(ID, datatypeObj);
-			return datatypeObj;
-		} else {
-			return datatypesMap.get(ID);
-		}
-	}
-	
-	private Element getDatatypeElement(Element elmDatatypes, String id) {
-		NodeList datatypeNodeList = elmDatatypes
-				.getElementsByTagName("Datatype");
-		for (int i = 0; i < datatypeNodeList.getLength(); i++) {
-			Element elmDatatype = (Element) datatypeNodeList.item(i);
-			if (id.equals(elmDatatype.getAttribute("ID"))) {
-				return elmDatatype;
-			}
-		}
-		return null;
-	}
-	
-	private String findTableIdByMappingId(String bindingIdentifier, Tables tables) {
-		for (Table table : tables.getChildren()) {
-			if (table.getBindingIdentifier().equals(bindingIdentifier)) {
-				return table.getId();
-			}
-		}
-		return null;
-	}
-
-	
-	private List<Predicate> findPredicates(Context context, String id, String name) {
-		Set<ByNameOrByID> byNameOrByIDs = context.getByNameOrByIDs();
-		List<Predicate> result = new ArrayList<Predicate>();
-		for (ByNameOrByID byNameOrByID : byNameOrByIDs) {
-			if (byNameOrByID instanceof ByID) {
-				ByID byID = (ByID) byNameOrByID;
-				if (byID.getByID().equals(id)) {
-					for (Predicate p : byID.getPredicates()) {
-						result.add(p);
-					}
-				}
-			} else if (byNameOrByID instanceof ByName) {
-				ByName byName = (ByName) byNameOrByID;
-				if (byName.getByName().equals(name)) {
-					for (Predicate p : byName.getPredicates()) {
-						result.add(p);
-					}
-				}
-			}
-		}
-		return result;
-	}
-	
-	private List<ConformanceStatement> findConformanceStatement(Context context, String id, String name) {
-		Set<ByNameOrByID> byNameOrByIDs = context.getByNameOrByIDs();
-		List<ConformanceStatement> result = new ArrayList<ConformanceStatement>();
-		for (ByNameOrByID byNameOrByID : byNameOrByIDs) {
-			if (byNameOrByID instanceof ByID) {
-				ByID byID = (ByID) byNameOrByID;
-				if (byID.getByID().equals(id)) {
-					for (ConformanceStatement c : byID.getConformanceStatements()) {
-						result.add(c);
-					}
-				}else if (byNameOrByID instanceof ByName) {
-					ByName byName = (ByName) byNameOrByID;
-					if (byName.getByName().equals(name)) {
-						for (ConformanceStatement c : byName.getConformanceStatements()) {
-							result.add(c);
-						}
-					}
-				}
-			}
-		}
-		return result;
-	}
-
-	private void deserializeMetaData(Profile profile, Element elmConformanceProfile) {
-		profile.getMetaData().setProfileID(elmConformanceProfile.getAttribute("ID"));
-		profile.getMetaData().setType(elmConformanceProfile.getAttribute("Type"));
-		profile.getMetaData().setHl7Version(elmConformanceProfile.getAttribute("HL7Version"));
-		profile.getMetaData().setSchemaVersion(elmConformanceProfile.getAttribute("SchemaVersion"));
-
-		NodeList nodes = elmConformanceProfile.getElementsByTagName("MetaData");
-
-		Element elmMetaData = (Element) nodes.item(0);
-		profile.getMetaData().setName(elmMetaData.getAttribute("Name"));
-		profile.getMetaData().setOrgName(elmMetaData.getAttribute("OrgName"));
-		profile.getMetaData().setVersion(elmMetaData.getAttribute("Version"));
-		profile.getMetaData().setDate(elmMetaData.getAttribute("Date"));
-		profile.getMetaData().setSpecificationName(elmMetaData.getAttribute("SpecificationName"));
-		profile.getMetaData().setStatus(elmMetaData.getAttribute("Status"));
-		profile.getMetaData().setTopics(elmMetaData.getAttribute("Topics"));
-	}
-
-	private Document stringToDom(String xmlSource) {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		factory.setIgnoringComments(false);
-		factory.setIgnoringElementContentWhitespace(true);
-		DocumentBuilder builder;
-		try {
-			builder = factory.newDocumentBuilder();
-			return builder.parse(new InputSource(new StringReader(xmlSource)));
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private void deserializeEncodings(Profile profile, Element elmConformanceProfile) {
-		NodeList nodes = elmConformanceProfile.getElementsByTagName("Encoding");
-		if (nodes != null && nodes.getLength() != 0) {
-			Set<String> encodingSet = new HashSet<String>();
-			for (int i = 0; i < nodes.getLength(); i++) {
-				encodingSet.add(nodes.item(i).getNodeValue());
-			}
-			profile.getMetaData().setEncodings(encodingSet);
-		}
-	}
-
-	public Tables deserializeXMLToTableLibrary(String xmlContents, String hl7Version) {
-		Document tableLibraryDoc = this.stringToDom(xmlContents);
-		Tables tableLibrary = new Tables();
-		Element elmTableLibrary = (Element) tableLibraryDoc.getElementsByTagName("ValueSetLibrary").item(0);
-		tableLibrary.setValueSetLibraryIdentifier(elmTableLibrary.getAttribute("ValueSetLibraryIdentifier"));
-		this.deserializeXMLToTable(elmTableLibrary, tableLibrary, hl7Version);
-
-		return tableLibrary;
-	}
-
-	private void deserializeXMLToTable(Element elmTableLibrary, Tables tableLibrary, String hl7Version) {
-		NodeList valueSetDefinitionsNode = elmTableLibrary.getElementsByTagName("ValueSetDefinitions");
-		for (int i = 0; i < valueSetDefinitionsNode.getLength(); i++) {
-			Element valueSetDefinitionsElement = (Element) valueSetDefinitionsNode.item(i);
-			NodeList valueSetDefinitionNodes = valueSetDefinitionsElement.getElementsByTagName("ValueSetDefinition");
-			for (int j = 0; j < valueSetDefinitionNodes.getLength(); j++) {
-				Element elmTable = (Element) valueSetDefinitionNodes.item(j);
-
-				Table tableObj = new Table();
-				tableObj.setId(ObjectId.get().toString());
-				tableObj.setHl7Version(hl7Version);
-				tableObj.setBindingIdentifier(elmTable.getAttribute("BindingIdentifier"));
-				tableObj.setName(elmTable.getAttribute("Name"));
-
-				tableObj.setGroup(valueSetDefinitionsElement.getAttribute("Group"));
-				String orderStr = valueSetDefinitionsElement.getAttribute("Order");
-				if (orderStr != null && !orderStr.equals("")) {
-					tableObj.setOrder(Integer.parseInt(orderStr));
-				}
-
-				if (elmTable.getAttribute("Description") != null && !elmTable.getAttribute("Description").equals(""))
-					tableObj.setDescription(elmTable.getAttribute("Description"));
-				if (elmTable.getAttribute("Version") != null && !elmTable.getAttribute("Version").equals(""))
-					tableObj.setVersion(elmTable.getAttribute("Version"));
-				if (elmTable.getAttribute("Oid") != null && !elmTable.getAttribute("Oid").equals(""))
-					tableObj.setOid(elmTable.getAttribute("Oid"));
-
-				if (elmTable.getAttribute("Extensibility") != null
-						&& !elmTable.getAttribute("Extensibility").equals("")) {
-					tableObj.setExtensibility(Extensibility.fromValue(elmTable.getAttribute("Extensibility")));
-				} else {
-					tableObj.setExtensibility(Extensibility.fromValue("Open"));
-				}
-
-				if (elmTable.getAttribute("Stability") != null && !elmTable.getAttribute("Stability").equals("")) {
-					tableObj.setStability(Stability.fromValue(elmTable.getAttribute("Stability")));
-				} else {
-					tableObj.setStability(Stability.fromValue("Static"));
-				}
-
-				if (elmTable.getAttribute("ContentDefinition") != null
-						&& !elmTable.getAttribute("ContentDefinition").equals("")) {
-					tableObj.setContentDefinition(
-							ContentDefinition.fromValue(elmTable.getAttribute("ContentDefinition")));
-				} else {
-					tableObj.setContentDefinition(ContentDefinition.fromValue("Extensional"));
-				}
-
-				this.deserializeXMLToCode(elmTable, tableObj);
-				tableLibrary.addTable(tableObj);
-			}
-		}
-	}
-
-	private void deserializeXMLToCode(Element elmTable, Table tableObj) {
-		NodeList nodes = elmTable.getElementsByTagName("ValueElement");
-
-		for (int i = 0; i < nodes.getLength(); i++) {
-			Element elmCode = (Element) nodes.item(i);
-
-			Code codeObj = new Code();
-			codeObj.setId(ObjectId.get().toString());
-			codeObj.setValue(elmCode.getAttribute("Value"));
-			codeObj.setLabel(elmCode.getAttribute("DisplayName"));
-
-			if (elmCode.getAttribute("CodeSystem") != null && !elmCode.getAttribute("CodeSystem").equals(""))
-				codeObj.setCodeSystem(elmCode.getAttribute("CodeSystem"));
-			if (elmCode.getAttribute("CodeSystemVersion") != null
-					&& !elmCode.getAttribute("CodeSystemVersion").equals(""))
-				codeObj.setCodeSystemVersion(elmCode.getAttribute("CodeSystemVersion"));
-			if (elmCode.getAttribute("Comments") != null && !elmCode.getAttribute("Comments").equals(""))
-				codeObj.setComments(elmCode.getAttribute("Comments"));
-
-			if (elmCode.getAttribute("Usage") != null && !elmCode.getAttribute("Usage").equals("")) {
-				codeObj.setCodeUsage(elmCode.getAttribute("Usage"));
-			} else {
-				codeObj.setCodeUsage("R");
-			}
-
-			tableObj.addCode(codeObj);
-		}
-
-	}
-
-	private Constraints deserializeXMLToConformanceStatements(String xmlConstraints) {
-		if (xmlConstraints != null) {
-			Document conformanceContextDoc = this.stringToDom(xmlConstraints);
-			Element elmConstraints = (Element) conformanceContextDoc.getElementsByTagName("Constraints").item(0);
-			Constraints constraints = new Constraints();
-			constraints.setId(ObjectId.get().toString());
-
-			Context datatypeContextObj = new Context();
-			datatypeContextObj.setId(ObjectId.get().toString());
-			Context segmentContextObj = new Context();
-			segmentContextObj.setId(ObjectId.get().toString());
-			Context groupContextObj = new Context();
-			groupContextObj.setId(ObjectId.get().toString());
-			Context messageContextObj = new Context();
-			messageContextObj.setId(ObjectId.get().toString());
-
-			this.deserializeXMLToContext((Element) elmConstraints.getElementsByTagName("Datatype").item(0),
-					datatypeContextObj);
-			this.deserializeXMLToContext((Element) elmConstraints.getElementsByTagName("Segment").item(0),
-					segmentContextObj);
-			this.deserializeXMLToContext((Element) elmConstraints.getElementsByTagName("Group").item(0),
-					groupContextObj);
-			this.deserializeXMLToContext((Element) elmConstraints.getElementsByTagName("Message").item(0),
-					messageContextObj);
-
-			constraints.setDatatypes(datatypeContextObj);
-			constraints.setSegments(segmentContextObj);
-			constraints.setGroups(groupContextObj);
-			constraints.setMessages(messageContextObj);
-
-			return constraints;
-		}
-		return null;
-	}
-	
-	private Constraints deserializeXMLToPredicates(String xmlConstraints) {
-		if (xmlConstraints != null) {
-			Document conformanceContextDoc = this.stringToDom(xmlConstraints);
-			Element elmConstraints = (Element) conformanceContextDoc.getElementsByTagName("Predicates").item(0);
-			Constraints constraints = new Constraints();
-			constraints.setId(ObjectId.get().toString());
-
-			Context datatypeContextObj = new Context();
-			datatypeContextObj.setId(ObjectId.get().toString());
-			Context segmentContextObj = new Context();
-			segmentContextObj.setId(ObjectId.get().toString());
-			Context groupContextObj = new Context();
-			groupContextObj.setId(ObjectId.get().toString());
-			Context messageContextObj = new Context();
-			messageContextObj.setId(ObjectId.get().toString());
-
-			this.deserializeXMLToContext((Element) elmConstraints.getElementsByTagName("Datatype").item(0), datatypeContextObj);
-			this.deserializeXMLToContext((Element) elmConstraints.getElementsByTagName("Segment").item(0), segmentContextObj);
-			this.deserializeXMLToContext((Element) elmConstraints.getElementsByTagName("Group").item(0), groupContextObj);
-			this.deserializeXMLToContext((Element) elmConstraints.getElementsByTagName("Message").item(0), messageContextObj);
-
-			constraints.setDatatypes(datatypeContextObj);
-			constraints.setSegments(segmentContextObj);
-			constraints.setGroups(groupContextObj);
-			constraints.setMessages(messageContextObj);
-
-			return constraints;
-		}
-		return null;
-	}
-
-	private void deserializeXMLToContext(Element elmContext, Context contextObj) {
-		if (elmContext != null) {
-			NodeList nodes = elmContext.getChildNodes();
-
-			for (int i = 0; i < nodes.getLength(); i++) {
-				if (nodes.item(i).getNodeName().equals("ByName")) {
-					ByName byNameObj = new ByName();
-					byNameObj.setId(ObjectId.get().toString());
-					Element elmByName = (Element) nodes.item(i);
-					byNameObj.setByName(elmByName.getAttribute("Name"));
-					deserializeXMLToConstraints(elmByName, byNameObj);
-					contextObj.getByNameOrByIDs().add(byNameObj);
-				} else if (nodes.item(i).getNodeName().equals("ByID")) {
-					ByID byIDObj = new ByID();
-					byIDObj.setId(ObjectId.get().toString());
-					Element elmByID = (Element) nodes.item(i);
-					byIDObj.setByID(elmByID.getAttribute("ID"));
-					deserializeXMLToConstraints(elmByID, byIDObj);
-					contextObj.getByNameOrByIDs().add(byIDObj);
-				}
-
-			}
-		}
-
-	}
-
-	private void deserializeXMLToConstraints(Element elmByNameOrByID, ByNameOrByID byNameOrByIDObj) {
-		NodeList constraintNodes = elmByNameOrByID.getElementsByTagName("Constraint");
-
-		for (int i = 0; i < constraintNodes.getLength(); i++) {
-			ConformanceStatement constraintObj = new ConformanceStatement();
-			constraintObj.setId(ObjectId.get().toString());
-			Element elmConstraint = (Element) constraintNodes.item(i);
-
-			constraintObj.setConstraintId(elmConstraint.getAttribute("ID"));
-			constraintObj.setConstraintTarget(elmConstraint.getAttribute("Target"));
-			String constraintClassification = elmConstraint.getAttribute("Classification");
-			if (constraintClassification == null || constraintClassification.equals("")) {
-				constraintObj.setConstraintClassification("E");
-			} else {
-				constraintObj.setConstraintClassification(constraintClassification);
-			}
-			NodeList descriptionNodes = elmConstraint.getElementsByTagName("Description");
-			if (descriptionNodes != null && descriptionNodes.getLength() == 1) {
-				constraintObj.setDescription(descriptionNodes.item(0).getTextContent());
-			}else {
-				constraintObj.setDescription("NO DESC");
-			}
-			System.out.println(constraintObj.toString());
-			this.deserializeXMLToReference(elmConstraint, constraintObj);
-			constraintObj
-					.setAssertion(this.convertElementToString(elmConstraint.getElementsByTagName("Assertion").item(0)));
-			System.out.println(constraintObj.toString());
-			byNameOrByIDObj.getConformanceStatements().add(constraintObj);
-		}
-
-		NodeList predicateNodes = elmByNameOrByID.getElementsByTagName("Predicate");
-
-		for (int i = 0; i < predicateNodes.getLength(); i++) {
-			Predicate predicateObj = new Predicate();
-			predicateObj.setId(ObjectId.get().toString());
-			Element elmPredicate = (Element) predicateNodes.item(i);
-
-			predicateObj.setConstraintId(elmPredicate.getAttribute("ID"));
-			predicateObj.setConstraintTarget(elmPredicate.getAttribute("Target"));
-			predicateObj.setTrueUsage(Usage.fromValue(elmPredicate.getAttribute("TrueUsage")));
-			predicateObj.setFalseUsage(Usage.fromValue(elmPredicate.getAttribute("FalseUsage")));
-			NodeList descriptionNodes = elmPredicate.getElementsByTagName("Description");
-			if (descriptionNodes != null && descriptionNodes.getLength() == 1) {
-				predicateObj.setDescription(descriptionNodes.item(0).getTextContent());
-			}else {
-				predicateObj.setDescription("NO DESC");
-			}
-			this.deserializeXMLToReference(elmPredicate, predicateObj);
-			predicateObj
-					.setAssertion(this.convertElementToString(elmPredicate.getElementsByTagName("Condition").item(0)));
-			byNameOrByIDObj.getPredicates().add(predicateObj);
-		}
-	}
-
-	private void deserializeXMLToReference(Element elmConstraint, Constraint constraintObj) {
-		NodeList nodes = elmConstraint.getElementsByTagName("Reference");
-		if (nodes != null && nodes.getLength() == 1) {
-			Reference referenceObj = new Reference();
-			Element elmReference = (Element) nodes.item(0);
-
-			referenceObj.setChapter(elmReference.getAttribute("Chapter"));
-			referenceObj.setPage(Integer.parseInt(elmReference.getAttribute("Page")));
-			referenceObj.setSection(elmReference.getAttribute("Section"));
-			referenceObj.setUrl(elmReference.getAttribute("URL"));
-
-			constraintObj.setReference(referenceObj);
-		}
-
-	}
-
-	private String convertElementToString(Node node) {
-		try {
-			TransformerFactory transFactory = TransformerFactory.newInstance();
-			Transformer transformer = transFactory.newTransformer();
-			StringWriter buffer = new StringWriter();
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			transformer.transform(new DOMSource(node), new StreamResult(buffer));
-
-			return buffer.toString();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	public HashMap<String, Datatype> getDatatypesMap() {
-		return datatypesMap;
-	}
-
-	public void setDatatypesMap(HashMap<String, Datatype> datatypesMap) {
-		this.datatypesMap = datatypesMap;
-	}
-
-	public HashMap<String, Segment> getSegmentsMap() {
-		return segmentsMap;
-	}
-
-	public void setSegmentsMap(HashMap<String, Segment> segmentsMap) {
-		this.segmentsMap = segmentsMap;
-	}
-
-	public Constraints getConformanceStatements() {
-		return conformanceStatements;
-	}
-
-	public void setConformanceStatements(Constraints conformanceStatements) {
-		this.conformanceStatements = conformanceStatements;
-	}
-
-	public Constraints getPredicates() {
-		return predicates;
-	}
-
-	public void setPredicates(Constraints predicates) {
-		this.predicates = predicates;
-	}
+  Logger log = LoggerFactory.getLogger(ProfileServiceImpl.class);
+  @Autowired
+  private ProfileRepository profileRepository;
+
+  @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public ProfileData save(ProfileData data) throws Exception {
+    try {
+      IntegrationProfile integrationProfile = new IntegrationProfile();
+      IntegrationProfileMetaData integrationProfileMetaData = new IntegrationProfileMetaData();
+      Document profileDom = XMLManager.stringToDom(data.getProfileXMLFileStr());
+      Element conformanceProfileElm =
+          (Element) profileDom.getElementsByTagName("ConformanceProfile").item(0);
+      Element profileMetaDataElm = (Element) profileDom.getElementsByTagName("MetaData").item(0);
+      integrationProfileMetaData.setId(conformanceProfileElm.getAttribute("ID"));
+      integrationProfileMetaData.setDate(profileMetaDataElm.getAttribute("Date"));
+      integrationProfileMetaData.setHl7Version(conformanceProfileElm.getAttribute("HL7Version"));
+      integrationProfileMetaData.setName(profileMetaDataElm.getAttribute("Name"));
+      integrationProfileMetaData.setOrgName(profileMetaDataElm.getAttribute("OrgName"));
+      integrationProfileMetaData
+          .setSpecificationName(profileMetaDataElm.getAttribute("SpecificationName"));
+      integrationProfileMetaData.setType(conformanceProfileElm.getAttribute("Type"));
+      integrationProfileMetaData.setVersion(profileMetaDataElm.getAttribute("Version"));
+      integrationProfile.setIntegrationProfileMetaData(integrationProfileMetaData);
+
+      NodeList messageNodeList = profileDom.getElementsByTagName("Message");
+      for (int i = 0; i < messageNodeList.getLength(); i++) {
+        ConformanceProfile conformanceProfile = new ConformanceProfile();
+        ConformanceProfileMetaData conformanceProfileMetaData = new ConformanceProfileMetaData();
+        Element messageElm = (Element) messageNodeList.item(i);
+        conformanceProfileMetaData.setDescription(messageElm.getAttribute("Description"));
+        conformanceProfileMetaData.setEvent(messageElm.getAttribute("Event"));
+        conformanceProfileMetaData.setId(messageElm.getAttribute("ID"));
+        conformanceProfileMetaData.setIdentifier(messageElm.getAttribute("Identifier"));
+        conformanceProfileMetaData.setName(messageElm.getAttribute("Name"));
+        conformanceProfileMetaData.setStructId(messageElm.getAttribute("StructID"));
+        conformanceProfileMetaData.setType(messageElm.getAttribute("Type"));
+        conformanceProfile.setConformanceProfileMetaData(conformanceProfileMetaData);
+
+        for (int j = 0; j < messageElm.getChildNodes().getLength(); j++) {
+          Node childNode = messageElm.getChildNodes().item(j);
+          if (childNode.getNodeName() != null && childNode.getNodeName().equals("Segment")) {
+            conformanceProfile.addChild(this.parseSegmentRef((Element) childNode));
+          } else if (childNode.getNodeName() != null && childNode.getNodeName().equals("Group")) {
+            conformanceProfile.addChild(this.parseGroup((Element) childNode));
+          }
+        }
+
+        integrationProfile.addConformanceProfile(conformanceProfile);
+      }
+
+      NodeList segmentNodeList = profileDom.getElementsByTagName("Segment");
+      for (int i = 0; i < segmentNodeList.getLength(); i++) {
+        Element segmentElm = (Element) segmentNodeList.item(i);
+        Segment segment = new Segment();
+        segment.setName(segmentElm.getAttribute("Name"));
+        segment.setLabel(segmentElm.getAttribute("Label"));
+        segment.setId(segmentElm.getAttribute("ID"));
+        segment.setDescription(segmentElm.getAttribute("Description"));
+
+        for (int j = 0; j < segmentElm.getChildNodes().getLength(); j++) {
+          Node childNode = segmentElm.getChildNodes().item(j);
+
+          if (childNode.getNodeName() != null && childNode.getNodeName().equals("Field")) {
+            Element childElm = (Element) childNode;
+            Field f = new Field();
+            if (childElm.getAttribute("Binding") != null
+                && !childElm.getAttribute("Binding").equals(""))
+              f.setBindingId(childElm.getAttribute("Binding"));
+            if (childElm.getAttribute("BindingLocation") != null
+                && !childElm.getAttribute("BindingLocation").equals(""))
+              f.setBindingLocation(childElm.getAttribute("BindingLocation"));
+            if (childElm.getAttribute("BindingStrength") != null
+                && !childElm.getAttribute("BindingStrength").equals(""))
+              f.setBindingStrength(
+                  BindingStrength.fromValue(childElm.getAttribute("BindingStrength")));
+            f.setDatatypeId(childElm.getAttribute("Datatype"));
+            f.setMax(childElm.getAttribute("Max"));
+            f.setMaxLength(childElm.getAttribute("MaxLength"));
+            f.setMin(Integer.parseInt(childElm.getAttribute("Min")));
+
+
+            if (this.isInteger(childElm.getAttribute("MinLength"))) {
+              f.setMinLength(Integer.parseInt(childElm.getAttribute("MinLength")));              
+            }else {
+            }
+
+            f.setName(childElm.getAttribute("Name"));
+            f.setUsage(Usage.fromValue(childElm.getAttribute("Usage")));
+            if (childElm.getAttribute("Hide") != null
+                && childElm.getAttribute("Hide").equals("true"))
+              f.setHide(true);
+            else
+              f.setHide(false);
+            segment.addField(f);
+          }
+        }
+        NodeList dmList = segmentElm.getElementsByTagName("DynamicMapping");
+
+        if (dmList != null && dmList.getLength() > 0) {
+          Element dynamicMappingElm = (Element) dmList.item(0);
+          NodeList mappingList = dynamicMappingElm.getElementsByTagName("Mapping");
+          if (mappingList != null && mappingList.getLength() > 0) {
+            Element mappingElm = (Element) mappingList.item(0);
+
+            NodeList caseList = mappingElm.getElementsByTagName("Case");
+            if (caseList != null && caseList.getLength() > 0) {
+
+              DynamicMapping dynamicMapping = new DynamicMapping();
+              DynamicMappingDef dynamicMappingDef = new DynamicMappingDef();
+              dynamicMappingDef.setPostion(mappingElm.getAttribute("Position"));
+              dynamicMappingDef.setReference(mappingElm.getAttribute("Reference"));
+              if (mappingElm.getAttribute("SecondReference") != null
+                  && !mappingElm.getAttribute("SecondReference").equals(""))
+                dynamicMappingDef.setSecondReference(mappingElm.getAttribute("SecondReference"));
+              dynamicMapping.setDynamicMappingDef(dynamicMappingDef);
+
+              for (int k = 0; k < caseList.getLength(); k++) {
+                Element caseElm = (Element) caseList.item(k);
+
+                DynamicMappingItem dynamicMappingItem = new DynamicMappingItem();
+                if (caseElm.getAttribute("Value") != null
+                    && !caseElm.getAttribute("Value").equals(""))
+                  dynamicMappingItem.setValue(caseElm.getAttribute("Value"));
+                if (caseElm.getAttribute("SecondValue") != null
+                    && !caseElm.getAttribute("SecondValue").equals(""))
+                  dynamicMappingItem.setSecondValue(caseElm.getAttribute("SecondValue"));
+                if (caseElm.getAttribute("Datatype") != null
+                    && !caseElm.getAttribute("Datatype").equals(""))
+                  dynamicMappingItem.setDatatypeId(caseElm.getAttribute("Datatype"));
+
+                dynamicMapping.addItem(dynamicMappingItem);
+
+              }
+              segment.setDynamicMapping(dynamicMapping);
+            }
+
+          }
+        }
+
+        integrationProfile.addSegment(segment);
+      }
+
+      NodeList datatypeNodeList = profileDom.getElementsByTagName("Datatype");
+      for (int i = 0; i < datatypeNodeList.getLength(); i++) {
+        Element datatypeElm = (Element) datatypeNodeList.item(i);
+        Datatype datatype = new Datatype();
+        datatype.setName(datatypeElm.getAttribute("Name"));
+        datatype.setLabel(datatypeElm.getAttribute("Label"));
+        datatype.setId(datatypeElm.getAttribute("ID"));
+        datatype.setDescription(datatypeElm.getAttribute("Description"));
+
+        for (int j = 0; j < datatypeElm.getChildNodes().getLength(); j++) {
+          Node childNode = datatypeElm.getChildNodes().item(j);
+
+          if (childNode.getNodeName() != null && childNode.getNodeName().equals("Component")) {
+            Element childElm = (Element) childNode;
+            Component c = new Component();
+            if (childElm.getAttribute("Binding") != null
+                && !childElm.getAttribute("Binding").equals(""))
+              c.setBindingId(childElm.getAttribute("Binding"));
+            if (childElm.getAttribute("BindingLocation") != null
+                && !childElm.getAttribute("BindingLocation").equals(""))
+              c.setBindingLocation(childElm.getAttribute("BindingLocation"));
+            if (childElm.getAttribute("BindingStrength") != null
+                && !childElm.getAttribute("BindingStrength").equals(""))
+              c.setBindingStrength(
+                  BindingStrength.fromValue(childElm.getAttribute("BindingStrength")));
+            c.setDatatypeId(childElm.getAttribute("Datatype"));
+            c.setMaxLength(childElm.getAttribute("MaxLength"));
+            if (this.isInteger(childElm.getAttribute("MinLength"))) {
+              c.setMinLength(Integer.parseInt(childElm.getAttribute("MinLength")));            
+            }else {
+            }
+            c.setName(childElm.getAttribute("Name"));
+            c.setUsage(Usage.fromValue(childElm.getAttribute("Usage")));
+            if (childElm.getAttribute("Hide") != null
+                && childElm.getAttribute("Hide").equals("true"))
+              c.setHide(true);
+            else
+              c.setHide(false);
+            datatype.addComponent(c);
+          }
+        }
+        integrationProfile.addDatatype(datatype);
+      }
+
+      data.setIntegrationProfile(integrationProfile);
+
+
+      ValueSetLibrary valueSetLibrary = new ValueSetLibrary();
+      ValueSetLibraryMetaData valueSetLibraryMetaData = new ValueSetLibraryMetaData();
+      Document valueSetDom = XMLManager.stringToDom(data.getValueSetXMLFileStr());
+      Element valueSetLibraryElm =
+          (Element) valueSetDom.getElementsByTagName("ValueSetLibrary").item(0);
+      Element valueSetMetaDataElm = (Element) valueSetDom.getElementsByTagName("MetaData").item(0);
+      valueSetLibraryMetaData.setDate(valueSetMetaDataElm.getAttribute("Date"));
+      valueSetLibraryMetaData.setId(valueSetLibraryElm.getAttribute("ValueSetLibraryIdentifier"));
+      valueSetLibraryMetaData.setName(valueSetMetaDataElm.getAttribute("Name"));
+      valueSetLibraryMetaData.setOrgName(valueSetMetaDataElm.getAttribute("OrgName"));
+      valueSetLibraryMetaData
+          .setSpecificationName(valueSetMetaDataElm.getAttribute("SpecificationName"));
+      valueSetLibraryMetaData.setVersion(valueSetMetaDataElm.getAttribute("Version"));
+      valueSetLibrary.setMetaData(valueSetLibraryMetaData);
+
+      Element noValidationElm = (Element) valueSetDom.getElementsByTagName("NoValidation").item(0);
+      NodeList noValidationNodeList = noValidationElm.getElementsByTagName("BindingIdentifier");
+      for (int i = 0; i < noValidationNodeList.getLength(); i++) {
+        Element noValidationItemElm = (Element) noValidationNodeList.item(i);
+        valueSetLibrary.addNoValidation(noValidationItemElm.getTextContent());
+      }
+
+      NodeList valueSetDefinitionsNodeList =
+          valueSetDom.getElementsByTagName("ValueSetDefinitions");
+      for (int i = 0; i < valueSetDefinitionsNodeList.getLength(); i++) {
+        Element valueSetDefinitionsElm = (Element) valueSetDefinitionsNodeList.item(i);
+        String groupName = valueSetDefinitionsElm.getAttribute("Group");
+        String order = valueSetDefinitionsElm.getAttribute("Order");
+
+        NodeList valueSetDefinitionNodeList =
+            valueSetDefinitionsElm.getElementsByTagName("ValueSetDefinition");
+        for (int j = 0; j < valueSetDefinitionNodeList.getLength(); j++) {
+          Element valueSetDefinitionElm = (Element) valueSetDefinitionNodeList.item(j);
+          String bindingIdentifier = valueSetDefinitionElm.getAttribute("BindingIdentifier");
+          String name = valueSetDefinitionElm.getAttribute("Name");
+
+          ValueSetDefinition valueSetDefinition = new ValueSetDefinition();
+          valueSetDefinition.setName(name);
+          if (order != null && !order.equals("")) {
+            valueSetDefinition.setOrder(Integer.parseInt(order));
+          }
+          valueSetDefinition.setGroup(groupName);
+          valueSetDefinition.setBindingIdentifier(bindingIdentifier);
+
+          NodeList valueElementNodeList =
+              valueSetDefinitionElm.getElementsByTagName("ValueElement");
+          for (int k = 0; k < valueElementNodeList.getLength(); k++) {
+            Element valueElm = (Element) valueElementNodeList.item(k);
+            ValueElement ve = new ValueElement();
+            ve.setCodeSystem(valueElm.getAttribute("CodeSystem"));
+            ve.setDisplayName(valueElm.getAttribute("DisplayName"));
+            ve.setValue(valueElm.getAttribute("Value"));
+            valueSetDefinition.addValueElement(ve);
+          }
+          valueSetLibrary.addValueSetDefinition(valueSetDefinition);
+        }
+      }
+      data.setValueSetLibrary(valueSetLibrary);
+
+      ConformanceContext conformanceContext = new ConformanceContext();
+      ConformanceContextMetaData conformanceContextMetaData = new ConformanceContextMetaData();
+      Document constraintDom = XMLManager.stringToDom(data.getConstraintsXMLFileStr());
+      Element conformanceContextElm =
+          (Element) constraintDom.getElementsByTagName("ConformanceContext").item(0);
+      Element constraintMetaDataElm =
+          (Element) constraintDom.getElementsByTagName("MetaData").item(0);
+      conformanceContextMetaData.setDate(constraintMetaDataElm.getAttribute("Date"));
+      conformanceContextMetaData.setId(conformanceContextElm.getAttribute("UUID"));
+      conformanceContextMetaData.setName(constraintMetaDataElm.getAttribute("Name"));
+      conformanceContextMetaData.setOrgName(constraintMetaDataElm.getAttribute("OrgName"));
+      conformanceContextMetaData
+          .setSpecificationName(constraintMetaDataElm.getAttribute("SpecificationName"));
+      conformanceContextMetaData.setVersion(constraintMetaDataElm.getAttribute("Version"));
+      conformanceContext.setMetaData(conformanceContextMetaData);
+
+      Element predicatesElm = (Element) constraintDom.getElementsByTagName("Predicates").item(0);
+      Element predicateDatatypesElm =
+          (Element) predicatesElm.getElementsByTagName("Datatype").item(0);
+      Element predicateSegmentsElm =
+          (Element) predicatesElm.getElementsByTagName("Segment").item(0);
+      Element predicateGroupsElm = (Element) predicatesElm.getElementsByTagName("Group").item(0);
+      Element predicateMessagesElm =
+          (Element) predicatesElm.getElementsByTagName("Message").item(0);
+      conformanceContext.setDatatypePredicates(this.convertPredicates(predicateDatatypesElm));
+      conformanceContext.setSegmentPredicates(this.convertPredicates(predicateSegmentsElm));
+      conformanceContext.setGroupPredicates(this.convertPredicates(predicateGroupsElm));
+      conformanceContext.setMessagePredicates(this.convertPredicates(predicateMessagesElm));
+
+      Element conformanceStatementsElm =
+          (Element) constraintDom.getElementsByTagName("Constraints").item(0);
+      Element conformanceStatementDatatypesElm =
+          (Element) conformanceStatementsElm.getElementsByTagName("Datatype").item(0);
+      Element conformanceStatementSegmentsElm =
+          (Element) conformanceStatementsElm.getElementsByTagName("Segment").item(0);
+      Element conformanceStatementGroupsElm =
+          (Element) conformanceStatementsElm.getElementsByTagName("Group").item(0);
+      Element conformanceStatementMessagesElm =
+          (Element) conformanceStatementsElm.getElementsByTagName("Message").item(0);
+      conformanceContext.setDatatypeConformanceStatements(
+          this.convertConformanceStatements(conformanceStatementDatatypesElm));
+      conformanceContext.setGroupConformanceStatements(
+          this.convertConformanceStatements(conformanceStatementGroupsElm));
+      conformanceContext.setMessageConformanceStatements(
+          this.convertConformanceStatements(conformanceStatementMessagesElm));
+      conformanceContext.setSegmentConformanceStatements(
+          this.convertConformanceStatements(conformanceStatementSegmentsElm));
+
+      data.setConformanceContext(conformanceContext);
+
+      ProfileData result = profileRepository.save(data);
+
+      return result;
+    } catch (MongoException e) {
+      throw new Exception(e);
+    }
+  }
+
+  private Set<ConformanceStatement> convertConformanceStatements(Element elm) {
+    if (elm != null) {
+      Set<ConformanceStatement> conformanceStatements = new HashSet<ConformanceStatement>();
+      NodeList byIdNodeList = elm.getElementsByTagName("ByID");
+      NodeList byNameNodeList = elm.getElementsByTagName("ByName");
+      for (int i = 0; i < byIdNodeList.getLength(); i++) {
+        Element byIdElm = (Element) byIdNodeList.item(i);
+        String id = byIdElm.getAttribute("ID");
+        NodeList constraintNodeList = byIdElm.getElementsByTagName("Constraint");
+
+        for (int j = 0; j < constraintNodeList.getLength(); j++) {
+          conformanceStatements.add(
+              this.convertConformanceStatement((Element) constraintNodeList.item(j), id, null));
+        }
+      }
+      for (int i = 0; i < byNameNodeList.getLength(); i++) {
+        Element byNameElm = (Element) byNameNodeList.item(i);
+        String name = byNameElm.getAttribute("Name");
+        NodeList constraintNodeList = byNameElm.getElementsByTagName("Constraint");
+        for (int j = 0; j < constraintNodeList.getLength(); j++) {
+          conformanceStatements.add(
+              this.convertConformanceStatement((Element) constraintNodeList.item(j), null, name));
+        }
+      }
+      if (conformanceStatements.size() > 0)
+        return conformanceStatements;
+    }
+
+    return null;
+  }
+
+  private Set<Predicate> convertPredicates(Element elm) {
+    if (elm != null) {
+      Set<Predicate> predicates = new HashSet<Predicate>();
+      NodeList byIdNodeList = elm.getElementsByTagName("ByID");
+      NodeList byNameNodeList = elm.getElementsByTagName("ByName");
+      for (int i = 0; i < byIdNodeList.getLength(); i++) {
+        Element byIdElm = (Element) byIdNodeList.item(i);
+        String id = byIdElm.getAttribute("ID");
+        NodeList predicateNodeList = byIdElm.getElementsByTagName("Predicate");
+
+        for (int j = 0; j < predicateNodeList.getLength(); j++) {
+          predicates.add(this.convertPredicate((Element) predicateNodeList.item(j), id, null));
+        }
+      }
+      for (int i = 0; i < byNameNodeList.getLength(); i++) {
+        Element byNameElm = (Element) byNameNodeList.item(i);
+        String name = byNameElm.getAttribute("Name");
+        NodeList predicateNodeList = byNameElm.getElementsByTagName("Predicate");
+        for (int j = 0; j < predicateNodeList.getLength(); j++) {
+          predicates.add(this.convertPredicate((Element) predicateNodeList.item(j), null, name));
+        }
+      }
+      if (predicates.size() > 0)
+        return predicates;
+    }
+
+    return null;
+  }
+
+  private Predicate convertPredicate(Element elm, String id, String name) {
+    Predicate p = new Predicate();
+    p.setById(id);
+    p.setByName(name);
+    Element descriptionElm = (Element) elm.getElementsByTagName("Description").item(0);
+    p.setDescription(descriptionElm.getTextContent());
+    p.setFalseUsage(Usage.fromValue(elm.getAttribute("FalseUsage")));
+    p.setTrueUsage(Usage.fromValue(elm.getAttribute("TrueUsage")));
+    p.setTarget(elm.getAttribute("Target"));
+    return p;
+  }
+
+  private ConformanceStatement convertConformanceStatement(Element elm, String id, String name) {
+    ConformanceStatement cs = new ConformanceStatement();
+    cs.setById(id);
+    cs.setByName(name);
+    Element descriptionElm = (Element) elm.getElementsByTagName("Description").item(0);
+    cs.setDescription(descriptionElm.getTextContent());
+    cs.setCsId(elm.getAttribute("ID"));
+    return cs;
+  }
+
+  /**
+   * @param childElm
+   * @return
+   */
+  private Group parseGroup(Element groupElm) {
+    Group group = new Group();
+    group.setId(groupElm.getAttribute("ID"));
+    group.setMax(groupElm.getAttribute("Max"));
+    group.setMin(Integer.parseInt(groupElm.getAttribute("Min")));
+    group.setName(groupElm.getAttribute("Name"));
+    group.setUsage(Usage.fromValue(groupElm.getAttribute("Usage")));
+
+    for (int i = 0; i < groupElm.getChildNodes().getLength(); i++) {
+      Node childNode = groupElm.getChildNodes().item(i);
+      if (childNode.getNodeName() != null && childNode.getNodeName().equals("Segment")) {
+        group.addChild(this.parseSegmentRef((Element) childNode));
+      } else if (childNode.getNodeName() != null && childNode.getNodeName().equals("Group")) {
+        group.addChild(this.parseGroup((Element) childNode));
+      }
+    }
+
+    return group;
+  }
+
+  /**
+   * @param childElm
+   * @return
+   */
+  private SegmentRef parseSegmentRef(Element segmentElm) {
+    SegmentRef segmentRef = new SegmentRef();
+    segmentRef.setMax(segmentElm.getAttribute("Max"));
+    segmentRef.setMin(Integer.parseInt(segmentElm.getAttribute("Min")));
+    segmentRef.setRef(segmentElm.getAttribute("Ref"));
+    segmentRef.setUsage(Usage.fromValue(segmentElm.getAttribute("Usage")));
+    return segmentRef;
+  }
+
+  @Override
+  @Transactional
+  public void delete(String id) {
+    profileRepository.delete(id);
+  }
+
+  @Override
+  public ProfileData findOne(String id) {
+    ProfileData p = profileRepository.findOne(id);
+    return p;
+  }
+
+  @Override
+  public List<ProfileData> findAll() {
+    List<ProfileData> profiles = profileRepository.findAll();
+    log.info("profiles=" + profiles.size());
+    return profiles;
+  }
+
+  @Override
+  public List<ProfileData> findByAccountId(Long accountId) {
+    List<ProfileData> profiles = profileRepository.findByAccountId(accountId);
+    return profiles;
+  }
+
+  @Override
+  public List<ProfileData> findByAccountIdAndSourceType(Long accountId, String sourceType) {
+    List<ProfileData> profiles =
+        profileRepository.findByAccountIdAndSourceType(accountId, sourceType);
+    return profiles;
+  }
+
+  private boolean isInteger(String s) {
+    boolean isValidInteger = false;
+    if(s != null) {
+      try {
+        Integer.parseInt(s);
+        isValidInteger = true;
+      } catch (NumberFormatException ex) {
+      }
+    }
+
+    return isValidInteger;
+  }
 }

@@ -11,7 +11,7 @@
 </script>
 <div class="row">
     <div class="col-md-12">
-        <div ng-show="error === null">
+        <div ng-if="error === null">
             <table st-table="tmpTps" st-safe-src="tps" class="smart-table table table-striped table-bordered">
                 <thead>
                 <tr class="tbl-header">
@@ -59,7 +59,7 @@
 </div>
 
 <script type="text/ng-template" id="ValidationResult.html">
-    <div ng-show="validationResult !== null">
+    <div ng-if="validationResult !== null">
         <uib-tabset>
             <uib-tab ng-click="showValidationuib-table(validationResult.errors.categories[0],'errors')" active="active.errors"
                  ng-if="settings.options.validation.show.errors">
@@ -166,7 +166,7 @@
             <!--</uib-tabset>-->
             <!--</uib-tab>-->
         </uib-tabset>
-        <div class="panel panel-default" ng-show="settings.options.validation.show[currentType]">
+        <div class="panel panel-default" ng-if="settings.options.validation.show[currentType]">
             <div class="panel-body container-validation-uib-table">
                 <div class="">
                     <div validation-result-uib-table></div>
@@ -176,7 +176,7 @@
 
     </div>
 
-    <div ng-show="validationResult === null" style="text-align:center">
+    <div ng-if="validationResult === null" style="text-align:center">
         No Validation Performed.
     </div>
 </script>
@@ -214,14 +214,14 @@
 </script>
 
 <script type="text/ng-template" id="ValidationResultuib-table.html">
-    <div ng-show="loadingCategory" style="text-align:center">
+    <div ng-if="loadingCategory" style="text-align:center">
         <i class="fa fa-circle-o-notch fa-spin fa-2x"></i>
     </div>
-    <div ng-show="!loadingCategory">
+    <div ng-if="!loadingCategory">
         <!--<div ui-grid="gridOptions" class="grid"></div>-->
-        <div ng-show="currentCategory && currentCategory !== null">
+        <div ng-if="currentCategory && currentCategory !== null">
 
-            <div ng-show="currentCategory.data != null && currentCategory.data.length > 0">
+            <div ng-if="currentCategory.data != null && currentCategory.data.length > 0">
                 <div class="">
                     <input type="checkbox" title="Highlight All in editor"
                            ng-model="checkboxConfig[currentType][currentCategory.title]"
@@ -268,7 +268,7 @@
                         <!--</td>-->
                     </tr>
                     </tbody>
-                    <!--<tfoot ng-show="currentCategory.data.length >= 100">-->
+                    <!--<tfoot ng-if="currentCategory.data.length >= 100">-->
                     <!--<tr  >-->
                         <!--<td colspan="5" class="text-center" st-ratio="100">-->
                             <!--<div class="validation-pagination" st-pagination="" st-items-by-page="100"-->
@@ -279,7 +279,7 @@
                 </uib-table>
                     </div>
              </div>
-            <div ng-show="currentCategory.data == null || currentCategory.data.length == 0">
+            <div ng-if="currentCategory.data == null || currentCategory.data.length == 0">
                 No {{currentType}} found.
             </div>
 

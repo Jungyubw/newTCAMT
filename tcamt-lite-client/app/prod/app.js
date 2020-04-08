@@ -65,7 +65,8 @@ var
 var msg = {};
 
 app.config(function ($routeProvider, RestangularProvider, $httpProvider, KeepaliveProvider, IdleProvider, notificationsConfigProvider) {
-
+    $httpProvider.defaults.useXDomain = true;
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
     $routeProvider
         .when('/', {
@@ -317,6 +318,8 @@ app.config([
 ]);
 app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, userInfoService, $http, AppInfo, StorageService, $templateCache, $window, notifications, $q) {
     $rootScope.appInfo = {};
+    $rootScope.froalaDocLink = "https://www.froala.com/wysiwyg-editor/examples";
+
     //Check if the login dialog is already displayed.
     $rootScope.loginDialogShown = false;
     $rootScope.subActivePath = null;
@@ -324,36 +327,37 @@ app.run(function ($rootScope, $location, Restangular, $modal, $filter, base64, u
     // load app info
     AppInfo.get().then(function (appInfo) {
         $rootScope.appInfo = appInfo;
+        console.log("INIT FROALA");
+        console.log($rootScope.appInfo.uploadedImagesUrl);
         $rootScope.froalaEditorOptions = {
-                placeholderText: '',
-                toolbarButtons: ['fullscreen', 'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', '|', 'color', 'emoticons', 'inlineStyle', 'paragraphStyle', '|', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', 'quote', 'insertHR', '-', 'undo', 'redo', 'clearFormatting', 'selectAll', 'insertTable', 'insertLink', 'insertImage', 'insertFile'],
-                imageUploadURL: $rootScope.appInfo.uploadedImagesUrl + "/upload",
-                imageAllowedTypes: ['jpeg', 'jpg', 'png', 'gif'],
-                fileUploadURL: $rootScope.appInfo.uploadedImagesUrl + "/upload",
-                fileAllowedTypes: ['application/pdf', 'application/msword', 'application/x-pdf', 'text/plain', 'application/xml','text/xml'],
-                charCounterCount: false,
-                quickInsertTags: 8,
-                heightMin:250,
-                immediateAngularModelUpdate:true,
-                events: {
-                    'froalaEditor.initialized': function () {
+            placeholderText: '',
+            imageUploadURL: $rootScope.appInfo.uploadedImagesUrl + "/upload",
+            imageAllowedTypes: ['jpeg', 'jpg', 'png', 'gif'],
+            fileUploadURL: $rootScope.appInfo.uploadedImagesUrl + "/upload",
+            fileAllowedTypes: ['application/pdf', 'application/msword', 'application/x-pdf', 'text/plain', 'application/xml','text/xml'],
+            charCounterCount: false,
+            quickInsertTags: [''],
+            immediateAngularModelUpdate:true,
+            events: {
+                'froalaEditor.initialized': function () {
 
-                    },
-                    'froalaEditor.file.error': function(e, editor, error){
-                        $rootScope.msg().text= error.text;
-                        $rootScope.msg().type= error.type;
-                        $rootScope.msg().show= true;
-                     },
-                    'froalaEditor.image.error ':function(e, editor, error){
-                        $rootScope.msg().text= error.text;
-                        $rootScope.msg().type= error.type;
-                        $rootScope.msg().show= true;
-                    }
                 },
-                key: 'Rg1Wb2KYd1Td1WIh1CVc2F==',
-                imageResize: true,
-                imageEditButtons: ['imageReplace', 'imageAlign', 'imageRemove', '|', 'imageLink', 'linkOpen', 'linkEdit', 'linkRemove', '-', 'imageAlt']
-            };
+                'froalaEditor.file.error': function(e, editor, error){
+                    $rootScope.msg().text= error.text;
+                    $rootScope.msg().type= error.type;
+                    $rootScope.msg().show= true;
+                },
+                'froalaEditor.image.error ':function(e, editor, error){
+                    $rootScope.msg().text= error.text;
+                    $rootScope.msg().type= error.type;
+                    $rootScope.msg().show= true;
+                }
+            },
+            key: 'Rg1Wb2KYd1Td1WIh1CVc2F==',
+            imageResize: true,
+            imageEditButtons: ['imageReplace', 'imageAlign', 'imageRemove', '|', 'imageLink', 'linkOpen', 'linkEdit', 'linkRemove', '-', 'imageAlt'],
+            pastePlain: true
+        };
         httpHeaders.common['appVersion'] = appInfo.version;
         var prevVersion = StorageService.getAppVersion(StorageService.APP_VERSION);
         StorageService.setAppVersion(appInfo.version);

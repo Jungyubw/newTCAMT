@@ -3,14 +3,19 @@ angular.module('tcl').factory('StorageService',
     ['localStorageService', function (localStorageService) {
         var service = {
             TABLE_COLUMN_SETTINGS_KEY: 'SETTINGS_KEY',
-            SELECTED_IG_DOCUMENT_TYPE:'SelectedIgDocumentType',
-            SELECTED_IG_DOCUMENT_ID:'SelectedIgDocumentId',
+            SELECTED_TEST_PLAN_TYPE:'SelectedTestPlanType',
+            SELECTED_TEST_PLAN_ID:'SelectedTestPlanId',
             APP_VERSION:'APP_VERSION',
             TABLE_CONCISE_SETTINGS:'TABLE_CONCISE_SETTINGS',
             TABLE_RELEVANCE_SETTINGS:'TABLE_RELEVANCE_SETTINGS',
             TABLE_COLLAPSE_SETTINGS:'TABLE_COLLAPSE_SETTINGS',
             TABLE_READONLY_SETTINGS:'TABLE_READONLY_SETTINGS',
-            IG_DOCUMENT:'IG_DOCUMENT',
+            TEST_PLAN:'TEST_PLAN',
+            GVT_BASIC_AUTH:'GVT_BASIC_AUTH',
+            GVT_USERNAME:'GVT_USERNAME',
+            GVT_PASSWORD:'GVT_PASSWORD',
+
+
             remove: function (key) {
                 return localStorageService.remove(key);
             },
@@ -28,11 +33,11 @@ angular.module('tcl').factory('StorageService',
             get: function (key) {
                 return localStorageService.get(key);
             },
-            setSelectedIgDocumentType: function (val) {
-                this.set(this.SELECTED_IG_DOCUMENT_TYPE,val);
+            setSelectedTestPlanType: function (val) {
+                this.set(this.SELECTED_TEST_PLAN_TYPE,val);
             },
-            getSelectedIgDocumentType: function () {
-                return this.get(this.SELECTED_IG_DOCUMENT_TYPE);
+            getSelectedTestPlanType: function () {
+                return this.get(this.SELECTED_TEST_PLAN_TYPE);
             },
             setAppVersion: function (version) {
                 this.set(this.APP_VERSION,version);
@@ -40,11 +45,31 @@ angular.module('tcl').factory('StorageService',
             getAppVersion: function () {
                 return this.get(this.APP_VERSION);
             },
-            getIgDocument: function () {
-                return this.get(this.IG_DOCUMENT) != null ? angular.fromJson(this.get(this.IG_DOCUMENT)):null;
+            getTestPlan: function () {
+                return this.get(this.TEST_PLAN) != null ? angular.fromJson(this.get(this.TEST_PLAN)):null;
             },
-            setIgDocument: function (igDocument) {
-                this.set(this.IG_DOCUMENT,igDocument != null ?  angular.toJson(igDocument):null);
+            setTestPlan: function (TestPlan) {
+                this.set(this.TEST_PLAN,TestPlan != null ?  angular.toJson(TestPlan):null);
+            },
+            getGVTBasicAuth: function () {
+                return this.get(this.GVT_BASIC_AUTH);
+            },
+            setGVTBasicAuth: function (value) {
+                this.set(this.GVT_BASIC_AUTH,value);
+            },
+            getGvtUsername: function () {
+                var value = this.get(this.GVT_USERNAME);
+                return  value != undefined ? value: null;
+            },
+            setGvtUsername: function (value) {
+                this.set(this.GVT_USERNAME,value);
+            },
+            getGvtPassword: function () {
+                var value =  this.get(this.GVT_PASSWORD);
+                return value != undefined ? value: null;
+            },
+            setGvtPassword: function (value) {
+                this.set(this.GVT_PASSWORD,value);
             }
         };
         return service;

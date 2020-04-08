@@ -6,73 +6,83 @@ import java.util.List;
 import javax.persistence.Id;
 
 public class MessageTemplate {
-	@Id
-	private String id;
+  @Id
+  private String id;
 
-	private String name;
-	private String description;
-	private String date;
-	
-	private String integrationProfileId;
-	private String conformanceProfileId;
-	
-	private List<Categorization> categorizations = new ArrayList<Categorization>();
+  private String name;
+  private String description;
+  private String date;
 
-	public String getId() {
-		return id;
-	}
+  private String integrationProfileId;
+  private String conformanceProfileId;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+  private String structID;
 
-	public String getName() {
-		return name;
-	}
+  private List<Categorization> categorizations = new ArrayList<Categorization>();
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getId() {
+    return id;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public void setId(String id) {
+    this.id = id;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public String getDate() {
-		return date;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setDate(String date) {
-		this.date = date;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public String getConformanceProfileId() {
-		return conformanceProfileId;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public void setConformanceProfileId(String conformanceProfileId) {
-		this.conformanceProfileId = conformanceProfileId;
-	}
+  public String getDate() {
+    return date;
+  }
 
-	public List<Categorization> getCategorizations() {
-		return categorizations;
-	}
+  public void setDate(String date) {
+    this.date = date;
+  }
 
-	public void setCategorizations(List<Categorization> categorizations) {
-		this.categorizations = categorizations;
-	}
+  public String getConformanceProfileId() {
+    return conformanceProfileId;
+  }
 
-	public String getIntegrationProfileId() {
-		return integrationProfileId;
-	}
+  public void setConformanceProfileId(String conformanceProfileId) {
+    this.conformanceProfileId = conformanceProfileId;
+  }
 
-	public void setIntegrationProfileId(String integrationProfileId) {
-		this.integrationProfileId = integrationProfileId;
-	}
-	
-	
+  public List<Categorization> getCategorizations() {
+    return categorizations;
+  }
+
+  public void setCategorizations(List<Categorization> categorizations) {
+    this.categorizations = categorizations;
+  }
+
+  public String getIntegrationProfileId() {
+    return integrationProfileId;
+  }
+
+  public void setIntegrationProfileId(String integrationProfileId) {
+    this.integrationProfileId = integrationProfileId;
+  }
+
+  public String getStructID() {
+    return structID;
+  }
+
+  public void setStructID(String structID) {
+    this.structID = structID;
+  }
+
+
 }

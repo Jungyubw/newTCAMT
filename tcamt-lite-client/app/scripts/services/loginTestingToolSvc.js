@@ -6,110 +6,77 @@ angular.module('tcl').factory('loginTestingToolSvc',
 
         var svc = this;
 
-        svc.pushRB = function(host,username,password) {
+
+
+        svc.exportToGVT = function(id, auth,targetUrl,targetDomain) {
+            var httpHeaders = {};
+            httpHeaders['target-auth'] = auth;
+            httpHeaders['target-url'] = targetUrl;
+            httpHeaders['target-domain'] = targetDomain;
+            return $http.post('api/testplans/' + id + '/connect',{headers:httpHeaders});
+        };
+
+        svc.login = function(username, password,targetUrl) {
+
             var delay = $q.defer();
-            console.log(host);
+            var httpHeaders = {};
+            httpHeaders['Accept'] = 'application/json';
+            var auth =  base64.encode(username + ':' + password);
+            httpHeaders['target-auth'] = 'Basic ' + auth;
+            httpHeaders['target-url'] = targetUrl;
+            console.log(targetUrl);
             console.log(username);
             console.log(password);
-            var httpHeaders = {};
-            httpHeaders['Accept'] = 'application/json';
-            var auth =  base64.encode(username + ':' + password);
-            //httpHeaders['Authorization'] = 'Basic ' + auth;
-            httpHeaders['gvt-auth'] = auth;
-            var testplanId=$rootScope.selectedTestPlan.id;
-            console.log($rootScope.selectedTestPlan);
+            console.log(auth);
+            $http.get('api/connect/login', {headers:httpHeaders}).then(function (res) {
 
-            $http.post('api/testplans/pushRB/'+testplanId,host,{headers:httpHeaders}).then(function (re) {
-
-
-                delay.resolve(re);
-
-                console.log("SUCCESS")
-
-            }, function(error){
-                console.log("ERROR");
-                console.log(error);
-                delay.reject(error);
-            });
-
-
-
-            return delay.promise;
-        };
-
-
-
-        svc.login = function(username, password) {
-            var delay = $q.defer();
-            var httpHeaders = {};
-            httpHeaders['Accept'] = 'application/json';
-            var auth =  base64.encode(username + ':' + password);
-            httpHeaders['Authorization'] = 'Basic ' + auth;
-            $http.get(+ 'api/accounts/login', {headers:httpHeaders}).then(function (re) {
+                console.log(auth);
                 delay.resolve(auth);
+
             }, function(er){
                 delay.reject(er);
             });
             return delay.promise;
         };
 
-        svc.exportToGVT = function(id,mids, auth) {
-            var httpHeaders = {};
-            httpHeaders['gvt-auth'] = auth;
-            return
-        };
-
-
-        svc.deleteFromGVT = function(username, password,testingUrl) {
-            var delay = $q.defer();
+        svc.createDomain = function(auth,targetUrl,key, name,homeTitle) {
             var httpHeaders = {};
             httpHeaders['Accept'] = 'application/json';
-            var auth =  base64.encode(username + ':' + password);
-            httpHeaders['gvt-auth'] =auth;
-            $http.post('api/testplans/' +  $rootScope.selectedTestPlan.id+'/deleteFromGVT' ,testingUrl,{headers:httpHeaders}).then(function (re) {
+            httpHeaders['target-auth'] = auth;
+            httpHeaders['target-url'] = targetUrl;
+            return $http.post('api/connect/createDomain',{'key':key,'name':name,'homeTitle':homeTitle}, {headers:httpHeaders});
+        };
 
 
+        svc.exportToGVT = function(id, auth,targetUrl,targetDomain) {
+            var httpHeaders = {};
+            httpHeaders['target-auth'] = auth;
+            httpHeaders['target-url'] = targetUrl;
+            httpHeaders['target-domain'] = targetDomain;
+            return $http.post('api/testplans/' + id + '/connect',{},{headers:httpHeaders});
+        };
 
-                delay.resolve(re);
-                console.log(re);
+        svc.exportToGVTForCompositeProfile = function(id, cids, auth,targetUrl,targetDomain) {
+            var httpHeaders = {};
+            httpHeaders['target-auth'] = auth;
+            httpHeaders['target-url'] = targetUrl;
+            httpHeaders['target-domain'] = targetDomain;
+            return $http.post('api/igdocuments/' + id + '/connect/composites',cids,{headers:httpHeaders});
+        };
 
+        svc.getDomains = function(targetUrl,auth) {
+            var delay = $q.defer();
+            var httpHeaders = {};
+            httpHeaders['target-url'] = targetUrl;
+            httpHeaders['target-auth'] = auth;
+            $http.get("api/connect/domains",{headers:httpHeaders}).then(function (result) {
+                var data = angular.fromJson(result.data);
+                delay.resolve(data);
             }, function(er){
                 delay.reject(er);
             });
             return delay.promise;
         };
-
-
-        //
-        // $svc.deleteFromGVT = function(username, password) {
-        //     var delay = $q.defer();
-        //     var httpHeaders = {};
-        //     httpHeaders['Accept'] = 'application/json';
-        //     var auth =  base64.encode(username + ':' + password);
-        //     httpHeaders['gvt-auth'] =auth;
-        //     $http.post('api/testplans/' +  $rootScope.selectedTestPlan.longId+'/deleteFromGVT' ,$scope.testingUrl,{headers:httpHeaders}).then(function (re) {
-        //
-        //
-        //         if(response){
-        //             $rootScope.selectedTestPlan.gvtPresence=false;
-        //
-        //             $mdDialog.hide();
-        //
-        //             $scope.alert=false;
-        //
-        //         }else{
-        //             $scope.alertText = "ERROR: Cannot access server. Please verify you Credentials";
-        //             $scope.alert=true;
-        //         }
-        //
-        //         delay.resolve(response);
-        //
-        //     }, function(er){
-        //         delay.reject(er);
-        //     });
-        //     return delay.promise;
-        // };
-
 
 
 

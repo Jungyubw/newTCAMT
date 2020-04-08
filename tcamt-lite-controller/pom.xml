@@ -19,12 +19,6 @@
 				<!-- <artifactId>spring-boot-maven-plugin</artifactId> -->
 				<!-- </plugin> -->
 				<!-- tag::wsdl[] -->
-
-
-
-
-
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-eclipse-plugin</artifactId>
@@ -78,19 +72,13 @@
 		<dependency>
 			<groupId>gov.nist</groupId>
 			<artifactId>hl7-v2-validation</artifactId>
-			<version>1.1.14</version>
+			<version>1.1.18</version>
 		</dependency>
 
 		<dependency>
 			<groupId>gov.nist.healthcare.hl7.v2.unifiedreport</groupId>
 			<artifactId>validation-proxy</artifactId>
 			<version>1.0.6</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>gov.nist.healthcare.tools.hl7.v2.xml</groupId>
-			<artifactId>xml-tool</artifactId>
-			<version>0.9.1</version>
 		</dependency>
 
 		<dependency>
@@ -253,7 +241,7 @@
 			<version>1.10.2</version>
 		</dependency>
 
-	   <dependency>
+		<dependency>
 			<groupId>gov.nist.hit.resources.deploy</groupId>
 			<artifactId>hit-resource-client</artifactId>
 			<version>2.0.3</version>

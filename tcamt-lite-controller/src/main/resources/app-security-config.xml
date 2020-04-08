@@ -29,6 +29,7 @@
 	<sec:http pattern="/api/igdocuments/config" security="none" />
 	<sec:http pattern="/api/datatype-library/config" security="none" />
 	<sec:http pattern="/api/appInfo" security="none" />
+	<sec:http pattern="/api/tcamtdocument" security="none" />
 	<sec:http pattern="/api/uploaded_files/file" security="none" />
 
 	<sec:http create-session="ifRequired" use-expressions="true">
@@ -58,9 +59,6 @@
 			access="isFullyAuthenticated()" />
 		<sec:intercept-url pattern="/**"
 			access="isFullyAuthenticated() and hasRole('admin')" />
-		<sec:intercept-url pattern="/api/uploaded_files/file" access="isAnonymous()" />
-		<sec:intercept-url pattern="/api/uploaded_files/upload" access="isFullyAuthenticated()" />
-
 		<sec:logout logout-success-url="/index.html" />
 		<!-- <sec:custom-filter ref="csrfHeaderFilter" after="CSRF_FILTER"/> -->
 		<!-- <sec:csrf token-repository-ref="csrfTokenRepository" /> -->

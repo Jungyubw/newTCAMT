@@ -61,4 +61,12 @@ public class TemplateServiceImpl implements TemplateService {
 		}
 		return templates.get(0);
 	}
+	
+	@Override
+    public List<Template> findAll() {
+        List<Template> templates = templateRepository.findAll();
+        log.info("templates=" + templates.size());
+        return templates;
+    }
+
 }

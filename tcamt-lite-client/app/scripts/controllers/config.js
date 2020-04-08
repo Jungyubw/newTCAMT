@@ -2,7 +2,7 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce, Notification) {
+angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, $sce) {
 	$scope.loading = false;
 
 
@@ -48,11 +48,45 @@ angular.module('tcl').controller('ConfigCtrl', function ($document, $scope, $roo
         });
     };
 
+    $scope.deleteTestStoryConfig = function (ev, tsc) {
+        $rootScope.selectedTestStoryConfig = tsc;
+
+        $http.post('api/config/' + $rootScope.selectedTestStoryConfig.id + '/delete').then(function (response) {
+            $rootScope.msg().text = "testplanDeleteSuccess";
+            $rootScope.msg().type = "success";
+            $rootScope.msg().show = true;
+            $rootScope.manualHandle = true;
+
+            var idxP = _.findIndex($rootScope.testStoryConfigs, function (child) {
+                return child.id === $rootScope.selectedTestStoryConfig.id;
+            });
+            $rootScope.testStoryConfigs.splice(idxP, 1);
+
+        }, function (error) {
+            $scope.error = error;
+        });
+    };
+
     $scope.editTestStoryConfigModalCtrl = function($scope, $mdDialog, $http, userInfoService) {
+        $scope.needHelp = false;
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+
+
+        };
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
     	if(!$rootScope.selectedTestStoryConfig){
             $scope.selectedTestStoryConfig =  angular.copy(_.find($rootScope.testStoryConfigs, function(config){ return config.accountId == 0; }));
             $scope.selectedTestStoryConfig.id = new ObjectId().toString();
-            $scope.selectedTestStoryConfig.name = 'NewTestStoryConfig';
+            $scope.selectedTestStoryConfig.name = 'NewTestStoryTemplate';
             $scope.selectedTestStoryConfig.accountId = userInfoService.getAccountID();
     	}else{
             $scope.selectedTestStoryConfig = $rootScope.selectedTestStoryConfig;

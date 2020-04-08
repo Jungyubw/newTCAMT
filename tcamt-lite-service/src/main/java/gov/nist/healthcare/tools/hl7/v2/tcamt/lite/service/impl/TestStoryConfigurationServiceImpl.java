@@ -88,4 +88,13 @@ public class TestStoryConfigurationServiceImpl implements TestStoryConfiguration
 
 		return defaultConfig;
 	}
+
+  /* (non-Javadoc)
+   * @see gov.nist.healthcare.tools.hl7.v2.tcamt.lite.service.TestStoryConfigurationService#delete(java.lang.String)
+   */
+  @Override
+  public void delete(String id) {
+    testStoryConfigurationRepository.delete(id);
+    
+  }
 }

@@ -2,9 +2,8 @@
  * Created by Jungyub on 5/12/16
  */
 
-angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $modal, $cookies, $timeout, userInfoService, ngTreetableParams, $interval, ViewSettings, StorageService, $q, notifications, IgDocumentService, ElementUtils,AutoSaveService,$sce, Notification) {
+angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $rootScope, $templateCache, Restangular, $http, $filter, $mdDialog, $sce) {
 	$scope.loading = false;
-
 
 	$scope.initProfiles= function () {
 		if(!$rootScope.profiles || $rootScope.profiles == [] ) $rootScope.loadProfiles();
@@ -13,30 +12,25 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 	$scope.confirmDeletePublicProfile = function(ev, profile) {
 		var confirm = $mdDialog.prompt()
 			.title('Are you sure you want to delete the Public Profile?')
-			.textContent('This operation is irreversible. Need passcode.')
-			.placeholder('PASSCODE')
-			.ariaLabel('PASSCODE')
-			.initialValue('')
+			.textContent('This operation is irreversible.')
 			.targetEvent(ev)
 			.ok('Confirm')
 			.cancel('Cancel');
 
 		$mdDialog.show(confirm).then(function(result) {
-			if(result == 'nist1234'){
-				$http.post($rootScope.api('api/profiles/' + profile.id + '/delete')).then(function (response) {
-					$rootScope.msg().text = "profileDeleteSuccess";
-					$rootScope.msg().type = "success";
-					$rootScope.msg().show = true;
-					$rootScope.manualHandle = true;
-                    $rootScope.loadProfiles();
-				}, function (error) {
-					$scope.error = error;
-					$scope.loading = false;
-					$rootScope.msg().text = "profileDeleteFailed";
-					$rootScope.msg().type = "danger";
-					$rootScope.msg().show = true;
-				});
-			}
+            $http.post('api/profiles/' + profile.id + '/delete').then(function () {
+                $rootScope.msg().text = "profileDeleteSuccess";
+                $rootScope.msg().type = "success";
+                $rootScope.msg().show = true;
+                $rootScope.manualHandle = true;
+                $rootScope.loadProfiles();
+            }, function (error) {
+                $scope.error = error;
+                $scope.loading = false;
+                $rootScope.msg().text = "profileDeleteFailed";
+                $rootScope.msg().type = "danger";
+                $rootScope.msg().show = true;
+            });
 		}, function() {
 		});
 	};
@@ -51,19 +45,20 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 			.cancel('Cancel');
 
 		$mdDialog.show(confirm).then(function() {
-			$http.post($rootScope.api('api/profiles/' + profile.id + '/delete')).then(function (response) {
-				$rootScope.msg().text = "profileDeleteSuccess";
-				$rootScope.msg().type = "success";
-				$rootScope.msg().show = true;
-				$rootScope.manualHandle = true;
+
+            $http.post('api/profiles/' + profile.id + '/delete').then(function () {
+                $rootScope.msg().text = "profileDeleteSuccess";
+                $rootScope.msg().type = "success";
+                $rootScope.msg().show = true;
+                $rootScope.manualHandle = true;
                 $rootScope.loadProfiles();
-			}, function (error) {
-				$scope.error = error;
-				$scope.loading = false;
-				$rootScope.msg().text = "profileDeleteFailed";
-				$rootScope.msg().type = "danger";
-				$rootScope.msg().show = true;
-			});
+            }, function (error) {
+                $scope.error = error;
+                $scope.loading = false;
+                $rootScope.msg().text = "profileDeleteFailed";
+                $rootScope.msg().type = "danger";
+                $rootScope.msg().show = true;
+            });
 		}, function() {
 		});
 	};
@@ -98,6 +93,45 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 		});
 	};
 
+    $scope.openDialogToShowProfile = function (ev, profile, m) {
+        $mdDialog.show({
+            controller: $scope.ShowProfileModalCtrl,
+            templateUrl: 'ShowProfileModal.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose:false,
+            fullscreen: true, // Only for -xs, -sm breakpoints.
+            locals: {
+                profile: profile,
+                m : m
+            },
+        }).then(function() {
+        }, function() {
+        });
+    };
+
+    $scope.ShowProfileModalCtrl = function($scope,$mdDialog,$http, profile, m) {
+        $scope.profile = profile;
+        $scope.m = m;
+
+        console.log(profile);
+        console.log(m);
+        $scope.cancel = function() {
+            $mdDialog.hide();
+        };
+
+    };
+
+	$scope.saveProfileName = function(profile) {
+        $http.post('api/profiles/saveProfileMeta', profile).then(function (response) {
+            var result = response.data;
+            if(result.success){
+                $scope.checkLoadAll();
+            }
+        }, function (e) {
+        });
+    }
+
 	$scope.openDialogForReplacePublicProfile = function (ev, profile) {
 		$rootScope.toBeReplaceProfileId = profile.id;
 		$mdDialog.show({
@@ -129,15 +163,28 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 	};
 
 	$scope.ImportXMLPublicProfileModalCtrl = function($scope, $mdDialog, $http) {
-		$scope.isSuperUser = false;
-		$scope.passcode = '';
+        $scope.needHelp = false;
 		$scope.xmlFilesData = {};
+
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+
+
+        };
+
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
+
+
 		$scope.cancel = function() {
 			$mdDialog.hide();
-		};
-
-		$scope.checkPassCode = function () {
-			if($scope.passcode == 'nist1234') $scope.isSuperUser = true;
 		};
 
 		$scope.checkLoadAll = function (){
@@ -148,46 +195,98 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 
 		};
 
-		$scope.validateForProfileXMLFile = function(files) {
-			var f = document.getElementById('profilePublicFile').files[0];
-			var reader = new FileReader();
-			reader.onloadend = function(e) {
-				$scope.xmlFilesData.profileXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForPublicProfile");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
-			};
-			reader.readAsText(f);
+        $scope.validateForProfileXMLFile = function(files) {
+            var f = document.getElementById('profilePublicFile').files[0];
+            var reader = new FileReader();
+            reader.readAsText(f);
+            reader.onloadend = function(e) {
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyProfileByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.profileXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForPublicProfile");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForPublicProfile");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForPublicProfile");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
+            };
+        };
 
+        $scope.validateForValueSetXMLFile = function(files) {
+            var f = document.getElementById('valueSetPublicFile').files[0];
+            var reader = new FileReader();
+            reader.readAsText(f);
+            reader.onloadend = function(e) {
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyValueSetByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.valueSetXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForValueSetPublic");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForValueSetPublic");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForValueSetPublic");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
+            };
+        };
 
-		};
-
-		$scope.validateForValueSetXMLFile = function(files) {
-			var f = document.getElementById('valueSetPublicFile').files[0];
-			var reader = new FileReader();
-			reader.onloadend = function(e) {
-				$scope.xmlFilesData.valueSetXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForValueSetPublic");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
-			};
-			reader.readAsText(f);
-		};
-
-		$scope.validateForConstraintsXMLFile = function(files) {
-			var f = document.getElementById('constraintsPublicFile').files[0];
-			var reader = new FileReader();
-			reader.onloadend = function(e) {
-				$scope.xmlFilesData.constraintsXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForConstraintsPublic");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
-			};
-			reader.readAsText(f);
-		};
+        $scope.validateForConstraintsXMLFile = function(files) {
+            var f = document.getElementById('constraintsPublicFile').files[0];
+            var reader = new FileReader();
+            reader.readAsText(f);
+            reader.onloadend = function(e) {
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyConstraintByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.constraintsXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForConstraintsPublic");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForConstraintsPublic");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForConstraintsPublic");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
+            };
+        };
 
 		$scope.importProfileXML = function() {
 			var importProfileButton = $("#importPublicProfileButton");
@@ -199,17 +298,22 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 		};
 	};
 
-
 	$scope.ReplacePublicProfileModalCtrl = function($scope, $mdDialog, $http) {
-		$scope.isSuperUser = false;
-		$scope.passcode = '';
+        $scope.needHelp = false;
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+        };
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
 		$scope.xmlFilesData = {};
 		$scope.cancel = function() {
 			$mdDialog.hide();
-		};
-
-		$scope.checkPassCode = function () {
-			if($scope.passcode == 'nist1234') $scope.isSuperUser = true;
 		};
 
 		$scope.checkLoadAll = function (){
@@ -220,46 +324,98 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 
 		};
 
-		$scope.validateForProfileXMLFile = function(files) {
-			var f = document.getElementById('replacePublicProfileXMLFile').files[0];
-			var reader = new FileReader();
-			reader.onloadend = function(e) {
-				$scope.xmlFilesData.profileXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForReplacePublicProfile");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
-			};
-			reader.readAsText(f);
+        $scope.validateForProfileXMLFile = function(files) {
+            var f = document.getElementById('replacePublicProfileXMLFile').files[0];
+            var reader = new FileReader();
+            reader.readAsText(f);
+            reader.onloadend = function(e) {
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyProfileByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.profileXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForReplacePublicProfile");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForReplacePublicProfile");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForReplacePublicProfile");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
+            };
+        };
 
+        $scope.validateForValueSetXMLFile = function(files) {
+            var f = document.getElementById('replacePublicValueSetXMLFile').files[0];
+            var reader = new FileReader();
+            reader.readAsText(f);
+            reader.onloadend = function(e) {
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyValueSetByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.valueSetXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForReplacePublicValueSet");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForReplacePublicValueSet");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForReplacePublicValueSet");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
+            };
+        };
 
-		};
-
-		$scope.validateForValueSetXMLFile = function(files) {
-			var f = document.getElementById('replacePublicValueSetXMLFile').files[0];
-			var reader = new FileReader();
-			reader.onloadend = function(e) {
-				$scope.xmlFilesData.valueSetXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForReplacePublicValueSet");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
-			};
-			reader.readAsText(f);
-		};
-
-		$scope.validateForConstraintsXMLFile = function(files) {
-			var f = document.getElementById('replacePublicConstraintsXMLFile').files[0];
-			var reader = new FileReader();
-			reader.onloadend = function(e) {
-				$scope.xmlFilesData.constraintsXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForReplacePublicConstraints");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
-			};
-			reader.readAsText(f);
-		};
+        $scope.validateForConstraintsXMLFile = function(files) {
+            var f = document.getElementById('replacePublicConstraintsXMLFile').files[0];
+            var reader = new FileReader();
+            reader.readAsText(f);
+            reader.onloadend = function(e) {
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyConstraintByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.constraintsXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForReplacePublicConstraints");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForReplacePublicConstraints");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForReplacePublicConstraints");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
+            };
+        };
 
 		$scope.replaceProfileXML = function() {
 			var replaceProfileButton = $("#replacePublicProfileButton");
@@ -273,6 +429,19 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 	};
 
 	$scope.ReplaceXMLProfileModalCtrl  = function($scope, $mdDialog, $http) {
+        $scope.needHelp = false;
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+        };
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
 		$scope.xmlFilesData = {};
 		$scope.cancel = function() {
 			$mdDialog.hide();
@@ -286,46 +455,98 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 
 		};
 
-		$scope.validateForProfileXMLFile = function(files) {
-			var f = document.getElementById('replaceProfileXMLFile').files[0];
-			var reader = new FileReader();
-			reader.onloadend = function(e) {
-				$scope.xmlFilesData.profileXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForReplaceProfile");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
-			};
-			reader.readAsText(f);
+        $scope.validateForProfileXMLFile = function(files) {
+            var f = document.getElementById('replaceProfileXMLFile').files[0];
+            var reader = new FileReader();
+            reader.readAsText(f);
+            reader.onloadend = function(e) {
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyProfileByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.profileXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForReplaceProfile");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForReplaceProfile");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForReplaceProfile");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
+            };
+        };
 
+        $scope.validateForValueSetXMLFile = function(files) {
+            var f = document.getElementById('replaceValueSetXMLFile').files[0];
+            var reader = new FileReader();
+            reader.readAsText(f);
+            reader.onloadend = function(e) {
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyValueSetByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.valueSetXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForReplaceValueSet");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForReplaceValueSet");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForReplaceValueSet");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
+            };
+        };
 
-		};
-
-		$scope.validateForValueSetXMLFile = function(files) {
-			var f = document.getElementById('replaceValueSetXMLFile').files[0];
-			var reader = new FileReader();
-			reader.onloadend = function(e) {
-				$scope.xmlFilesData.valueSetXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForReplaceValueSet");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
-			};
-			reader.readAsText(f);
-		};
-
-		$scope.validateForConstraintsXMLFile = function(files) {
-			var f = document.getElementById('replaceConstraintsXMLFile').files[0];
-			var reader = new FileReader();
-			reader.onloadend = function(e) {
-				$scope.xmlFilesData.constraintsXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForReplaceConstraints");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
-			};
-			reader.readAsText(f);
-		};
+        $scope.validateForConstraintsXMLFile = function(files) {
+            var f = document.getElementById('replaceConstraintsXMLFile').files[0];
+            var reader = new FileReader();
+            reader.readAsText(f);
+            reader.onloadend = function(e) {
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyConstraintByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.constraintsXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForReplaceConstraints");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForReplaceConstraints");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForReplaceConstraints");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
+            };
+        };
 
 		$scope.replaceProfileXML = function() {
 			var replaceProfileButton = $("#replaceProfileButton");
@@ -339,6 +560,21 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 	};
 
 	$scope.ImportXMLProfileModalCtrl = function($scope, $mdDialog, $http) {
+        $scope.needHelp = false;
+        $scope.showHelp = function () {
+            $scope.needHelp = true;
+
+            if(!$rootScope.tcamtDocument) $rootScope.loadDocument();
+
+
+        };
+        $scope.getHtml = function (index) {
+            if($rootScope.tcamtDocument){
+                return $sce.trustAsHtml($rootScope.tcamtDocument.helpGuide.slides[index].contents);
+            }else {
+                return null;
+            }
+        };
 		$scope.xmlFilesData = {};
 		$scope.cancel = function() {
 			$mdDialog.hide();
@@ -355,42 +591,94 @@ angular.module('tcl').controller('ProfileCtrl', function ($document, $scope, $ro
 		$scope.validateForProfileXMLFile = function(files) {
 			var f = document.getElementById('profileXMLFile').files[0];
 			var reader = new FileReader();
+            reader.readAsText(f);
 			reader.onloadend = function(e) {
-				$scope.xmlFilesData.profileXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForXMLProfile");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
+				var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyProfileByXSD', xmlReq).then(function (response) {
+                	var result = response.data;
+                	if(result.success){
+                        $scope.xmlFilesData.profileXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForXMLProfile");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+					}else{
+                        var errorElm = $("#errorMessageForXMLProfile");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+						}
+					}
+                }, function (e) {
+                    var errorElm = $("#errorMessageForXMLProfile");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
 			};
-			reader.readAsText(f);
-
-
 		};
 
 		$scope.validateForValueSetXMLFile = function(files) {
 			var f = document.getElementById('valueSetXMLFile').files[0];
 			var reader = new FileReader();
+            reader.readAsText(f);
 			reader.onloadend = function(e) {
-				$scope.xmlFilesData.valueSetXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForValueSetXML");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyValueSetByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.valueSetXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForValueSetXML");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForValueSetXML");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForValueSetXML");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
 			};
-			reader.readAsText(f);
 		};
 
 		$scope.validateForConstraintsXMLFile = function(files) {
 			var f = document.getElementById('constraintsXMLFile').files[0];
 			var reader = new FileReader();
-			reader.onloadend = function(e) {
-				$scope.xmlFilesData.constraintsXMLFileStr = reader.result;
-				var errorElm = $("#errorMessageForConstraintsXML");
-				errorElm.empty();
-				errorElm.append('<span>' + files[0].name + ' is loaded!</span>');
-				$scope.checkLoadAll();
-			};
-			reader.readAsText(f);
+            reader.readAsText(f);
+            reader.onloadend = function(e) {
+                var xmlReq = {};
+                xmlReq.xml = reader.result;
+                $http.post('api/profiles/verifyConstraintByXSD', xmlReq).then(function (response) {
+                    var result = response.data;
+                    if(result.success){
+                        $scope.xmlFilesData.constraintsXMLFileStr = reader.result;
+                        var errorElm = $("#errorMessageForConstraintsXML");
+                        errorElm.empty();
+                        errorElm.append('<li>' + files[0].name + ' is valid!</li>');
+                        $scope.checkLoadAll();
+                    }else{
+                        var errorElm = $("#errorMessageForConstraintsXML");
+                        errorElm.empty();
+                        errorElm.append('<li style="color: red;">' + files[0].name + ' is not valid!</li>');
+                        if(result.e){
+                            errorElm.append('<li style="color: red;">[Line-' + result.e.lineNumber + ']' + result.e.message + '</li>');
+                        }
+                    }
+                }, function (e) {
+                    var errorElm = $("#errorMessageForConstraintsXML");
+                    errorElm.empty();
+                    errorElm.append('<li style="color: red;">' + files[0].name + ' cannot be loaded!</li>');
+                });
+            };
 		};
 
 		$scope.importProfileXML = function() {

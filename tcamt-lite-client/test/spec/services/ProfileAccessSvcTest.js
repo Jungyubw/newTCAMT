@@ -23,9 +23,6 @@ describe("profile access service", function () {
 		});
 		// We want a pristine profile for each test so state changes from one test don't pollute
 		// the others.
-		var igdocument = JSON.parse(igdocumentAsString);
-		$rootScope.igdocument = igdocument;
-		profile = igdocument.profile;
 		expect(profile).toBeDefined();
 	});
 	
