@@ -105,7 +105,7 @@ body {
 											<label>Message Profile*</label>
 											<md-select ng-model="selectedTestStep.profileIds" ng-change="assignProfile();recordChanged(selectedTestStep);">
 												<md-optgroup label="{{ip.integrationProfileMetaData.name}}" ng-repeat="ip in integrationAbstractProfiles">
-													<md-option ng-value="cp.id+'@'+ip.id" ng-repeat="cp in ip.conformanceProfileMetaDataSet">{{cp.name}}</md-option>
+													<md-option ng-value="cp.id+'@'+ip.id" ng-repeat="cp in ip.conformanceProfileMetaDataSet">{{cp.name}} [{{cp.type}}^{{cp.event}}^{{cp.structId}}, {{cp.identifier}}]</md-option>
 												</md-optgroup>
 											</md-select>
 											<span ng-if="!selectedTestStep.conformanceProfileId" style="color: red">Message Profile is required!</span>
